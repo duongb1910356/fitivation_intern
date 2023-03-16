@@ -12,6 +12,7 @@ import {
 } from '@nestjs/common';
 import { FileInterceptor } from '@nestjs/platform-express';
 import {
+  ApiBearerAuth,
   ApiBody,
   ApiConsumes,
   ApiParam,
@@ -22,10 +23,12 @@ import { mkdirSync, writeFileSync } from 'fs';
 import { appConfig } from 'src/app.config';
 import { AvatarUploadDto } from './dto/avatar-upload-dto';
 import { CreateUserDto } from './dto/create-user-dto';
+import { GetUserDto } from './dto/get-user-dto';
 import { User } from './schemas/user.schema';
 import { UsersService } from './users.service';
 
 @ApiTags('users')
+@ApiBearerAuth()
 @Controller('users')
 export class UsersController {
   constructor(private readonly userService: UsersService) {}
@@ -35,6 +38,12 @@ export class UsersController {
   @ApiResponse({ type: User, status: 200 })
   getUserById(@Param('id') id) {
     return this.userService.findOne({ _id: id });
+  }
+
+  @Get()
+  @ApiResponse({ type: User, status: 200 })
+  getAllUsers(@Param() filter: GetUserDto) {
+    return this.userService.findAll(filter);
   }
 
   @Post()
