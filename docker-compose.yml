@@ -16,6 +16,7 @@ services:
       - APP_NAME
       - APP_VERSION
       - FILE_HOST
+      - FILE_ROOT
   
   db:
     image: mongo
@@ -43,7 +44,7 @@ services:
     image: nginx:alpine
     restart: always
     volumes:
-      - ./files:/usr/share/nginx/html
+      - $FILE_ROOT:/usr/share/nginx/html
     ports:
       - $FILE_PORT:80
 
