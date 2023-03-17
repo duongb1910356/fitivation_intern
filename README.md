@@ -18,7 +18,7 @@ View APIs docs at <http://localhost:3000/docs>
 ## Re-build docker image after install new package
 
 ```bash
-docker compose up build api
+docker compose build api
 ```
 
 ## Test
