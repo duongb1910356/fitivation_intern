@@ -24,11 +24,11 @@ export class User extends BaseObject {
   @ApiProperty()
   password: string;
 
-  @Prop()
+  @Prop({ default: UserRole.MEMBER })
   @ApiProperty()
   role: UserRole;
 
-  @Prop()
+  @Prop({ default: '' })
   @ApiProperty()
   avatar?: string;
 }

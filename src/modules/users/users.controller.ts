@@ -1,11 +1,13 @@
 import {
   Body,
   Controller,
+  Delete,
   FileTypeValidator,
   Get,
   MaxFileSizeValidator,
   Param,
   ParseFilePipe,
+  Patch,
   Post,
   UploadedFile,
   UseInterceptors,
@@ -24,6 +26,7 @@ import { appConfig } from 'src/app.config';
 import { AvatarUploadDto } from './dto/avatar-upload-dto';
 import { CreateUserDto } from './dto/create-user-dto';
 import { GetUserDto } from './dto/get-user-dto';
+import { UpdateUserDto } from './dto/update-user-dto';
 import { User } from './schemas/user.schema';
 import { UsersService } from './users.service';
 
@@ -34,7 +37,7 @@ export class UsersController {
   constructor(private readonly userService: UsersService) {}
 
   @Get(':id')
-  @ApiParam({ name: 'id', type: String })
+  @ApiParam({ name: 'id', type: String, description: 'User ID' })
   @ApiResponse({ type: User, status: 200 })
   getUserById(@Param('id') id) {
     return this.userService.findOne({ _id: id });
@@ -51,6 +54,17 @@ export class UsersController {
   @ApiResponse({ type: User, status: 201 })
   createUser(@Body() input: CreateUserDto) {
     return this.userService.createOne(input);
+  }
+
+  @Patch()
+  updateUser(@Body() updateUserDto: UpdateUserDto) {
+    return this.userService.updateOne(updateUserDto);
+  }
+
+  @Delete(':id')
+  @ApiParam({ name: 'id', type: String, description: 'User ID' })
+  deleteUser(@Param() id: string) {
+    return this.userService.deleteOne(id);
   }
 
   @Post(':id/avatar')
@@ -73,8 +87,8 @@ export class UsersController {
     const dir = `${appConfig.fileRoot}/${id}`;
     mkdirSync(dir, { recursive: true });
     writeFileSync(`${dir}/${file.originalname}`, file.buffer);
-    return {
-      url: appConfig.fileHost + `/${id}/${file.originalname}`,
-    };
+    const url: string = appConfig.fileHost + `/${id}/${file.originalname}`;
+
+    return this.userService.updateAvatar(id, url);
   }
 }
