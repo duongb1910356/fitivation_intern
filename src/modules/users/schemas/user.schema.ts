@@ -1,7 +1,7 @@
 import { Prop, Schema, SchemaFactory } from '@nestjs/mongoose';
 import { ApiProperty } from '@nestjs/swagger';
 import { HydratedDocument } from 'mongoose';
-import { BaseObject } from 'src/shared/schemas/base-object.schema';
+import { BaseObject } from '../../../shared/schemas/base-object.schema';
 
 export type UserDocument = HydratedDocument<User>;
 

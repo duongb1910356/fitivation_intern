@@ -6,10 +6,10 @@ import {
   UnauthorizedException,
 } from '@nestjs/common';
 import { JwtService } from '@nestjs/jwt';
-import { appConfig } from 'src/app.config';
-import { User } from 'src/modules/users/schemas/user.schema';
-import { SuccessResponse } from 'src/shared/response/success-response';
-import { Password } from 'src/utils/password';
+import { appConfig } from '../../app.config';
+import { User } from '../../modules/users/schemas/user.schema';
+import { SuccessResponse } from '../../shared/response/success-response';
+import { Password } from '../../utils/password';
 import { UsersService } from '../users/users.service';
 import { RefreshTokenDto } from './dto/refresh-token-dto';
 import { RegisterDto } from './dto/register-dto';
@@ -45,7 +45,7 @@ export class AuthService {
 
       if (user) {
         return {
-          statusCode: HttpStatus.OK,
+          statusCode: HttpStatus.CREATED,
           message: 'Register Success!',
         };
       }

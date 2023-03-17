@@ -6,8 +6,8 @@ import {
 } from '@nestjs/common';
 import { InjectModel } from '@nestjs/mongoose';
 import { isValidObjectId, Model } from 'mongoose';
-import { SuccessResponse } from 'src/shared/response/success-response';
-import { Password } from 'src/utils/password';
+import { SuccessResponse } from '../../shared/response/success-response';
+import { Password } from '../../utils/password';
 import { RegisterDto } from '../auth/dto/register-dto';
 import { CreateUserDto } from './dto/create-user-dto';
 import { GetUserDto } from './dto/get-user-dto';
@@ -23,8 +23,8 @@ export class UsersService {
   }
 
   async findAll(filter: GetUserDto): Promise<User[]> {
-    console.log(filter);
-    return this.userModel.find(filter);
+    const { limit, offset } = filter;
+    return this.userModel.find(filter).limit(limit).skip(offset);
   }
 
   async createOne(input: CreateUserDto | RegisterDto): Promise<User> {
@@ -40,7 +40,7 @@ export class UsersService {
       }
       if (password || displayName) {
         delete input.id;
-        return await this.userModel.findByIdAndUpdate(id, input);
+        return await this.userModel.findByIdAndUpdate(id, input, { new: true });
       }
       throw new BadRequestException('Data invalid!');
     } catch (err) {

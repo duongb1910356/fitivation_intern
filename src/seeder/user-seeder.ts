@@ -3,8 +3,8 @@ import { InjectModel } from '@nestjs/mongoose';
 
 import { Model } from 'mongoose';
 import { Seeder } from 'nestjs-seeder';
-import { User, UserRole } from 'src/modules/users/schemas/user.schema';
-import { Password } from 'src/utils/password';
+import { User, UserRole } from '../modules/users/schemas/user.schema';
+import { Password } from '../utils/password';
 
 @Injectable()
 export class UserSeeder implements Seeder {
@@ -21,7 +21,7 @@ export class UserSeeder implements Seeder {
 
       items.push({
         displayName: 'User ' + i + 1,
-        email: `test${i + 1}@.test.com`,
+        email: `test${i + 1}@test.com`,
         password: await Password.hashPassword('123123123'),
         role: role,
       });
