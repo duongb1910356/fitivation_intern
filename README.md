@@ -32,6 +32,16 @@
 $ npm install
 ```
 
+## Run docker
+
+```
+cp .env.example .env
+docker compose up -d
+```
+
+View APIs docs at http://localhost:3000/docs
+
+
 ## Running the app
 
 ```bash
