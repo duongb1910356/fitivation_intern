@@ -1,4 +1,6 @@
 import { ApiProperty } from '@nestjs/swagger';
+import { IsEnum, IsOptional, IsString } from 'class-validator';
+import { ESortField, ESortOrder } from '../enum/sort.enum';
 
 export class DefaultListDto {
   @ApiProperty({
@@ -20,6 +22,8 @@ export class DefaultListDto {
     description: 'Search value for the expected result',
     example: 'search@gmail.com',
   })
+  @IsString()
+  @IsOptional()
   searchValue?: string;
 
   @ApiProperty({
@@ -27,19 +31,27 @@ export class DefaultListDto {
     description: 'The name of field searched',
     example: 'email',
   })
+  @IsString()
+  @IsOptional()
   searchField?: string;
 
   @ApiProperty({
     required: false,
     description: 'The name of sort field sorted',
+    enum: ESortField,
     example: 'createdAt',
   })
-  sortField?: string;
+  @IsEnum(ESortField)
+  @IsOptional()
+  sortField?: ESortField;
 
   @ApiProperty({
     required: false,
     description: 'Sort newest or oldest',
+    enum: ESortOrder,
     example: 'asc',
   })
-  sortOrder?: 'asc' | 'desc';
+  @IsEnum(ESortOrder)
+  @IsOptional()
+  sortOrder?: ESortOrder;
 }

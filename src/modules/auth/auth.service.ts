@@ -71,7 +71,7 @@ export class AuthService {
         access_token: this.jwtService.sign(signPayload),
         refresh_token: this.jwtService.sign(signPayload, {
           secret: appConfig.jwtRefreshSecret,
-          expiresIn: '7d',
+          expiresIn: appConfig.jwtRefreshExp,
         }),
       };
     }

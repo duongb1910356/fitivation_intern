@@ -40,8 +40,7 @@ export class AuthController {
   @Post('login')
   @ApiResponse({ type: TokenResponse, status: 200 })
   @ApiUnauthorizedResponse({
-    type: 'string',
-    status: 400,
+    status: 401,
     description: 'UnAuthorization',
   })
   async login(@Body() loginDto: LoginDto) {

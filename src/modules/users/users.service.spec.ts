@@ -34,7 +34,7 @@ describe('UserService', () => {
 
     const users = await service.findAll(query);
 
-    expect(users.length).toEqual(10);
+    expect(users.data.length).toEqual(10);
   });
 
   it('should be find users with correct result', async () => {
@@ -46,10 +46,10 @@ describe('UserService', () => {
 
     const users = await service.findAll(query);
 
-    if (users.length > 0) {
-      expect(users[0]?.displayName).toContain(query.displayName);
+    if (users.data.length > 0) {
+      expect(users.data[0]?.displayName).toContain(query.displayName);
     }
-    expect(users.length).toEqual(0);
+    expect(users.data.length).toEqual(0);
   });
 
   it('should be create a user', async () => {

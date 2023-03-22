@@ -78,7 +78,8 @@ describe('UserController (e2e)', () => {
         .set('Accept', 'application/json')
         .set('Authorization', 'Bearer ' + accessToken)
         .expect((response: request.Response) => {
-          expect(response.body.length).toEqual(10);
+          console.log(response.body);
+          expect(response.body.data.length).toEqual(10);
         });
     });
   });

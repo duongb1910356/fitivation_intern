@@ -6,6 +6,8 @@ import {
 } from '@nestjs/common';
 import { InjectModel } from '@nestjs/mongoose';
 import { isValidObjectId, Model } from 'mongoose';
+import { DefaultListDto } from '../../shared/dto/default-list-dto';
+import { ESortOrder } from '../../shared/enum/sort.enum';
 import { SuccessResponse } from '../../shared/response/success-response';
 import { Password } from '../../utils/password';
 import { RegisterDto } from '../auth/dto/register-dto';
@@ -22,13 +24,47 @@ export class UsersService {
     return this.userModel.findOne(filter);
   }
 
-  async findAll(filter: GetUserDto): Promise<User[]> {
-    const { limit, offset } = filter;
-    return this.userModel.find(filter).limit(limit).skip(offset);
+  async findAll(
+    filter: GetUserDto,
+  ): Promise<SuccessResponse<User[], DefaultListDto>> {
+    const { limit, offset, sortField, sortOrder, ...condition } = filter;
+    try {
+      // const result: User[] = await this.userModel
+      //   .find(condition)
+      //   .sort({ [sortField]: sortOrder === ESortOrder.ASC ? -1 : 1 })
+      //   .limit(+limit)
+      //   .skip(+offset);
+
+      const [count, users] = await Promise.all([
+        this.userModel.count(condition),
+        this.userModel
+          .find(condition)
+          .sort({ [sortField]: sortOrder === ESortOrder.ASC ? -1 : 1 })
+          .limit(+limit)
+          .skip(+offset),
+      ]);
+
+      return {
+        statusCode: HttpStatus.OK,
+        filter: filter,
+        total: count,
+        data: users,
+      };
+    } catch (err) {
+      throw new BadRequestException(err);
+    }
   }
 
   async createOne(input: CreateUserDto | RegisterDto): Promise<User> {
-    return this.userModel.create(input);
+    try {
+      const user = await this.userModel.findOne({ email: input.email });
+      if (!user) {
+        return this.userModel.create(input);
+      }
+      throw new BadRequestException('Email has existed!');
+    } catch (err) {
+      return err;
+    }
   }
 
   async updateOne(input: UpdateUserDto): Promise<User> {

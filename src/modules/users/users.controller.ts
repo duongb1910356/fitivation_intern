@@ -34,6 +34,7 @@ import { GetUserDto } from './dto/get-user-dto';
 import { UpdateUserDto } from './dto/update-user-dto';
 import { User } from './schemas/user.schema';
 import { UsersService } from './users.service';
+import { GenFileName } from '../../utils/gen-filename';
 
 @ApiTags('users')
 @ApiBearerAuth()
@@ -54,7 +55,7 @@ export class UsersController {
   }
 
   @Get()
-  @ApiResponse({ type: [User], status: 200 })
+  @ApiResponse({ type: SuccessResponse<User>, status: 200 })
   @ApiBadRequestResponse({
     type: 'string',
     status: 400,
@@ -77,7 +78,7 @@ export class UsersController {
   }
 
   @Patch()
-  @ApiResponse({ type: User, status: 201 })
+  @ApiResponse({ type: User, status: 200 })
   @ApiBadRequestResponse({
     type: 'string',
     status: 400,
@@ -126,9 +127,10 @@ export class UsersController {
     file: Express.Multer.File,
   ) {
     const dir = `${appConfig.fileRoot}/${id}`;
+    const fileName = GenFileName.gen(file.mimetype);
     mkdirSync(dir, { recursive: true });
-    writeFileSync(`${dir}/${file.originalname}`, file.buffer);
-    const url: string = appConfig.fileHost + `/${id}/${file.originalname}`;
+    writeFileSync(`${dir}/${fileName}`, file.buffer);
+    const url: string = appConfig.fileHost + `/${id}/${fileName}`;
 
     return this.userService.updateAvatar(id, url);
   }

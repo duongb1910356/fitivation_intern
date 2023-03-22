@@ -5,9 +5,10 @@ describe('AuthController (e2e)', () => {
   const authUrl = 'http://localhost:3000/api/auth';
 
   let accessToken;
+  let refreshToken;
 
   const mockUser: any = {
-    displayName: 'test',
+    displayName: 'User test',
     email: 'email@test.com',
     password: 'password',
   };
@@ -34,6 +35,7 @@ describe('AuthController (e2e)', () => {
         .expect((response: request.Response) => {
           const { access_token, refresh_token } = response.body;
           accessToken = access_token;
+          refreshToken = refresh_token;
 
           expect(access_token).toBeTruthy();
           expect(refresh_token).toBeTruthy();
@@ -47,11 +49,12 @@ describe('AuthController (e2e)', () => {
         .post('/refresh-token')
         .set('Accept', 'application/json')
         .send({
-          token: accessToken,
+          token: refreshToken,
         })
         .expect((response: request.Response) => {
           const { access_token, refresh_token } = response.body;
           accessToken = access_token;
+          refreshToken = refresh_token;
 
           expect(access_token).toBeTruthy();
           expect(refresh_token).toBeTruthy();
