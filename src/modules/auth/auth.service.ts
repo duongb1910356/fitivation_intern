@@ -33,7 +33,7 @@ export class AuthService {
       access_token: this.jwtService.sign(payload),
       refresh_token: this.jwtService.sign(payload, {
         secret: appConfig.jwtRefreshSecret,
-        expiresIn: '7d',
+        expiresIn: appConfig.jwtRefreshExp,
       }),
     };
   }
