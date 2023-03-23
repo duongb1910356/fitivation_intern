@@ -17,10 +17,9 @@ import {
   ApiResponse,
   ApiTags,
   ApiUnauthorizedResponse,
-  PickType,
 } from '@nestjs/swagger';
-import { SuccessResponse } from '../../shared/response/success-response';
 import { UsersService } from '../../modules/users/users.service';
+import { SuccessResponse } from '../../shared/response/success-response';
 import { Password } from '../../utils/password';
 import { User } from '../users/schemas/user.schema';
 import { AuthService } from './auth.service';
@@ -127,6 +126,6 @@ export class AuthController {
     description: 'Token invalid',
   })
   getProfile(@Request() req: any) {
-    return req.user;
+    return this.userService.findOne(req.uid);
   }
 }
