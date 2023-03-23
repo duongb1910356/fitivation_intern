@@ -1,5 +1,5 @@
 import { Prop, Schema, SchemaFactory } from '@nestjs/mongoose';
-import { ApiProperty } from '@nestjs/swagger';
+import { ApiHideProperty, ApiProperty } from '@nestjs/swagger';
 import { HydratedDocument } from 'mongoose';
 import { BaseObject } from '../../../shared/schemas/base-object.schema';
 
@@ -21,7 +21,7 @@ export class User extends BaseObject {
   email: string;
 
   @Prop({ minlength: 6 })
-  @ApiProperty()
+  @ApiHideProperty()
   password: string;
 
   @Prop({ default: UserRole.MEMBER })

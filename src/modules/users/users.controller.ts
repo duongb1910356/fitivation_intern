@@ -1,15 +1,18 @@
 import {
+  BadRequestException,
   Body,
   Controller,
   Delete,
   FileTypeValidator,
   Get,
   MaxFileSizeValidator,
+  NotFoundException,
   Param,
   ParseFilePipe,
   Patch,
   Post,
   Query,
+  UnsupportedMediaTypeException,
   UploadedFile,
   UseInterceptors,
 } from '@nestjs/common';
@@ -24,17 +27,20 @@ import {
   ApiParam,
   ApiResponse,
   ApiTags,
+  ApiUnsupportedMediaTypeResponse,
+  PickType,
 } from '@nestjs/swagger';
 import { mkdirSync, writeFileSync } from 'fs';
-import { SuccessResponse } from '../../shared/response/success-response';
+import { ESortField, ESortOrder } from 'src/shared/enum/sort.enum';
 import { appConfig } from '../../app.config';
+import { SuccessResponse } from '../../shared/response/success-response';
+import { GenFileName } from '../../utils/gen-filename';
 import { AvatarUploadDto } from './dto/avatar-upload-dto';
 import { CreateUserDto } from './dto/create-user-dto';
 import { GetUserDto } from './dto/get-user-dto';
 import { UpdateUserDto } from './dto/update-user-dto';
-import { User } from './schemas/user.schema';
+import { User, UserRole } from './schemas/user.schema';
 import { UsersService } from './users.service';
-import { GenFileName } from '../../utils/gen-filename';
 
 @ApiTags('users')
 @ApiBearerAuth()
@@ -46,7 +52,7 @@ export class UsersController {
   @ApiParam({ name: 'id', type: String, description: 'User ID' })
   @ApiOkResponse({ type: User, status: 200 })
   @ApiNotFoundResponse({
-    type: 'string',
+    type: NotFoundException,
     status: 400,
     description: 'User not found!',
   })
@@ -55,9 +61,38 @@ export class UsersController {
   }
 
   @Get()
-  @ApiResponse({ type: SuccessResponse<User>, status: 200 })
+  @ApiResponse({
+    schema: {
+      example: {
+        statusCode: 200,
+        message: '',
+        total: 0,
+        filter: {
+          limit: 10,
+          offset: 0,
+          role: UserRole.ADMIN,
+          searchField: 'string',
+          searchValue: 'string',
+          sortField: ESortField.CREATED_AT,
+          sortOrder: ESortOrder.ASC,
+        } as GetUserDto,
+        data: [
+          {
+            _id: '_id',
+            displayName: 'string',
+            email: 'string',
+            role: UserRole.MEMBER,
+            createdAt: new Date(),
+            updatedAt: new Date(),
+            avatar: '',
+          },
+        ] as User[],
+      } as SuccessResponse<User[], GetUserDto>,
+    },
+    status: 200,
+  })
   @ApiBadRequestResponse({
-    type: 'string',
+    type: BadRequestException,
     status: 400,
     description: '[Input] invalid!',
   })
@@ -66,10 +101,34 @@ export class UsersController {
   }
 
   @Post()
-  @ApiBody({ type: CreateUserDto })
+  @ApiBody({
+    type: CreateUserDto,
+    examples: {
+      ADMIN: {
+        summary: 'Admin',
+        value: {
+          displayName: 'Admin user',
+          email: 'admin@test.com',
+          password: '123123123123',
+          role: UserRole.ADMIN,
+          avatar: '',
+        } as CreateUserDto,
+      },
+      USER: {
+        summary: 'User',
+        value: {
+          displayName: 'User',
+          email: 'user@test.com',
+          password: '123123123123',
+          role: UserRole.MEMBER,
+          avatar: '',
+        } as CreateUserDto,
+      },
+    },
+  })
   @ApiResponse({ type: User, status: 201 })
   @ApiBadRequestResponse({
-    type: 'string',
+    type: BadRequestException,
     status: 400,
     description: '[Input] invalid!',
   })
@@ -80,7 +139,7 @@ export class UsersController {
   @Patch()
   @ApiResponse({ type: User, status: 200 })
   @ApiBadRequestResponse({
-    type: 'string',
+    type: BadRequestException,
     status: 400,
     description: '[Input] invalid!',
   })
@@ -90,14 +149,22 @@ export class UsersController {
 
   @Delete(':id')
   @ApiParam({ name: 'id', type: String, description: 'User ID' })
-  @ApiResponse({ type: SuccessResponse<User>, status: 200 })
+  @ApiResponse({
+    schema: {
+      example: {
+        statusCode: 200,
+        message: 'Delete success!',
+      } as SuccessResponse<null>,
+    },
+    status: 200,
+  })
   @ApiBadRequestResponse({
-    type: 'string',
+    type: BadRequestException,
     status: 400,
     description: '[Input] invalid!',
   })
   @ApiNotFoundResponse({
-    type: 'string',
+    type: NotFoundException,
     status: 404,
     description: 'User not found!',
   })
@@ -113,6 +180,21 @@ export class UsersController {
   @ApiOkResponse({
     type: User,
     status: 200,
+  })
+  @ApiNotFoundResponse({
+    type: NotFoundException,
+    status: 404,
+    description: 'User not found!',
+  })
+  @ApiUnsupportedMediaTypeResponse({
+    type: UnsupportedMediaTypeException,
+    status: 415,
+    description: 'File invalid!',
+  })
+  @ApiBadRequestResponse({
+    type: BadRequestException,
+    status: 400,
+    description: 'File size invalid!',
   })
   uploadFile(
     @Param('id') id,

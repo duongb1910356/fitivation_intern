@@ -1,19 +1,19 @@
 import { HttpStatus } from '@nestjs/common';
 import { ApiProperty } from '@nestjs/swagger';
 
-export class SuccessResponse<T, F = null> {
+export class SuccessResponse<T, F = unknown> {
   @ApiProperty({ type: Number, example: 200 })
   statusCode: HttpStatus;
 
-  @ApiProperty({ type: String, example: 'Delete success!' })
+  @ApiProperty({ type: String, example: '' })
   message?: string;
 
   @ApiProperty({ type: Number, description: 'Total data in a list resp' })
   total?: number;
 
-  @ApiProperty({ type: Number, description: 'The filter apply' })
-  filter?: F;
+  @ApiProperty({ type: Object, description: 'The filter apply' })
+  filter?: F | unknown;
 
-  @ApiProperty()
-  data?: T;
+  @ApiProperty({ type: Object, isArray: true, description: 'Data returned' })
+  data?: T | unknown;
 }

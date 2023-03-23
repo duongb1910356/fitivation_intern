@@ -11,10 +11,13 @@ import {
 import {
   ApiBadRequestResponse,
   ApiBearerAuth,
+  ApiBody,
+  ApiCreatedResponse,
   ApiOperation,
   ApiResponse,
   ApiTags,
   ApiUnauthorizedResponse,
+  PickType,
 } from '@nestjs/swagger';
 import { SuccessResponse } from '../../shared/response/success-response';
 import { UsersService } from '../../modules/users/users.service';
@@ -38,7 +41,26 @@ export class AuthController {
 
   @Public()
   @Post('login')
-  @ApiResponse({ type: TokenResponse, status: 200 })
+  @ApiBody({
+    type: LoginDto,
+    examples: {
+      ADMIN: {
+        summary: 'Admin',
+        value: {
+          email: 'test1@test.com',
+          password: '123123123',
+        } as LoginDto,
+      },
+      USER: {
+        summary: 'User',
+        value: {
+          email: 'test2@test.com',
+          password: '123123123',
+        } as LoginDto,
+      },
+    },
+  })
+  @ApiCreatedResponse({ type: TokenResponse, status: 201 })
   @ApiUnauthorizedResponse({
     status: 401,
     description: 'UnAuthorization',
@@ -59,9 +81,17 @@ export class AuthController {
 
   @Public()
   @Post('register')
-  @ApiResponse({ type: SuccessResponse<any>, status: 200 })
+  @ApiCreatedResponse({
+    schema: {
+      example: {
+        statusCode: 200,
+        message: 'Register success!',
+      } as SuccessResponse<any>,
+    },
+    status: 201,
+  })
   @ApiBadRequestResponse({
-    type: 'string',
+    type: BadRequestException,
     status: 400,
     description: '[Input] invalid',
   })
@@ -76,9 +106,9 @@ export class AuthController {
   @Public()
   @Post('refresh-token')
   @ApiOperation({ description: 'Refresh new token' })
-  @ApiResponse({ type: TokenResponse, status: 200 })
+  @ApiCreatedResponse({ type: TokenResponse, status: 201 })
   @ApiUnauthorizedResponse({
-    type: 'string',
+    type: UnauthorizedException,
     status: 400,
     description: 'Token invalid',
   })
@@ -92,7 +122,7 @@ export class AuthController {
   @ApiOperation({ description: 'Get loggedIn user info ' })
   @ApiResponse({ type: User, status: 200 })
   @ApiUnauthorizedResponse({
-    type: 'string',
+    type: UnauthorizedException,
     status: 400,
     description: 'Token invalid',
   })
