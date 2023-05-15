@@ -25,7 +25,7 @@ docker compose build api
 
 ```bash
 # unit tests
-$ npm run test
+$ npm run test:unit
 
 # e2e tests
 $ npm run test:e2e
