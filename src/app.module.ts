@@ -10,33 +10,33 @@ import { AppLoggerMiddleware } from './middleware/logging.middleware';
 import { GlobalExceptionFilter } from './exception-filters/global-exception.filter';
 
 @Module({
-  imports: [
-    // Make it look good and work well
-    MongooseModule.forRoot(appConfig.mongoURI),
-    AuthModule,
-    UsersModule,
-  ],
-  providers: [
-    {
-      provide: APP_GUARD,
-      useClass: JwtAuthGuard,
-    },
-    {
-      provide: APP_FILTER,
-      useClass: GlobalExceptionFilter,
-    },
-    {
-      provide: APP_INTERCEPTOR,
-      useClass: ResponseInterceptor,
-    },
-  ],
+	imports: [
+		// Make it look good and work well
+		MongooseModule.forRoot(appConfig.mongoURI),
+		AuthModule,
+		UsersModule,
+	],
+	providers: [
+		{
+			provide: APP_GUARD,
+			useClass: JwtAuthGuard,
+		},
+		{
+			provide: APP_FILTER,
+			useClass: GlobalExceptionFilter,
+		},
+		{
+			provide: APP_INTERCEPTOR,
+			useClass: ResponseInterceptor,
+		},
+	],
 })
 export class AppModule {
-  configure(consumer: MiddlewareConsumer): void {
-    consumer.apply(AppLoggerMiddleware).forRoutes('*');
-  }
+	configure(consumer: MiddlewareConsumer): void {
+		consumer.apply(AppLoggerMiddleware).forRoutes('*');
+	}
 
-  constructor() {
-    console.log({ appConfig });
-  }
+	constructor() {
+		console.log({ appConfig });
+	}
 }

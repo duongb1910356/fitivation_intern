@@ -8,28 +8,28 @@ import { Password } from '../utils/password';
 
 @Injectable()
 export class UserSeeder implements Seeder {
-  constructor(
-    @InjectModel(User.name)
-    private readonly userModel: Model<User>,
-  ) {}
+	constructor(
+		@InjectModel(User.name)
+		private readonly userModel: Model<User>,
+	) {}
 
-  async seed(): Promise<any> {
-    const items: any[] = [];
+	async seed(): Promise<any> {
+		const items: any[] = [];
 
-    for (let i = 0; i < 50; i++) {
-      const role = i === 0 ? UserRole.ADMIN : UserRole.MEMBER;
+		for (let i = 0; i < 50; i++) {
+			const role = i === 0 ? UserRole.ADMIN : UserRole.MEMBER;
 
-      items.push({
-        displayName: 'User ' + i + 1,
-        email: `test${i + 1}@test.com`,
-        password: await Password.hashPassword('123123123'),
-        role: role,
-      });
-    }
+			items.push({
+				displayName: 'User ' + i + 1,
+				email: `test${i + 1}@test.com`,
+				password: await Password.hashPassword('123123123'),
+				role: role,
+			});
+		}
 
-    await this.userModel.insertMany(items);
-  }
-  async drop(): Promise<any> {
-    await this.userModel.deleteMany({});
-  }
+		await this.userModel.insertMany(items);
+	}
+	async drop(): Promise<any> {
+		await this.userModel.deleteMany({});
+	}
 }

@@ -6,19 +6,19 @@ import { TokenPayloadDto } from './dto/token-payload-dto';
 
 @Injectable()
 export class JwtStrategy extends PassportStrategy(Strategy) {
-  constructor() {
-    super({
-      jwtFromRequest: ExtractJwt.fromAuthHeaderAsBearerToken(),
-      ignoreExpiration: false,
-      secretOrKey: appConfig.jwtSecret,
-    });
-  }
+	constructor() {
+		super({
+			jwtFromRequest: ExtractJwt.fromAuthHeaderAsBearerToken(),
+			ignoreExpiration: false,
+			secretOrKey: appConfig.jwtSecret,
+		});
+	}
 
-  async validate(payload: TokenPayloadDto) {
-    return {
-      uid: payload.sub,
-      name: payload.nam,
-      role: payload.rol,
-    };
-  }
+	async validate(payload: TokenPayloadDto) {
+		return {
+			uid: payload.sub,
+			name: payload.nam,
+			role: payload.rol,
+		};
+	}
 }

@@ -11,41 +11,41 @@ import { RegisterDto } from './dto/register-dto';
 import { JwtStrategy } from './jwt.strategy';
 
 describe('AuthService', () => {
-  let service: AuthService;
+	let service: AuthService;
 
-  beforeEach(async () => {
-    const module: TestingModule = await Test.createTestingModule({
-      imports: [
-        MongooseModule.forRoot(appConfig.mongoURI),
-        MongooseModule.forFeature([{ name: User.name, schema: UserSchema }]),
-        UsersModule,
-        PassportModule,
-        JwtModule.register({
-          secret: appConfig.jwtSecret,
-          signOptions: {
-            // expiresIn: appConfig.jwtExpiresIn,
-          },
-        }),
-      ],
-      providers: [AuthService, JwtStrategy],
-    }).compile();
+	beforeEach(async () => {
+		const module: TestingModule = await Test.createTestingModule({
+			imports: [
+				MongooseModule.forRoot(appConfig.mongoURI),
+				MongooseModule.forFeature([{ name: User.name, schema: UserSchema }]),
+				UsersModule,
+				PassportModule,
+				JwtModule.register({
+					secret: appConfig.jwtSecret,
+					signOptions: {
+						// expiresIn: appConfig.jwtExpiresIn,
+					},
+				}),
+			],
+			providers: [AuthService, JwtStrategy],
+		}).compile();
 
-    service = module.get<AuthService>(AuthService);
-  });
+		service = module.get<AuthService>(AuthService);
+	});
 
-  it('should be defined', () => {
-    expect(service).toBeDefined();
-  });
+	it('should be defined', () => {
+		expect(service).toBeDefined();
+	});
 
-  it('should be register a new account', async () => {
-    const input: RegisterDto = {
-      email: 'test1@test.com',
-      password: '123123123',
-      displayName: 'Test user',
-    };
+	it('should be register a new account', async () => {
+		const input: RegisterDto = {
+			email: 'test1@test.com',
+			password: '123123123',
+			displayName: 'Test user',
+		};
 
-    const res = await service.register(input);
+		const res = await service.register(input);
 
-    expect(res.statusCode).toEqual(HttpStatus.CREATED);
-  });
+		expect(res.statusCode).toEqual(HttpStatus.CREATED);
+	});
 });

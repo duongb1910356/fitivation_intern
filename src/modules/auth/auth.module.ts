@@ -8,18 +8,18 @@ import { JwtStrategy } from './jwt.strategy';
 import { AuthController } from './auth.controller';
 
 @Module({
-  imports: [
-    UsersModule,
-    PassportModule,
-    JwtModule.register({
-      secret: appConfig.jwtSecret,
-      signOptions: {
-        expiresIn: appConfig.jwtExpiresIn,
-      },
-    }),
-  ],
-  providers: [AuthService, JwtStrategy],
-  exports: [AuthService],
-  controllers: [AuthController],
+	imports: [
+		UsersModule,
+		PassportModule,
+		JwtModule.register({
+			secret: appConfig.jwtSecret,
+			signOptions: {
+				expiresIn: appConfig.jwtExpiresIn,
+			},
+		}),
+	],
+	providers: [AuthService, JwtStrategy],
+	exports: [AuthService],
+	controllers: [AuthController],
 })
 export class AuthModule {}
