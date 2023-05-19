@@ -22,13 +22,13 @@ import {
   ApiBearerAuth,
   ApiBody,
   ApiConsumes,
+  ApiCreatedResponse,
   ApiNotFoundResponse,
   ApiOkResponse,
   ApiParam,
   ApiResponse,
   ApiTags,
   ApiUnsupportedMediaTypeResponse,
-  PickType,
 } from '@nestjs/swagger';
 import { mkdirSync, writeFileSync } from 'fs';
 import { ESortField, ESortOrder } from 'src/shared/enum/sort.enum';
@@ -64,29 +64,31 @@ export class UsersController {
   @ApiResponse({
     schema: {
       example: {
-        statusCode: 200,
-        message: '',
-        total: 0,
-        filter: {
-          limit: 10,
-          offset: 0,
-          role: UserRole.ADMIN,
-          searchField: 'string',
-          searchValue: 'string',
-          sortField: ESortField.CREATED_AT,
-          sortOrder: ESortOrder.ASC,
-        } as GetUserDto,
-        data: [
-          {
-            _id: '_id',
-            displayName: 'string',
-            email: 'string',
-            role: UserRole.MEMBER,
-            createdAt: new Date(),
-            updatedAt: new Date(),
-            avatar: '',
-          },
-        ] as User[],
+        code: 200,
+        message: 'Success',
+        data: {
+          total: 0,
+          filter: {
+            limit: 10,
+            offset: 0,
+            role: UserRole.ADMIN,
+            searchField: 'string',
+            searchValue: 'string',
+            sortField: ESortField.CREATED_AT,
+            sortOrder: ESortOrder.ASC,
+          } as GetUserDto,
+          data: [
+            {
+              _id: '_id',
+              displayName: 'string',
+              email: 'string',
+              role: UserRole.MEMBER,
+              createdAt: new Date(),
+              updatedAt: new Date(),
+              avatar: '',
+            },
+          ] as User[],
+        },
       } as SuccessResponse<User[], GetUserDto>,
     },
     status: 200,
@@ -126,7 +128,20 @@ export class UsersController {
       },
     },
   })
-  @ApiResponse({ type: User, status: 201 })
+  @ApiCreatedResponse({
+    schema: {
+      example: {
+        code: 200,
+        message: 'Success',
+        data: {
+          displayName: 'User',
+          email: 'user@test.com',
+          role: UserRole.MEMBER,
+          avatar: '',
+        },
+      },
+    },
+  })
   @ApiBadRequestResponse({
     type: BadRequestException,
     status: 400,
@@ -137,7 +152,22 @@ export class UsersController {
   }
 
   @Patch()
-  @ApiResponse({ type: User, status: 200 })
+  @ApiOkResponse({
+    // type: User,
+    status: 200,
+    schema: {
+      example: {
+        code: 200,
+        message: 'Success',
+        data: {
+          displayName: 'User',
+          email: 'user@test.com',
+          role: UserRole.MEMBER,
+          avatar: '',
+        },
+      },
+    },
+  })
   @ApiBadRequestResponse({
     type: BadRequestException,
     status: 400,
@@ -152,8 +182,8 @@ export class UsersController {
   @ApiResponse({
     schema: {
       example: {
-        statusCode: 200,
-        message: 'Delete success!',
+        code: 200,
+        message: 'Success',
       } as SuccessResponse<null>,
     },
     status: 200,
@@ -178,8 +208,19 @@ export class UsersController {
   @ApiParam({ name: 'id', type: String })
   @ApiBody({ type: AvatarUploadDto })
   @ApiOkResponse({
-    type: User,
     status: 200,
+    schema: {
+      example: {
+        code: 200,
+        message: 'Success',
+        data: {
+          displayName: 'User',
+          email: 'user@test.com',
+          role: UserRole.MEMBER,
+          avatar: '',
+        },
+      },
+    },
   })
   @ApiNotFoundResponse({
     type: NotFoundException,

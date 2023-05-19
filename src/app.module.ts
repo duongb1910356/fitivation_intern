@@ -1,11 +1,13 @@
 import { MiddlewareConsumer, Module } from '@nestjs/common';
-import { APP_GUARD } from '@nestjs/core';
+import { APP_FILTER, APP_GUARD, APP_INTERCEPTOR } from '@nestjs/core';
 import { MongooseModule } from '@nestjs/mongoose';
 import { appConfig } from './app.config';
-import { AppLoggerMiddleware } from './common/middleware/logging.middleware';
 import { AuthModule } from './modules/auth/auth.module';
 import { JwtAuthGuard } from './modules/auth/jwt-auth.guard';
 import { UsersModule } from './modules/users/users.module';
+import { ResponseInterceptor } from './interceptors/response.interceptor';
+import { AppLoggerMiddleware } from './middleware/logging.middleware';
+import { GlobalExceptionFilter } from './exception-filters/global-exception.filter';
 
 @Module({
   imports: [
@@ -18,6 +20,14 @@ import { UsersModule } from './modules/users/users.module';
     {
       provide: APP_GUARD,
       useClass: JwtAuthGuard,
+    },
+    {
+      provide: APP_FILTER,
+      useClass: GlobalExceptionFilter,
+    },
+    {
+      provide: APP_INTERCEPTOR,
+      useClass: ResponseInterceptor,
     },
   ],
 })

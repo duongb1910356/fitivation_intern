@@ -2,12 +2,6 @@ import { HttpStatus } from '@nestjs/common';
 import { ApiProperty } from '@nestjs/swagger';
 
 export class SuccessResponse<T, F = unknown> {
-  @ApiProperty({ type: Number, example: 200 })
-  statusCode: HttpStatus;
-
-  @ApiProperty({ type: String, example: '' })
-  message?: string;
-
   @ApiProperty({ type: Number, description: 'Total data in a list resp' })
   total?: number;
 

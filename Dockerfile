@@ -1,4 +1,4 @@
-FROM --platform=linux/amd64 node:16-alpine
+FROM --platform=linux/amd64 node:19-alpine
 
 ENV TZ="Asia/Seoul"
 

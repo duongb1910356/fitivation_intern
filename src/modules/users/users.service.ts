@@ -45,7 +45,6 @@ export class UsersService {
       ]);
 
       return {
-        statusCode: HttpStatus.OK,
         filter: filter,
         total: count,
         data: users,
@@ -92,10 +91,7 @@ export class UsersService {
         _id: id,
       });
 
-      return {
-        statusCode: HttpStatus.OK,
-        message: 'Delete success!',
-      };
+      return;
     } catch (err) {
       throw new BadRequestException(err);
     }

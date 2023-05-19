@@ -1,6 +1,5 @@
 import {
   BadRequestException,
-  HttpStatus,
   Injectable,
   InternalServerErrorException,
   UnauthorizedException,
@@ -44,10 +43,7 @@ export class AuthService {
       const user = this.userService.createOne(input);
 
       if (user) {
-        return {
-          statusCode: HttpStatus.CREATED,
-          message: 'Register Success!',
-        };
+        return;
       }
       throw new BadRequestException('Create user failed!');
     } catch (err) {
