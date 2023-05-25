@@ -25,7 +25,7 @@ export class OpenTime {
 		enum: dayOfWeek,
 		type: String,
 	})
-	dayOfWeek: dayOfWeek;
+	dayOfWeek?: dayOfWeek;
 
 	@Prop({
 		type: Number,
@@ -34,7 +34,7 @@ export class OpenTime {
 			message: 'Day of month must be between 1 and 31',
 		},
 	})
-	dayofMoth: number;
+	dayofMoth?: number;
 }
 
 export const OpenTimeSchema = SchemaFactory.createForClass(OpenTime);
