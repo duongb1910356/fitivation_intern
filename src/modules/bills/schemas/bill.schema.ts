@@ -3,7 +3,7 @@ import mongoose, { HydratedDocument } from 'mongoose';
 import { ApiProperty } from '@nestjs/swagger';
 import { BaseObject } from 'src/shared/schemas/base-object.schema';
 import { User } from 'src/modules/users/schemas/user.schema';
-import { Promotion } from 'src/modules/promotion/schemas/promotion.schema';
+import { Promotion } from 'src/modules/promotions/schemas/promotion.schema';
 
 export type BillDocument = HydratedDocument<Bill>;
 
