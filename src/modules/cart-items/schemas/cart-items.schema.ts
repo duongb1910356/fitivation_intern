@@ -1,6 +1,5 @@
 import { Prop, Schema, SchemaFactory } from '@nestjs/mongoose';
 import mongoose, { HydratedDocument } from 'mongoose';
-import { ApiProperty } from '@nestjs/swagger';
 import { BaseObject } from 'src/shared/schemas/base-object.schema';
 import { Promotion } from 'src/modules/promotions/schemas/promotion.schema';
 import { Cart } from 'src/modules/carts/schemas/cart.schema';
@@ -13,7 +12,6 @@ export class CartItem extends BaseObject {
 		type: mongoose.Schema.Types.ObjectId,
 		ref: 'Promotion',
 	})
-	@ApiProperty()
 	promotionID?: Promotion;
 
 	// @Prop({
@@ -25,11 +23,9 @@ export class CartItem extends BaseObject {
 	// packageID: Package;
 
 	@Prop({ required: true, type: mongoose.Schema.Types.ObjectId, ref: 'Cart' })
-	@ApiProperty()
 	cartID: Cart;
 
 	@Prop({ required: true, type: Number, min: 0 })
-	@ApiProperty()
 	price: number;
 }
 
