@@ -12,7 +12,6 @@ import { PromotionsModule } from './modules/promotions/promotions.module';
 import { BillsModule } from './modules/bills/bills.module';
 import { SubscriptionsModule } from './modules/subscriptions/subscriptions.module';
 import { CartsModule } from './modules/carts/carts.module';
-import { CartItemsModule } from './modules/cart-items/cart-items.module';
 
 @Module({
 	imports: [
@@ -24,7 +23,6 @@ import { CartItemsModule } from './modules/cart-items/cart-items.module';
 		BillsModule,
 		SubscriptionsModule,
 		CartsModule,
-		CartItemsModule,
 	],
 	providers: [
 		{
