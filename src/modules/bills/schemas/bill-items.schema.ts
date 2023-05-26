@@ -30,8 +30,8 @@ export class BillItems extends BaseObject {
 	@Prop({ required: true, type: Number })
 	PackgePrice: number;
 
-	@Prop({ type: [Promotion] })
-	Promotion: Promotion[];
+	@Prop({ type: [Promotion], default: [] })
+	Promotions: Promotion[];
 
 	@Prop({ required: true, type: String })
 	brandName: string;
@@ -42,11 +42,11 @@ export class BillItems extends BaseObject {
 	@Prop({ required: true, type: String })
 	facilityName: string;
 
-	@Prop({ required: true, type: String })
-	facilityAddress: string;
+	// @Prop({ required: true, type: Object })
+	// facilityAddress: Address;
 
-	@Prop({ required: true, type: [String] })
-	facilityCoordinatesLocation: string[];
+	@Prop({ type: [Number], required: true, default: [] })
+	facilityCoordinatesLocation: [number, number];
 
 	@Prop({ required: true, type: String })
 	facilityPhoto: string;
