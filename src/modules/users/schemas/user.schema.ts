@@ -36,7 +36,13 @@ export class User extends BaseObject {
 	})
 	username: string;
 
-	@Prop({ required: true, unique: true, type: String, lowercase: true })
+	@Prop({
+		required: true,
+		unique: true,
+		type: String,
+		lowercase: true,
+		match: /^[w-.]+@([w-]+.)+[w-]{2,4}$/,
+	})
 	email: string;
 
 	@Prop({ required: true, minlength: 6 })
@@ -57,7 +63,13 @@ export class User extends BaseObject {
 	@Prop({ required: true, type: Date })
 	birthDate: Date;
 
-	@Prop({ required: true, type: String, maxlength: 10, minlength: 8 })
+	@Prop({
+		required: true,
+		type: String,
+		maxlength: 10,
+		minlength: 8,
+		match: /^\d{10}$/,
+	})
 	tel: string;
 
 	@Prop({ type: UserAddress })
