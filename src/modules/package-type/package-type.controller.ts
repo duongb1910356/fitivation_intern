@@ -4,6 +4,7 @@ import {
 	Controller,
 	Delete,
 	Get,
+	NotFoundException,
 	Param,
 	Patch,
 	Post,
@@ -11,33 +12,48 @@ import {
 import {
 	ApiBadRequestResponse,
 	ApiBody,
+	ApiCreatedResponse,
+	ApiInternalServerErrorResponse,
+	ApiNotFoundResponse,
+	ApiOkResponse,
 	ApiOperation,
+	ApiParam,
 	ApiResponse,
 	ApiTags,
 } from '@nestjs/swagger';
 import { CreatePackageTypeDto } from './dto/create-package-type-dto';
 import { Public } from '../auth/utils';
+import { PackageType } from './entities/package-type.entity';
+import { UpdatePackageType } from './dto/update-package-type-dto';
 
 @ApiTags('package-type')
 @Controller('package-type')
 export class PackageTypeController {
+	@Public()
 	@Get(':id')
-	@ApiResponse({ status: 200, description: 'Get package type by ID' })
-	getPackageTypeById(@Param('id') id: string) {
+	@ApiOperation({
+		summary: 'Get all package-type by Facility_Id',
+		description: `All role can use this API`,
+	})
+	@ApiParam({ name: 'id', type: String, description: 'Facility ID' })
+	@ApiResponse({ status: 200, description: 'Get all package type by ID' })
+	@ApiOkResponse({
+		type: PackageType,
+		status: 200,
+	})
+	@ApiNotFoundResponse({
+		type: NotFoundException,
+		status: 400,
+		description: 'Package Type not found!',
+	})
+	getAllPackageTypeById(@Param('id') id: string) {
 		// Logic để lấy thông tin package type theo ID
 	}
 
-	@Get()
-	@ApiResponse({ status: 200, description: 'Get all package types' })
-	getAllPackageTypes() {
-		// Logic để lấy tất cả package types
-	}
-
-	@Public()
 	@Post()
 	@ApiOperation({
 		summary: 'Create new Package Type',
-		description: `*    Admin and Facility Owner can use this API`,
+		description: `Facility Owner can use this API`,
 	})
 	@ApiBody({
 		type: CreatePackageTypeDto,
@@ -60,7 +76,7 @@ export class PackageTypeController {
 			},
 		},
 	})
-	@ApiResponse({
+	@ApiCreatedResponse({
 		schema: {
 			example: {
 				code: 200,
@@ -83,13 +99,58 @@ export class PackageTypeController {
 	}
 
 	@Patch(':id')
-	@ApiResponse({ status: 200, description: 'Update package type by ID' })
+	@ApiOperation({
+		summary: 'Update Package Type by Package_Type_Id',
+		description: `Facility Owner can use this API`,
+	})
+	@ApiParam({ name: 'id', type: String, description: 'Package Type ID' })
+	@ApiBody({
+		type: UpdatePackageType,
+		examples: {
+			Test1: {
+				value: {
+					name: 'Tang co giam mo',
+					description: 'Goi tap giup tang co giam mo',
+					price: 100000,
+				} as UpdatePackageType,
+			},
+		},
+	})
+	@ApiOkResponse({
+		status: 200,
+		description: 'Update Package Type successfull',
+	})
+	@ApiNotFoundResponse({
+		type: NotFoundException,
+		status: 404,
+		description: 'Not found Package Type to update!',
+	})
+	@ApiBadRequestResponse({ status: 400, description: 'Invalid request' })
+	@ApiInternalServerErrorResponse({
+		status: 500,
+		description: 'Internal server error',
+	})
 	updatePackageType(@Param('id') id: string, @Body() data: any) {
 		// Logic để cập nhật package type theo ID
 	}
 
 	@Delete(':id')
-	@ApiResponse({ status: 204, description: 'Delete package type by ID' })
+	@ApiOperation({
+		summary: 'Delete Package Type by Package_Type_Id',
+		description: `Facility Owner can use this API`,
+	})
+	@ApiParam({ name: 'id', type: String, description: 'Package Type ID' })
+	@ApiResponse({ status: 204, description: 'Delete package type successfull' })
+	@ApiBadRequestResponse({
+		type: BadRequestException,
+		status: 400,
+		description: '[Input] invalid!',
+	})
+	@ApiNotFoundResponse({
+		type: NotFoundException,
+		status: 404,
+		description: 'PackageType not found!',
+	})
 	deletePackageType(@Param('id') id: string) {
 		// Logic để xóa package type theo ID
 	}
