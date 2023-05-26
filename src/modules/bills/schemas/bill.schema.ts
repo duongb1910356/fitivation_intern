@@ -26,23 +26,8 @@ export class Bill extends BaseObject {
 	})
 	accountID: User;
 
-	@Prop({
-		required: true,
-		type: [
-			{
-				packageName: { type: String },
-				packageType: { type: String },
-				price: { type: Number },
-				promotions: { type: [String] },
-			},
-		],
-	})
-	billItems: {
-		packageName: string;
-		packageType: string;
-		price: number;
-		promotions: [string];
-	}[];
+	@Prop({ type: [BillItems] })
+	billItems: BillItems[];
 
 	@Prop({ required: true, enum: PaymentMethod, type: String })
 	paymentMethod: PaymentMethod;
