@@ -63,8 +63,12 @@ export class Promotion extends BaseObject {
 	@Prop({ enum: CustomerType, default: CustomerType.CUSTOMER, type: String })
 	customerType: CustomerType;
 
-	@Prop({ enum: Status, default: Status.ACTIVE, type: String })
-	status: Status;
+	@Prop({
+		enum: PromotionStatus,
+		default: PromotionStatus.ACTIVE,
+		type: String,
+	})
+	status: PromotionStatus;
 }
 
 export const PromotionSchema = SchemaFactory.createForClass(Promotion);

@@ -53,8 +53,8 @@ export class Bill extends BaseObject {
 	@Prop({ required: true, type: Number, min: 0 })
 	totalPrice: number;
 
-	@Prop({ default: Status.ACTIVE, enum: Status, type: String })
-	status: Status;
+	@Prop({ default: BillStatus.ACTIVE, enum: BillStatus, type: String })
+	status: BillStatus;
 
 	@Prop({ type: String, minlength: 0, maxlength: 200 })
 	description?: string;

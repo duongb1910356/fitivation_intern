@@ -26,8 +26,12 @@ export class Subscription extends BaseObject {
 	@Prop({ required: true, type: Date })
 	expires: Date;
 
-	@Prop({ enum: Status, default: Status.ACTIVE, type: String })
-	status: Status;
+	@Prop({
+		enum: SubscriptionStatus,
+		default: SubscriptionStatus.ACTIVE,
+		type: String,
+	})
+	status: SubscriptionStatus;
 
 	@Prop({ default: false, type: Boolean })
 	renew: boolean;
