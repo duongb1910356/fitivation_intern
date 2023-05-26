@@ -16,6 +16,7 @@ export enum Status {
 	INACTIVE = 'INACTIVE',
 }
 
+@Schema({ timestamps: true })
 export class Bill extends BaseObject {
 	@Prop({
 		required: true,
