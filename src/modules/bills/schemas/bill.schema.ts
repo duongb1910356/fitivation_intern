@@ -44,8 +44,8 @@ export class Bill extends BaseObject {
 	@Prop({ type: String, minlength: 0, maxlength: 200 })
 	description?: string;
 
-	@Prop({ type: mongoose.Schema.Types.ObjectId, ref: 'Promotion' })
-	promotion?: Promotion;
+	@Prop({ type: [Promotion] })
+	promotions?: Promotion[];
 
 	@Prop({ type: Number, min: 0 })
 	totalPromotionPrice?: number;
