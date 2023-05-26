@@ -36,7 +36,7 @@ export class Promotion extends BaseObject {
 	@Prop({ required: true, type: String, minlength: 2, maxlength: 40 })
 	name: string;
 
-	@Prop({ required: true, type: String, minlength: 2, maxlength: 40 })
+	@Prop({ required: true, type: String, minlength: 2, maxlength: 120 })
 	description: string;
 
 	@Prop({ type: String, minlength: 2, maxlength: 10 })
