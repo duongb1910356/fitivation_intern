@@ -1,6 +1,9 @@
 import { Module } from '@nestjs/common';
 import { MongooseModule } from '@nestjs/mongoose';
-import { Province, ProvinceSchema, District, DistrictSchema, Commune, CommuneSchema } from './schemas/address.schema';
+import { Province, ProvinceSchema} from './schemas/province.schema';
+import { District, DistrictSchema } from './schemas/district.schema';
+import { Commune, CommuneSchema } from './schemas/commune.schema';
+import { AddressController } from './address.controller';
 
 @Module({
     imports: [
@@ -10,7 +13,7 @@ import { Province, ProvinceSchema, District, DistrictSchema, Commune, CommuneSch
     ],
     providers: [],
     exports: [],
-    controllers: [],
+    controllers: [AddressController],
 })
 
 export class AddressModule {}

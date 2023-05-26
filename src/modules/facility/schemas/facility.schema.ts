@@ -45,11 +45,11 @@ export class Facility extends BaseObject {
     @Prop({ type: mongoose.Schema.Types.ObjectId, ref: 'Brand', required: true })
     brandID: Brand;
 
-    @Prop({ type: { type: mongoose.Schema.Types.ObjectId, ref: 'FacilityCategory' }, required: true })
-    facilityCategoryID: FacilityCategory;
+    @Prop({ type: mongoose.Schema.Types.ObjectId, ref: 'FacilityCategory', required: true })
+    facilityCategoryID: string;
 
-    @Prop({ type: { type: mongoose.Schema.Types.ObjectId, ref: 'Account' }, required: true })
-    ownerID: Account;
+    @Prop({ type: mongoose.Schema.Types.ObjectId, ref: 'Account', required: true })
+    ownerID: string;
 
     @Prop({ type: String, required: true })
     name: string;
