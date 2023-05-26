@@ -3,7 +3,7 @@ import { FacilityController } from './facility.controller';
 import { FacilityService } from './facility.service';
 import { MongooseModule } from '@nestjs/mongoose';
 import { Facility, FacilitySchema } from './schemas/facility.schema';
-import { Brand, BrandSchema } from './schemas/brand.schema';
+import { Brand, BrandSchema } from '../brand/schemas/brand.schema';
 
 @Module({
   imports: [

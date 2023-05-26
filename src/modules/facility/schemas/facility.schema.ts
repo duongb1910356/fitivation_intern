@@ -1,9 +1,9 @@
 import { Prop, Schema, SchemaFactory } from '@nestjs/mongoose';
 import mongoose, { Document, HydratedDocument } from 'mongoose';
 import { BaseObject } from '../../../shared/schemas/base-object.schema';
-import { Review } from 'src/modules/reviews/schemas/reviews.schema';
-import { Brand, BrandSchema } from './brand.schema';
-import { Photo } from 'src/modules/photo/schemas/photo.schema';
+import { Review, ReviewSchema } from 'src/modules/reviews/schemas/reviews.schema';
+import { Brand, BrandSchema } from '../../brand/schemas/brand.schema';
+import { Photo, PhotoSchema } from 'src/modules/photo/schemas/photo.schema';
 
 enum State {
     ACTIVE = 'ACTIVE',
@@ -22,8 +22,22 @@ enum ScheduleType {
     MONTHLY = 'MONTHLY',
 }
 
-export type FacilityDocument = HydratedDocument<Facility>;
+interface Address {
+    province: {
+        name: string;
+        code: number;
+    };
+    district: {
+        name: string;
+        code: number;
+    };
+    commune: {
+        name: string;
+        code: number;
+    };
+}
 
+export type FacilityDocument = HydratedDocument<Facility>;
 
 @Schema({ timestamps: true })
 export class Facility extends BaseObject {
@@ -31,30 +45,17 @@ export class Facility extends BaseObject {
     @Prop({ type: mongoose.Schema.Types.ObjectId, ref: 'Brand', required: true })
     brandID: Brand;
 
-    // @Prop({ type: { type: mongoose.Schema.Types.ObjectId, ref: 'FacilityCategory' }, required: true })
-    // facilityCategoryID: FacilityCategory;
+    @Prop({ type: { type: mongoose.Schema.Types.ObjectId, ref: 'FacilityCategory' }, required: true })
+    facilityCategoryID: FacilityCategory;
 
-    // @Prop({ type: { type: mongoose.Schema.Types.ObjectId, ref: 'Account' }, required: true })
-    // ownerID: Account;
+    @Prop({ type: { type: mongoose.Schema.Types.ObjectId, ref: 'Account' }, required: true })
+    ownerID: Account;
 
-    @Prop({ required: true })
+    @Prop({ type: String, required: true })
     name: string;
 
-    @Prop({ type: mongoose.Schema.Types.Mixed, required: true })
-    address: {
-        province: {
-            name: string;
-            code: number;
-        };
-        district: {
-            name: string;
-            code: number;
-        };
-        commune: {
-            name: string;
-            code: number;
-        };
-    };
+    @Prop({type: Object, required: true })
+    address: Address
 
     @Prop({ default: '' })
     summary: string;
@@ -62,8 +63,8 @@ export class Facility extends BaseObject {
     @Prop({ default: '' })
     description: string;
 
-    @Prop({ required: true, default: '' })
-    coordinationLocation: string;
+    @Prop({ type: [Number], required: true, default: [] })
+    coordinationLocation: [number, number];
 
     @Prop({ enum: State, default: State.ACTIVE })
     state: State;
@@ -71,30 +72,18 @@ export class Facility extends BaseObject {
     @Prop({ enum: Status, default: Status.APPROVED })
     status: Status;
 
-    @Prop({required: false, min: 0})
+    @Prop({ required: false, min: 0 })
     averageStar: number;
 
     @Prop({
-        type: [{ type: mongoose.Schema.Types.Mixed }],
+        type: [PhotoSchema],
         default: [],
-        validate: {
-            validator: function (array) {
-                return array.length <= 5;
-            },
-            message: 'Array cannot have more than 5 elements',
-        },
     })
     photos: Photo[];
 
     @Prop({
-        type: [{ type: mongoose.Schema.Types.Mixed }],
+        type: [ReviewSchema],
         default: [],
-        validate: {
-            validator: function (array) {
-                return array.length <= 5;
-            },
-            message: 'Array cannot have more than 5 elements',
-        },
     })
     reviews: Review[];
 
