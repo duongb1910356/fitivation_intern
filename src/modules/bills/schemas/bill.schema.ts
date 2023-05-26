@@ -61,6 +61,9 @@ export class Bill extends BaseObject {
 
 	@Prop({ type: mongoose.Schema.Types.ObjectId, ref: 'Promotion' })
 	promotion?: Promotion;
+
+	@Prop({ type: Number, min: 0 })
+	totalPromotionPrice?: number;
 }
 
 export const BillSchema = SchemaFactory.createForClass(Bill);
