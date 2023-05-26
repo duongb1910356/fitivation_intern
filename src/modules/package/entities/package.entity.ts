@@ -28,7 +28,7 @@ export class Package extends BaseObject {
 	facilityID: string; //Facility
 
 	@Prop({ type: String, enum: TimeType, required: true })
-	type: PackageType;
+	type: TimeType;
 
 	@Prop({ type: Number, required: true })
 	price: number;

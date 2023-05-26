@@ -1,4 +1,5 @@
 import { Prop, Schema, SchemaFactory } from '@nestjs/mongoose';
+import { ShiftTime, ShiftTimeSchema } from './shift-time.entity';
 
 enum dayOfWeek {
 	MONDAY,
@@ -12,14 +13,8 @@ enum dayOfWeek {
 
 @Schema()
 export class OpenTime {
-	@Prop({
-		type: {
-			startTime: { type: Date, required: true },
-			endTime: { type: Date, required: true },
-		},
-		required: true,
-	})
-	shift: { startTime: Date; endTime: Date };
+	@Prop({ type: ShiftTimeSchema })
+	shift: ShiftTime;
 
 	@Prop({
 		enum: dayOfWeek,

@@ -1,15 +1,24 @@
 import { Prop, Schema, SchemaFactory } from '@nestjs/mongoose';
+import mongoose from 'mongoose';
 import { BaseObject } from 'src/shared/schemas/base-object.schema';
 
 @Schema()
 export class Attendance extends BaseObject {
-	// @Prop({ type: AccountSchema, required: true })
-	// accountID: Account;
+	@Prop({
+		type: mongoose.Schema.Types.ObjectId,
+		ref: 'Account',
+		required: true,
+	})
+	accountID: string; //Account
 
-	// @Prop({ type: FacilitySchema, required: true })
-	// facilityID: Facility;
+	@Prop({
+		type: mongoose.Schema.Types.ObjectId,
+		ref: 'Facility',
+		required: true,
+	})
+	facilityID: string; //Faccility
 
-	@Prop({ type: [{ type: Date }] })
+	@Prop({ type: [Date] })
 	date: Date[];
 }
 

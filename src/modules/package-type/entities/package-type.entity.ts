@@ -17,7 +17,7 @@ export class PackageType extends BaseObject {
 	@Prop({ type: String, required: true })
 	description: string;
 
-	@Prop({ type: Number, required: true })
+	@Prop({ type: Number, min: 50000, required: true })
 	price: number;
 
 	@Prop({ type: Number, required: true })
