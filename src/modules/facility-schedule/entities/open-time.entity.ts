@@ -2,13 +2,13 @@ import { Prop, Schema, SchemaFactory } from '@nestjs/mongoose';
 import { ShiftTime, ShiftTimeSchema } from './shift-time.entity';
 
 enum dayOfWeek {
-	MONDAY,
-	TUESDAY,
-	WEDNESDAY,
-	THURSDAY,
-	FRIDAY,
-	SATURDAY,
-	SUNDAY,
+	MONDAY = 'MONDAY',
+	TUESDAY = 'TUESDAY',
+	WEDNESDAY = 'WEDNESDAY',
+	THURSDAY = 'THURSDAY',
+	FRIDAY = 'FRIDAY',
+	SATURDAY = 'SATURDAY',
+	SUNDAY = 'SUNDAY',
 }
 
 @Schema()
@@ -29,7 +29,7 @@ export class OpenTime {
 			message: 'Day of month must be between 1 and 31',
 		},
 	})
-	dayofMoth?: number;
+	dayOfMoth?: number;
 }
 
 export const OpenTimeSchema = SchemaFactory.createForClass(OpenTime);

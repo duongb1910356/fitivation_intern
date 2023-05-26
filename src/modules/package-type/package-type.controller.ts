@@ -67,7 +67,7 @@ export class PackageTypeController {
 				message: 'Success',
 				data: {
 					name: 'User',
-					description: 'This is a standard package',
+					description: 'This is a standard package !',
 					price: 99.99,
 				},
 			},
