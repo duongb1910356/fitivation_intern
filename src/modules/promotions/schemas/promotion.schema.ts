@@ -27,7 +27,7 @@ export enum Status {
 
 @Schema({ timestamps: true })
 export class Promotion extends BaseObject {
-	@Prop({ required: true, type: String })
+	@Prop({ required: true, type: String, maxlength: 12 })
 	targetId: string;
 
 	@Prop({ required: true, enum: Type, type: String })
@@ -60,7 +60,7 @@ export class Promotion extends BaseObject {
 	@Prop({ required: true, type: Date })
 	endDate: Date;
 
-	@Prop({ enum: Status, default: CustomerType.CUSTOMER, type: String })
+	@Prop({ enum: CustomerType, default: CustomerType.CUSTOMER, type: String })
 	customerType: CustomerType;
 
 	@Prop({ enum: Status, default: Status.ACTIVE, type: String })
