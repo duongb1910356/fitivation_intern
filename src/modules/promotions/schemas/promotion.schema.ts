@@ -45,7 +45,7 @@ export class Promotion extends BaseObject {
 	@Prop({ required: true, type: Number })
 	value: number;
 
-	@Prop({ required: true, enum: Status, type: String })
+	@Prop({ required: true, enum: Method, type: String })
 	methods: Method;
 
 	@Prop({ required: true, type: Number, min: 0 })
