@@ -1,8 +1,14 @@
 import { Prop, Schema, SchemaFactory } from '@nestjs/mongoose';
 import { HydratedDocument } from 'mongoose';
 import { BaseObject } from '../../../shared/schemas/base-object.schema';
+import { UserAddress } from './user-address.schema';
 
 export type UserDocument = HydratedDocument<User>;
+
+export enum UserStatus {
+	ACTIVE = 'ACTIVE',
+	INACTIVE = 'INACTIVE',
+}
 
 export enum UserRole {
 	ADMIN = 'ADMIN',
@@ -54,25 +60,17 @@ export class User extends BaseObject {
 	@Prop({ required: true, type: String, maxlength: 10, minlength: 8 })
 	tel: string;
 
-	@Prop({
-		default: [],
-		type: {
-			province: { type: String },
-			district: { type: String },
-			commune: { type: String },
-		},
-	})
-	address: {
-		province: string;
-		district: string;
-		commune: number;
-	};
+	@Prop({ type: UserAddress })
+	address: UserAddress;
 
 	@Prop({ default: '', type: String })
 	avatar?: string;
 
 	@Prop({ type: Boolean })
 	isMember?: boolean;
+
+	@Prop({ default: UserStatus.ACTIVE, enum: UserStatus, type: String })
+	status: UserStatus;
 }
 
 export const UserSchema = SchemaFactory.createForClass(User);
