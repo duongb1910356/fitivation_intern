@@ -20,7 +20,7 @@ export enum CustomerType {
 	MEMBER = 'MEMBER',
 }
 
-export enum Status {
+export enum PromotionStatus {
 	ACTIVE = 'ACTIVE',
 	INACTIVE = 'INACTIVE',
 }

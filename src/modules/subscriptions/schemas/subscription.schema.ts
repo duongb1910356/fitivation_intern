@@ -6,7 +6,7 @@ import { Bill } from 'src/modules/bills/schemas/bill.schema';
 
 export type SubscriptionDocument = HydratedDocument<Subscription>;
 
-export enum Status {
+export enum SubscriptionStatus {
 	ACTIVE = 'ACTIVE',
 	INACTIVE = 'INACTIVE',
 }

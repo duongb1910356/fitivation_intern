@@ -12,7 +12,7 @@ export enum PaymentMethod {
 	CASH = 'CASH',
 }
 
-export enum Status {
+export enum BillStatus {
 	ACTIVE = 'ACTIVE',
 	INACTIVE = 'INACTIVE',
 }
