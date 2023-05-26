@@ -1,5 +1,4 @@
 import { Prop, Schema, SchemaFactory } from '@nestjs/mongoose';
-import { ApiHideProperty, ApiProperty } from '@nestjs/swagger';
 import { HydratedDocument } from 'mongoose';
 import { BaseObject } from '../../../shared/schemas/base-object.schema';
 
@@ -20,7 +19,6 @@ export enum Gender {
 @Schema({ timestamps: true })
 export class User extends BaseObject {
 	@Prop({ default: UserRole.MEMBER, type: String })
-	@ApiProperty()
 	role: UserRole;
 
 	@Prop({
@@ -30,39 +28,30 @@ export class User extends BaseObject {
 		minlength: 2,
 		maxlength: 40,
 	})
-	@ApiProperty()
 	username: string;
 
 	@Prop({ required: true, unique: true, type: String })
-	@ApiProperty()
 	email: string;
 
 	@Prop({ required: true, minlength: 6 })
-	@ApiHideProperty()
 	password: string;
 
-	@Prop({ required: true, minlength: 2, maxlength: 12 })
-	@ApiProperty({ type: String })
+	@Prop({ required: true, type: String, minlength: 2, maxlength: 12 })
 	displayName: string;
 
 	@Prop({ required: true, type: String, minlength: 2, maxlength: 20 })
-	@ApiProperty()
 	firstName: string;
 
 	@Prop({ required: true, type: String, minlength: 2, maxlength: 40 })
-	@ApiProperty()
 	lastName: string;
 
 	@Prop({ required: true, enum: Gender, type: String })
-	@ApiProperty()
 	gender: Gender;
 
 	@Prop({ required: true, type: Date })
-	@ApiProperty()
 	birthDate: Date;
 
 	@Prop({ required: true, type: String, maxlength: 10, minlength: 8 })
-	@ApiProperty()
 	tell: string;
 
 	@Prop({
@@ -73,7 +62,6 @@ export class User extends BaseObject {
 			commune: { type: String },
 		},
 	})
-	@ApiProperty()
 	address: {
 		province: string;
 		district: string;
@@ -81,11 +69,9 @@ export class User extends BaseObject {
 	};
 
 	@Prop({ default: '', type: String })
-	@ApiProperty()
 	avatar?: string;
 
 	@Prop({ type: Boolean })
-	@ApiProperty()
 	isMember?: boolean;
 }
 
