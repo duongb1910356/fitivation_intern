@@ -30,13 +30,13 @@ export class User extends BaseObject {
 	})
 	username: string;
 
-	@Prop({ required: true, unique: true, type: String })
+	@Prop({ required: true, unique: true, type: String, lowercase: true })
 	email: string;
 
 	@Prop({ required: true, minlength: 6 })
 	password: string;
 
-	@Prop({ required: true, type: String, minlength: 2, maxlength: 12 })
+	@Prop({ required: true, type: String, minlength: 2, maxlength: 20 })
 	displayName: string;
 
 	@Prop({ required: true, type: String, minlength: 2, maxlength: 20 })
@@ -52,7 +52,7 @@ export class User extends BaseObject {
 	birthDate: Date;
 
 	@Prop({ required: true, type: String, maxlength: 10, minlength: 8 })
-	tell: string;
+	tel: string;
 
 	@Prop({
 		default: [],
