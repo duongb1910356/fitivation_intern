@@ -4,13 +4,13 @@ import { BaseObject } from 'src/shared/schemas/base-object.schema';
 
 export type PromotionDocument = HydratedDocument<Promotion>;
 
-export enum Type {
+export enum PromotionType {
 	FACILITY = 'FACILITY',
 	BILL = 'BILL',
 	PACKAGE = 'PACKAGE',
 }
 
-export enum Method {
+export enum PromotionMethod {
 	PERCENT = 'PERCENT',
 	NUMBER = 'NUMBER',
 }
@@ -30,8 +30,8 @@ export class Promotion extends BaseObject {
 	@Prop({ required: true, type: String, maxlength: 12 })
 	targetId: string;
 
-	@Prop({ required: true, enum: Type, type: String })
-	type: Type;
+	@Prop({ required: true, enum: PromotionType, type: String })
+	type: PromotionType;
 
 	@Prop({ required: true, type: String, minlength: 2, maxlength: 40 })
 	name: string;
@@ -45,8 +45,8 @@ export class Promotion extends BaseObject {
 	@Prop({ required: true, type: Number })
 	value: number;
 
-	@Prop({ required: true, enum: Method, type: String })
-	methods: Method;
+	@Prop({ required: true, enum: PromotionMethod, type: String })
+	method: PromotionMethod;
 
 	@Prop({ required: true, type: Number, min: 0 })
 	maxValue: number;
