@@ -3,7 +3,7 @@ import { HydratedDocument } from 'mongoose';
 import { Promotion } from 'src/modules/promotions/schemas/promotion.schema';
 import { BaseObject } from 'src/shared/schemas/base-object.schema';
 
-export type BillItemsDocument = HydratedDocument<BillItems>;
+export type BillItemsDocument = HydratedDocument<BillItem>;
 
 export enum PaymentMethod {
 	DEBIT_CARD = 'DEBIT_CARD',
@@ -17,7 +17,7 @@ export enum BillStatus {
 }
 
 @Schema({ timestamps: true })
-export class BillItems extends BaseObject {
+export class BillItem extends BaseObject {
 	@Prop({ required: true, type: String })
 	packageName: string;
 
@@ -52,4 +52,4 @@ export class BillItems extends BaseObject {
 	facilityPhoto: string;
 }
 
-export const BillItemsSchema = SchemaFactory.createForClass(BillItems);
+export const BillItemSchema = SchemaFactory.createForClass(BillItem);

@@ -3,7 +3,7 @@ import mongoose, { HydratedDocument } from 'mongoose';
 import { BaseObject } from 'src/shared/schemas/base-object.schema';
 import { User } from 'src/modules/users/schemas/user.schema';
 import { Promotion } from 'src/modules/promotions/schemas/promotion.schema';
-import { BillItems } from './bill-items.schema';
+import { BillItem } from './bill-item.schema';
 
 export type BillDocument = HydratedDocument<Bill>;
 
@@ -27,8 +27,8 @@ export class Bill extends BaseObject {
 	})
 	accountID: User;
 
-	@Prop({ type: [BillItems] })
-	billItems: BillItems[];
+	@Prop({ type: [BillItem] })
+	billItems: BillItem[];
 
 	@Prop({ required: true, enum: PaymentMethod, type: String })
 	paymentMethod: PaymentMethod;
