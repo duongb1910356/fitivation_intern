@@ -68,7 +68,7 @@ export class User extends BaseObject {
 		type: String,
 		maxlength: 10,
 		minlength: 8,
-		match: /^\d{10}$/,
+		match: /^\d+$/,
 	})
 	tel: string;
 
