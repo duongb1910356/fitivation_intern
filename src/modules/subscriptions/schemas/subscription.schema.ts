@@ -16,8 +16,12 @@ export class Subscription extends BaseObject {
 	@Prop({ required: true, type: mongoose.Schema.Types.ObjectId, ref: 'User' })
 	accountID: User;
 
-	@Prop({ required: true, type: mongoose.Schema.Types.ObjectId, ref: 'Bill' })
-	billID: Bill;
+	@Prop({
+		required: true,
+		type: mongoose.Schema.Types.ObjectId,
+		ref: 'BillItem',
+	})
+	billItemID: BillItem;
 
 	// @Prop({ type: mongoose.Schema.Types.ObjectId, ref: 'Package' })
 	// @ApiProperty()
