@@ -18,6 +18,10 @@ export enum BillStatus {
 
 @Schema({ timestamps: true })
 export class BillItem extends BaseObject {
+	// @Prop({ type: mongoose.Schema.Types.ObjectId, ref: 'Package' })
+	// @ApiProperty()
+	// packageID: Package;
+
 	@Prop({ required: true, type: String })
 	packageName: string;
 
