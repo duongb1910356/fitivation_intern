@@ -8,11 +8,8 @@ export type CartItemDocument = HydratedDocument<CartItem>;
 
 @Schema({ timestamps: true })
 export class CartItem extends BaseObject {
-	@Prop({
-		type: mongoose.Schema.Types.ObjectId,
-		ref: 'Promotion',
-	})
-	promotionID?: Promotion;
+	@Prop({ type: [Promotion], default: [] })
+	promotions?: Promotion[];
 
 	// @Prop({
 	// 	required: true,
