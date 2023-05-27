@@ -30,8 +30,8 @@ export class BillItems extends BaseObject {
 	@Prop({ required: true, type: Number })
 	packgePrice: number;
 
-	@Prop({ type: [Promotion], default: [] })
-	promotions: Promotion[];
+	@Prop({ type: [Promotion] })
+	promotions?: Promotion[];
 
 	@Prop({ required: true, type: String })
 	brandName: string;
