@@ -3,7 +3,7 @@ import mongoose, { Document } from 'mongoose';
 import { BaseObject } from 'src/shared/schemas/base-object.schema';
 
 @Schema({timestamps: true})
-export class Province extends Document {
+export class Province extends BaseObject {
   @Prop({ required: true, unique: true })
   name: string;
 

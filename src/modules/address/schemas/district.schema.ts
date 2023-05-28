@@ -4,7 +4,7 @@ import { BaseObject } from 'src/shared/schemas/base-object.schema';
 import { Province } from './province.schema';
 
 @Schema({timestamps: true})
-export class District extends Document {
+export class District extends BaseObject {
   @Prop({ required: true })
   name: string;
 
