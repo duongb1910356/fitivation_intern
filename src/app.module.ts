@@ -8,6 +8,7 @@ import { UsersModule } from './modules/users/users.module';
 import { ResponseInterceptor } from './interceptors/response.interceptor';
 import { AppLoggerMiddleware } from './middleware/logging.middleware';
 import { GlobalExceptionFilter } from './exception-filters/global-exception.filter';
+import { PackageTypeModule } from './modules/package-type/package-type.module';
 
 @Module({
 	imports: [
@@ -15,6 +16,7 @@ import { GlobalExceptionFilter } from './exception-filters/global-exception.filt
 		MongooseModule.forRoot(appConfig.mongoURI),
 		AuthModule,
 		UsersModule,
+		PackageTypeModule,
 	],
 	providers: [
 		{
