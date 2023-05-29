@@ -8,12 +8,8 @@ export type CartItemDocument = HydratedDocument<CartItem>;
 
 @Schema({ timestamps: true })
 export class CartItem extends BaseObject {
-	@Prop({
-		required: true,
-		type: mongoose.Schema.Types.ObjectId,
-		ref: 'Promotion',
-	})
-	promotionIDs?: Promotion[];
+	@Prop({ required: true, type: mongoose.Schema.Types.ObjectId, ref: 'Cart' })
+	cartID: Cart;
 
 	// @Prop({
 	// 	required: true,
@@ -23,8 +19,12 @@ export class CartItem extends BaseObject {
 	// @ApiProperty()
 	// packageID: Package;
 
-	@Prop({ required: true, type: mongoose.Schema.Types.ObjectId, ref: 'Cart' })
-	cartID: Cart;
+	@Prop({
+		required: true,
+		type: mongoose.Schema.Types.ObjectId,
+		ref: 'Promotion',
+	})
+	promotionIDs?: Promotion[];
 
 	@Prop({ default: 0, type: Number, min: 0 })
 	promotionPrice: number;
