@@ -12,6 +12,11 @@ import { PromotionsModule } from './modules/promotions/promotions.module';
 import { BillsModule } from './modules/bills/bills.module';
 import { SubscriptionsModule } from './modules/subscriptions/subscriptions.module';
 import { CartsModule } from './modules/carts/carts.module';
+import { FacilityModule } from './modules/facility/facility.module';
+import { AddressModule } from './modules/address/address.module';
+import { Review } from './modules/reviews/schemas/reviews.schema';
+import { PhotoModule } from './modules/photo/photo.module';
+import { PackageTypeModule } from './modules/package-type/package-type.module';
 
 @Module({
 	imports: [
@@ -23,6 +28,11 @@ import { CartsModule } from './modules/carts/carts.module';
 		BillsModule,
 		SubscriptionsModule,
 		CartsModule,
+		FacilityModule,
+		AddressModule,
+		PhotoModule,
+		Review,
+		PackageTypeModule,
 	],
 	providers: [
 		{
