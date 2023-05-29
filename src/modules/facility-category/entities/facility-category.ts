@@ -10,7 +10,7 @@ export enum CategoryType {
 }
 
 @Schema()
-export class Package extends BaseObject {
+export class FacilityCategory extends BaseObject {
 	@Prop({ type: String, enum: CategoryType, required: true })
 	type: PackageType;
 
@@ -18,4 +18,5 @@ export class Package extends BaseObject {
 	name: string;
 }
 
-export const PackageSchema = SchemaFactory.createForClass(Package);
+export const FacilityCategorySchema =
+	SchemaFactory.createForClass(FacilityCategory);
