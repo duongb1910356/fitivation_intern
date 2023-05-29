@@ -23,6 +23,7 @@ async function bootstrap() {
 	SwaggerModule.setup('docs', app, document);
 
 	await app.listen(3000);
+	console.log("App's listening on 3000 : ", process.env.MONGO_URI);
 }
 
 bootstrap();

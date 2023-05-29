@@ -8,7 +8,12 @@ import { UsersModule } from './modules/users/users.module';
 import { ResponseInterceptor } from './interceptors/response.interceptor';
 import { AppLoggerMiddleware } from './middleware/logging.middleware';
 import { GlobalExceptionFilter } from './exception-filters/global-exception.filter';
+import { FacilityModule } from './modules/facility/facility.module';
+import { AddressModule } from './modules/address/address.module';
+import { Review } from './modules/reviews/schemas/reviews.schema';
+import { PhotoModule } from './modules/photo/photo.module';
 import { PackageTypeModule } from './modules/package-type/package-type.module';
+
 
 @Module({
 	imports: [
@@ -16,6 +21,10 @@ import { PackageTypeModule } from './modules/package-type/package-type.module';
 		MongooseModule.forRoot(appConfig.mongoURI),
 		AuthModule,
 		UsersModule,
+		FacilityModule,
+		AddressModule,
+		PhotoModule,
+		Review
 		PackageTypeModule,
 	],
 	providers: [
