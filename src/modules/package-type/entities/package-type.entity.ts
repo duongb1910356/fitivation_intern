@@ -1,5 +1,6 @@
 import { Prop, Schema, SchemaFactory } from '@nestjs/mongoose';
 import mongoose from 'mongoose';
+import { Facility } from 'src/modules/facility/schemas/facility.schema';
 import { BaseObject } from 'src/shared/schemas/base-object.schema';
 
 @Schema()
@@ -9,7 +10,7 @@ export class PackageType extends BaseObject {
 		ref: 'Facility',
 		required: true,
 	})
-	facilityID: string; //Facility
+	facilityID: Facility;
 
 	@Prop({ type: String, required: true, minlength: 2, maxlength: 50 })
 	name: string;

@@ -14,7 +14,6 @@ import { Review } from './modules/reviews/schemas/reviews.schema';
 import { PhotoModule } from './modules/photo/photo.module';
 import { PackageTypeModule } from './modules/package-type/package-type.module';
 
-
 @Module({
 	imports: [
 		// Make it look good and work well
@@ -24,7 +23,7 @@ import { PackageTypeModule } from './modules/package-type/package-type.module';
 		FacilityModule,
 		AddressModule,
 		PhotoModule,
-		Review
+		Review,
 		PackageTypeModule,
 	],
 	providers: [

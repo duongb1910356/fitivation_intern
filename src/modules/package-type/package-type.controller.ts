@@ -25,6 +25,7 @@ import { CreatePackageTypeDto } from './dto/create-package-type-dto';
 import { Public } from '../auth/utils';
 import { PackageType } from './entities/package-type.entity';
 import { UpdatePackageType } from './dto/update-package-type-dto';
+import { UpdateOrderDto } from './dto/update-order-dto';
 
 @ApiTags('package-type')
 @Controller('package-type')
@@ -100,7 +101,7 @@ export class PackageTypeController {
 
 	@Patch(':id')
 	@ApiOperation({
-		summary: 'Update Package Type by Package_Type_Id',
+		summary: 'Update Package Type information by Package_Type_Id',
 		description: `Facility Owner can use this API`,
 	})
 	@ApiParam({ name: 'id', type: String, description: 'Package Type ID' })
@@ -153,5 +154,46 @@ export class PackageTypeController {
 	})
 	deletePackageType(@Param('id') id: string) {
 		// Logic để xóa package type theo ID
+	}
+
+	@Patch('/swap-order/:id')
+	@ApiOperation({
+		summary: 'Swap Package Type order by Package_Type_Id',
+		description: `Facility Owner can use this API`,
+	})
+	@ApiParam({ name: 'id', type: String, description: 'Package Type ID' })
+	@ApiBody({
+		type: UpdateOrderDto,
+		examples: {
+			Test1: {
+				value: {
+					order1: 0,
+					order2: 1,
+				} as UpdateOrderDto,
+			},
+			Test2: {
+				value: {
+					order1: 1,
+					order2: 3,
+				} as UpdateOrderDto,
+			},
+		},
+	})
+	@ApiOkResponse({
+		status: 200,
+		description: 'Update Package Type order successfull',
+	})
+	@ApiNotFoundResponse({
+		type: NotFoundException,
+		status: 404,
+		description: 'Not found Package Type to update!',
+	})
+	@ApiInternalServerErrorResponse({
+		status: 500,
+		description: 'Internal server error',
+	})
+	@ApiBadRequestResponse({ status: 400, description: 'Invalid request' })
+	swapPackageTypeInList(@Param('id') id: string) {
+		//Logic để hoán đổi order của 2 TackageType
 	}
 }
