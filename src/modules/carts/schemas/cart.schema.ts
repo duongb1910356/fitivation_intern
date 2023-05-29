@@ -13,7 +13,7 @@ export class Cart extends BaseObject {
 	accountID: User;
 
 	@Prop({ type: [{ type: mongoose.Schema.Types.ObjectId, ref: 'CartItem' }] })
-	cartItems: CartItem[];
+	cartItemIDs: CartItem[];
 
 	@Prop({ type: [{ type: mongoose.Schema.Types.ObjectId, ref: 'Promotion' }] })
 	promotions?: Promotion[];
