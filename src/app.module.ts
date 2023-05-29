@@ -12,6 +12,8 @@ import { FacilityModule } from './modules/facility/facility.module';
 import { AddressModule } from './modules/address/address.module';
 import { Review } from './modules/reviews/schemas/reviews.schema';
 import { PhotoModule } from './modules/photo/photo.module';
+import { PackageTypeModule } from './modules/package-type/package-type.module';
+
 
 @Module({
 	imports: [
@@ -23,6 +25,7 @@ import { PhotoModule } from './modules/photo/photo.module';
 		AddressModule,
 		PhotoModule,
 		Review
+		PackageTypeModule,
 	],
 	providers: [
 		{
