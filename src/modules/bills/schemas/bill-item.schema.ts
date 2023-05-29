@@ -34,7 +34,7 @@ export class BillItem extends BaseObject {
 	@Prop({ required: true, type: Number })
 	packgePrice: number;
 
-	@Prop({ type: [Promotion] })
+	@Prop({ type: [PromotionSchema] })
 	promotions?: Promotion[];
 
 	@Prop({ required: true, type: String })
@@ -54,6 +54,12 @@ export class BillItem extends BaseObject {
 
 	@Prop({ required: true, type: String })
 	facilityPhoto: string;
+
+	@Prop({ required: true, type: Number, min: 0 })
+	promotionPrice: number;
+
+	@Prop({ required: true, type: Number, min: 0 })
+	totalPrice: number;
 }
 
 export const BillItemSchema = SchemaFactory.createForClass(BillItem);
