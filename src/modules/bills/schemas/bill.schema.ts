@@ -57,6 +57,12 @@ export class Bill extends BaseObject {
 
 	@Prop({ default: 0, type: Number, min: 0 })
 	promotionPrice: number;
+
+	@Prop({ required: true, type: Number, min: 0 })
+	totalPrice: number;
+
+	@Prop({ default: BillStatus.ACTIVE, enum: BillStatus, type: String })
+	status: BillStatus;
 }
 
 export const BillSchema = SchemaFactory.createForClass(Bill);
