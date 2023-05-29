@@ -58,7 +58,7 @@ export class BillItem extends BaseObject {
 	@Prop({ required: true, type: String })
 	facilityPhoto: string;
 
-	@Prop({ required: true, type: Number, min: 0 })
+	@Prop({ default: 0, type: Number, min: 0 })
 	promotionPrice: number;
 
 	@Prop({ required: true, type: Number, min: 0 })
