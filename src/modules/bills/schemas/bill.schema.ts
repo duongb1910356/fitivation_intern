@@ -2,7 +2,10 @@ import { Prop, Schema, SchemaFactory } from '@nestjs/mongoose';
 import mongoose, { HydratedDocument } from 'mongoose';
 import { BaseObject } from 'src/shared/schemas/base-object.schema';
 import { User } from 'src/modules/users/schemas/user.schema';
-import { Promotion } from 'src/modules/promotions/schemas/promotion.schema';
+import {
+	Promotion,
+	PromotionSchema,
+} from 'src/modules/promotions/schemas/promotion.schema';
 import { BillItem } from './bill-item.schema';
 
 export type BillDocument = HydratedDocument<Bill>;
@@ -27,7 +30,11 @@ export class Bill extends BaseObject {
 	})
 	accountID: User;
 
-	@Prop({ required: true, type: [BillItem] })
+	@Prop({
+		required: true,
+		type: mongoose.Schema.Types.ObjectId,
+		ref: 'BillItem',
+	})
 	billItems: BillItem[];
 
 	@Prop({ required: true, enum: PaymentMethod, type: String })
@@ -45,11 +52,11 @@ export class Bill extends BaseObject {
 	@Prop({ type: String, minlength: 0, maxlength: 200 })
 	description?: string;
 
-	@Prop({ type: [Promotion] })
+	@Prop({ type: [PromotionSchema] })
 	promotions?: Promotion[];
 
-	@Prop({ type: Number, min: 0 })
-	totalPromotionPrice?: number;
+	@Prop({ default: 0, type: Number, min: 0 })
+	promotionPrice: number;
 }
 
 export const BillSchema = SchemaFactory.createForClass(Bill);
