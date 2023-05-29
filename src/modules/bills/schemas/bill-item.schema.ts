@@ -8,13 +8,7 @@ import { BaseObject } from 'src/shared/schemas/base-object.schema';
 
 export type BillItemsDocument = HydratedDocument<BillItem>;
 
-export enum PaymentMethod {
-	DEBIT_CARD = 'DEBIT_CARD',
-	CREDIT_CARD = 'CREDIT_CARD',
-	CASH = 'CASH',
-}
-
-export enum BillStatus {
+export enum BillItemStatus {
 	ACTIVE = 'ACTIVE',
 	INACTIVE = 'INACTIVE',
 }
@@ -63,6 +57,9 @@ export class BillItem extends BaseObject {
 
 	@Prop({ required: true, type: Number, min: 0 })
 	totalPrice: number;
+
+	@Prop({ default: BillItemStatus.ACTIVE, enum: BillItemStatus, type: String })
+	status: BillItemStatus;
 }
 
 export const BillItemSchema = SchemaFactory.createForClass(BillItem);
