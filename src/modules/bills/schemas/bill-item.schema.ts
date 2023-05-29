@@ -1,6 +1,9 @@
 import { Prop, Schema, SchemaFactory } from '@nestjs/mongoose';
 import { HydratedDocument } from 'mongoose';
-import { Promotion } from 'src/modules/promotions/schemas/promotion.schema';
+import {
+	Promotion,
+	PromotionSchema,
+} from 'src/modules/promotions/schemas/promotion.schema';
 import { BaseObject } from 'src/shared/schemas/base-object.schema';
 
 export type BillItemsDocument = HydratedDocument<BillItem>;
