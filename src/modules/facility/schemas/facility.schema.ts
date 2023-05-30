@@ -22,7 +22,7 @@ enum ScheduleType {
     MONTHLY = 'MONTHLY',
 }
 
-interface Address {
+export interface Address {
     province: {
         name: string;
         code: number;

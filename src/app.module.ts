@@ -24,7 +24,7 @@ import { PackageTypeModule } from './modules/package-type/package-type.module';
 		FacilityModule,
 		AddressModule,
 		PhotoModule,
-		Review
+		Review,
 		PackageTypeModule,
 	],
 	providers: [
