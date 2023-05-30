@@ -11,13 +11,12 @@ export class CartItem extends BaseObject {
 	@Prop({ required: true, type: mongoose.Schema.Types.ObjectId, ref: 'Cart' })
 	cartID: Cart;
 
-	// @Prop({
-	// 	required: true,
-	// 	type: mongoose.Schema.Types.ObjectId,
-	// 	ref: 'Package',
-	// })
-	// @ApiProperty()
-	// packageID: Package;
+	@Prop({
+		required: true,
+		type: mongoose.Schema.Types.ObjectId,
+		ref: 'Package',
+	})
+	packageID: Package;
 
 	@Prop({
 		required: true,
