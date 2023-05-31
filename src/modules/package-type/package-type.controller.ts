@@ -8,6 +8,7 @@ import {
 	Param,
 	Patch,
 	Post,
+	Query,
 } from '@nestjs/common';
 import {
 	ApiBadRequestResponse,
@@ -20,22 +21,73 @@ import {
 	ApiParam,
 	ApiQuery,
 	ApiTags,
+	ApiUnauthorizedResponse,
 } from '@nestjs/swagger';
 import { CreatePackageTypeDto } from './dto/create-package-type-dto';
 import { Public } from '../auth/utils';
 import { PackageType } from './entities/package-type.entity';
 import { UpdatePackageTypeDto } from './dto/update-package-type-dto';
 import { UpdateOrderDto } from './dto/update-order-dto';
-import { ESortOrder } from 'src/shared/enum/sort.enum';
 import { Package } from '../package/entities/package.entity';
 import {
 	ErrorResponse,
+	ListOptions,
 	ListResponse,
 } from 'src/shared/response/common-response';
+import { Facility } from '../facility/schemas/facility.schema';
+import { ApiDocsPagination } from 'src/decorators/swagger-form-data.decorator';
 
 @ApiTags('package-type')
-@Controller('package-type')
+@Controller()
 export class PackageTypeController {
+	@Public()
+	@Get('/package-types/')
+	// @ApiBearerAuth()
+	// @UseGuards(RoleGuard(UserRole.MEMBER))
+	@ApiOperation({
+		summary: 'Get All package-type',
+		description: `Only logged in user can use this API`,
+	})
+	@ApiDocsPagination(PackageType, 'PackageTypes')
+	@ApiOkResponse({
+		schema: {
+			example: {
+				items: [
+					{
+						_id: '6476ef7d1f0419cd330fe128',
+						facilityID: {} as unknown as Facility,
+						name: 'GYM GYM 1',
+						description: 'cơ sở tập gym chất lượng',
+						price: 100000,
+						order: 0,
+						createdAt: new Date(),
+						updatedAt: new Date(),
+					} as PackageType,
+				],
+				total: 1,
+				options: {
+					limit: 10,
+					offset: 0,
+					search: 'string',
+					sortBy: 'facilityID',
+					sortOrder: 'asc',
+				} as ListOptions<PackageType>,
+			} as ListResponse<PackageType>,
+		},
+	})
+	@ApiUnauthorizedResponse({
+		schema: {
+			example: {
+				code: '401',
+				message: 'Unauthorized',
+				details: null,
+			} as ErrorResponse<PackageType>,
+		},
+	})
+	getAllPackageType(@Query() filter: ListOptions<PackageType>) {
+		console.log(filter);
+	}
+
 	@Public()
 	@Get(':id')
 	@ApiOperation({
@@ -66,14 +118,10 @@ export class PackageTypeController {
 	@ApiOkResponse({
 		schema: {
 			example: {
-				code: 200,
-				message: 'Success',
-				data: {
-					items: [],
-					total: 0,
-					options: {},
-				} as ListResponse<Package>,
-			},
+				items: [],
+				total: 0,
+				options: {},
+			} as ListResponse<Package>,
 		},
 	})
 	@ApiNotFoundResponse({
@@ -88,14 +136,7 @@ export class PackageTypeController {
 		required: false,
 		description: 'SortField option (price or type)',
 	})
-	@ApiQuery({
-		name: 'sortOrder',
-		enum: ESortOrder,
-		enumName: 'SortOrder',
-		required: false,
-		description: 'SortOrder option (asc or desc)',
-	})
-	getAllPackageByPackageTypeId(@Param() id: string) {
+	getAllPackageByPackageTypeId(@Query() filter: ListOptions) {
 		//
 	}
 

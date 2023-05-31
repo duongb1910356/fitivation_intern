@@ -1,4 +1,4 @@
 import { Controller } from '@nestjs/common';
 
-@Controller('counter')
+@Controller()
 export class CounterController {}

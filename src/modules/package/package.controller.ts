@@ -25,8 +25,8 @@ import { Package, TimeType } from './entities/package.entity';
 import { CreatePackageDto } from './dto/create-package-dto';
 import { UpdatePackageDto } from './dto/update-package-dto';
 
-@ApiTags('package')
-@Controller('package')
+@ApiTags('packages')
+@Controller()
 export class PackageController {
 	@Public()
 	@Get(':id')
