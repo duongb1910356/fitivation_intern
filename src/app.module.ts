@@ -17,6 +17,12 @@ import { AddressModule } from './modules/address/address.module';
 import { Review } from './modules/reviews/schemas/reviews.schema';
 import { PhotoModule } from './modules/photo/photo.module';
 import { PackageTypeModule } from './modules/package-type/package-type.module';
+import { PackageModule } from './modules/package/package.module';
+import { FacilityCategoryModule } from './modules/facility-category/facility-category.module';
+import { FacilityScheduleModule } from './modules/facility-schedule/facility-schedule.module';
+import { HolidayModule } from './modules/holiday/holiday.module';
+import { AttendanceModule } from './modules/attendance/attendance.module';
+import { CounterModule } from './modules/counter/counter.module';
 
 @Module({
 	imports: [
@@ -33,6 +39,12 @@ import { PackageTypeModule } from './modules/package-type/package-type.module';
 		PhotoModule,
 		Review,
 		PackageTypeModule,
+		PackageModule,
+		FacilityCategoryModule,
+		FacilityScheduleModule,
+		HolidayModule,
+		AttendanceModule,
+		CounterModule,
 	],
 	providers: [
 		{

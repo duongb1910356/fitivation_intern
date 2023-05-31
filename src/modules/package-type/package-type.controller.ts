@@ -18,14 +18,20 @@ import {
 	ApiOkResponse,
 	ApiOperation,
 	ApiParam,
-	ApiResponse,
+	ApiQuery,
 	ApiTags,
 } from '@nestjs/swagger';
 import { CreatePackageTypeDto } from './dto/create-package-type-dto';
 import { Public } from '../auth/utils';
 import { PackageType } from './entities/package-type.entity';
-import { UpdatePackageType } from './dto/update-package-type-dto';
+import { UpdatePackageTypeDto } from './dto/update-package-type-dto';
 import { UpdateOrderDto } from './dto/update-order-dto';
+import { ESortOrder } from 'src/shared/enum/sort.enum';
+import { Package } from '../package/entities/package.entity';
+import {
+	ErrorResponse,
+	ListResponse,
+} from 'src/shared/response/common-response';
 
 @ApiTags('package-type')
 @Controller('package-type')
@@ -33,11 +39,10 @@ export class PackageTypeController {
 	@Public()
 	@Get(':id')
 	@ApiOperation({
-		summary: 'Get all package-type by Facility_Id',
+		summary: 'Get package-type by packageTypeId',
 		description: `All role can use this API`,
 	})
-	@ApiParam({ name: 'id', type: String, description: 'Facility ID' })
-	@ApiResponse({ status: 200, description: 'Get all package type by ID' })
+	@ApiParam({ name: 'id', type: String, description: 'PackageType ID' })
 	@ApiOkResponse({
 		type: PackageType,
 		status: 200,
@@ -47,8 +52,51 @@ export class PackageTypeController {
 		status: 400,
 		description: 'Package Type not found!',
 	})
-	getAllPackageTypeById(@Param('id') id: string) {
+	getPackageType(@Param('id') id: string) {
 		// Logic để lấy thông tin package type theo ID
+	}
+
+	@Public()
+	@Get('/package-type/:id/package')
+	@ApiOperation({
+		summary: 'Get all package by packageTypeId',
+		description: `All role can use this API`,
+	})
+	@ApiParam({ name: 'id', type: String, description: 'PackageType ID' })
+	@ApiOkResponse({
+		schema: {
+			example: {
+				code: 200,
+				message: 'Success',
+				data: {
+					items: [],
+					total: 0,
+					options: {},
+				} as ListResponse<Package>,
+			},
+		},
+	})
+	@ApiNotFoundResponse({
+		type: NotFoundException,
+		status: 400,
+		description: 'Package Type not found!',
+	})
+	@ApiQuery({
+		name: 'sortField',
+		enum: ['price', 'type'],
+		enumName: 'SortField',
+		required: false,
+		description: 'SortField option (price or type)',
+	})
+	@ApiQuery({
+		name: 'sortOrder',
+		enum: ESortOrder,
+		enumName: 'SortOrder',
+		required: false,
+		description: 'SortOrder option (asc or desc)',
+	})
+	getAllPackageByPackageTypeId(@Param() id: string) {
+		//
 	}
 
 	@Post()
@@ -64,7 +112,7 @@ export class PackageTypeController {
 					facilityID: '59001f60c122611f9ae47f67',
 					name: 'Standard Package 1',
 					description: 'This is a standard package 1',
-					price: 99.99,
+					price: 998.99,
 				} as CreatePackageTypeDto,
 			},
 			test2: {
@@ -72,7 +120,7 @@ export class PackageTypeController {
 					facilityID: '611f9ae47f6759001f60c122',
 					name: 'Standard Package 2',
 					description: 'This is a standard package 2',
-					price: 88.88,
+					price: 888.88,
 				} as CreatePackageTypeDto,
 			},
 		},
@@ -84,8 +132,8 @@ export class PackageTypeController {
 				message: 'Success',
 				data: {
 					name: 'User',
-					description: 'This is a standard package !',
-					price: 99.99,
+					description: 'This is a standard package type !',
+					price: 998.99,
 				},
 			},
 		},
@@ -106,14 +154,14 @@ export class PackageTypeController {
 	})
 	@ApiParam({ name: 'id', type: String, description: 'Package Type ID' })
 	@ApiBody({
-		type: UpdatePackageType,
+		type: UpdatePackageTypeDto,
 		examples: {
 			Test1: {
 				value: {
 					name: 'Tang co giam mo',
 					description: 'Goi tap giup tang co giam mo',
 					price: 100000,
-				} as UpdatePackageType,
+				} as UpdatePackageTypeDto,
 			},
 		},
 	})
@@ -141,7 +189,10 @@ export class PackageTypeController {
 		description: `Facility Owner can use this API`,
 	})
 	@ApiParam({ name: 'id', type: String, description: 'Package Type ID' })
-	@ApiResponse({ status: 204, description: 'Delete package type successfull' })
+	@ApiOkResponse({
+		status: 204,
+		description: 'Delete package type successfull',
+	})
 	@ApiBadRequestResponse({
 		type: BadRequestException,
 		status: 400,
