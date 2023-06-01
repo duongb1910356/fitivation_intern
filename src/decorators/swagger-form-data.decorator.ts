@@ -1,7 +1,7 @@
 import { applyDecorators } from '@nestjs/common';
 import { ApiQuery } from '@nestjs/swagger';
 
-export function ApiDocsPagination<T>(param1: T, entity: string) {
+export function ApiDocsPagination(entity: string) {
 	return applyDecorators(
 		ApiQuery({
 			name: 'limit',
