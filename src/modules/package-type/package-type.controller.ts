@@ -167,6 +167,15 @@ export class PackageTypeController {
 			} as ErrorResponse<null>,
 		},
 	})
+	@ApiBadRequestResponse({
+		schema: {
+			example: {
+				code: '400',
+				message: '[Input] invalid!',
+				details: null,
+			} as ErrorResponse<null>,
+		},
+	})
 	getAllPackageTypeByFacility(
 		@Param('facility_id') facility_id: string,
 		@Query() filter: ListOptions<PackageType>,
@@ -385,6 +394,15 @@ export class PackageTypeController {
 			} as ErrorResponse<null>,
 		},
 	})
+	@ApiBadRequestResponse({
+		schema: {
+			example: {
+				code: '400',
+				message: '[Input] invalid!',
+				details: null,
+			} as ErrorResponse<null>,
+		},
+	})
 	deletePackageType(@Param('pkgType_id') pkgType_id: string) {
 		console.log(pkgType_id);
 		// Logic để xóa package type theo ID
@@ -449,7 +467,15 @@ export class PackageTypeController {
 			} as ErrorResponse<null>,
 		},
 	})
-	@ApiBadRequestResponse({ status: 400, description: 'Invalid request' })
+	@ApiBadRequestResponse({
+		schema: {
+			example: {
+				code: '400',
+				message: '[Input] invalid!',
+				details: null,
+			} as ErrorResponse<null>,
+		},
+	})
 	swapPackageTypeInList(
 		@Param('facility_id') facility_id: string,
 		@Body() data: UpdateOrderDto,
