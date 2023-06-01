@@ -6,7 +6,7 @@ import {
 	Promotion,
 	PromotionSchema,
 } from 'src/modules/promotions/schemas/promotion.schema';
-import { BillItem } from './bill-item.schema';
+import { BillItem } from '../../bill-items/schemas/bill-item.schema';
 
 export type BillDocument = HydratedDocument<Bill>;
 
