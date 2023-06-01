@@ -80,12 +80,16 @@ export class PackageTypeController {
 	}
 
 	@Public()
-	@Get('/package-types/:pkgType_id')
+	@Get('/package-types/:packageTypeId')
 	@ApiOperation({
 		summary: 'Get Package Type by packageTypeId',
 		description: `All role can use this API`,
 	})
-	@ApiParam({ name: 'pkgType_id', type: String, description: 'PackageType ID' })
+	@ApiParam({
+		name: 'packageTypeId',
+		type: String,
+		description: 'PackageType ID',
+	})
 	@ApiOkResponse({
 		schema: {
 			example: {
@@ -118,19 +122,19 @@ export class PackageTypeController {
 			} as ErrorResponse<null>,
 		},
 	})
-	getPackageType(@Param('pkgType_id') pkgType_id: string) {
+	getPackageType(@Param('packageTypeId') packageTypeId: string) {
 		//
-		console.log(pkgType_id);
+		console.log(packageTypeId);
 	}
 
 	@Public()
-	@Get('facilities/:facility_id/package-types')
+	@Get('facilities/:facilityId/package-types')
 	@ApiOperation({
 		summary: 'Get all Package Type by facilityId',
 		description: `All role can use this API`,
 	})
 	@ApiDocsPagination('PackageTypes')
-	@ApiParam({ name: 'facility_id', type: String, description: 'Facility ID' })
+	@ApiParam({ name: 'facilityId', type: String, description: 'Facility ID' })
 	@ApiOkResponse({
 		schema: {
 			example: {
@@ -177,21 +181,21 @@ export class PackageTypeController {
 		},
 	})
 	getAllPackageTypeByFacility(
-		@Param('facility_id') facility_id: string,
+		@Param('facilityId') facilityId: string,
 		@Query() filter: ListOptions<PackageType>,
 	) {
 		//
-		console.log(facility_id, filter);
+		console.log(facilityId, filter);
 	}
 
 	@ApiBearerAuth()
 	@Roles(UserRole.FACILITY_OWNER)
-	@Post('facilities/:facility_id/package-types')
+	@Post('facilities/:facilityId/package-types')
 	@ApiOperation({
 		summary: 'Create new Package Type by facilityId',
 		description: `Facility Owner can use this API`,
 	})
-	@ApiParam({ name: 'facility_id', type: String, description: 'Facility ID' })
+	@ApiParam({ name: 'facilityId', type: String, description: 'Facility ID' })
 	@ApiBody({
 		type: CreatePackageTypeDto,
 		examples: {
@@ -253,7 +257,7 @@ export class PackageTypeController {
 		},
 	})
 	createPackageType(
-		@Param('facility_id') id: string,
+		@Param('facilityId') id: string,
 		@Body() data: CreatePackageTypeDto,
 	) {
 		console.log(id, data);
@@ -261,13 +265,13 @@ export class PackageTypeController {
 
 	@ApiBearerAuth()
 	@Roles(UserRole.FACILITY_OWNER)
-	@Patch('package-types/:pkgType_id')
+	@Patch('package-types/:packageTypeId')
 	@ApiOperation({
 		summary: 'Update Package Type by packageTypeId',
 		description: `Facility Owner can use this API`,
 	})
 	@ApiParam({
-		name: 'pkgType_id',
+		name: 'packageTypeId',
 		type: String,
 		description: 'Package Type ID',
 	})
@@ -341,22 +345,22 @@ export class PackageTypeController {
 		},
 	})
 	updatePackageType(
-		@Param('pkgType_id') pkgType_id: string,
+		@Param('packageTypeId') packageTypeId: string,
 		@Body() data: UpdatePackageTypeDto,
 	) {
-		console.log(pkgType_id, data);
+		console.log(packageTypeId, data);
 		// Logic để cập nhật package type theo ID
 	}
 
 	@ApiBearerAuth()
 	@Roles(UserRole.FACILITY_OWNER)
-	@Delete('package-types/:pkgType_id')
+	@Delete('package-types/:packageTypeId')
 	@ApiOperation({
 		summary: 'Delete Package Type by packageTypeId',
 		description: `Facility Owner can use this API`,
 	})
 	@ApiParam({
-		name: 'pkgType_id',
+		name: 'packageTypeId',
 		type: String,
 		description: 'Package Type ID',
 	})
@@ -403,19 +407,19 @@ export class PackageTypeController {
 			} as ErrorResponse<null>,
 		},
 	})
-	deletePackageType(@Param('pkgType_id') pkgType_id: string) {
-		console.log(pkgType_id);
+	deletePackageType(@Param('packageTypeId') packageTypeId: string) {
+		console.log(packageTypeId);
 		// Logic để xóa package type theo ID
 	}
 
 	@ApiBearerAuth()
 	@Roles(UserRole.FACILITY_OWNER)
-	@Patch('facilities/:facility_id/package-types/swap-order')
+	@Patch('facilities/:facilityId/package-types/swap-order')
 	@ApiOperation({
 		summary: 'Swap Package Type order by facilityId',
 		description: `Facility Owner can use this API`,
 	})
-	@ApiParam({ name: 'facility_id', type: String, description: 'Facility ID' })
+	@ApiParam({ name: 'facilityId', type: String, description: 'Facility ID' })
 	@ApiBody({
 		type: UpdateOrderDto,
 		examples: {
@@ -477,10 +481,10 @@ export class PackageTypeController {
 		},
 	})
 	swapPackageTypeInList(
-		@Param('facility_id') facility_id: string,
+		@Param('facilityId') facilityId: string,
 		@Body() data: UpdateOrderDto,
 	) {
-		console.log(facility_id, data);
+		console.log(facilityId, data);
 		//Logic để hoán đổi order của 2 TackageType
 	}
 }

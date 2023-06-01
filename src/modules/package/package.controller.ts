@@ -79,12 +79,12 @@ export class PackageController {
 	}
 
 	@Public()
-	@Get('packages/:pkg_id')
+	@Get('packages/:packageId')
 	@ApiOperation({
 		summary: 'Get Package by packageId',
 		description: `All role can use this API`,
 	})
-	@ApiParam({ name: 'pkg_id', type: String, description: 'Package ID' })
+	@ApiParam({ name: 'packageID', type: String, description: 'Package ID' })
 	@ApiOkResponse({
 		schema: {
 			example: {
@@ -116,20 +116,20 @@ export class PackageController {
 			} as ErrorResponse<null>,
 		},
 	})
-	getPackage(@Param('pkg_id') pkg_id: string) {
-		console.log(pkg_id);
+	getPackage(@Param('packageID') packageID: string) {
+		console.log(packageID);
 		//
 	}
 
 	@Public()
-	@Get('package-type/:pkgType_id/packages')
+	@Get('package-type/:packageTypeId/packages')
 	@ApiOperation({
 		summary: 'Get all Package by packageTypeId',
 		description: `All role can use this API`,
 	})
 	@ApiDocsPagination('PackageTypes')
 	@ApiParam({
-		name: 'pkgType_id',
+		name: 'packageTypeId',
 		type: String,
 		description: 'Package Type ID',
 	})
@@ -178,22 +178,22 @@ export class PackageController {
 		},
 	})
 	getAllPackagesByPackageType(
-		@Param('pkgType_id') pkgType_id: string,
+		@Param('packageTypeId') packageTypeId: string,
 		@Query() filter: ListOptions<Package>,
 	) {
 		//
-		console.log(pkgType_id, filter);
+		console.log(packageTypeId, filter);
 	}
 
 	@ApiBearerAuth()
 	@Roles(UserRole.FACILITY_OWNER)
-	@Post('package-type/:pkgType_id/packages')
+	@Post('package-type/:packageTypeId/packages')
 	@ApiOperation({
 		summary: 'Create new Package by packageTypeId',
 		description: `Facility Owner can use this API`,
 	})
 	@ApiParam({
-		name: 'pkgType_id',
+		name: 'packageTypeId',
 		type: String,
 		description: 'Package Type ID',
 	})
@@ -255,21 +255,21 @@ export class PackageController {
 		},
 	})
 	createPackageType(
-		@Param('pkgType_id') pkgType_id: string,
+		@Param('packageTypeId') packageTypeId: string,
 		@Body() data: CreatePackageDto,
 	) {
-		console.log(pkgType_id, data);
+		console.log(packageTypeId, data);
 	}
 
 	@ApiBearerAuth()
 	@Roles(UserRole.FACILITY_OWNER)
-	@Patch('packages/:pkg_id')
+	@Patch('packages/:packageID')
 	@ApiOperation({
 		summary: 'Update Package by packageId',
 		description: `Facility Owner can use this API`,
 	})
 	@ApiParam({
-		name: 'pkg_id',
+		name: 'packageID',
 		type: String,
 		description: 'Package ID',
 	})
@@ -338,22 +338,22 @@ export class PackageController {
 		},
 	})
 	updatePackageType(
-		@Param('pkg_id') pkg_id: string,
+		@Param('packageID') packageID: string,
 		@Body() data: UpdatePackageDto,
 	) {
-		console.log(pkg_id, data);
+		console.log(packageID, data);
 		//
 	}
 
 	@ApiBearerAuth()
 	@Roles(UserRole.FACILITY_OWNER)
-	@Delete('package/:pkg_id')
+	@Delete('package/:packageID')
 	@ApiOperation({
 		summary: 'Delete Package by packageId',
 		description: `Facility Owner can use this API`,
 	})
 	@ApiParam({
-		name: 'pkg_id',
+		name: 'packageID',
 		type: String,
 		description: 'Package ID',
 	})
@@ -391,8 +391,8 @@ export class PackageController {
 			} as ErrorResponse<null>,
 		},
 	})
-	deletePackage(@Param('pkg_id') pkg_id: string) {
-		console.log(pkg_id);
+	deletePackage(@Param('packageID') packageID: string) {
+		console.log(packageID);
 		//
 	}
 }
