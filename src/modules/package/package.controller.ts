@@ -347,7 +347,7 @@ export class PackageController {
 
 	@ApiBearerAuth()
 	@Roles(UserRole.FACILITY_OWNER)
-	@Delete('package-types/:pkg_id')
+	@Delete('package/:pkg_id')
 	@ApiOperation({
 		summary: 'Delete Package by packageId',
 		description: `Facility Owner can use this API`,
@@ -391,7 +391,7 @@ export class PackageController {
 			} as ErrorResponse<null>,
 		},
 	})
-	deletePackageType(@Param('pkg_id') pkg_id: string) {
+	deletePackage(@Param('pkg_id') pkg_id: string) {
 		console.log(pkg_id);
 		//
 	}
