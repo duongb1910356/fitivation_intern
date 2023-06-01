@@ -23,6 +23,7 @@ import { FacilityScheduleModule } from './modules/facility-schedule/facility-sch
 import { HolidayModule } from './modules/holiday/holiday.module';
 import { AttendanceModule } from './modules/attendance/attendance.module';
 import { CounterModule } from './modules/counter/counter.module';
+import { RolesGuard } from './decorators/role-decorator/role.guard';
 
 @Module({
 	imports: [
@@ -50,6 +51,10 @@ import { CounterModule } from './modules/counter/counter.module';
 		{
 			provide: APP_GUARD,
 			useClass: JwtAuthGuard,
+		},
+		{
+			provide: APP_GUARD,
+			useClass: RolesGuard,
 		},
 		{
 			provide: APP_FILTER,
