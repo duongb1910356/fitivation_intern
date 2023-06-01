@@ -1,5 +1,6 @@
 import { Prop, Schema, SchemaFactory } from '@nestjs/mongoose';
-import { HydratedDocument } from 'mongoose';
+import mongoose, { HydratedDocument } from 'mongoose';
+import { Package } from 'src/modules/package/entities/package.entity';
 import {
 	Promotion,
 	PromotionSchema,
@@ -15,9 +16,8 @@ export enum BillItemStatus {
 
 @Schema({ timestamps: true })
 export class BillItem extends BaseObject {
-	// @Prop({ type: mongoose.Schema.Types.ObjectId, ref: 'Package' })
-	// @ApiProperty()
-	// packageID: Package;
+	@Prop({ type: mongoose.Schema.Types.ObjectId, ref: 'Package' })
+	packageID: Package;
 
 	@Prop({ required: true, type: String })
 	packageName: string;
@@ -37,8 +37,8 @@ export class BillItem extends BaseObject {
 	@Prop({ required: true, type: String })
 	facilityName: string;
 
-	// @Prop({ required: true, type: Object })
-	// facilityAddress: Address;
+	@Prop({ required: true, type: Object })
+	facilityAddress: object;
 
 	@Prop({ type: [Number], required: true, default: [] })
 	facilityCoordinatesLocation: [number, number];
