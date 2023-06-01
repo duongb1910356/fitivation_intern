@@ -17,6 +17,8 @@ import { AddressModule } from './modules/address/address.module';
 import { Review } from './modules/reviews/schemas/reviews.schema';
 import { PhotoModule } from './modules/photo/photo.module';
 import { PackageTypeModule } from './modules/package-type/package-type.module';
+import { BillItemsModule } from './modules/bill-items/bill-items.module';
+import { CartItemsModule } from './modules/cart-items/cart-items.module';
 
 @Module({
 	imports: [
@@ -33,6 +35,8 @@ import { PackageTypeModule } from './modules/package-type/package-type.module';
 		PhotoModule,
 		Review,
 		PackageTypeModule,
+		BillItemsModule,
+		CartItemsModule,
 	],
 	providers: [
 		{
