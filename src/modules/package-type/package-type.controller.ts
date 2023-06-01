@@ -44,7 +44,7 @@ export class PackageTypeController {
 	@Get('/package-types/')
 	@ApiOperation({
 		summary: 'Get All package-type',
-		description: `Only logged in user can use this API`,
+		description: `Only admin can use this API`,
 	})
 	@ApiDocsPagination('PackageTypes')
 	@ApiOkResponse({
