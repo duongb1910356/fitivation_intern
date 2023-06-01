@@ -10,6 +10,7 @@ import {
 } from '@nestjs/common';
 import {
 	ApiBadRequestResponse,
+	ApiBearerAuth,
 	ApiBody,
 	ApiCreatedResponse,
 	ApiForbiddenResponse,
@@ -36,6 +37,7 @@ import { ApiDocsPagination } from 'src/decorators/swagger-form-data.decorator';
 @ApiTags('package-type')
 @Controller()
 export class PackageTypeController {
+	@ApiBearerAuth()
 	@Get('/package-types/')
 	// @ApiBearerAuth()
 	// @UseGuards(RoleGuard(UserRole.MEMBER))
@@ -175,6 +177,7 @@ export class PackageTypeController {
 		console.log(id, filter);
 	}
 
+	@ApiBearerAuth()
 	@Post('facilities/:id/package-types/')
 	@ApiOperation({
 		summary: 'Create new Package Type by facilityId',
@@ -248,6 +251,7 @@ export class PackageTypeController {
 		console.log(data);
 	}
 
+	@ApiBearerAuth()
 	@Patch('package-types/:id')
 	@ApiOperation({
 		summary: 'Update Package Type information',
@@ -333,6 +337,7 @@ export class PackageTypeController {
 		// Logic để cập nhật package type theo ID
 	}
 
+	@ApiBearerAuth()
 	@Delete('package-types/:id')
 	@ApiOperation({
 		summary: 'Delete Package Type by Package_Type_Id',
@@ -379,6 +384,7 @@ export class PackageTypeController {
 		// Logic để xóa package type theo ID
 	}
 
+	@ApiBearerAuth()
 	@Patch('facilities/:id/package-types/swap-order')
 	@ApiOperation({
 		summary: 'Swap Package Type order by Package_Type_Id',
