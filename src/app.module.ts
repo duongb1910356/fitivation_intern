@@ -53,10 +53,6 @@ import { RolesGuard } from './decorators/role-decorator/role.guard';
 			useClass: JwtAuthGuard,
 		},
 		{
-			provide: APP_GUARD,
-			useClass: RolesGuard,
-		},
-		{
 			provide: APP_FILTER,
 			useClass: GlobalExceptionFilter,
 		},
