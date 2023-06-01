@@ -33,15 +33,15 @@ import {
 } from 'src/shared/response/common-response';
 import { Facility } from '../facility/schemas/facility.schema';
 import { ApiDocsPagination } from 'src/decorators/swagger-form-data.decorator';
+import { Roles } from 'src/decorators/role-decorator/role.decorator';
+import { UserRole } from '../users/schemas/user.schema';
 
 @ApiTags('package-type')
 @Controller()
 export class PackageTypeController {
 	@ApiBearerAuth()
+	@Roles()
 	@Get('/package-types/')
-	// @ApiBearerAuth()
-	// @UseGuards(RoleGuard(UserRole.MEMBER))
-	// @Roles(UserRole.ADMIN)
 	@ApiOperation({
 		summary: 'Get All package-type',
 		description: `Only logged in user can use this API`,
@@ -89,17 +89,15 @@ export class PackageTypeController {
 	@ApiOkResponse({
 		schema: {
 			example: {
-				data: {
-					_id: '6476ef7d1f0419cd330fe128',
-					facilityID: {} as unknown as Facility,
-					name: 'GYM GYM 1',
-					description: 'cơ sở tập gym chất lượng',
-					price: 100000,
-					order: 0,
-					createdAt: new Date(),
-					updatedAt: new Date(),
-				} as PackageType,
-			},
+				_id: '6476ef7d1f0419cd330fe128',
+				facilityID: {} as unknown as Facility,
+				name: 'GYM GYM 1',
+				description: 'cơ sở tập gym chất lượng',
+				price: 100000,
+				order: 0,
+				createdAt: new Date(),
+				updatedAt: new Date(),
+			} as PackageType,
 		},
 	})
 	@ApiNotFoundResponse({
@@ -178,6 +176,7 @@ export class PackageTypeController {
 	}
 
 	@ApiBearerAuth()
+	@Roles(UserRole.FACILITY_OWNER)
 	@Post('facilities/:id/package-types/')
 	@ApiOperation({
 		summary: 'Create new Package Type by facilityId',
@@ -188,7 +187,6 @@ export class PackageTypeController {
 		examples: {
 			test1: {
 				value: {
-					facilityID: '59001f60c122611f9ae47f67',
 					name: 'Standard Package 1',
 					description: 'This is a standard package 1',
 					price: 998.99,
@@ -196,7 +194,6 @@ export class PackageTypeController {
 			},
 			test2: {
 				value: {
-					facilityID: '611f9ae47f6759001f60c122',
 					name: 'Standard Package 2',
 					description: 'This is a standard package 2',
 					price: 888.88,
@@ -207,17 +204,15 @@ export class PackageTypeController {
 	@ApiCreatedResponse({
 		schema: {
 			example: {
-				data: {
-					_id: '6476ef7d1f0419cd330fe128',
-					facilityID: {} as unknown as Facility,
-					name: 'GYM GYM 1',
-					description: 'cơ sở tập gym chất lượng',
-					price: 100000,
-					order: 0,
-					createdAt: new Date(),
-					updatedAt: new Date(),
-				} as PackageType,
-			},
+				_id: '6476ef7d1f0419cd330fe128',
+				facilityID: {} as unknown as Facility,
+				name: 'GYM GYM 1',
+				description: 'cơ sở tập gym chất lượng',
+				price: 100000,
+				order: 0,
+				createdAt: new Date(),
+				updatedAt: new Date(),
+			} as PackageType,
 		},
 	})
 	@ApiUnauthorizedResponse({
@@ -247,11 +242,15 @@ export class PackageTypeController {
 			} as ErrorResponse<null>,
 		},
 	})
-	createPackageType(@Body() data: CreatePackageTypeDto) {
-		console.log(data);
+	createPackageType(
+		@Param('id') id: string,
+		@Body() data: CreatePackageTypeDto,
+	) {
+		console.log(id, data);
 	}
 
 	@ApiBearerAuth()
+	@Roles(UserRole.FACILITY_OWNER)
 	@Patch('package-types/:id')
 	@ApiOperation({
 		summary: 'Update Package Type information',
@@ -280,17 +279,15 @@ export class PackageTypeController {
 	@ApiOkResponse({
 		schema: {
 			example: {
-				data: {
-					_id: '6476ef7d1f0419cd330fe128',
-					facilityID: {} as unknown as Facility,
-					name: 'GYM GYM 1',
-					description: 'cơ sở tập gym chất lượng',
-					price: 99000,
-					order: 0,
-					createdAt: new Date(),
-					updatedAt: new Date(),
-				} as PackageType,
-			},
+				_id: '6476ef7d1f0419cd330fe128',
+				facilityID: {} as unknown as Facility,
+				name: 'GYM GYM 1',
+				description: 'cơ sở tập gym chất lượng',
+				price: 99000,
+				order: 0,
+				createdAt: new Date(),
+				updatedAt: new Date(),
+			} as PackageType,
 		},
 	})
 	@ApiUnauthorizedResponse({
@@ -338,6 +335,7 @@ export class PackageTypeController {
 	}
 
 	@ApiBearerAuth()
+	@Roles(UserRole.FACILITY_OWNER)
 	@Delete('package-types/:id')
 	@ApiOperation({
 		summary: 'Delete Package Type by Package_Type_Id',
@@ -347,7 +345,6 @@ export class PackageTypeController {
 	@ApiOkResponse({
 		schema: {
 			example: {
-				code: '200',
 				message: 'Delete PackageType successful!',
 			},
 		},
@@ -385,6 +382,7 @@ export class PackageTypeController {
 	}
 
 	@ApiBearerAuth()
+	@Roles(UserRole.FACILITY_OWNER)
 	@Patch('facilities/:id/package-types/swap-order')
 	@ApiOperation({
 		summary: 'Swap Package Type order by Package_Type_Id',
@@ -411,7 +409,6 @@ export class PackageTypeController {
 	@ApiOkResponse({
 		schema: {
 			example: {
-				code: '200',
 				message: 'Swap order successful!',
 			},
 		},
