@@ -7,6 +7,7 @@ import {
 	Patch,
 	Post,
 	Query,
+	UseGuards,
 } from '@nestjs/common';
 import {
 	ApiBadRequestResponse,
@@ -35,12 +36,14 @@ import { Facility } from '../facility/schemas/facility.schema';
 import { ApiDocsPagination } from 'src/decorators/swagger-form-data.decorator';
 import { Roles } from 'src/decorators/role-decorator/role.decorator';
 import { UserRole } from '../users/schemas/user.schema';
+import { RolesGuard } from 'src/decorators/role-decorator/role.guard';
 
 @ApiTags('package-types')
 @Controller()
 export class PackageTypeController {
 	@ApiBearerAuth()
-	@Roles() //empty then admin default
+	@UseGuards(RolesGuard)
+	@Roles(UserRole.ADMIN, UserRole.FACILITY_OWNER)
 	@Get('/package-types')
 	@ApiOperation({
 		summary: 'Get All Package Type',
@@ -189,7 +192,8 @@ export class PackageTypeController {
 	}
 
 	@ApiBearerAuth()
-	@Roles(UserRole.FACILITY_OWNER)
+	@UseGuards(RolesGuard)
+	@Roles(UserRole.ADMIN, UserRole.FACILITY_OWNER)
 	@Post('facilities/:facilityId/package-types')
 	@ApiOperation({
 		summary: 'Create new Package Type by facilityId',
@@ -264,7 +268,8 @@ export class PackageTypeController {
 	}
 
 	@ApiBearerAuth()
-	@Roles(UserRole.FACILITY_OWNER)
+	@UseGuards(RolesGuard)
+	@Roles(UserRole.ADMIN, UserRole.FACILITY_OWNER)
 	@Patch('package-types/:packageTypeId')
 	@ApiOperation({
 		summary: 'Update Package Type by packageTypeId',
@@ -353,7 +358,8 @@ export class PackageTypeController {
 	}
 
 	@ApiBearerAuth()
-	@Roles(UserRole.FACILITY_OWNER)
+	@UseGuards(RolesGuard)
+	@Roles(UserRole.ADMIN, UserRole.FACILITY_OWNER)
 	@Delete('package-types/:packageTypeId')
 	@ApiOperation({
 		summary: 'Delete Package Type by packageTypeId',
@@ -413,7 +419,8 @@ export class PackageTypeController {
 	}
 
 	@ApiBearerAuth()
-	@Roles(UserRole.FACILITY_OWNER)
+	@UseGuards(RolesGuard)
+	@Roles(UserRole.ADMIN, UserRole.FACILITY_OWNER)
 	@Patch('facilities/:facilityId/package-types/swap-order')
 	@ApiOperation({
 		summary: 'Swap Package Type order by facilityId',

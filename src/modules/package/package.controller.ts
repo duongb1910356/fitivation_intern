@@ -7,6 +7,7 @@ import {
 	Patch,
 	Post,
 	Query,
+	UseGuards,
 } from '@nestjs/common';
 import { Public } from '../auth/utils';
 import {
@@ -35,12 +36,14 @@ import {
 	ListResponse,
 } from 'src/shared/response/common-response';
 import { UserRole } from '../users/schemas/user.schema';
+import { RolesGuard } from 'src/decorators/role-decorator/role.guard';
 
 @ApiTags('packages')
 @Controller()
 export class PackageController {
 	@ApiBearerAuth()
-	@Roles()
+	@UseGuards(RolesGuard)
+	@Roles(UserRole.ADMIN, UserRole.FACILITY_OWNER)
 	@Get('/packages')
 	@ApiOperation({
 		summary: 'Get All Packages',
@@ -186,7 +189,8 @@ export class PackageController {
 	}
 
 	@ApiBearerAuth()
-	@Roles(UserRole.FACILITY_OWNER)
+	@UseGuards(RolesGuard)
+	@Roles(UserRole.ADMIN, UserRole.FACILITY_OWNER)
 	@Post('package-type/:packageTypeId/packages')
 	@ApiOperation({
 		summary: 'Create new Package by packageTypeId',
@@ -262,7 +266,9 @@ export class PackageController {
 	}
 
 	@ApiBearerAuth()
-	@Roles(UserRole.FACILITY_OWNER)
+	@UseGuards(RolesGuard)
+	@UseGuards(RolesGuard)
+	@Roles(UserRole.ADMIN, UserRole.FACILITY_OWNER)
 	@Patch('packages/:packageID')
 	@ApiOperation({
 		summary: 'Update Package by packageId',
@@ -346,7 +352,9 @@ export class PackageController {
 	}
 
 	@ApiBearerAuth()
-	@Roles(UserRole.FACILITY_OWNER)
+	@UseGuards(RolesGuard)
+	@UseGuards(RolesGuard)
+	@Roles(UserRole.ADMIN, UserRole.FACILITY_OWNER)
 	@Delete('package/:packageID')
 	@ApiOperation({
 		summary: 'Delete Package by packageId',
