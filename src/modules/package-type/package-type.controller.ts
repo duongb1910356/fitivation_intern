@@ -36,14 +36,14 @@ import { ApiDocsPagination } from 'src/decorators/swagger-form-data.decorator';
 import { Roles } from 'src/decorators/role-decorator/role.decorator';
 import { UserRole } from '../users/schemas/user.schema';
 
-@ApiTags('package-type')
+@ApiTags('package-types')
 @Controller()
 export class PackageTypeController {
 	@ApiBearerAuth()
 	@Roles()
 	@Get('/package-types/')
 	@ApiOperation({
-		summary: 'Get All package-type',
+		summary: 'Get All Package Type',
 		description: `Only admin can use this API`,
 	})
 	@ApiDocsPagination('PackageTypes')
@@ -80,9 +80,9 @@ export class PackageTypeController {
 	}
 
 	@Public()
-	@Get('/package-types/:id')
+	@Get('/package-types/:pkgType_id')
 	@ApiOperation({
-		summary: 'Get package-type by packageTypeId',
+		summary: 'Get Package Type by packageTypeId',
 		description: `All role can use this API`,
 	})
 	@ApiParam({ name: 'id', type: String, description: 'PackageType ID' })
@@ -118,13 +118,13 @@ export class PackageTypeController {
 			} as ErrorResponse<null>,
 		},
 	})
-	getPackageTypeById(@Param('id') id: string) {
+	getPackageType(@Param('id') id: string) {
 		//
 		console.log(id);
 	}
 
 	@Public()
-	@Get('facilities/:id/package-types/')
+	@Get('facilities/:facility_id/package-types/')
 	@ApiOperation({
 		summary: 'Get all Package Type by facilityId',
 		description: `All role can use this API`,
@@ -177,7 +177,7 @@ export class PackageTypeController {
 
 	@ApiBearerAuth()
 	@Roles(UserRole.FACILITY_OWNER)
-	@Post('facilities/:id/package-types/')
+	@Post('facilities/:facility_id/package-types/')
 	@ApiOperation({
 		summary: 'Create new Package Type by facilityId',
 		description: `Facility Owner can use this API`,
@@ -251,9 +251,9 @@ export class PackageTypeController {
 
 	@ApiBearerAuth()
 	@Roles(UserRole.FACILITY_OWNER)
-	@Patch('package-types/:id')
+	@Patch('package-types/:pkgType_id')
 	@ApiOperation({
-		summary: 'Update Package Type information',
+		summary: 'Update Package Type by packageTypeId',
 		description: `Facility Owner can use this API`,
 	})
 	@ApiParam({ name: 'id', type: String, description: 'Package Type ID' })
@@ -336,9 +336,9 @@ export class PackageTypeController {
 
 	@ApiBearerAuth()
 	@Roles(UserRole.FACILITY_OWNER)
-	@Delete('package-types/:id')
+	@Delete('package-types/:pkgType_id')
 	@ApiOperation({
-		summary: 'Delete Package Type by Package_Type_Id',
+		summary: 'Delete Package Type by packagTypeId',
 		description: `Facility Owner can use this API`,
 	})
 	@ApiParam({ name: 'id', type: String, description: 'Package Type ID' })
@@ -383,9 +383,9 @@ export class PackageTypeController {
 
 	@ApiBearerAuth()
 	@Roles(UserRole.FACILITY_OWNER)
-	@Patch('facilities/:id/package-types/swap-order')
+	@Patch('facilities/:facility_id/package-types/swap-order')
 	@ApiOperation({
-		summary: 'Swap Package Type order by Package_Type_Id',
+		summary: 'Swap Package Type order by facilityId',
 		description: `Facility Owner can use this API`,
 	})
 	@ApiParam({ name: 'id', type: String, description: 'Facility ID' })
