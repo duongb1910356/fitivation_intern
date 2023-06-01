@@ -352,7 +352,7 @@ export class PackageTypeController {
 	@Roles(UserRole.FACILITY_OWNER)
 	@Delete('package-types/:pkgType_id')
 	@ApiOperation({
-		summary: 'Delete Package Type by packagTypeId',
+		summary: 'Delete Package Type by packageTypeId',
 		description: `Facility Owner can use this API`,
 	})
 	@ApiParam({
