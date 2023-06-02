@@ -76,6 +76,24 @@ export class PackageController {
 			} as ListResponse<Package>,
 		},
 	})
+	@ApiUnauthorizedResponse({
+		schema: {
+			example: {
+				code: '401',
+				message: 'Unauthorized',
+				details: null,
+			} as ErrorResponse<null>,
+		},
+	})
+	@ApiForbiddenResponse({
+		schema: {
+			example: {
+				code: '403',
+				message: 'Forbidden resource',
+				details: null,
+			} as ErrorResponse<null>,
+		},
+	})
 	getAllPackages(@Query() filter: ListOptions<Package>) {
 		console.log(filter);
 		//
