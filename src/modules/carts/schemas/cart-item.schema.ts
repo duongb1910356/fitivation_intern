@@ -3,6 +3,7 @@ import mongoose, { HydratedDocument } from 'mongoose';
 import { BaseObject } from 'src/shared/schemas/base-object.schema';
 import { Promotion } from 'src/modules/promotions/schemas/promotion.schema';
 import { Cart } from 'src/modules/carts/schemas/cart.schema';
+import { Package } from 'src/modules/package/entities/package.entity';
 
 export type CartItemDocument = HydratedDocument<CartItem>;
 
@@ -11,13 +12,12 @@ export class CartItem extends BaseObject {
 	@Prop({ required: true, type: mongoose.Schema.Types.ObjectId, ref: 'Cart' })
 	cartID: Cart;
 
-	// @Prop({
-	// 	required: true,
-	// 	type: mongoose.Schema.Types.ObjectId,
-	// 	ref: 'Package',
-	// })
-	// @ApiProperty()
-	// packageID: Package;
+	@Prop({
+		required: true,
+		type: mongoose.Schema.Types.ObjectId,
+		ref: 'Package',
+	})
+	packageID: Package;
 
 	@Prop({
 		required: true,

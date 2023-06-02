@@ -16,9 +16,7 @@ import { FacilityModule } from './modules/facility/facility.module';
 import { AddressModule } from './modules/address/address.module';
 import { PhotoModule } from './modules/photo/photo.module';
 import { PackageTypeModule } from './modules/package-type/package-type.module';
-import { BrandModule } from './modules/brand/brand.module';
 import { ReviewsModule } from './modules/reviews/reviews.module';
-
 @Module({
 	imports: [
 		// Make it look good and work well
@@ -34,7 +32,6 @@ import { ReviewsModule } from './modules/reviews/reviews.module';
 		PhotoModule,
 		ReviewsModule,
 		PackageTypeModule,
-		BrandModule
 	],
 	providers: [
 		{

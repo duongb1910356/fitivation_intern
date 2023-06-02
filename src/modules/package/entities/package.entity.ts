@@ -1,9 +1,10 @@
 import { Prop, Schema, SchemaFactory } from '@nestjs/mongoose';
 import mongoose from 'mongoose';
+import { Facility } from 'src/modules/facility/schemas/facility.schema';
 import { PackageType } from 'src/modules/package-type/entities/package-type.entity';
 import { BaseObject } from 'src/shared/schemas/base-object.schema';
 
-enum TimeType {
+export enum TimeType {
 	ONE_MONTH = '1',
 	TWO_MONTH = '2',
 	THREE_MONTH = '3',
@@ -25,12 +26,12 @@ export class Package extends BaseObject {
 		ref: 'Facility',
 		required: true,
 	})
-	facilityID: string; //Facility
+	facilityID: Facility;
 
 	@Prop({ type: String, enum: TimeType, required: true })
 	type: TimeType;
 
-	@Prop({ type: Number, required: true })
+	@Prop({ type: Number, min: 0, required: true })
 	price: number;
 }
 
