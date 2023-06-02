@@ -43,7 +43,7 @@ import { RolesGuard } from 'src/decorators/role-decorator/role.guard';
 export class PackageTypeController {
 	@ApiBearerAuth()
 	@UseGuards(RolesGuard)
-	@Roles(UserRole.ADMIN, UserRole.FACILITY_OWNER)
+	@Roles(UserRole.ADMIN)
 	@Get('/package-types')
 	@ApiOperation({
 		summary: 'Get All Package Type',
