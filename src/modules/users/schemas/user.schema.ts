@@ -41,7 +41,7 @@ export class User extends BaseObject {
 		unique: true,
 		type: String,
 		lowercase: true,
-		match: /^[w-.]+@([w-]+.)+[w-]{2,4}$/,
+		match: /^[\w-\.]+@([\w-]+\.)+[\w-]{2,4}$/,
 	})
 	email: string;
 

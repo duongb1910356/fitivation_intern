@@ -14,9 +14,10 @@ import { SubscriptionsModule } from './modules/subscriptions/subscriptions.modul
 import { CartsModule } from './modules/carts/carts.module';
 import { FacilityModule } from './modules/facility/facility.module';
 import { AddressModule } from './modules/address/address.module';
-import { Review } from './modules/reviews/schemas/reviews.schema';
 import { PhotoModule } from './modules/photo/photo.module';
 import { PackageTypeModule } from './modules/package-type/package-type.module';
+import { BrandModule } from './modules/brand/brand.module';
+import { ReviewsModule } from './modules/reviews/reviews.module';
 
 @Module({
 	imports: [
@@ -31,8 +32,9 @@ import { PackageTypeModule } from './modules/package-type/package-type.module';
 		FacilityModule,
 		AddressModule,
 		PhotoModule,
-		Review,
+		ReviewsModule,
 		PackageTypeModule,
+		BrandModule
 	],
 	providers: [
 		{

@@ -4,6 +4,8 @@ import { BaseObject } from '../../../shared/schemas/base-object.schema';
 import { Review, ReviewSchema } from 'src/modules/reviews/schemas/reviews.schema';
 import { Brand, BrandSchema } from '../../brand/schemas/brand.schema';
 import { Photo, PhotoSchema } from 'src/modules/photo/schemas/photo.schema';
+import { FacilityCategory } from 'src/modules/facility-category/entities/facility-category';
+import { User } from 'src/modules/users/schemas/user.schema';
 
 enum State {
     ACTIVE = 'ACTIVE',
@@ -46,10 +48,10 @@ export class Facility extends BaseObject {
     brandID: Brand;
 
     @Prop({ type: mongoose.Schema.Types.ObjectId, ref: 'FacilityCategory', required: true })
-    facilityCategoryID: string;
+    facilityCategoryID: FacilityCategory;
 
-    @Prop({ type: mongoose.Schema.Types.ObjectId, ref: 'Account', required: true })
-    ownerID: string;
+    @Prop({ type: mongoose.Schema.Types.ObjectId, ref: 'User', required: true })
+    ownerID: User;
 
     @Prop({ type: String, required: true })
     name: string;
@@ -57,13 +59,13 @@ export class Facility extends BaseObject {
     @Prop({type: Object, required: true })
     address: Address
 
-    @Prop({ default: '' })
+    @Prop({ default: '', required: false })
     summary: string;
 
-    @Prop({ default: '' })
+    @Prop({ default: '', required: false })
     description: string;
 
-    @Prop({ type: [Number], required: true, default: [] })
+    @Prop({ type: [Number], required: false, default: [] })
     coordinationLocation: [number, number];
 
     @Prop({ enum: State, default: State.ACTIVE })
@@ -76,13 +78,21 @@ export class Facility extends BaseObject {
     averageStar: number;
 
     @Prop({
-        type: [PhotoSchema],
+        type: [{type: mongoose.Schema.Types.ObjectId, ref: 'Photo', required: true}],
+        validate: {
+            validator: (reviews: any[]) => reviews.length <= 10,
+            message: 'Facility have 10 photo latest'
+        },
         default: [],
     })
     photos: Photo[];
 
     @Prop({
-        type: [ReviewSchema],
+        type: [{type: mongoose.Schema.Types.ObjectId, ref: 'Review', required: false}],
+        validate: {
+            validator: (reviews: any[]) => reviews.length <= 10,
+            message: 'Facility have 10 reviews latest'
+        },
         default: [],
     })
     reviews: Review[];

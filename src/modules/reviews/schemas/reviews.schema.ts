@@ -2,18 +2,19 @@ import { Prop, Schema, SchemaFactory } from '@nestjs/mongoose';
 import { IsUrl } from 'class-validator';
 import mongoose, { Document, HydratedDocument } from 'mongoose';
 import { Facility } from 'src/modules/facility/schemas/facility.schema';
+import { User } from 'src/modules/users/schemas/user.schema';
 import { BaseObject } from 'src/shared/schemas/base-object.schema';
 
 export type ReviewDocument = HydratedDocument<Review>;
 
 @Schema()
 export class Review extends BaseObject {
-    // @Prop({
-    //     required: true,
-    //     type: mongoose.Schema.Types.ObjectId,
-    //     ref: 'Account',
-    // })
-    // accountID: Account;
+    @Prop({
+        required: true,
+        type: mongoose.Schema.Types.ObjectId,
+        ref: 'User',
+    })
+    accountID: User;
 
     @Prop({
         required: true,
