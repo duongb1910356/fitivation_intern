@@ -1,20 +1,24 @@
 import { Prop, Schema, SchemaFactory } from '@nestjs/mongoose';
-import mongoose, {HydratedDocument} from 'mongoose';
+import mongoose, { HydratedDocument } from 'mongoose';
 import { BaseObject } from 'src/shared/schemas/base-object.schema';
 import { Facility } from 'src/modules/facility/schemas/facility.schema';
 
 export type PhotoDocument = HydratedDocument<Photo>;
 
-@Schema({timestamps: true})
+@Schema({ timestamps: true })
 export class Photo extends BaseObject {
-  @Prop({ type: mongoose.Schema.Types.ObjectId, ref: 'Facility', required: true })
-  facilityID: Facility;
+  @Prop({ type: String, required: true })
+  buckets: string;
 
-  @Prop({type: String, required: true })
-  linkURL: string;
+  @Prop({ type: String, required: true })
+  name: string;
 
-  @Prop({default: ''})
+  @Prop({ type: String, required: false, default: '' })
   describe: string;
+
+  get linkURL(): string {
+    return `http://localhost:8080/${this.buckets}/${this.name}`;
+  }
 }
 
 export const PhotoSchema = SchemaFactory.createForClass(Photo);

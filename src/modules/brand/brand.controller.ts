@@ -2,12 +2,16 @@ import { Controller, Get, Post, Body, Patch, Param, Delete, UseInterceptors, Bad
 import { BrandService } from './brand.service';
 import { CreateBrandDto } from './dto/create-brand.dto';
 import { UpdateBrandDto } from './dto/update-brand.dto';
-import { ApiBadRequestResponse, ApiBody, ApiConsumes, ApiNotFoundResponse, ApiOkResponse, ApiOperation, ApiQuery, ApiTags } from '@nestjs/swagger';
+import { ApiBadRequestResponse, ApiBody, ApiConsumes, ApiForbiddenResponse, ApiNotFoundResponse, ApiOkResponse, ApiOperation, ApiQuery, ApiTags } from '@nestjs/swagger';
 import { FilesInterceptor } from '@nestjs/platform-express';
 import { Public } from '../auth/utils';
+import { ApiDocsPagination } from 'src/decorators/swagger-form-data.decorator';
+import { ErrorResponse, ListOptions, ListResponse } from 'src/shared/response/common-response';
+import { Brand } from './schemas/brand.schema';
+import { User } from '../users/schemas/user.schema';
 
-@Controller('brands')
 @ApiTags('brands')
+@Controller('brands')
 export class BrandController {
   constructor(private readonly brandService: BrandService) { }
 
@@ -19,11 +23,13 @@ export class BrandController {
     type: CreateBrandDto,
     examples: {
       example1: {
-        value: { name: 'String', photo: 'example.jpg' },
+        value: {
+          accountID: '1233',
+          name: 'string'
+        } as CreateBrandDto,
       }
     }
   })
-  @ApiConsumes('multipart/form-data')
   @ApiOkResponse({
     status: 200,
     schema: {
@@ -31,12 +37,11 @@ export class BrandController {
         code: 200,
         message: 'Success',
         data: {
-          brandID: '123456',
-          accountID: '123456',
+          accountID: {},
           name: 'City Gym',
-          createAt: 'Date',
-          updateAt: 'Date'
-        },
+          createdAt: new Date(),
+          updatedAt: new Date()
+        } as Brand,
       },
     },
   })
@@ -45,21 +50,16 @@ export class BrandController {
     status: 400,
     description: '[Input] invalid!',
   })
-  @UseInterceptors(FilesInterceptor('files', 1))
-  create(@Body() createBrandDto: CreateBrandDto) {
-    return this.brandService.create(createBrandDto);
+  createBrand() {
+    // return this.brandService.create(createBrandDto);
   }
 
   @Public()
   @Get()
   @ApiOperation({
-    summary: 'Get lists brand or search Brand by name'
+    summary: 'Get list of Brand'
   })
-  @ApiQuery({ name: 'page', required: false, type: Number, example: 1 })
-  @ApiQuery({ name: 'limit', required: false, type: Number, example: 10 })
-  @ApiQuery({ name: 'search', required: false, type: String, example: 'Name of Brand' })
-  @ApiQuery({ name: 'sortBy', required: false, type: String, example: 'name' })
-  @ApiQuery({ name: 'sortOrder', required: false, enum: ['asc', 'desc'], example: 'asc' })
+  @ApiDocsPagination('Brand')
   @ApiOkResponse({
     status: 200,
     schema: {
@@ -69,22 +69,23 @@ export class BrandController {
         data: {
           items: [
             {
-              brandID: '123456',
-              accountID: '123456',
+              _id: '123456',
+              accountID: {} as unknown as User,
               name: 'City Gym',
-              createAt: 'Date',
-              updateAt: 'Date'
-            }
+              createdAt: new Date(),
+              updatedAt: new Date()
+            } as Brand
           ],
           total: 1,
           options: {
-            limit: 1,
-            offet: 1,
-            search: 'string',
-            sortBy: 'createAt',
-            sortOrder: 'asc'
-          }
-        },
+            limit: 5,
+            offset: 5,
+            searchField: 'createdAt',
+            searchValue: 'string',
+            sortField: 'createdAt',
+            sortOrder: 'desc',
+          } as ListOptions<Brand>
+        } as ListResponse<Brand>,
       },
     },
   })
@@ -105,7 +106,7 @@ export class BrandController {
   @Public()
   @Get(':id')
   @ApiOperation({
-    summary: 'Get infomation of a Brand'
+    summary: 'Get infomation of a brand'
   })
   @ApiQuery({ name: 'id', required: true, type: String, example: '123456' })
   @ApiOkResponse({
@@ -115,11 +116,11 @@ export class BrandController {
         code: 200,
         message: 'Success',
         data: {
-          brandID: '123456',
+          _id: '123456',
           accountID: '123456',
           name: 'City Gym',
-          createAt: 'Date',
-          updateAt: 'Date'
+          createAt: new Date(),
+          updateAt: new Date()
         }
       },
     },
@@ -140,14 +141,14 @@ export class BrandController {
 
   @Patch(':id')
   @ApiOperation({
-    summary: 'Modified Brand'
+    summary: 'Modified brand'
   })
   @ApiQuery({ name: 'id', required: true, type: String, example: '123456' })
   @ApiBody({
     type: UpdateBrandDto,
     examples: {
       example1: {
-        value: { accountID: '123456', name: 'String', photo: 'example.jpg' },
+        value: { accountID: '123456', name: 'String'} as UpdateBrandDto,
       }
     }
   })
@@ -158,12 +159,11 @@ export class BrandController {
         code: 200,
         message: 'Success',
         data: {
-          brandID: '123456',
-          accountID: '123456',
+          accountID: {},
           name: 'City Gym',
-          createAt: 'Date',
-          updateAt: 'Date'
-        }
+          createdAt: new Date(),
+          updatedAt: new Date()
+        } as Brand
       },
     },
   })
@@ -177,14 +177,19 @@ export class BrandController {
     status: 400,
     description: '[Input] invalid'
   })
-  update(@Param('id') id: string, @Body() updateBrandDto: UpdateBrandDto) {
-    return this.brandService.update(+id, updateBrandDto);
+  @ApiForbiddenResponse({
+		schema: {
+			example: {
+				code: '403',
+				message: 'Forbidden resource',
+				details: null,
+			} as ErrorResponse<null>,
+		},
+	})
+  updateBrand(@Param('id') id: string, @Body() updateBrandDto: UpdateBrandDto) {
   }
 
-  @Patch(':id')
-  @ApiOperation({
-    summary: 'Delete Brand'
-  })
+  @Delete(':id')
   @ApiQuery({ name: 'id', required: true, type: String, example: '123456' })
   @ApiOkResponse({
     status: 200,
@@ -201,13 +206,15 @@ export class BrandController {
     status: 404,
     description: 'Brands not found!',
   })
-  @ApiBadRequestResponse({
-    type: BadRequestException,
-    status: 400,
-    description: '[Input] invalid'
-  })
-  @Delete(':id')
-  remove(@Param('id') id: string) {
-    return this.brandService.remove(+id);
+  @ApiForbiddenResponse({
+		schema: {
+			example: {
+				code: '403',
+				message: 'Forbidden resource',
+				details: null,
+			} as ErrorResponse<null>,
+		},
+	})
+  deleteBrand(@Param('id') id: string) {
   }
 }

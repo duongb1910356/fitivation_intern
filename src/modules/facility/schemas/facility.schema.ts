@@ -81,7 +81,7 @@ export class Facility extends BaseObject {
         type: [{type: mongoose.Schema.Types.ObjectId, ref: 'Photo', required: true}],
         validate: {
             validator: (reviews: any[]) => reviews.length <= 10,
-            message: 'Facility have 10 photo latest'
+            message: 'Facility have 5 photo latest'
         },
         default: [],
     })
@@ -91,7 +91,7 @@ export class Facility extends BaseObject {
         type: [{type: mongoose.Schema.Types.ObjectId, ref: 'Review', required: false}],
         validate: {
             validator: (reviews: any[]) => reviews.length <= 10,
-            message: 'Facility have 10 reviews latest'
+            message: 'Facility have 5 reviews latest'
         },
         default: [],
     })

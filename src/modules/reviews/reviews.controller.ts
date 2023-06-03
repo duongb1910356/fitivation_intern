@@ -6,12 +6,15 @@ import { Review } from './schemas/reviews.schema';
 import { FilesInterceptor } from '@nestjs/platform-express';
 import { UpdateReviewDto } from './dto/update-review-dto';
 import { FileUploadDto } from '../photo/dto/file-upload-dto';
+import { Photo } from '../photo/schemas/photo.schema';
 
 @ApiTags('reviews')
 @Controller('reviews')
 export class ReviewsController {
 
     @Post()
+    @UseInterceptors(FilesInterceptor('files', 5))
+    @ApiConsumes('multipart/form-data')
     @ApiOperation({
         summary: 'Create a new review'
     })
@@ -24,12 +27,14 @@ export class ReviewsController {
                     facilityID: '123456',
                     rating: 5,
                     comment: 'Great',
-                    photos: []
+                    photos: [
+                        { file: {}, describe: 'optional' },
+                        { file: {}, describe: 'optional' }
+                    ]
                 } as CreateReviewDto,
             }
         }
     })
-    @ApiConsumes('multipart/form-data')
     @ApiOkResponse({
         status: 200,
         schema: {
@@ -37,14 +42,24 @@ export class ReviewsController {
                 code: 200,
                 message: 'Success',
                 data: {
-                    accountID: '1233456',
-                    facilityID: '123456',
+                    _id: '123456789',
+                    accountID: {},
+                    facilityID: {},
+                    comment: 'Đáng để trải nghiệm',
                     rating: 5,
-                    comment: 'Great',
-                    linkURLs: [
-                        'http://abc.xyz'
-                    ]
-                } as unknown as Review,
+                    photos: [
+                        {
+                            _id: '12345678dsgdgsdxdg4',
+                            buckets: 'bucket1',
+                            name: 'image-name',
+                            linkURL: 'http://localhost:8080/bucket1/image-name',
+                            createdAt: new Date(),
+                            updatedAt: new Date()
+                        }
+                    ] as Photo[],
+                    createdAt: new Date(),
+                    updatedAt: new Date()
+                } as Review,
             },
         },
     })
@@ -53,7 +68,6 @@ export class ReviewsController {
         status: 400,
         description: '[Input] invalid!',
     })
-    @UseInterceptors(FilesInterceptor('files', 5))
     createReview() {
     }
 
@@ -70,11 +84,11 @@ export class ReviewsController {
                     rating: 5,
                     comment: 'string',
                     photos: [
-                        {fileName: 'abc', file: null} as FileUploadDto
+                        {file: {}, describe: "describe field is optional"}
                     ],
                     deletedImages: [
-                        'image1',
-                        'image2',
+                        'name-image1',
+                        'name-image2',
                     ]
                 } as UpdateReviewDto,
             }
@@ -86,7 +100,25 @@ export class ReviewsController {
             example: {
                 code: 200,
                 message: 'Success',
-                data: null,
+                data: {
+                    _id: '123456789',
+                    accountID: {},
+                    facilityID: {},
+                    comment: 'Đáng để trải nghiệm',
+                    rating: 5,
+                    photos: [
+                        {
+                            _id: '12345678dsgdgsdxdg4',
+                            buckets: 'bucket1',
+                            name: 'image-name',
+                            linkURL: 'http://localhost:8080/bucket1/image-name',
+                            createdAt: new Date(),
+                            updatedAt: new Date()
+                        }
+                    ] as Photo[],
+                    createdAt: new Date(),
+                    updatedAt: new Date()
+                } as Review,
             },
         },
     })

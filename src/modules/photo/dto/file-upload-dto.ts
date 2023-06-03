@@ -3,10 +3,9 @@ import { IsNotEmpty, IsString, IsOptional } from 'class-validator';
 import { Express } from 'express';
 
 export class FileUploadDto {
-  @IsNotEmpty()
+
   @IsString()
-  @ApiProperty()
-  fileName?: string;
+  describe?: string;
 
   @ApiProperty({ type: 'string', format: 'binary' })
   @IsNotEmpty()

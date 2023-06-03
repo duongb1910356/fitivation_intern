@@ -10,7 +10,7 @@ import { ApiProperty } from '@nestjs/swagger';
 // 	password: string;
 // }
 
-import { IsNotEmpty, IsNumber, Min, Max, IsArray, IsString, ArrayNotEmpty, Validate, IsObject, IsOptional, IsEnum, isEnum } from 'class-validator';
+import { IsNotEmpty, IsNumber, Min, Max, IsArray, IsString, ArrayNotEmpty, Validate, IsObject, IsOptional, IsEnum, isEnum, ArrayMaxSize } from 'class-validator';
 import { isURL } from 'class-validator';
 import { State, Status, ScheduleType  } from '../../../shared/enum/facility.enum';
 import { isObjectIdOrHexString } from 'mongoose';
@@ -22,6 +22,7 @@ export class CreateReviewDto {
     accountID?: string;
 
     @IsNotEmpty()
+    @IsString()
     facilityID: string;
 
     @IsNotEmpty()
@@ -34,6 +35,7 @@ export class CreateReviewDto {
 
     @IsArray()
     @IsOptional()
+    @ArrayMaxSize(5)
     photos: FileUploadDto[]
 
 }

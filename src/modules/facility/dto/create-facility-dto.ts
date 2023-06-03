@@ -35,7 +35,7 @@ export class CreateFacilityDto {
 
     @IsNotEmpty()
     @IsString()
-    address: string;
+    address: number;
 
     @IsString()
     @IsOptional()
@@ -49,14 +49,6 @@ export class CreateFacilityDto {
     @IsNumber({}, { each: true })
     coordinatesLocation?: number[];
 
-    // @IsEnum(State)
-    // @IsOptional()
-    // state: State;
-
-    // @IsOptional()
-    // @IsEnum(Status)
-    // status: Status;
-
     @IsEnum(ScheduleType)
     scheduleType: ScheduleType
 
@@ -64,9 +56,5 @@ export class CreateFacilityDto {
     @IsArray()
     photos: FileUploadDto[]
 
-
-    // @IsArray()
-    // @Validate(isURL, { each: true })
-    // linkURL: string[];
 }
 
