@@ -466,7 +466,7 @@ export class BillsController {
 	@ApiTags('facilities/bills')
 	@ApiOperation({
 		summary: 'getManyBillsOneOwnFacility',
-		description: `Allow facility owners to get many bills for one owned facility`,
+		description: `Allow facility owners to get many bills for one owned facility\n\nAllow admin to get many bills from one facility`,
 	})
 	@ApiParam({ name: 'facilityID', type: String, description: 'Facility ID' })
 	@ApiQuery({
@@ -556,7 +556,8 @@ export class BillsController {
 	@ApiTags('facilities/bills')
 	@ApiOperation({
 		summary: 'getOneBillOneOwnFacility',
-		description: 'Allow facility owners to get one bill for one owned facility',
+		description:
+			'Allow facility owners to get one bill for one owned facility\n\nAllow admin to get one bill from one facility`',
 	})
 	@ApiParam({ name: 'facilityID', type: String, description: 'Facility ID' })
 	@ApiParam({ name: 'billID', type: String, description: 'Bill ID' })
@@ -699,7 +700,7 @@ export class BillsController {
 	@ApiTags('packages/bills')
 	@ApiOperation({
 		summary: 'getManyBillsOneOwnPackage',
-		description: `Allow facility owners to get many bills for one owned package`,
+		description: `Allow facility owners to get many bills for one owned package\n\nAllow admin to get many bills from one package`,
 	})
 	@ApiParam({ name: 'packageID', type: String, description: 'Package ID' })
 	@ApiQuery({
@@ -789,7 +790,8 @@ export class BillsController {
 	@ApiTags('packages/bills')
 	@ApiOperation({
 		summary: 'getOneBillOneOwnPackage',
-		description: 'Allow facility owners to get one bill for one owned package',
+		description:
+			'Allow facility owners to get one bill for one owned package\n\nAllow admin to get one bill from one package',
 	})
 	@ApiParam({ name: 'packageID', type: String, description: 'Package ID' })
 	@ApiParam({ name: 'billID', type: String, description: 'Bill ID' })
@@ -931,7 +933,7 @@ export class BillsController {
 	@ApiTags('brands/bills')
 	@ApiOperation({
 		summary: 'getManyBillsOneOwnBrand',
-		description: `Allow facility owners to get many bills for one owned brand`,
+		description: `Allow facility owners to get many bills for one owned brand\n\nAllow admin to get many bills from one brand`,
 	})
 	@ApiParam({ name: 'brandID', type: String, description: 'Brand ID' })
 	@ApiQuery({
@@ -1021,7 +1023,8 @@ export class BillsController {
 	@ApiTags('brands/bills')
 	@ApiOperation({
 		summary: 'getOneBillOneOwnBrand',
-		description: 'Allow facility owners to get one bill for one owned brand',
+		description:
+			'Allow facility owners to get one bill for one owned brand\n\nAllow admin to get one bill from one brand',
 	})
 	@ApiParam({ name: 'brandID', type: String, description: 'Brand ID' })
 	@ApiParam({ name: 'billID', type: String, description: 'Bill ID' })
