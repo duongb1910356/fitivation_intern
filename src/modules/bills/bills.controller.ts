@@ -145,7 +145,7 @@ export class BillsController {
 		status: 201,
 		schema: {
 			example: {
-				message: 'Created success',
+				message: 'Created successfully',
 				data: {},
 			},
 		},
@@ -166,7 +166,7 @@ export class BillsController {
 		status: 200,
 		schema: {
 			example: {
-				message: 'Updated success',
+				message: 'Updated successfully',
 				data: {},
 			},
 		},
@@ -192,6 +192,16 @@ export class BillsController {
 		description: 'Delete one bill',
 	})
 	@ApiParam({ name: 'id', type: String, description: 'Bill ID' })
+	@ApiResponse({
+		status: 200,
+		schema: {
+			example: {
+				code: 200,
+				message: 'Deleted successfully',
+				details: {},
+			},
+		},
+	})
 	@ApiResponse({
 		status: 404,
 		schema: {
