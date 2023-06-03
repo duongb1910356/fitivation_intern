@@ -566,7 +566,7 @@ export class FacilityScheduleController {
 			} as ErrorResponse<null>,
 		},
 	})
-	updateScheduleByFacility(
+	updateSchedule(
 		@Param('scheduleId') scheduleId: string,
 		@Body() data: UpdateFacilityScheduleDto,
 	) {
