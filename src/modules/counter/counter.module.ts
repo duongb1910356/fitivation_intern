@@ -3,7 +3,7 @@ import { CounterService } from './counter.service';
 import { CounterController } from './counter.controller';
 
 @Module({
-  providers: [CounterService],
-  controllers: [CounterController]
+	providers: [CounterService],
+	controllers: [CounterController],
 })
 export class CounterModule {}
