@@ -21,6 +21,7 @@ import { CreateBillDto } from './dto/create-bill.dto';
 import { UpdateBillDto } from './dto/update-bill.dto';
 import { GetBillDto } from './dto/get-bill.dto';
 import { ESortField, ESortOrder } from 'src/shared/enum/sort.enum';
+import { BillStatus, PaymentMethod } from './schemas/bill.schema';
 
 @Controller('')
 export class BillsController {
@@ -61,7 +62,22 @@ export class BillsController {
 		status: 200,
 		schema: {
 			example: {
-				items: [],
+				items: [
+					{
+						_id: 'id',
+						accountID: 'accountID',
+						billItems: [{}],
+						paymenMethod: PaymentMethod.CREDIT_CARD,
+						taxes: 0.02,
+						description: 'string',
+						promotions: [{}],
+						promotionPrice: 1000,
+						totalPrice: 1000,
+						status: BillStatus.ACTIVE,
+						createdAt: Date.now(),
+						updatedAt: Date.now(),
+					},
+				],
 				total: 0,
 				options: {
 					limit: 1,
@@ -98,7 +114,22 @@ export class BillsController {
 		status: 200,
 		schema: {
 			example: {
-				items: [],
+				items: [
+					{
+						_id: 'id',
+						accountID: 'accountID',
+						billItems: [{}],
+						paymenMethod: PaymentMethod.CREDIT_CARD,
+						taxes: 0.02,
+						description: 'string',
+						promotions: [{}],
+						promotionPrice: 1000,
+						totalPrice: 1000,
+						status: BillStatus.ACTIVE,
+						createdAt: Date.now(),
+						updatedAt: Date.now(),
+					},
+				],
 				total: 0,
 				options: {
 					limit: 1,
@@ -251,7 +282,22 @@ export class BillsController {
 		status: 200,
 		schema: {
 			example: {
-				items: [],
+				items: [
+					{
+						_id: 'id',
+						accountID: 'accountID',
+						billItems: [{}],
+						paymenMethod: PaymentMethod.CREDIT_CARD,
+						taxes: 0.02,
+						description: 'string',
+						promotions: [{}],
+						promotionPrice: 1000,
+						totalPrice: 1000,
+						status: BillStatus.ACTIVE,
+						createdAt: Date.now(),
+						updatedAt: Date.now(),
+					},
+				],
 				total: 0,
 				options: {
 					limit: 1,
@@ -288,7 +334,22 @@ export class BillsController {
 		status: 200,
 		schema: {
 			example: {
-				items: [],
+				items: [
+					{
+						_id: 'id',
+						accountID: 'accountID',
+						billItems: [{}],
+						paymenMethod: PaymentMethod.CREDIT_CARD,
+						taxes: 0.02,
+						description: 'string',
+						promotions: [{}],
+						promotionPrice: 1000,
+						totalPrice: 1000,
+						status: BillStatus.ACTIVE,
+						createdAt: Date.now(),
+						updatedAt: Date.now(),
+					},
+				],
 				total: 0,
 				options: {
 					limit: 1,
@@ -360,7 +421,22 @@ export class BillsController {
 		status: 200,
 		schema: {
 			example: {
-				items: [],
+				items: [
+					{
+						_id: 'id',
+						accountID: 'accountID',
+						billItems: [{}],
+						paymenMethod: PaymentMethod.CREDIT_CARD,
+						taxes: 0.02,
+						description: 'string',
+						promotions: [{}],
+						promotionPrice: 1000,
+						totalPrice: 1000,
+						status: BillStatus.ACTIVE,
+						createdAt: Date.now(),
+						updatedAt: Date.now(),
+					},
+				],
 				total: 0,
 				options: {
 					limit: 1,
@@ -422,7 +498,22 @@ export class BillsController {
 		status: 200,
 		schema: {
 			example: {
-				items: [],
+				items: [
+					{
+						_id: 'id',
+						accountID: 'accountID',
+						billItems: [{}],
+						paymenMethod: PaymentMethod.CREDIT_CARD,
+						taxes: 0.02,
+						description: 'string',
+						promotions: [{}],
+						promotionPrice: 1000,
+						totalPrice: 1000,
+						status: BillStatus.ACTIVE,
+						createdAt: Date.now(),
+						updatedAt: Date.now(),
+					},
+				],
 				total: 0,
 				options: {
 					limit: 1,
@@ -473,7 +564,22 @@ export class BillsController {
 		status: 200,
 		schema: {
 			example: {
-				items: [],
+				items: [
+					{
+						_id: 'id',
+						accountID: 'accountID',
+						billItems: [{}],
+						paymenMethod: PaymentMethod.CREDIT_CARD,
+						taxes: 0.02,
+						description: 'string',
+						promotions: [{}],
+						promotionPrice: 1000,
+						totalPrice: 1000,
+						status: BillStatus.ACTIVE,
+						createdAt: Date.now(),
+						updatedAt: Date.now(),
+					},
+				],
 				total: 0,
 				options: {
 					limit: 1,
@@ -548,7 +654,22 @@ export class BillsController {
 		status: 200,
 		schema: {
 			example: {
-				items: [],
+				items: [
+					{
+						_id: 'id',
+						accountID: 'accountID',
+						billItems: [{}],
+						paymenMethod: PaymentMethod.CREDIT_CARD,
+						taxes: 0.02,
+						description: 'string',
+						promotions: [{}],
+						promotionPrice: 1000,
+						totalPrice: 1000,
+						status: BillStatus.ACTIVE,
+						createdAt: Date.now(),
+						updatedAt: Date.now(),
+					},
+				],
 				total: 0,
 				options: {
 					limit: 1,
@@ -610,7 +731,22 @@ export class BillsController {
 		status: 200,
 		schema: {
 			example: {
-				items: [],
+				items: [
+					{
+						_id: 'id',
+						accountID: 'accountID',
+						billItems: [{}],
+						paymenMethod: PaymentMethod.CREDIT_CARD,
+						taxes: 0.02,
+						description: 'string',
+						promotions: [{}],
+						promotionPrice: 1000,
+						totalPrice: 1000,
+						status: BillStatus.ACTIVE,
+						createdAt: Date.now(),
+						updatedAt: Date.now(),
+					},
+				],
 				total: 0,
 				options: {
 					limit: 1,
@@ -661,7 +797,22 @@ export class BillsController {
 		status: 200,
 		schema: {
 			example: {
-				items: [],
+				items: [
+					{
+						_id: 'id',
+						accountID: 'accountID',
+						billItems: [{}],
+						paymenMethod: PaymentMethod.CREDIT_CARD,
+						taxes: 0.02,
+						description: 'string',
+						promotions: [{}],
+						promotionPrice: 1000,
+						totalPrice: 1000,
+						status: BillStatus.ACTIVE,
+						createdAt: Date.now(),
+						updatedAt: Date.now(),
+					},
+				],
 				total: 0,
 				options: {
 					limit: 1,
@@ -735,7 +886,22 @@ export class BillsController {
 		status: 200,
 		schema: {
 			example: {
-				items: [],
+				items: [
+					{
+						_id: 'id',
+						accountID: 'accountID',
+						billItems: [{}],
+						paymenMethod: PaymentMethod.CREDIT_CARD,
+						taxes: 0.02,
+						description: 'string',
+						promotions: [{}],
+						promotionPrice: 1000,
+						totalPrice: 1000,
+						status: BillStatus.ACTIVE,
+						createdAt: Date.now(),
+						updatedAt: Date.now(),
+					},
+				],
 				total: 0,
 				options: {
 					limit: 1,
@@ -797,7 +963,22 @@ export class BillsController {
 		status: 200,
 		schema: {
 			example: {
-				items: [],
+				items: [
+					{
+						_id: 'id',
+						accountID: 'accountID',
+						billItems: [{}],
+						paymenMethod: PaymentMethod.CREDIT_CARD,
+						taxes: 0.02,
+						description: 'string',
+						promotions: [{}],
+						promotionPrice: 1000,
+						totalPrice: 1000,
+						status: BillStatus.ACTIVE,
+						createdAt: Date.now(),
+						updatedAt: Date.now(),
+					},
+				],
 				total: 0,
 				options: {
 					limit: 1,
@@ -848,7 +1029,22 @@ export class BillsController {
 		status: 200,
 		schema: {
 			example: {
-				items: [],
+				items: [
+					{
+						_id: 'id',
+						accountID: 'accountID',
+						billItems: [{}],
+						paymenMethod: PaymentMethod.CREDIT_CARD,
+						taxes: 0.02,
+						description: 'string',
+						promotions: [{}],
+						promotionPrice: 1000,
+						totalPrice: 1000,
+						status: BillStatus.ACTIVE,
+						createdAt: Date.now(),
+						updatedAt: Date.now(),
+					},
+				],
 				total: 0,
 				options: {
 					limit: 1,
