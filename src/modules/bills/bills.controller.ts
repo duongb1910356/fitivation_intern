@@ -78,7 +78,7 @@ export class BillsController {
 						updatedAt: Date.now(),
 					},
 				],
-				total: 0,
+				total: 1,
 				options: {
 					limit: 1,
 					offset: 0,
@@ -130,7 +130,7 @@ export class BillsController {
 						updatedAt: Date.now(),
 					},
 				],
-				total: 0,
+				total: 1,
 				options: {
 					limit: 1,
 					offset: 0,
@@ -298,7 +298,7 @@ export class BillsController {
 						updatedAt: Date.now(),
 					},
 				],
-				total: 0,
+				total: 1,
 				options: {
 					limit: 1,
 					offset: 0,
@@ -350,7 +350,7 @@ export class BillsController {
 						updatedAt: Date.now(),
 					},
 				],
-				total: 0,
+				total: 1,
 				options: {
 					limit: 1,
 					offset: 0,
@@ -437,7 +437,7 @@ export class BillsController {
 						updatedAt: Date.now(),
 					},
 				],
-				total: 0,
+				total: 1,
 				options: {
 					limit: 1,
 					offset: 0,
@@ -514,7 +514,7 @@ export class BillsController {
 						updatedAt: Date.now(),
 					},
 				],
-				total: 0,
+				total: 1,
 				options: {
 					limit: 1,
 					offset: 0,
@@ -580,7 +580,7 @@ export class BillsController {
 						updatedAt: Date.now(),
 					},
 				],
-				total: 0,
+				total: 1,
 				options: {
 					limit: 1,
 					offset: 0,
@@ -670,7 +670,7 @@ export class BillsController {
 						updatedAt: Date.now(),
 					},
 				],
-				total: 0,
+				total: 1,
 				options: {
 					limit: 1,
 					offset: 0,
@@ -747,7 +747,7 @@ export class BillsController {
 						updatedAt: Date.now(),
 					},
 				],
-				total: 0,
+				total: 1,
 				options: {
 					limit: 1,
 					offset: 0,
@@ -813,7 +813,7 @@ export class BillsController {
 						updatedAt: Date.now(),
 					},
 				],
-				total: 0,
+				total: 1,
 				options: {
 					limit: 1,
 					offset: 0,
@@ -902,7 +902,7 @@ export class BillsController {
 						updatedAt: Date.now(),
 					},
 				],
-				total: 0,
+				total: 1,
 				options: {
 					limit: 1,
 					offset: 0,
@@ -979,7 +979,7 @@ export class BillsController {
 						updatedAt: Date.now(),
 					},
 				],
-				total: 0,
+				total: 1,
 				options: {
 					limit: 1,
 					offset: 0,
@@ -1045,7 +1045,7 @@ export class BillsController {
 						updatedAt: Date.now(),
 					},
 				],
-				total: 0,
+				total: 1,
 				options: {
 					limit: 1,
 					offset: 0,
