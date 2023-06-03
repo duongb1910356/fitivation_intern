@@ -117,7 +117,7 @@ export class FacilityScheduleController {
 		summary: 'Get Schedule by scheduleId',
 		description: `All role can use this API`,
 	})
-	@ApiParam({ name: 'scheduleID', type: String, description: 'Schedule ID' })
+	@ApiParam({ name: 'scheduleId', type: String, description: 'Schedule ID' })
 	@ApiOkResponse({
 		schema: {
 			example: {
@@ -155,8 +155,8 @@ export class FacilityScheduleController {
 			} as ErrorResponse<null>,
 		},
 	})
-	getSchedule(@Param('scheduleID') scheduleID: string) {
-		console.log(scheduleID);
+	getSchedule(@Param('scheduleId') scheduleId: string) {
+		console.log(scheduleId);
 		//
 	}
 
@@ -241,7 +241,7 @@ export class FacilityScheduleController {
 			} as ErrorResponse<null>,
 		},
 	})
-	getAllScheduleByFacility(
+	getAllSchedulesByFacility(
 		@Param('facilityId') facilityId: string,
 		@Query() filter: ListOptions<FacilitySchedule>,
 	) {
@@ -301,7 +301,7 @@ export class FacilityScheduleController {
 	@ApiBearerAuth()
 	@UseGuards(RolesGuard)
 	@Roles(UserRole.ADMIN, UserRole.FACILITY_OWNER)
-	@Post('facilities/:facilityId/schedules/')
+	@Post('facilities/:facilityId/schedules')
 	@ApiOperation({
 		summary: 'Create new Schedule by facilityId',
 		description: `Facility Owner can use this API`,
@@ -630,7 +630,7 @@ export class FacilityScheduleController {
 			} as ErrorResponse<null>,
 		},
 	})
-	deleteScheduleByFacility(@Param('scheduleId') scheduleId: string) {
+	deleteSchedule(@Param('scheduleId') scheduleId: string) {
 		console.log(scheduleId);
 		//
 	}
