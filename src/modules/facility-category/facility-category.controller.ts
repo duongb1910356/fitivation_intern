@@ -23,7 +23,7 @@ import {
 	ApiUnauthorizedResponse,
 } from '@nestjs/swagger';
 import { ApiDocsPagination } from 'src/decorators/swagger-form-data.decorator';
-import { CategoryType, FacilityCategory } from './entities/facility-category';
+import { FacilityCategory } from './entities/facility-category';
 import {
 	ErrorResponse,
 	ListOptions,
@@ -52,8 +52,8 @@ export class FacilityCategoryController {
 				items: [
 					{
 						_id: '6476ef7d1f0419cd330fe128',
-						type: CategoryType.AEROPIC,
-						name: 'AEROPIC',
+						type: 'AEROPIC',
+						name: 'string',
 						createdAt: new Date(),
 						updatedAt: new Date(),
 					} as FacilityCategory,
@@ -83,8 +83,8 @@ export class FacilityCategoryController {
 		schema: {
 			example: {
 				_id: '6476ef7d1f0419cd330fe128',
-				type: CategoryType.GYM,
-				name: 'GYM',
+				type: 'GYM',
+				name: 'string',
 				createdAt: new Date(),
 				updatedAt: new Date(),
 			} as FacilityCategory,
@@ -126,7 +126,7 @@ export class FacilityCategoryController {
 		examples: {
 			test: {
 				value: {
-					type: CategoryType.SPA,
+					type: 'SPA',
 					name: 'SPA',
 				} as CreateCategoryDto,
 			},
@@ -136,8 +136,8 @@ export class FacilityCategoryController {
 		schema: {
 			example: {
 				_id: '6476ef7d1f0419cd330fe128',
-				type: CategoryType.GYM,
-				name: 'GYM',
+				type: 'SPA',
+				name: 'SPA',
 				createdAt: new Date(),
 				updatedAt: new Date(),
 			} as FacilityCategory,
@@ -202,7 +202,7 @@ export class FacilityCategoryController {
 		schema: {
 			example: {
 				_id: '6476ef7d1f0419cd330fe128',
-				type: CategoryType.GYM,
+				type: 'GYM',
 				name: 'GYM',
 				createdAt: new Date(),
 				updatedAt: new Date(),

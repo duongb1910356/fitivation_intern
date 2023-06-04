@@ -1,10 +1,9 @@
-import { IsEnum, IsNotEmpty, IsString } from 'class-validator';
-import { CategoryType } from '../entities/facility-category';
+import { IsNotEmpty, IsString } from 'class-validator';
 
 export class CreateCategoryDto {
 	@IsNotEmpty()
-	@IsEnum(CategoryType)
-	type: CategoryType;
+	@IsString()
+	type: string;
 
 	@IsNotEmpty()
 	@IsString()
