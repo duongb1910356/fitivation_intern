@@ -17,6 +17,21 @@ export class CreateBillItemDto {
 	@ApiProperty()
 	@IsString()
 	@IsNotEmpty()
+	brandID: string;
+
+	@ApiProperty()
+	@IsString()
+	@IsNotEmpty()
+	facilityID: string;
+
+	@ApiProperty()
+	@IsString()
+	@IsNotEmpty()
+	packageTypeID: string;
+
+	@ApiProperty()
+	@IsString()
+	@IsNotEmpty()
 	packageID: string;
 
 	@ApiProperty()
