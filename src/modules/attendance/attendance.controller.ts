@@ -1,4 +1,5 @@
 import {
+	Body,
 	Controller,
 	Delete,
 	Get,
@@ -12,6 +13,7 @@ import {
 import {
 	ApiBadRequestResponse,
 	ApiBearerAuth,
+	ApiBody,
 	ApiCreatedResponse,
 	ApiForbiddenResponse,
 	ApiNotFoundResponse,
@@ -34,6 +36,7 @@ import { Attendance } from './entities/attendance.entity';
 import { Facility } from '../facility/schemas/facility.schema';
 import RequestWithUser from 'src/interfaces/requestWithUser.interface';
 import { Public } from '../auth/utils';
+import { CreateAttendanceDto } from './dto/create-attendance-dto';
 
 @ApiTags('attendances')
 @Controller()
@@ -291,17 +294,22 @@ export class AttendanceController {
 
 	@ApiBearerAuth()
 	@UseGuards(RolesGuard)
-	@Roles(UserRole.ADMIN, UserRole.MEMBER)
-	@Post('facilities/:facilityId/attendances')
+	@Roles(UserRole.ADMIN)
+	@Post('facilities/attendances')
 	@ApiOperation({
 		summary: 'Create new Attendance',
-		description: `Member can use this API, 
-        Create new Attendance by facilityId end userId (get to req)`,
+		description: `Only Admin can use this API`,
 	})
-	@ApiParam({
-		name: 'facilityId',
-		type: String,
-		description: 'Facility ID',
+	@ApiBody({
+		type: CreateAttendanceDto,
+		examples: {
+			test: {
+				value: {
+					accountID: '6476ef7d10fe128f0419cd33',
+					facilityID: '64419cd3376ef7d10fe128f0',
+				} as CreateAttendanceDto,
+			},
+		},
 	})
 	@ApiCreatedResponse({
 		schema: {
@@ -333,22 +341,20 @@ export class AttendanceController {
 			} as ErrorResponse<null>,
 		},
 	})
-	createAttendance(
-		@Request() req: RequestWithUser,
-		@Param('facilityId') FacilitylityId: string,
-	) {
-		const userId = req.user._id;
-		console.log(userId, FacilitylityId);
+	createAttendance(@Body() data: CreateAttendanceDto) {
+		console.log(data);
 		//
 	}
 
 	@ApiBearerAuth()
 	@UseGuards(RolesGuard)
-	@Roles(UserRole.ADMIN, UserRole.MEMBER)
+	@Roles(UserRole.MEMBER)
 	@Patch('attendances/:attendanceId')
 	@ApiOperation({
 		summary: 'Update Attendance by attendanceId',
-		description: `Facility Owner can use this API`,
+		description: `Member can use this API
+		- Without request body, server will add the current date to the date array
+		- Request to pass 'date = new Date()' to the request header`,
 	})
 	@ApiParam({
 		name: 'attendanceId',
@@ -403,13 +409,10 @@ export class AttendanceController {
 			} as ErrorResponse<null>,
 		},
 	})
-	updateAttendance(
-		@Request() req: any,
-		@Param('attendanceId') attendanceId: string,
-	) {
-		const currentDate = req.timestamp;
+	updateAttendance(@Request() req: any) {
 		const userid = req.user._id;
-		console.log(attendanceId, userid, currentDate);
+		const currentDate = req.headers.date;
+		console.log(userid, currentDate);
 		//Logic: thuc chat chi la cong them ngay goi api vao update
 	}
 
