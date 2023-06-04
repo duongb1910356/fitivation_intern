@@ -24,7 +24,7 @@ import { ESortField, ESortOrder } from 'src/shared/enum/sort.enum';
 import { BillStatus, PaymentMethod } from './schemas/bill.schema';
 import { BillItemStatus } from '../bill-items/schemas/bill-item.schema';
 
-@Controller('')
+@Controller()
 export class BillsController {
 	constructor(private readonly billsService: BillsService) {}
 
@@ -119,7 +119,7 @@ export class BillsController {
 		schema: {
 			example: {
 				code: 403,
-				message: `You don't have permisstion to this access`,
+				message: `You don't have permission to this access`,
 				details: {},
 			},
 		},
@@ -195,7 +195,7 @@ export class BillsController {
 		schema: {
 			example: {
 				code: 403,
-				message: `You don't have permisstion to this access`,
+				message: `You don't have permission to this access`,
 				details: {},
 			},
 		},
@@ -234,7 +234,7 @@ export class BillsController {
 		schema: {
 			example: {
 				code: 403,
-				message: `You don't have permisstion to this access`,
+				message: `You don't have permission to this access`,
 				details: {},
 			},
 		},
@@ -264,7 +264,7 @@ export class BillsController {
 		schema: {
 			example: {
 				code: 403,
-				message: `You don't have permisstion to this access`,
+				message: `You don't have permission to this access`,
 				details: {},
 			},
 		},
@@ -304,7 +304,7 @@ export class BillsController {
 		schema: {
 			example: {
 				code: 403,
-				message: `You don't have permisstion to this access`,
+				message: `You don't have permission to this access`,
 				details: {},
 			},
 		},
@@ -414,7 +414,7 @@ export class BillsController {
 		schema: {
 			example: {
 				code: 403,
-				message: `You don't have permisstion to this access`,
+				message: `You don't have permission to this access`,
 				details: {},
 			},
 		},
@@ -490,7 +490,7 @@ export class BillsController {
 		schema: {
 			example: {
 				code: 403,
-				message: `You don't have permisstion to this access`,
+				message: `You don't have permission to this access`,
 				details: {},
 			},
 		},

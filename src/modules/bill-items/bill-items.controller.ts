@@ -23,7 +23,7 @@ import { GetBillItemDto } from './dto/get-bill-item.dto';
 import { ESortField, ESortOrder } from 'src/shared/enum/sort.enum';
 import { BillItemStatus } from './schemas/bill-item.schema';
 
-@Controller('')
+@Controller()
 export class BillItemsController {
 	constructor(private readonly billItemsService: BillItemsService) {}
 
@@ -103,7 +103,7 @@ export class BillItemsController {
 		schema: {
 			example: {
 				code: 403,
-				message: `You don't have permisstion to this access`,
+				message: `You don't have permission to this access`,
 				details: {},
 			},
 		},
@@ -173,7 +173,7 @@ export class BillItemsController {
 		schema: {
 			example: {
 				code: 403,
-				message: `You don't have permisstion to this access`,
+				message: `You don't have permission to this access`,
 				details: {},
 			},
 		},
@@ -200,7 +200,7 @@ export class BillItemsController {
 		schema: {
 			example: {
 				code: 403,
-				message: `You don't have permisstion to this access`,
+				message: `You don't have permission to this access`,
 				details: {},
 			},
 		},
@@ -239,7 +239,7 @@ export class BillItemsController {
 		schema: {
 			example: {
 				code: 403,
-				message: `You don't have permisstion to this access`,
+				message: `You don't have permission to this access`,
 				details: {},
 			},
 		},
@@ -281,7 +281,7 @@ export class BillItemsController {
 		schema: {
 			example: {
 				code: 403,
-				message: `You don't have permisstion to this access`,
+				message: `You don't have permission to this access`,
 				details: {},
 			},
 		},
@@ -342,7 +342,7 @@ export class BillItemsController {
 		schema: {
 			example: {
 				code: 403,
-				message: `You don't have permisstion to this access`,
+				message: `You don't have permission to this access`,
 				details: {},
 			},
 		},
@@ -381,7 +381,7 @@ export class BillItemsController {
 		schema: {
 			example: {
 				code: 403,
-				message: `You don't have permisstion to this access`,
+				message: `You don't have permission to this access`,
 				details: {},
 			},
 		},
@@ -470,7 +470,7 @@ export class BillItemsController {
 		schema: {
 			example: {
 				code: 403,
-				message: `You don't have permisstion to this access`,
+				message: `You don't have permission to this access`,
 				details: {},
 			},
 		},
@@ -566,7 +566,7 @@ export class BillItemsController {
 		schema: {
 			example: {
 				code: 403,
-				message: `You don't have permisstion to this access`,
+				message: `You don't have permission to this access`,
 				details: {},
 			},
 		},
@@ -641,7 +641,7 @@ export class BillItemsController {
 		schema: {
 			example: {
 				code: 403,
-				message: `You don't have permisstion to this access`,
+				message: `You don't have permission to this access`,
 				details: {},
 			},
 		},
@@ -729,7 +729,7 @@ export class BillItemsController {
 		schema: {
 			example: {
 				code: 403,
-				message: `You don't have permisstion to this access`,
+				message: `You don't have permission to this access`,
 				details: {},
 			},
 		},
@@ -825,7 +825,7 @@ export class BillItemsController {
 		schema: {
 			example: {
 				code: 403,
-				message: `You don't have permisstion to this access`,
+				message: `You don't have permission to this access`,
 				details: {},
 			},
 		},
@@ -900,7 +900,7 @@ export class BillItemsController {
 		schema: {
 			example: {
 				code: 403,
-				message: `You don't have permisstion to this access`,
+				message: `You don't have permission to this access`,
 				details: {},
 			},
 		},
@@ -988,7 +988,7 @@ export class BillItemsController {
 		schema: {
 			example: {
 				code: 403,
-				message: `You don't have permisstion to this access`,
+				message: `You don't have permission to this access`,
 				details: {},
 			},
 		},
@@ -1084,7 +1084,7 @@ export class BillItemsController {
 		schema: {
 			example: {
 				code: 403,
-				message: `You don't have permisstion to this access`,
+				message: `You don't have permission to this access`,
 				details: {},
 			},
 		},
@@ -1159,7 +1159,7 @@ export class BillItemsController {
 		schema: {
 			example: {
 				code: 403,
-				message: `You don't have permisstion to this access`,
+				message: `You don't have permission to this access`,
 				details: {},
 			},
 		},
