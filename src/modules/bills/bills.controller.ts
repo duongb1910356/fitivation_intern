@@ -70,6 +70,9 @@ export class BillsController {
 						billItems: [
 							{
 								_id: '_id',
+								brandID: 'string',
+								facilityID: 'string',
+								packageTypeID: 'string',
 								packageID: 'string',
 								packageName: 'string',
 								packageType: 'string',
@@ -143,6 +146,9 @@ export class BillsController {
 						billItems: [
 							{
 								_id: '_id',
+								brandID: 'string',
+								facilityID: 'string',
+								packageTypeID: 'string',
 								packageID: 'string',
 								packageName: 'string',
 								packageType: 'string',
@@ -359,6 +365,9 @@ export class BillsController {
 						billItems: [
 							{
 								_id: '_id',
+								brandID: 'string',
+								facilityID: 'string',
+								packageTypeID: 'string',
 								packageID: 'string',
 								packageName: 'string',
 								packageType: 'string',
@@ -432,6 +441,9 @@ export class BillsController {
 						billItems: [
 							{
 								_id: '_id',
+								brandID: 'string',
+								facilityID: 'string',
+								packageTypeID: 'string',
 								packageID: 'string',
 								packageName: 'string',
 								packageType: 'string',

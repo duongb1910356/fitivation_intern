@@ -65,6 +65,9 @@ export class BillItemsController {
 				items: [
 					{
 						_id: '_id',
+						brandID: 'string',
+						facilityID: 'string',
+						packageTypeID: 'string',
 						packageID: 'string',
 						packageName: 'string',
 						packageType: 'string',
@@ -122,6 +125,9 @@ export class BillItemsController {
 				items: [
 					{
 						_id: '_id',
+						brandID: 'string',
+						facilityID: 'string',
+						packageTypeID: 'string',
 						packageID: 'string',
 						packageName: 'string',
 						packageType: 'string',
@@ -298,6 +304,9 @@ export class BillItemsController {
 				items: [
 					{
 						_id: '_id',
+						brandID: 'string',
+						facilityID: 'string',
+						packageTypeID: 'string',
 						packageID: 'string',
 						packageName: 'string',
 						packageType: 'string',
@@ -423,6 +432,9 @@ export class BillItemsController {
 				items: [
 					{
 						_id: '_id',
+						brandID: 'string',
+						facilityID: 'string',
+						packageTypeID: 'string',
 						packageID: 'string',
 						packageName: 'string',
 						packageType: 'string',
@@ -506,6 +518,9 @@ export class BillItemsController {
 				items: [
 					{
 						_id: '_id',
+						brandID: 'string',
+						facilityID: 'string',
+						packageTypeID: 'string',
 						packageID: 'string',
 						packageName: 'string',
 						packageType: 'string',
@@ -578,6 +593,9 @@ export class BillItemsController {
 				items: [
 					{
 						_id: '_id',
+						brandID: 'string',
+						facilityID: 'string',
+						packageTypeID: 'string',
 						packageID: 'string',
 						packageName: 'string',
 						packageType: 'string',
@@ -673,6 +691,9 @@ export class BillItemsController {
 				items: [
 					{
 						_id: '_id',
+						brandID: 'string',
+						facilityID: 'string',
+						packageTypeID: 'string',
 						packageID: 'string',
 						packageName: 'string',
 						packageType: 'string',
@@ -756,6 +777,9 @@ export class BillItemsController {
 				items: [
 					{
 						_id: '_id',
+						brandID: 'string',
+						facilityID: 'string',
+						packageTypeID: 'string',
 						packageID: 'string',
 						packageName: 'string',
 						packageType: 'string',
@@ -828,6 +852,9 @@ export class BillItemsController {
 				items: [
 					{
 						_id: '_id',
+						brandID: 'string',
+						facilityID: 'string',
+						packageTypeID: 'string',
 						packageID: 'string',
 						packageName: 'string',
 						packageType: 'string',
@@ -923,6 +950,9 @@ export class BillItemsController {
 				items: [
 					{
 						_id: '_id',
+						brandID: 'string',
+						facilityID: 'string',
+						packageTypeID: 'string',
 						packageID: 'string',
 						packageName: 'string',
 						packageType: 'string',
@@ -1006,6 +1036,9 @@ export class BillItemsController {
 				items: [
 					{
 						_id: '_id',
+						brandID: 'string',
+						facilityID: 'string',
+						packageTypeID: 'string',
 						packageID: 'string',
 						packageName: 'string',
 						packageType: 'string',
@@ -1078,6 +1111,9 @@ export class BillItemsController {
 				items: [
 					{
 						_id: '_id',
+						brandID: 'string',
+						facilityID: 'string',
+						packageTypeID: 'string',
 						packageID: 'string',
 						packageName: 'string',
 						packageType: 'string',
