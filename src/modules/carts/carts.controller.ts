@@ -27,7 +27,7 @@ import { PurchaseCartDto } from './dto/purchase-cart.dto';
 export class CartsController {
 	constructor(private readonly cartsService: CartsService) {}
 	@Get('carts')
-	@ApiTags('/carts')
+	@ApiTags('carts')
 	@ApiOperation({
 		summary: 'getManyCarts',
 		description: 'Get many carts',
@@ -99,7 +99,7 @@ export class CartsController {
 	}
 
 	@Get('carts/:id')
-	@ApiTags('/carts')
+	@ApiTags('carts')
 	@ApiOperation({
 		summary: 'getOneCart',
 		description: 'Get one cart',
@@ -157,7 +157,7 @@ export class CartsController {
 	}
 
 	@Post('carts/:id')
-	@ApiTags('/carts')
+	@ApiTags('carts')
 	@ApiOperation({
 		summary: 'createCart',
 		description: 'Create one cart',
@@ -189,7 +189,7 @@ export class CartsController {
 	}
 
 	@Patch('carts/:id')
-	@ApiTags('/carts')
+	@ApiTags('carts')
 	@ApiOperation({
 		summary: 'updateCart',
 		description: 'Update one cart',
@@ -221,7 +221,7 @@ export class CartsController {
 	}
 
 	@Delete('carts/:id')
-	@ApiTags('/carts')
+	@ApiTags('carts')
 	@ApiOperation({
 		summary: 'deleteCart',
 		description: 'Delete one cart',
@@ -252,7 +252,7 @@ export class CartsController {
 	}
 
 	@Get('carts/me')
-	@ApiTags('/carts')
+	@ApiTags('carts')
 	@ApiOperation({
 		summary: 'getCartByCustomer',
 		description: 'Allow customers to get their cart',
@@ -299,7 +299,7 @@ export class CartsController {
 	}
 
 	@Post('carts/purchase')
-	@ApiTags('/carts')
+	@ApiTags('carts')
 	@ApiOperation({
 		summary: 'purchaseInCart',
 		description: 'Allow customers to purchase packages in their cart',

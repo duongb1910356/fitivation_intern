@@ -29,7 +29,7 @@ export class BillsController {
 	constructor(private readonly billsService: BillsService) {}
 
 	@Get('bills')
-	@ApiTags('/bills')
+	@ApiTags('bills')
 	@ApiOperation({
 		summary: 'getManyBills',
 		description: 'Get many bills',
@@ -129,7 +129,7 @@ export class BillsController {
 	}
 
 	@Get('bills/:id')
-	@ApiTags('/bills')
+	@ApiTags('bills')
 	@ApiOperation({
 		summary: 'getOneBill',
 		description: 'Get one bill',
@@ -215,7 +215,7 @@ export class BillsController {
 	}
 
 	@Post('bills')
-	@ApiTags('/bills')
+	@ApiTags('bills')
 	@ApiOperation({
 		summary: 'createBill',
 		description: 'Create one bill',
@@ -244,7 +244,7 @@ export class BillsController {
 	}
 
 	@Patch('bills/:id')
-	@ApiTags('/bills')
+	@ApiTags('bills')
 	@ApiOperation({
 		summary: 'updateBill',
 		description: 'Update one bill',
@@ -284,7 +284,7 @@ export class BillsController {
 	}
 
 	@Delete('bills/:id')
-	@ApiTags('/bills')
+	@ApiTags('bills')
 	@ApiOperation({
 		summary: 'deleteBill',
 		description: 'Delete one bill',
@@ -324,7 +324,7 @@ export class BillsController {
 	}
 
 	@Get('bills/me')
-	@ApiTags('/bills')
+	@ApiTags('bills')
 	@ApiOperation({
 		summary: 'getManyBillsByCustomer',
 		description: `Allow users to get many of their bills`,
@@ -424,7 +424,7 @@ export class BillsController {
 	}
 
 	@Get('bills/:id/me')
-	@ApiTags('/bills')
+	@ApiTags('bills')
 	@ApiOperation({
 		summary: 'getOneBillByCustomer',
 		description: `Allow users to get one of their bills`,

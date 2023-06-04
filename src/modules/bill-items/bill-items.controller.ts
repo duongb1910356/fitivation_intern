@@ -28,7 +28,7 @@ export class BillItemsController {
 	constructor(private readonly billItemsService: BillItemsService) {}
 
 	@Get('bill-items')
-	@ApiTags('/bill-items')
+	@ApiTags('bill-items')
 	@ApiOperation({
 		summary: 'getManyBillItems',
 		description: 'Get many bill-items',
@@ -112,7 +112,7 @@ export class BillItemsController {
 		return 'getManyBillItems';
 	}
 	@Get('bill-items/:id')
-	@ApiTags('/bill-items')
+	@ApiTags('bill-items')
 	@ApiOperation({
 		summary: 'getOneBillItem',
 		description: 'Get one bill-item',
@@ -182,7 +182,7 @@ export class BillItemsController {
 		return 'getOneBillItems';
 	}
 	@Post('bill-items')
-	@ApiTags('/bill-items')
+	@ApiTags('bill-items')
 	@ApiOperation({
 		summary: 'createBillItem',
 		description: 'Create one bill-item',
@@ -209,7 +209,7 @@ export class BillItemsController {
 		return 'createBillItem';
 	}
 	@Patch('bill-items/:id')
-	@ApiTags('/bill-items')
+	@ApiTags('bill-items')
 	@ApiOperation({
 		summary: 'updateBillItem',
 		description: 'Update one bill-item',
@@ -251,7 +251,7 @@ export class BillItemsController {
 		return 'updateBillItem';
 	}
 	@Delete('bill-items/:id')
-	@ApiTags('/bill-items')
+	@ApiTags('bill-items')
 	@ApiOperation({
 		summary: 'deleteBillItem',
 		description: 'Delete one bill-item',
@@ -291,7 +291,7 @@ export class BillItemsController {
 	}
 
 	@Get('bills/:billID/bill-items')
-	@ApiTags('/bills/bill-items')
+	@ApiTags('bills/bill-items')
 	@ApiOperation({
 		summary: 'getBillItemsForBill',
 		description: 'Get all bill-items for specific bill',
@@ -352,7 +352,7 @@ export class BillItemsController {
 	}
 
 	@Post('bills/:billID/bill-items')
-	@ApiTags('/bills/bill-items')
+	@ApiTags('bills/bill-items')
 	@ApiOperation({
 		summary: 'createBillItemForBill',
 		description: 'Create one bill-item for specific bIll',
@@ -394,7 +394,7 @@ export class BillItemsController {
 	}
 
 	@Get('facilities/bill-items')
-	@ApiTags('/facilities/bill-items')
+	@ApiTags('facilities/bill-items')
 	@ApiOperation({
 		summary: 'getManyBillItemsAllOwnFacility',
 		description:
@@ -480,7 +480,7 @@ export class BillItemsController {
 	}
 	@Get('facilities/:facilityID/bill-items')
 	@ApiParam({ name: 'facilityID', type: String, description: 'facility ID' })
-	@ApiTags('/facilities/bill-items')
+	@ApiTags('facilities/bill-items')
 	@ApiOperation({
 		summary: 'getManyBillItemsOneOwnFacility',
 		description:
@@ -578,7 +578,7 @@ export class BillItemsController {
 		return 'getManyBillItemsOneOwnFacility';
 	}
 	@Get('facilities/:facilityID/bill-items/:billItemID')
-	@ApiTags('/facilities/bill-items')
+	@ApiTags('facilities/bill-items')
 	@ApiOperation({
 		summary: 'getOneBillItemOneOwnFacility',
 		description:
@@ -653,7 +653,7 @@ export class BillItemsController {
 		return 'getOneBillItemOneOwnFacility';
 	}
 	@Get('package/bill-items')
-	@ApiTags('/packages/bill-items')
+	@ApiTags('packages/bill-items')
 	@ApiOperation({
 		summary: 'getManyBillItemsAllOwnPackage',
 		description:
@@ -738,7 +738,7 @@ export class BillItemsController {
 		return 'getManyBillItemsAllOwnPackage';
 	}
 	@Get('package/:packageID/bill-items')
-	@ApiTags('/packages/bill-items')
+	@ApiTags('packages/bill-items')
 	@ApiOperation({
 		summary: 'getManyBillItemsOneOwnPackage',
 		description:
@@ -837,7 +837,7 @@ export class BillItemsController {
 		return 'getManyBillItemsOneOwnPackage';
 	}
 	@Get('package/:packageID/bill-items/:billItemID')
-	@ApiTags('/packages/bill-items')
+	@ApiTags('packages/bill-items')
 	@ApiOperation({
 		summary: 'getOneBillItemOneOwnPackage',
 		description:
@@ -912,7 +912,7 @@ export class BillItemsController {
 		return 'getOneBillItemOneOwnPackage';
 	}
 	@Get('brands/bill-items')
-	@ApiTags('/brands/bill-items')
+	@ApiTags('brands/bill-items')
 	@ApiOperation({
 		summary: 'getManyBillItemsAllOwnBrand',
 		description:
@@ -997,7 +997,7 @@ export class BillItemsController {
 		return 'getManyBillItemsAllOwnBrand';
 	}
 	@Get('brands/:brandID/bill-items')
-	@ApiTags('/brands/bill-items')
+	@ApiTags('brands/bill-items')
 	@ApiOperation({
 		summary: 'getManyBillItemsOneOwnBrand',
 		description:
@@ -1096,7 +1096,7 @@ export class BillItemsController {
 		return 'getManyBillItemsOneOwnBrand';
 	}
 	@Get('brands/:brandID/bill-items/:billItemID')
-	@ApiTags('/brands/bill-items')
+	@ApiTags('brands/bill-items')
 	@ApiOperation({
 		summary: 'getOneBillItemOneOwnBrand',
 		description:
