@@ -7,6 +7,7 @@ import {
 	Patch,
 	Post,
 	Query,
+	UseGuards,
 } from '@nestjs/common';
 import {
 	ApiTags,
@@ -19,6 +20,7 @@ import {
 	ApiCreatedResponse,
 	ApiUnauthorizedResponse,
 	ApiForbiddenResponse,
+	ApiBearerAuth,
 } from '@nestjs/swagger';
 import { ApiDocsPagination } from 'src/decorators/swagger-form-data.decorator';
 import {
@@ -29,8 +31,14 @@ import {
 import { CountObject, Counter, TargetObject } from './entities/counter.entity';
 import { CreateCounterDto } from './dto/create-counter-dto';
 import { UpdateCounterDto } from './dto/update-counter-dto';
+import { RolesGuard } from 'src/decorators/role-decorator/role.guard';
+import { Roles } from 'src/decorators/role-decorator/role.decorator';
+import { UserRole } from '../users/schemas/user.schema';
 
 @ApiTags('counters')
+@ApiBearerAuth()
+@UseGuards(RolesGuard)
+@Roles(UserRole.ADMIN)
 @Controller('counters')
 export class CounterController {
 	@Get()

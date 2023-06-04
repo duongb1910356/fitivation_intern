@@ -42,7 +42,7 @@ export class HolidayController {
 	@ApiBearerAuth()
 	@UseGuards(RolesGuard)
 	@Roles(UserRole.ADMIN)
-	@Get('/holidays')
+	@Get('holidays')
 	@ApiOperation({
 		summary: 'Get All Holidays',
 		description: `Only admin can use this API`,

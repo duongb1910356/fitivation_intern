@@ -285,7 +285,6 @@ export class PackageController {
 
 	@ApiBearerAuth()
 	@UseGuards(RolesGuard)
-	@UseGuards(RolesGuard)
 	@Roles(UserRole.ADMIN, UserRole.FACILITY_OWNER)
 	@Patch('packages/:packageID')
 	@ApiOperation({
@@ -370,7 +369,6 @@ export class PackageController {
 	}
 
 	@ApiBearerAuth()
-	@UseGuards(RolesGuard)
 	@UseGuards(RolesGuard)
 	@Roles(UserRole.ADMIN, UserRole.FACILITY_OWNER)
 	@Delete('package/:packageID')

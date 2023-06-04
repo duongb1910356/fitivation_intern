@@ -7,9 +7,11 @@ import {
 	Patch,
 	Post,
 	Query,
+	UseGuards,
 } from '@nestjs/common';
 import {
 	ApiBadRequestResponse,
+	ApiBearerAuth,
 	ApiBody,
 	ApiCreatedResponse,
 	ApiForbiddenResponse,
@@ -29,10 +31,15 @@ import {
 } from 'src/shared/response/common-response';
 import { CreateCategoryDto } from './dto/create-category-dto';
 import { UpdateCategoryDto } from './dto/update-category-dto';
+import { Public } from '../auth/utils';
+import { RolesGuard } from 'src/decorators/role-decorator/role.guard';
+import { Roles } from 'src/decorators/role-decorator/role.decorator';
+import { UserRole } from '../users/schemas/user.schema';
 
 @ApiTags('categories')
 @Controller('categories')
 export class FacilityCategoryController {
+	@Public()
 	@Get()
 	@ApiOperation({
 		summary: 'Get All categories',
@@ -65,6 +72,7 @@ export class FacilityCategoryController {
 		//
 	}
 
+	@Public()
 	@Get(':id')
 	@ApiOperation({
 		summary: 'Get Category',
@@ -105,6 +113,9 @@ export class FacilityCategoryController {
 		//
 	}
 
+	@ApiBearerAuth()
+	@UseGuards(RolesGuard)
+	@Roles(UserRole.ADMIN)
 	@Post()
 	@ApiOperation({
 		summary: 'Create category',
@@ -164,6 +175,9 @@ export class FacilityCategoryController {
 		//
 	}
 
+	@ApiBearerAuth()
+	@UseGuards(RolesGuard)
+	@Roles(UserRole.ADMIN)
 	@Patch(':id')
 	@ApiOperation({
 		summary: 'Update category',
@@ -217,7 +231,7 @@ export class FacilityCategoryController {
 		schema: {
 			example: {
 				code: '404',
-				message: 'Not found Schedule to update!',
+				message: 'Not found category to update!',
 				details: null,
 			} as ErrorResponse<null>,
 		},
@@ -236,6 +250,9 @@ export class FacilityCategoryController {
 		//
 	}
 
+	@ApiBearerAuth()
+	@UseGuards(RolesGuard)
+	@Roles(UserRole.ADMIN)
 	@Delete(':id')
 	@ApiOperation({
 		summary: 'Delete category',

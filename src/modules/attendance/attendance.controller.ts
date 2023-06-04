@@ -33,6 +33,7 @@ import { User, UserRole } from '../users/schemas/user.schema';
 import { Attendance } from './entities/attendance.entity';
 import { Facility } from '../facility/schemas/facility.schema';
 import RequestWithUser from 'src/interfaces/requestWithUser.interface';
+import { Public } from '../auth/utils';
 
 @ApiTags('attendances')
 @Controller()
@@ -40,7 +41,7 @@ export class AttendanceController {
 	@ApiBearerAuth()
 	@UseGuards(RolesGuard)
 	@Roles(UserRole.ADMIN)
-	@Get('/attendances')
+	@Get('attendances')
 	@ApiOperation({
 		summary: 'Get All Attendances',
 		description: `Only admin can use this API`,
@@ -94,6 +95,7 @@ export class AttendanceController {
 		//
 	}
 
+	@Public()
 	@Get('attendances/:attendanceId')
 	@ApiOperation({
 		summary: 'Get Attendance by attendanceId',
@@ -145,7 +147,7 @@ export class AttendanceController {
 	@Get('facilities/:facilityId/attendances')
 	@ApiOperation({
 		summary: 'Get All Attendance by facilityId',
-		description: `Only Owner can use this API`,
+		description: `Owner can use this API`,
 	})
 	@ApiParam({
 		name: 'facilityId',
@@ -224,7 +226,7 @@ export class AttendanceController {
 
 	@ApiBearerAuth()
 	@UseGuards(RolesGuard)
-	@Roles(UserRole.ADMIN, UserRole.FACILITY_OWNER)
+	@Roles(UserRole.ADMIN, UserRole.MEMBER)
 	@Get('/api/attendances/me')
 	@ApiOperation({
 		summary: 'Get All Attendance by User',
