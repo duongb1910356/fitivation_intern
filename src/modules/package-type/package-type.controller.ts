@@ -49,7 +49,7 @@ export class PackageTypeController {
 		summary: 'Get All Package Type',
 		description: `Only admin can use this API`,
 	})
-	@ApiDocsPagination('PackageTypes')
+	@ApiDocsPagination('PackageType')
 	@ApiOkResponse({
 		schema: {
 			example: {
@@ -154,7 +154,7 @@ export class PackageTypeController {
 		summary: 'Get all Package Type by facilityId',
 		description: `All role can use this API`,
 	})
-	@ApiDocsPagination('PackageTypes')
+	@ApiDocsPagination('PackageType')
 	@ApiParam({ name: 'facilityId', type: String, description: 'Facility ID' })
 	@ApiOkResponse({
 		schema: {

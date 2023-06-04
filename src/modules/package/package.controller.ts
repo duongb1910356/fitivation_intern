@@ -49,7 +49,7 @@ export class PackageController {
 		summary: 'Get All Packages',
 		description: `Only admin can use this API`,
 	})
-	@ApiDocsPagination('Packages')
+	@ApiDocsPagination('Package')
 	@ApiOkResponse({
 		schema: {
 			example: {
@@ -148,7 +148,7 @@ export class PackageController {
 		summary: 'Get all Package by packageTypeId',
 		description: `All role can use this API`,
 	})
-	@ApiDocsPagination('PackageTypes')
+	@ApiDocsPagination('Package')
 	@ApiParam({
 		name: 'packageTypeId',
 		type: String,

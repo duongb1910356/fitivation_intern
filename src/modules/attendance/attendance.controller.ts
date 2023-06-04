@@ -46,7 +46,7 @@ export class AttendanceController {
 		summary: 'Get All Attendances',
 		description: `Only admin can use this API`,
 	})
-	@ApiDocsPagination('Attendances')
+	@ApiDocsPagination('Attendance')
 	@ApiOkResponse({
 		schema: {
 			example: {
@@ -154,7 +154,7 @@ export class AttendanceController {
 		type: String,
 		description: 'Facility ID',
 	})
-	@ApiDocsPagination('Attendances')
+	@ApiDocsPagination('Attendance')
 	@ApiOkResponse({
 		schema: {
 			example: {
@@ -232,7 +232,7 @@ export class AttendanceController {
 		summary: 'Get All Attendance by User',
 		description: `Member can use this API`,
 	})
-	@ApiDocsPagination('Attendances')
+	@ApiDocsPagination('Attendance')
 	@ApiOkResponse({
 		schema: {
 			example: {

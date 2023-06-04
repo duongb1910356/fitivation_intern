@@ -47,7 +47,7 @@ export class HolidayController {
 		summary: 'Get All Holidays',
 		description: `Only admin can use this API`,
 	})
-	@ApiDocsPagination('Holidays')
+	@ApiDocsPagination('Holiday')
 	@ApiOkResponse({
 		schema: {
 			example: {

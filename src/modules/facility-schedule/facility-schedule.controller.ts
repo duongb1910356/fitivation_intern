@@ -55,7 +55,7 @@ export class FacilityScheduleController {
 		summary: 'Get All Schedules',
 		description: `Only admin can use this API`,
 	})
-	@ApiDocsPagination('Schedules')
+	@ApiDocsPagination('Schedule')
 	@ApiOkResponse({
 		schema: {
 			example: {

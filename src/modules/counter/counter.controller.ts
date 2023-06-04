@@ -46,7 +46,7 @@ export class CounterController {
 		summary: 'Get All counters',
 		description: `Only Admin can use this API`,
 	})
-	@ApiDocsPagination('counters')
+	@ApiDocsPagination('counter')
 	@ApiOkResponse({
 		schema: {
 			example: {

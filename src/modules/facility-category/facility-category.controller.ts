@@ -45,7 +45,7 @@ export class FacilityCategoryController {
 		summary: 'Get All categories',
 		description: `All roles can use this API`,
 	})
-	@ApiDocsPagination('categories')
+	@ApiDocsPagination('categorie')
 	@ApiOkResponse({
 		schema: {
 			example: {
