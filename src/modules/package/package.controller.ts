@@ -33,9 +33,9 @@ import { RolesGuard } from 'src/decorators/role-decorator/role.guard';
 @Controller('packages')
 export class PackageController {
 	@Public()
-	@Get(':packageId')
+	@Get(':packageID')
 	@ApiOperation({
-		summary: 'Get Package by packageId',
+		summary: 'Get Package by packageID',
 		description: `All role can use this API`,
 	})
 	@ApiParam({ name: 'packageID', type: String, description: 'Package ID' })
@@ -78,13 +78,13 @@ export class PackageController {
 	@ApiBearerAuth()
 	@UseGuards(RolesGuard)
 	@Roles(UserRole.FACILITY_OWNER)
-	@Patch(':packageId')
+	@Patch(':packageID')
 	@ApiOperation({
-		summary: 'Update Package by packageId',
+		summary: 'Update Package by packageID',
 		description: `Facility Owner can use this API`,
 	})
 	@ApiParam({
-		name: 'packageId',
+		name: 'packageID',
 		type: String,
 		description: 'Package ID',
 	})
@@ -153,23 +153,23 @@ export class PackageController {
 		},
 	})
 	updatePackageType(
-		@Param('packageId') packageId: string,
+		@Param('packageID') packageID: string,
 		@Body() data: UpdatePackageDto,
 	) {
-		console.log(packageId, data);
+		console.log(packageID, data);
 		//
 	}
 
 	@ApiBearerAuth()
 	@UseGuards(RolesGuard)
 	@Roles(UserRole.FACILITY_OWNER)
-	@Delete(':packageId')
+	@Delete(':packageID')
 	@ApiOperation({
-		summary: 'Delete Package by packageId',
+		summary: 'Delete Package by packageID',
 		description: `Facility Owner can use this API`,
 	})
 	@ApiParam({
-		name: 'packageId',
+		name: 'packageID',
 		type: String,
 		description: 'Package ID',
 	})
@@ -207,8 +207,8 @@ export class PackageController {
 			} as ErrorResponse<null>,
 		},
 	})
-	deletePackage(@Param('packageId') packageId: string) {
-		console.log(packageId);
+	deletePackage(@Param('packageID') packageID: string) {
+		console.log(packageID);
 		//
 	}
 }

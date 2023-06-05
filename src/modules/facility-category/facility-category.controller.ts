@@ -52,12 +52,12 @@ export class FacilityCategoryController {
 		//
 	}
 
-	@Get(':categoryId')
+	@Get(':categoryID')
 	@ApiOperation({
 		summary: 'Get Category',
 		description: `All roles can use this API`,
 	})
-	@ApiParam({ name: 'categoryId', type: String, description: 'Category ID' })
+	@ApiParam({ name: 'categoryID', type: String, description: 'Category ID' })
 	@ApiOkResponse({
 		schema: {
 			example: {
@@ -87,8 +87,8 @@ export class FacilityCategoryController {
 			} as ErrorResponse<null>,
 		},
 	})
-	getCategory(@Param('categoryId') categoryId: string) {
-		console.log(categoryId);
+	getCategory(@Param('categoryID') categoryID: string) {
+		console.log(categoryID);
 		//
 	}
 }

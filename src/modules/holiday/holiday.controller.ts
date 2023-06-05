@@ -32,12 +32,12 @@ import { HolidayDto } from './dto/holiday-dto';
 @Controller('holidays')
 export class HolidayController {
 	@Public()
-	@Get(':holidayId')
+	@Get(':holidayID')
 	@ApiOperation({
-		summary: 'Get holiday by holidayId',
+		summary: 'Get holiday by holidayID',
 		description: `All role can use this API`,
 	})
-	@ApiParam({ name: 'holidayId', type: String, description: 'Holiday ID' })
+	@ApiParam({ name: 'holidayID', type: String, description: 'Holiday ID' })
 	@ApiOkResponse({
 		schema: {
 			example: {
@@ -69,21 +69,21 @@ export class HolidayController {
 			} as ErrorResponse<null>,
 		},
 	})
-	getHoliday(@Param('holidayId') holidayId: string) {
-		console.log(holidayId);
+	getHoliday(@Param('holidayID') holidayID: string) {
+		console.log(holidayID);
 		//
 	}
 
 	@ApiBearerAuth()
 	@UseGuards(RolesGuard)
 	@Roles(UserRole.FACILITY_OWNER)
-	@Patch(':holidayId')
+	@Patch(':holidayID')
 	@ApiOperation({
-		summary: 'Update Holiday by holidayId',
+		summary: 'Update Holiday by holidayID',
 		description: `Facility Owner can use this API`,
 	})
 	@ApiParam({
-		name: 'holidayId',
+		name: 'holidayID',
 		type: String,
 		description: 'Holiday ID',
 	})
@@ -149,23 +149,23 @@ export class HolidayController {
 		},
 	})
 	updateHoliday(
-		@Param('holidayId') holidayId: string,
+		@Param('holidayID') holidayID: string,
 		@Body() data: HolidayDto,
 	) {
-		console.log(holidayId, data);
+		console.log(holidayID, data);
 		//
 	}
 
 	@ApiBearerAuth()
 	@UseGuards(RolesGuard)
 	@Roles(UserRole.FACILITY_OWNER)
-	@Delete(':holidayId')
+	@Delete(':holidayID')
 	@ApiOperation({
-		summary: 'Delete Holiday by holidayId',
+		summary: 'Delete Holiday by holidayID',
 		description: `Facility Owner can use this API`,
 	})
 	@ApiParam({
-		name: 'holidayId',
+		name: 'holidayID',
 		type: String,
 		description: 'Holiday ID',
 	})
@@ -212,8 +212,8 @@ export class HolidayController {
 			} as ErrorResponse<null>,
 		},
 	})
-	deleteHoliday(@Param('holidayId') holidayId: string) {
-		console.log(holidayId);
+	deleteHoliday(@Param('holidayID') holidayID: string) {
+		console.log(holidayID);
 		//
 	}
 }

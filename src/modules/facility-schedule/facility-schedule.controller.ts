@@ -39,12 +39,12 @@ import { Facility } from '../facility/schemas/facility.schema';
 @Controller('schedules')
 export class FacilityScheduleController {
 	@Public()
-	@Get(':scheduleId')
+	@Get(':scheduleID')
 	@ApiOperation({
-		summary: 'Get Schedule by scheduleId',
+		summary: 'Get Schedule by scheduleID',
 		description: `All role can use this API`,
 	})
-	@ApiParam({ name: 'scheduleId', type: String, description: 'Schedule ID' })
+	@ApiParam({ name: 'scheduleID', type: String, description: 'Schedule ID' })
 	@ApiOkResponse({
 		schema: {
 			example: {
@@ -82,21 +82,21 @@ export class FacilityScheduleController {
 			} as ErrorResponse<null>,
 		},
 	})
-	getSchedule(@Param('scheduleId') scheduleId: string) {
-		console.log(scheduleId);
+	getSchedule(@Param('scheduleID') scheduleID: string) {
+		console.log(scheduleID);
 		//
 	}
 
 	@ApiBearerAuth()
 	@UseGuards(RolesGuard)
 	@Roles(UserRole.FACILITY_OWNER)
-	@Patch(':scheduleId')
+	@Patch(':scheduleID')
 	@ApiOperation({
-		summary: 'Update Schedule by scheduleId',
+		summary: 'Update Schedule by scheduleID',
 		description: `Facility Owner can use this API`,
 	})
 	@ApiParam({
-		name: 'scheduleId',
+		name: 'scheduleID',
 		type: String,
 		description: 'Schedule ID',
 	})
@@ -229,23 +229,23 @@ export class FacilityScheduleController {
 		},
 	})
 	updateSchedule(
-		@Param('scheduleId') scheduleId: string,
+		@Param('scheduleID') scheduleID: string,
 		@Body() data: UpdateFacilityScheduleDto,
 	) {
-		console.log(scheduleId, data);
+		console.log(scheduleID, data);
 		//
 	}
 
 	@ApiBearerAuth()
 	@UseGuards(RolesGuard)
 	@Roles(UserRole.FACILITY_OWNER)
-	@Delete(':scheduleId')
+	@Delete(':scheduleID')
 	@ApiOperation({
-		summary: 'Delete Schedule Type by scheduleId',
+		summary: 'Delete Schedule Type by scheduleID',
 		description: `Facility Owner can use this API`,
 	})
 	@ApiParam({
-		name: 'scheduleId',
+		name: 'scheduleID',
 		type: String,
 		description: 'Schedule ID',
 	})
@@ -292,8 +292,8 @@ export class FacilityScheduleController {
 			} as ErrorResponse<null>,
 		},
 	})
-	deleteSchedule(@Param('scheduleId') scheduleId: string) {
-		console.log(scheduleId);
+	deleteSchedule(@Param('scheduleID') scheduleID: string) {
+		console.log(scheduleID);
 		//
 	}
 }

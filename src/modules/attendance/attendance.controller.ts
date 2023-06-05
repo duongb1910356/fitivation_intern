@@ -28,13 +28,13 @@ import { Public } from '../auth/utils';
 @Controller('attendances')
 export class AttendanceController {
 	@Public()
-	@Get(':attendanceId')
+	@Get(':attendanceID')
 	@ApiOperation({
-		summary: 'Get Attendance by attendanceId',
+		summary: 'Get Attendance by attendanceID',
 		description: `All role can use this API`,
 	})
 	@ApiParam({
-		name: 'attendanceId',
+		name: 'attendanceID',
 		type: String,
 		description: 'Attendance ID',
 	})
@@ -68,8 +68,8 @@ export class AttendanceController {
 			} as ErrorResponse<null>,
 		},
 	})
-	getAttendance(@Param('attendanceId') attendanceId: string) {
-		console.log(attendanceId);
+	getAttendance(@Param('attendanceID') attendanceID: string) {
+		console.log(attendanceID);
 		//
 	}
 

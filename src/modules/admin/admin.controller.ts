@@ -53,13 +53,13 @@ import { TimeType, Package } from '../package/entities/package.entity';
 @Controller('admin')
 export class AdminController {
 	// ATTENDANCES
-	@Get('facillities/:facilityId/attendances')
+	@Get('facillities/:facilityID/attendances')
 	@ApiOperation({
-		summary: 'Get All Attendances by facilityId',
+		summary: 'Get All Attendances by facilityID',
 		description: `Only admin can use this API`,
 	})
 	@ApiParam({
-		name: 'facilityId',
+		name: 'facilityID',
 		type: String,
 		description: 'Facility ID',
 	})
@@ -109,19 +109,19 @@ export class AdminController {
 	})
 	getAllAttendancesByFacility(
 		@Query() filter: ListOptions<Attendance>,
-		@Param('facilityId') facilityId: string,
+		@Param('facilityID') facilityID: string,
 	) {
-		console.log(filter, facilityId);
+		console.log(filter, facilityID);
 		//
 	}
 
-	@Get('users/:userId/attendances')
+	@Get('users/:userID/attendances')
 	@ApiOperation({
-		summary: 'Get All Attendances by userId',
+		summary: 'Get All Attendances by userID',
 		description: `Only admin can use this API`,
 	})
 	@ApiParam({
-		name: 'userId',
+		name: 'userID',
 		type: String,
 		description: 'User ID',
 	})
@@ -171,19 +171,19 @@ export class AdminController {
 	})
 	getAllAttendancesByUser(
 		@Query() filter: ListOptions<Attendance>,
-		@Param('userId') userId: string,
+		@Param('userID') userID: string,
 	) {
-		console.log(filter, userId);
+		console.log(filter, userID);
 		//
 	}
 
-	@Delete('attendances/:attendanceId')
+	@Delete('attendances/:attendanceID')
 	@ApiOperation({
-		summary: 'Delete Attendance by attendanceId',
+		summary: 'Delete Attendance by attendanceID',
 		description: `Only Admin can use this API`,
 	})
 	@ApiParam({
-		name: 'attendanceId',
+		name: 'attendanceID',
 		type: String,
 		description: 'Attendance ID',
 	})
@@ -230,8 +230,8 @@ export class AdminController {
 			} as ErrorResponse<null>,
 		},
 	})
-	deteleAttendance(@Param('attendanceId') attendanceId: string) {
-		console.log(attendanceId);
+	deteleAttendance(@Param('attendanceID') attendanceID: string) {
+		console.log(attendanceID);
 		//
 	}
 
@@ -295,13 +295,13 @@ export class AdminController {
 		//
 	}
 
-	@Patch('categories/:categoryId')
+	@Patch('categories/:categoryID')
 	@ApiOperation({
 		summary: 'Update category',
 		description: `Only admin can use this API`,
 	})
 	@ApiParam({
-		name: 'categoryId',
+		name: 'categoryID',
 		type: String,
 		description: 'Category ID',
 	})
@@ -363,20 +363,20 @@ export class AdminController {
 		},
 	})
 	updateCategory(
-		@Param('categoryId') categoryId: string,
+		@Param('categoryID') categoryID: string,
 		@Body() data: UpdateCategoryDto,
 	) {
-		console.log(categoryId, data);
+		console.log(categoryID, data);
 		//
 	}
 
-	@Delete('categories/:categoryId')
+	@Delete('categories/:categoryID')
 	@ApiOperation({
 		summary: 'Delete category',
 		description: `Only admin can use this API`,
 	})
 	@ApiParam({
-		name: 'categoryId',
+		name: 'categoryID',
 		type: String,
 		description: 'Category ID',
 	})
@@ -423,8 +423,8 @@ export class AdminController {
 			} as ErrorResponse<null>,
 		},
 	})
-	deleteCategory(@Param('categoryId') categoryId: string) {
-		console.log(categoryId);
+	deleteCategory(@Param('categoryID') categoryID: string) {
+		console.log(categoryID);
 		//
 	}
 
