@@ -19,9 +19,11 @@ import {
 	ApiResponse,
 	ApiTags,
 } from '@nestjs/swagger';
-import { GetCartDto } from './dto/get-cart.dto';
 import { ESortField, ESortOrder } from 'src/shared/enum/sort.enum';
 import { PurchaseCartDto } from './dto/purchase-cart.dto';
+import { ListOptions } from 'src/shared/response/common-response.type';
+import { Cart } from './schemas/cart.schema';
+import { ListResponse } from 'src/shared/response/common-response.type';
 
 @Controller()
 export class CartsController {
@@ -64,15 +66,15 @@ export class CartsController {
 				items: [
 					{
 						_id: '_id',
-						accountID: 'string',
-						cartItemIDs: [{}],
-						promotionIDs: [],
+						accountID: {},
+						cartItemIDs: [],
+						promotionIDs: {},
 						promotionPrice: 0,
-						totalPrice: '0',
-						createdAt: Date.now(),
-						updatedAt: Date.now(),
+						totalPrice: 0,
+						createdAt: new Date(),
+						updatedAt: new Date(),
 					},
-				],
+				] as Cart[],
 				total: 1,
 				options: {
 					limit: 1,
@@ -80,8 +82,8 @@ export class CartsController {
 					search: 'string',
 					sortBy: ESortField.CREATED_AT,
 					sortOrder: ESortOrder.ASC,
-				},
-			},
+				} as ListOptions<Cart>,
+			} as ListResponse<Cart>,
 		},
 	})
 	@ApiResponse({
@@ -94,7 +96,7 @@ export class CartsController {
 			},
 		},
 	})
-	getManyCarts(@Query() getCartDto: GetCartDto) {
+	getManyCarts(@Query() filter: ListOptions<Cart>) {
 		return 'getManyCarts';
 	}
 
@@ -112,15 +114,15 @@ export class CartsController {
 				items: [
 					{
 						_id: '_id',
-						accountID: 'string',
-						cartItemIDs: [{}],
-						promotionIDs: [],
+						accountID: {},
+						cartItemIDs: [],
+						promotionIDs: {},
 						promotionPrice: 0,
-						totalPrice: '0',
-						createdAt: Date.now(),
-						updatedAt: Date.now(),
+						totalPrice: 0,
+						createdAt: new Date(),
+						updatedAt: new Date(),
 					},
-				],
+				] as Cart[],
 				total: 1,
 				options: {
 					limit: 1,
@@ -128,8 +130,8 @@ export class CartsController {
 					search: 'string',
 					sortBy: ESortField.CREATED_AT,
 					sortOrder: ESortOrder.ASC,
-				},
-			},
+				} as ListOptions<Cart>,
+			} as ListResponse<Cart>,
 		},
 	})
 	@ApiResponse({
@@ -264,15 +266,15 @@ export class CartsController {
 				items: [
 					{
 						_id: '_id',
-						accountID: 'string',
-						cartItemIDs: [{}],
-						promotionIDs: [],
+						accountID: {},
+						cartItemIDs: [],
+						promotionIDs: {},
 						promotionPrice: 0,
-						totalPrice: '0',
-						createdAt: Date.now(),
-						updatedAt: Date.now(),
+						totalPrice: 0,
+						createdAt: new Date(),
+						updatedAt: new Date(),
 					},
-				],
+				] as Cart[],
 				total: 1,
 				options: {
 					limit: 1,
@@ -280,8 +282,8 @@ export class CartsController {
 					search: 'string',
 					sortBy: ESortField.CREATED_AT,
 					sortOrder: ESortOrder.ASC,
-				},
-			},
+				} as ListOptions<Cart>,
+			} as ListResponse<Cart>,
 		},
 	})
 	@ApiResponse({
