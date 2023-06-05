@@ -7,21 +7,22 @@ import {
 	Param,
 	Delete,
 	Query,
+	UseGuards,
 } from '@nestjs/common';
 import { CartsService } from './carts.service';
 import { CreateCartDto } from './dto/create-cart.dto';
 import { UpdateCartDto } from './dto/update-cart.dto';
 import {
+	ApiBearerAuth,
 	ApiBody,
 	ApiOperation,
 	ApiParam,
-	ApiQuery,
 	ApiResponse,
 	ApiTags,
 } from '@nestjs/swagger';
 import { ESortField, ESortOrder } from 'src/shared/enum/sort.enum';
 import { PurchaseCartDto } from './dto/purchase-cart.dto';
-import { ListOptions } from 'src/shared/response/common-response.type';
+import { ListOptions } from 'src/shared/response/common-response';
 import { Cart } from './schemas/cart.schema';
 import { ListResponse } from 'src/shared/response/common-response';
 import { ApiDocsPagination } from 'src/decorators/swagger-form-data.decorator';
@@ -30,10 +31,13 @@ import { UserRole } from '../users/schemas/user.schema';
 import { RolesGuard } from 'src/decorators/role-decorator/role.guard';
 
 @Controller()
+@ApiBearerAuth()
 export class CartsController {
 	constructor(private readonly cartsService: CartsService) {}
 	@Get('carts')
 	@ApiTags('carts')
+	@UseGuards(RolesGuard)
+	@Roles(UserRole.ADMIN)
 	@ApiOperation({
 		summary: 'getManyCarts',
 		description: 'Get many carts',
@@ -82,6 +86,8 @@ export class CartsController {
 
 	@Get('carts/:id')
 	@ApiTags('carts')
+	@UseGuards(RolesGuard)
+	@Roles(UserRole.ADMIN)
 	@ApiOperation({
 		summary: 'getOneCart',
 		description: 'Get one cart',
@@ -140,6 +146,8 @@ export class CartsController {
 
 	@Post('carts/:id')
 	@ApiTags('carts')
+	@UseGuards(RolesGuard)
+	@Roles(UserRole.ADMIN)
 	@ApiOperation({
 		summary: 'createCart',
 		description: 'Create one cart',
@@ -172,6 +180,8 @@ export class CartsController {
 
 	@Patch('carts/:id')
 	@ApiTags('carts')
+	@UseGuards(RolesGuard)
+	@Roles(UserRole.ADMIN)
 	@ApiOperation({
 		summary: 'updateCart',
 		description: 'Update one cart',
@@ -204,6 +214,8 @@ export class CartsController {
 
 	@Delete('carts/:id')
 	@ApiTags('carts')
+	@UseGuards(RolesGuard)
+	@Roles(UserRole.ADMIN)
 	@ApiOperation({
 		summary: 'deleteCart',
 		description: 'Delete one cart',
@@ -235,6 +247,8 @@ export class CartsController {
 
 	@Post('carts/purchase')
 	@ApiTags('carts')
+	@UseGuards(RolesGuard)
+	@Roles(UserRole.ADMIN, UserRole.MEMBER)
 	@ApiOperation({
 		summary: 'purchaseInCart',
 		description: 'Allow customers to purchase packages in their cart',
@@ -246,7 +260,7 @@ export class CartsController {
 			example: {
 				code: 403,
 				message: `You don't have permisstion to this access`,
-				details: {},
+				details: null,
 			},
 		},
 	})
