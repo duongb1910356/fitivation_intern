@@ -23,7 +23,11 @@ import { ESortField, ESortOrder } from 'src/shared/enum/sort.enum';
 import { PurchaseCartDto } from './dto/purchase-cart.dto';
 import { ListOptions } from 'src/shared/response/common-response.type';
 import { Cart } from './schemas/cart.schema';
-import { ListResponse } from 'src/shared/response/common-response.type';
+import { ListResponse } from 'src/shared/response/common-response';
+import { ApiDocsPagination } from 'src/decorators/swagger-form-data.decorator';
+import { Roles } from 'src/decorators/role-decorator/role.decorator';
+import { UserRole } from '../users/schemas/user.schema';
+import { RolesGuard } from 'src/decorators/role-decorator/role.guard';
 
 @Controller()
 export class CartsController {
@@ -34,31 +38,7 @@ export class CartsController {
 		summary: 'getManyCarts',
 		description: 'Get many carts',
 	})
-	@ApiQuery({
-		name: 'limit',
-		required: false,
-		type: Number,
-	})
-	@ApiQuery({
-		name: 'offset',
-		required: false,
-		type: Number,
-	})
-	@ApiQuery({
-		name: 'search',
-		required: false,
-		type: String,
-	})
-	@ApiQuery({
-		name: 'sortBy',
-		required: false,
-		type: ESortField.CREATED_AT,
-	})
-	@ApiQuery({
-		name: 'sortOrder',
-		required: false,
-		type: ESortOrder.ASC,
-	})
+	@ApiDocsPagination('cart')
 	@ApiResponse({
 		status: 200,
 		schema: {
