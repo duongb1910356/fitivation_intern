@@ -23,6 +23,7 @@ import { GetBillItemDto } from './dto/get-bill-item.dto';
 import { ESortField, ESortOrder } from 'src/shared/enum/sort.enum';
 import { BillItem, BillItemStatus } from './schemas/bill-item.schema';
 import { ListOptions, ListResponse } from 'src/shared/response/common-response';
+import { ApiDocsPagination } from 'src/decorators/swagger-form-data.decorator';
 
 @Controller()
 export class BillItemsController {
@@ -34,31 +35,7 @@ export class BillItemsController {
 		summary: 'getManyBillItems',
 		description: 'Get many bill-items',
 	})
-	@ApiQuery({
-		name: 'limit',
-		required: false,
-		type: Number,
-	})
-	@ApiQuery({
-		name: 'offset',
-		required: false,
-		type: Number,
-	})
-	@ApiQuery({
-		name: 'search',
-		required: false,
-		type: String,
-	})
-	@ApiQuery({
-		name: 'sortBy',
-		required: false,
-		type: ESortField.CREATED_AT,
-	})
-	@ApiQuery({
-		name: 'sortOrder',
-		required: false,
-		type: ESortOrder.ASC,
-	})
+	@ApiDocsPagination('bill-item')
 	@ApiResponse({
 		status: 200,
 		schema: {
@@ -401,31 +378,7 @@ export class BillItemsController {
 		description:
 			'Allow facility owners to get many bill-items for all owned facilities',
 	})
-	@ApiQuery({
-		name: 'limit',
-		required: false,
-		type: Number,
-	})
-	@ApiQuery({
-		name: 'offset',
-		required: false,
-		type: Number,
-	})
-	@ApiQuery({
-		name: 'search',
-		required: false,
-		type: String,
-	})
-	@ApiQuery({
-		name: 'sortBy',
-		required: false,
-		type: ESortField.CREATED_AT,
-	})
-	@ApiQuery({
-		name: 'sortOrder',
-		required: false,
-		type: ESortOrder.ASC,
-	})
+	@ApiDocsPagination('bill-item')
 	@ApiResponse({
 		status: 200,
 		schema: {
@@ -488,31 +441,7 @@ export class BillItemsController {
 		description:
 			'Allow facility owners to get many bill-items for one owned facility\n\nAllow admin to get many bill-items for one facility',
 	})
-	@ApiQuery({
-		name: 'limit',
-		required: false,
-		type: Number,
-	})
-	@ApiQuery({
-		name: 'offset',
-		required: false,
-		type: Number,
-	})
-	@ApiQuery({
-		name: 'search',
-		required: false,
-		type: String,
-	})
-	@ApiQuery({
-		name: 'sortBy',
-		required: false,
-		type: ESortField.CREATED_AT,
-	})
-	@ApiQuery({
-		name: 'sortOrder',
-		required: false,
-		type: ESortOrder.ASC,
-	})
+	@ApiDocsPagination('bill-item')
 	@ApiResponse({
 		status: 200,
 		schema: {
@@ -663,31 +592,7 @@ export class BillItemsController {
 		description:
 			'Allow facility owners to get many bill-items for all owned package',
 	})
-	@ApiQuery({
-		name: 'limit',
-		required: false,
-		type: Number,
-	})
-	@ApiQuery({
-		name: 'offset',
-		required: false,
-		type: Number,
-	})
-	@ApiQuery({
-		name: 'search',
-		required: false,
-		type: String,
-	})
-	@ApiQuery({
-		name: 'sortBy',
-		required: false,
-		type: ESortField.CREATED_AT,
-	})
-	@ApiQuery({
-		name: 'sortOrder',
-		required: false,
-		type: ESortOrder.ASC,
-	})
+	@ApiDocsPagination('bill-item')
 	@ApiResponse({
 		status: 200,
 		schema: {
@@ -750,31 +655,7 @@ export class BillItemsController {
 			'Allow facility owners to get many bill-items for one owned package\n\nAllow admin to get many bill-items for one package',
 	})
 	@ApiParam({ name: 'packageID', type: String, description: 'Package ID' })
-	@ApiQuery({
-		name: 'limit',
-		required: false,
-		type: Number,
-	})
-	@ApiQuery({
-		name: 'offset',
-		required: false,
-		type: Number,
-	})
-	@ApiQuery({
-		name: 'search',
-		required: false,
-		type: String,
-	})
-	@ApiQuery({
-		name: 'sortBy',
-		required: false,
-		type: ESortField.CREATED_AT,
-	})
-	@ApiQuery({
-		name: 'sortOrder',
-		required: false,
-		type: ESortOrder.ASC,
-	})
+	@ApiDocsPagination('bill-item')
 	@ApiResponse({
 		status: 200,
 		schema: {
@@ -925,31 +806,7 @@ export class BillItemsController {
 		description:
 			'Allow facility owners to get many bill-items for all owned brand',
 	})
-	@ApiQuery({
-		name: 'limit',
-		required: false,
-		type: Number,
-	})
-	@ApiQuery({
-		name: 'offset',
-		required: false,
-		type: Number,
-	})
-	@ApiQuery({
-		name: 'search',
-		required: false,
-		type: String,
-	})
-	@ApiQuery({
-		name: 'sortBy',
-		required: false,
-		type: ESortField.CREATED_AT,
-	})
-	@ApiQuery({
-		name: 'sortOrder',
-		required: false,
-		type: ESortOrder.ASC,
-	})
+	@ApiDocsPagination('bill-item')
 	@ApiResponse({
 		status: 200,
 		schema: {
@@ -1012,31 +869,7 @@ export class BillItemsController {
 			'Allow facility owners to get many billItems for one owned brand\n\nAllow admin to get many bill-items for one brand',
 	})
 	@ApiParam({ name: 'brandID', type: String, description: 'Brand ID' })
-	@ApiQuery({
-		name: 'limit',
-		required: false,
-		type: Number,
-	})
-	@ApiQuery({
-		name: 'offset',
-		required: false,
-		type: Number,
-	})
-	@ApiQuery({
-		name: 'search',
-		required: false,
-		type: String,
-	})
-	@ApiQuery({
-		name: 'sortBy',
-		required: false,
-		type: ESortField.CREATED_AT,
-	})
-	@ApiQuery({
-		name: 'sortOrder',
-		required: false,
-		type: ESortOrder.ASC,
-	})
+	@ApiDocsPagination('bill-item')
 	@ApiResponse({
 		status: 200,
 		schema: {
