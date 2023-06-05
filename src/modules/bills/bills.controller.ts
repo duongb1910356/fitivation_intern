@@ -311,3 +311,4 @@ export class BillsController {
 	deleteBill(@Param('id') id: string) {
 		return 'deleteBill';
 	}
+}
