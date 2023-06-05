@@ -21,7 +21,8 @@ import {
 } from '@nestjs/swagger';
 import { GetBillItemDto } from './dto/get-bill-item.dto';
 import { ESortField, ESortOrder } from 'src/shared/enum/sort.enum';
-import { BillItemStatus } from './schemas/bill-item.schema';
+import { BillItem, BillItemStatus } from './schemas/bill-item.schema';
+import { ListOptions, ListResponse } from 'src/shared/response/common-response';
 
 @Controller()
 export class BillItemsController {
@@ -65,10 +66,10 @@ export class BillItemsController {
 				items: [
 					{
 						_id: '_id',
-						brandID: 'string',
-						facilityID: 'string',
-						packageTypeID: 'string',
-						packageID: 'string',
+						brandID: {},
+						facilityID: {},
+						packageTypeID: {},
+						packageID: {},
 						packageName: 'string',
 						packageType: 'string',
 						packageDescription: 'string',
@@ -78,24 +79,25 @@ export class BillItemsController {
 						facilityAddress: {},
 						facilityCoordinatesLocation: [1, 1],
 						facilityPhoto: 'string',
-						promotions: [{}],
+						promotions: [],
 						packagePrice: 1,
 						promotionPrice: 1,
 						totalPrice: 1,
 						status: BillItemStatus.ACTIVE,
-						createdAt: Date.now(),
-						updatedAt: Date.now(),
+						createdAt: new Date(),
+						updatedAt: new Date(),
 					},
-				],
+				] as BillItem[],
 				total: 1,
 				options: {
 					limit: 1,
 					offset: 0,
-					search: 'string',
-					sortBy: ESortField.CREATED_AT,
+					searchField: {},
+					searchValue: '',
+					sortField: ESortField.CREATED_AT,
 					sortOrder: ESortOrder.ASC,
-				},
-			},
+				} as ListOptions<BillItem>,
+			} as ListResponse<BillItem>,
 		},
 	})
 	@ApiResponse({
@@ -108,7 +110,7 @@ export class BillItemsController {
 			},
 		},
 	})
-	getManyBillItems(@Query() getBillItemDto: GetBillItemDto) {
+	getManyBillItems(@Query() filter: ListOptions<BillItem>) {
 		return 'getManyBillItems';
 	}
 	@Get('bill-items/:id')
@@ -125,10 +127,10 @@ export class BillItemsController {
 				items: [
 					{
 						_id: '_id',
-						brandID: 'string',
-						facilityID: 'string',
-						packageTypeID: 'string',
-						packageID: 'string',
+						brandID: {},
+						facilityID: {},
+						packageTypeID: {},
+						packageID: {},
 						packageName: 'string',
 						packageType: 'string',
 						packageDescription: 'string',
@@ -138,24 +140,25 @@ export class BillItemsController {
 						facilityAddress: {},
 						facilityCoordinatesLocation: [1, 1],
 						facilityPhoto: 'string',
-						promotions: [{}],
+						promotions: [],
 						packagePrice: 1,
 						promotionPrice: 1,
 						totalPrice: 1,
 						status: BillItemStatus.ACTIVE,
-						createdAt: Date.now(),
-						updatedAt: Date.now(),
+						createdAt: new Date(),
+						updatedAt: new Date(),
 					},
-				],
+				] as BillItem[],
 				total: 1,
 				options: {
 					limit: 1,
 					offset: 0,
-					search: 'string',
-					sortBy: ESortField.CREATED_AT,
+					searchField: {},
+					searchValue: '',
+					sortField: ESortField.CREATED_AT,
 					sortOrder: ESortOrder.ASC,
-				},
-			},
+				} as ListOptions<BillItem>,
+			} as ListResponse<BillItem>,
 		},
 	})
 	@ApiResponse({
@@ -304,10 +307,10 @@ export class BillItemsController {
 				items: [
 					{
 						_id: '_id',
-						brandID: 'string',
-						facilityID: 'string',
-						packageTypeID: 'string',
-						packageID: 'string',
+						brandID: {},
+						facilityID: {},
+						packageTypeID: {},
+						packageID: {},
 						packageName: 'string',
 						packageType: 'string',
 						packageDescription: 'string',
@@ -317,24 +320,25 @@ export class BillItemsController {
 						facilityAddress: {},
 						facilityCoordinatesLocation: [1, 1],
 						facilityPhoto: 'string',
-						promotions: [{}],
+						promotions: [],
 						packagePrice: 1,
 						promotionPrice: 1,
 						totalPrice: 1,
 						status: BillItemStatus.ACTIVE,
-						createdAt: Date.now(),
-						updatedAt: Date.now(),
+						createdAt: new Date(),
+						updatedAt: new Date(),
 					},
-				],
+				] as BillItem[],
 				total: 1,
 				options: {
 					limit: 1,
 					offset: 0,
-					search: 'string',
-					sortBy: ESortField.CREATED_AT,
+					searchField: {},
+					searchValue: '',
+					sortField: ESortField.CREATED_AT,
 					sortOrder: ESortOrder.ASC,
-				},
-			},
+				} as ListOptions<BillItem>,
+			} as ListResponse<BillItem>,
 		},
 	})
 	@ApiResponse({
@@ -386,10 +390,7 @@ export class BillItemsController {
 			},
 		},
 	})
-	createBillItemForBill(
-		@Param('billID') billID: string,
-		@Query() getBillItemDto: GetBillItemDto,
-	) {
+	createBillItemForBill(@Param('billID') billID: string) {
 		return 'createBillItemForBill';
 	}
 
@@ -432,10 +433,10 @@ export class BillItemsController {
 				items: [
 					{
 						_id: '_id',
-						brandID: 'string',
-						facilityID: 'string',
-						packageTypeID: 'string',
-						packageID: 'string',
+						brandID: {},
+						facilityID: {},
+						packageTypeID: {},
+						packageID: {},
 						packageName: 'string',
 						packageType: 'string',
 						packageDescription: 'string',
@@ -445,24 +446,25 @@ export class BillItemsController {
 						facilityAddress: {},
 						facilityCoordinatesLocation: [1, 1],
 						facilityPhoto: 'string',
-						promotions: [{}],
+						promotions: [],
 						packagePrice: 1,
 						promotionPrice: 1,
 						totalPrice: 1,
 						status: BillItemStatus.ACTIVE,
-						createdAt: Date.now(),
-						updatedAt: Date.now(),
+						createdAt: new Date(),
+						updatedAt: new Date(),
 					},
-				],
+				] as BillItem[],
 				total: 1,
 				options: {
 					limit: 1,
 					offset: 0,
-					search: 'string',
-					sortBy: ESortField.CREATED_AT,
+					searchField: {},
+					searchValue: '',
+					sortField: ESortField.CREATED_AT,
 					sortOrder: ESortOrder.ASC,
-				},
-			},
+				} as ListOptions<BillItem>,
+			} as ListResponse<BillItem>,
 		},
 	})
 	@ApiResponse({
@@ -475,7 +477,7 @@ export class BillItemsController {
 			},
 		},
 	})
-	getManyBillItemsAllOwnFacility(@Query() getBillItemDto: GetBillItemDto) {
+	getManyBillItemsAllOwnFacility(@Query() filter: ListOptions<BillItem>) {
 		return 'getManyBillItemsAllOwnFacility';
 	}
 	@Get('facilities/:facilityID/bill-items')
@@ -518,10 +520,10 @@ export class BillItemsController {
 				items: [
 					{
 						_id: '_id',
-						brandID: 'string',
-						facilityID: 'string',
-						packageTypeID: 'string',
-						packageID: 'string',
+						brandID: {},
+						facilityID: {},
+						packageTypeID: {},
+						packageID: {},
 						packageName: 'string',
 						packageType: 'string',
 						packageDescription: 'string',
@@ -531,24 +533,25 @@ export class BillItemsController {
 						facilityAddress: {},
 						facilityCoordinatesLocation: [1, 1],
 						facilityPhoto: 'string',
-						promotions: [{}],
+						promotions: [],
 						packagePrice: 1,
 						promotionPrice: 1,
 						totalPrice: 1,
 						status: BillItemStatus.ACTIVE,
-						createdAt: Date.now(),
-						updatedAt: Date.now(),
+						createdAt: new Date(),
+						updatedAt: new Date(),
 					},
-				],
+				] as BillItem[],
 				total: 1,
 				options: {
 					limit: 1,
 					offset: 0,
-					search: 'string',
-					sortBy: ESortField.CREATED_AT,
+					searchField: {},
+					searchValue: '',
+					sortField: ESortField.CREATED_AT,
 					sortOrder: ESortOrder.ASC,
-				},
-			},
+				} as ListOptions<BillItem>,
+			} as ListResponse<BillItem>,
 		},
 	})
 	@ApiResponse({
@@ -573,7 +576,7 @@ export class BillItemsController {
 	})
 	getManyBillItemsOneOwnFacility(
 		@Param('facilityID') facilityID: string,
-		@Query() getBillItemDto: GetBillItemDto,
+		@Query() filter: ListOptions<BillItem>,
 	) {
 		return 'getManyBillItemsOneOwnFacility';
 	}
@@ -593,10 +596,10 @@ export class BillItemsController {
 				items: [
 					{
 						_id: '_id',
-						brandID: 'string',
-						facilityID: 'string',
-						packageTypeID: 'string',
-						packageID: 'string',
+						brandID: {},
+						facilityID: {},
+						packageTypeID: {},
+						packageID: {},
 						packageName: 'string',
 						packageType: 'string',
 						packageDescription: 'string',
@@ -606,24 +609,25 @@ export class BillItemsController {
 						facilityAddress: {},
 						facilityCoordinatesLocation: [1, 1],
 						facilityPhoto: 'string',
-						promotions: [{}],
+						promotions: [],
 						packagePrice: 1,
 						promotionPrice: 1,
 						totalPrice: 1,
 						status: BillItemStatus.ACTIVE,
-						createdAt: Date.now(),
-						updatedAt: Date.now(),
+						createdAt: new Date(),
+						updatedAt: new Date(),
 					},
-				],
+				] as BillItem[],
 				total: 1,
 				options: {
 					limit: 1,
 					offset: 0,
-					search: 'string',
-					sortBy: ESortField.CREATED_AT,
+					searchField: {},
+					searchValue: '',
+					sortField: ESortField.CREATED_AT,
 					sortOrder: ESortOrder.ASC,
-				},
-			},
+				} as ListOptions<BillItem>,
+			} as ListResponse<BillItem>,
 		},
 	})
 	@ApiResponse({
@@ -691,10 +695,10 @@ export class BillItemsController {
 				items: [
 					{
 						_id: '_id',
-						brandID: 'string',
-						facilityID: 'string',
-						packageTypeID: 'string',
-						packageID: 'string',
+						brandID: {},
+						facilityID: {},
+						packageTypeID: {},
+						packageID: {},
 						packageName: 'string',
 						packageType: 'string',
 						packageDescription: 'string',
@@ -704,24 +708,25 @@ export class BillItemsController {
 						facilityAddress: {},
 						facilityCoordinatesLocation: [1, 1],
 						facilityPhoto: 'string',
-						promotions: [{}],
+						promotions: [],
 						packagePrice: 1,
 						promotionPrice: 1,
 						totalPrice: 1,
 						status: BillItemStatus.ACTIVE,
-						createdAt: Date.now(),
-						updatedAt: Date.now(),
+						createdAt: new Date(),
+						updatedAt: new Date(),
 					},
-				],
+				] as BillItem[],
 				total: 1,
 				options: {
 					limit: 1,
 					offset: 0,
-					search: 'string',
-					sortBy: ESortField.CREATED_AT,
+					searchField: {},
+					searchValue: '',
+					sortField: ESortField.CREATED_AT,
 					sortOrder: ESortOrder.ASC,
-				},
-			},
+				} as ListOptions<BillItem>,
+			} as ListResponse<BillItem>,
 		},
 	})
 	@ApiResponse({
@@ -734,7 +739,7 @@ export class BillItemsController {
 			},
 		},
 	})
-	getManyBillItemsAllOwnPackage(@Query() getBillItemDto: GetBillItemDto) {
+	getManyBillItemsAllOwnPackage(@Query() filter: ListOptions<BillItem>) {
 		return 'getManyBillItemsAllOwnPackage';
 	}
 	@Get('package/:packageID/bill-items')
@@ -777,10 +782,10 @@ export class BillItemsController {
 				items: [
 					{
 						_id: '_id',
-						brandID: 'string',
-						facilityID: 'string',
-						packageTypeID: 'string',
-						packageID: 'string',
+						brandID: {},
+						facilityID: {},
+						packageTypeID: {},
+						packageID: {},
 						packageName: 'string',
 						packageType: 'string',
 						packageDescription: 'string',
@@ -790,24 +795,25 @@ export class BillItemsController {
 						facilityAddress: {},
 						facilityCoordinatesLocation: [1, 1],
 						facilityPhoto: 'string',
-						promotions: [{}],
+						promotions: [],
 						packagePrice: 1,
 						promotionPrice: 1,
 						totalPrice: 1,
 						status: BillItemStatus.ACTIVE,
-						createdAt: Date.now(),
-						updatedAt: Date.now(),
+						createdAt: new Date(),
+						updatedAt: new Date(),
 					},
-				],
+				] as BillItem[],
 				total: 1,
 				options: {
 					limit: 1,
 					offset: 0,
-					search: 'string',
-					sortBy: ESortField.CREATED_AT,
+					searchField: {},
+					searchValue: '',
+					sortField: ESortField.CREATED_AT,
 					sortOrder: ESortOrder.ASC,
-				},
-			},
+				} as ListOptions<BillItem>,
+			} as ListResponse<BillItem>,
 		},
 	})
 	@ApiResponse({
@@ -832,7 +838,7 @@ export class BillItemsController {
 	})
 	getManyBillItemsOneOwnPackage(
 		@Param('packageID') packageID: string,
-		@Query() getBillItemDto: GetBillItemDto,
+		@Query() filter: ListOptions<BillItem>,
 	) {
 		return 'getManyBillItemsOneOwnPackage';
 	}
@@ -852,10 +858,10 @@ export class BillItemsController {
 				items: [
 					{
 						_id: '_id',
-						brandID: 'string',
-						facilityID: 'string',
-						packageTypeID: 'string',
-						packageID: 'string',
+						brandID: {},
+						facilityID: {},
+						packageTypeID: {},
+						packageID: {},
 						packageName: 'string',
 						packageType: 'string',
 						packageDescription: 'string',
@@ -865,24 +871,25 @@ export class BillItemsController {
 						facilityAddress: {},
 						facilityCoordinatesLocation: [1, 1],
 						facilityPhoto: 'string',
-						promotions: [{}],
+						promotions: [],
 						packagePrice: 1,
 						promotionPrice: 1,
 						totalPrice: 1,
 						status: BillItemStatus.ACTIVE,
-						createdAt: Date.now(),
-						updatedAt: Date.now(),
+						createdAt: new Date(),
+						updatedAt: new Date(),
 					},
-				],
+				] as BillItem[],
 				total: 1,
 				options: {
 					limit: 1,
 					offset: 0,
-					search: 'string',
-					sortBy: ESortField.CREATED_AT,
+					searchField: {},
+					searchValue: '',
+					sortField: ESortField.CREATED_AT,
 					sortOrder: ESortOrder.ASC,
-				},
-			},
+				} as ListOptions<BillItem>,
+			} as ListResponse<BillItem>,
 		},
 	})
 	@ApiResponse({
@@ -950,10 +957,10 @@ export class BillItemsController {
 				items: [
 					{
 						_id: '_id',
-						brandID: 'string',
-						facilityID: 'string',
-						packageTypeID: 'string',
-						packageID: 'string',
+						brandID: {},
+						facilityID: {},
+						packageTypeID: {},
+						packageID: {},
 						packageName: 'string',
 						packageType: 'string',
 						packageDescription: 'string',
@@ -963,24 +970,25 @@ export class BillItemsController {
 						facilityAddress: {},
 						facilityCoordinatesLocation: [1, 1],
 						facilityPhoto: 'string',
-						promotions: [{}],
+						promotions: [],
 						packagePrice: 1,
 						promotionPrice: 1,
 						totalPrice: 1,
 						status: BillItemStatus.ACTIVE,
-						createdAt: Date.now(),
-						updatedAt: Date.now(),
+						createdAt: new Date(),
+						updatedAt: new Date(),
 					},
-				],
+				] as BillItem[],
 				total: 1,
 				options: {
 					limit: 1,
 					offset: 0,
-					search: 'string',
-					sortBy: ESortField.CREATED_AT,
+					searchField: {},
+					searchValue: '',
+					sortField: ESortField.CREATED_AT,
 					sortOrder: ESortOrder.ASC,
-				},
-			},
+				} as ListOptions<BillItem>,
+			} as ListResponse<BillItem>,
 		},
 	})
 	@ApiResponse({
@@ -993,7 +1001,7 @@ export class BillItemsController {
 			},
 		},
 	})
-	getManyBillItemsAllOwnBrand(@Query() getBillItemDto: GetBillItemDto) {
+	getManyBillItemsAllOwnBrand(@Query() filter: ListOptions<BillItem>) {
 		return 'getManyBillItemsAllOwnBrand';
 	}
 	@Get('brands/:brandID/bill-items')
@@ -1036,10 +1044,10 @@ export class BillItemsController {
 				items: [
 					{
 						_id: '_id',
-						brandID: 'string',
-						facilityID: 'string',
-						packageTypeID: 'string',
-						packageID: 'string',
+						brandID: {},
+						facilityID: {},
+						packageTypeID: {},
+						packageID: {},
 						packageName: 'string',
 						packageType: 'string',
 						packageDescription: 'string',
@@ -1049,24 +1057,25 @@ export class BillItemsController {
 						facilityAddress: {},
 						facilityCoordinatesLocation: [1, 1],
 						facilityPhoto: 'string',
-						promotions: [{}],
+						promotions: [],
 						packagePrice: 1,
 						promotionPrice: 1,
 						totalPrice: 1,
 						status: BillItemStatus.ACTIVE,
-						createdAt: Date.now(),
-						updatedAt: Date.now(),
+						createdAt: new Date(),
+						updatedAt: new Date(),
 					},
-				],
+				] as BillItem[],
 				total: 1,
 				options: {
 					limit: 1,
 					offset: 0,
-					search: 'string',
-					sortBy: ESortField.CREATED_AT,
+					searchField: {},
+					searchValue: '',
+					sortField: ESortField.CREATED_AT,
 					sortOrder: ESortOrder.ASC,
-				},
-			},
+				} as ListOptions<BillItem>,
+			} as ListResponse<BillItem>,
 		},
 	})
 	@ApiResponse({
@@ -1091,7 +1100,7 @@ export class BillItemsController {
 	})
 	getManyBillItemsOneOwnBrand(
 		@Param('brandID') brandID: string,
-		@Query() getBillItemDto: GetBillItemDto,
+		@Query() filter: ListOptions<BillItem>,
 	) {
 		return 'getManyBillItemsOneOwnBrand';
 	}
@@ -1111,10 +1120,10 @@ export class BillItemsController {
 				items: [
 					{
 						_id: '_id',
-						brandID: 'string',
-						facilityID: 'string',
-						packageTypeID: 'string',
-						packageID: 'string',
+						brandID: {},
+						facilityID: {},
+						packageTypeID: {},
+						packageID: {},
 						packageName: 'string',
 						packageType: 'string',
 						packageDescription: 'string',
@@ -1124,24 +1133,25 @@ export class BillItemsController {
 						facilityAddress: {},
 						facilityCoordinatesLocation: [1, 1],
 						facilityPhoto: 'string',
-						promotions: [{}],
+						promotions: [],
 						packagePrice: 1,
 						promotionPrice: 1,
 						totalPrice: 1,
 						status: BillItemStatus.ACTIVE,
-						createdAt: Date.now(),
-						updatedAt: Date.now(),
+						createdAt: new Date(),
+						updatedAt: new Date(),
 					},
-				],
+				] as BillItem[],
 				total: 1,
 				options: {
 					limit: 1,
 					offset: 0,
-					search: 'string',
-					sortBy: ESortField.CREATED_AT,
+					searchField: {},
+					searchValue: '',
+					sortField: ESortField.CREATED_AT,
 					sortOrder: ESortOrder.ASC,
-				},
-			},
+				} as ListOptions<BillItem>,
+			} as ListResponse<BillItem>,
 		},
 	})
 	@ApiResponse({
