@@ -48,8 +48,8 @@ export class Promotion extends BaseObject {
 	@Prop({ required: true, enum: PromotionMethod, type: String })
 	method: PromotionMethod;
 
-	@Prop({ default: 0, type: String })
-	minPriceApply: PromotionMethod;
+	@Prop({ default: 0, type: Number })
+	minPriceApply: number;
 
 	@Prop({ required: true, type: Number, min: 0 })
 	maxValue: number;

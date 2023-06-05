@@ -8,16 +8,45 @@ import {
 	Query,
 } from '@nestjs/common';
 import { ApiOperation, ApiParam, ApiResponse, ApiTags } from '@nestjs/swagger';
-import { Subscription } from 'rxjs';
 import { ApiDocsPagination } from 'src/decorators/swagger-form-data.decorator';
-import { ListOptions } from 'src/shared/response/common-response';
+import { ListOptions, ListResponse } from 'src/shared/response/common-response';
+import {
+	Subscription,
+	SubscriptionStatus,
+} from './schemas/subscription.schema';
 
 @Controller('subscriptions')
 export class SubscriptionsController {
 	@Get('subscriptions')
+	@ApiTags('subscriptions')
 	@ApiDocsPagination('subscription')
 	@ApiOperation({ summary: 'getManySubscriptions' })
-	@ApiTags('subscriptions')
+	@ApiResponse({
+		status: 200,
+		schema: {
+			example: {
+				items: [
+					{
+						accountID: {},
+						billItemID: {},
+						packageID: {},
+						expires: new Date(),
+						status: SubscriptionStatus.ACTIVE,
+						renew: false,
+					},
+				] as Subscription[],
+				total: 1,
+				options: {
+					limit: 1,
+					offset: 0,
+					searchField: {},
+					searchValue: '',
+					sortField: 'createdAt',
+					sortOrder: 'asc',
+				} as ListOptions<Subscription>,
+			} as ListResponse<Subscription>,
+		},
+	})
 	getManySubscriptions(@Query() filter: ListOptions<Subscription>) {
 		return 'getManySubscriptions';
 	}
@@ -25,6 +54,32 @@ export class SubscriptionsController {
 	@ApiTags('subscriptions')
 	@ApiOperation({ summary: 'getOneSubscription' })
 	@ApiParam({ name: 'id', type: String, description: 'Subscription ID' })
+	@ApiResponse({
+		status: 200,
+		schema: {
+			example: {
+				items: [
+					{
+						accountID: {},
+						billItemID: {},
+						packageID: {},
+						expires: new Date(),
+						status: SubscriptionStatus.ACTIVE,
+						renew: false,
+					},
+				] as Subscription[],
+				total: 1,
+				options: {
+					limit: 1,
+					offset: 0,
+					searchField: {},
+					searchValue: '',
+					sortField: 'createdAt',
+					sortOrder: 'asc',
+				} as ListOptions<Subscription>,
+			} as ListResponse<Subscription>,
+		},
+	})
 	getOneSubscription(@Param('id') id: string) {
 		return 'getOneSubscription';
 	}

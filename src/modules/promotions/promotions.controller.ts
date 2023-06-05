@@ -9,16 +9,66 @@ import {
 } from '@nestjs/common';
 import { ApiOperation, ApiParam, ApiResponse, ApiTags } from '@nestjs/swagger';
 import { ApiDocsPagination } from 'src/decorators/swagger-form-data.decorator';
-import { ListOptions } from 'src/shared/response/common-response';
-import { Promotion } from './schemas/promotion.schema';
+import { ListOptions, ListResponse } from 'src/shared/response/common-response';
+import {
+	CustomerType,
+	Promotion,
+	PromotionMethod,
+	PromotionStatus,
+	PromotionType,
+} from './schemas/promotion.schema';
+import { ESortField, ESortOrder } from 'src/shared/enum/sort.enum';
 
 @Controller('promotions')
 export class PromotionsController {
 	@Get('promotions')
-	@ApiDocsPagination('promotion')
 	@ApiTags('promotions')
+	@ApiDocsPagination('promotion')
 	@ApiOperation({
 		summary: 'getManyPromotions',
+	})
+	@ApiResponse({
+		status: 200,
+		schema: {
+			example: {
+				items: [
+					{
+						targetId: 'string',
+						type: PromotionType.BILL,
+						name: 'string',
+						description: 'string',
+						couponCode: 'string',
+						value: 1,
+						method: PromotionMethod.NUMBER,
+						minPriceApply: 0,
+						maxQuantity: 0,
+						startDate: new Date(),
+						endDate: new Date(),
+						customerType: CustomerType.CUSTOMER,
+						status: PromotionStatus.ACTIVE,
+					},
+				] as Promotion[],
+				total: 1,
+				options: {
+					limit: 1,
+					offset: 0,
+					searchField: {},
+					searchValue: '',
+					sortField: 'createdAt',
+					sortOrder: 'asc',
+				} as ListOptions<Promotion>,
+			} as ListResponse<Promotion>,
+		},
+	})
+	@ApiResponse({
+		status: 403,
+		schema: {
+			example: {
+				code: 403,
+				message: `You don't have permission to this access`,
+				details: {},
+			},
+		},
 	})
 	getManyPromotions(@Query() filter: ListOptions<Promotion>) {
 		return 'getManyPromotions';
@@ -27,6 +77,69 @@ export class PromotionsController {
 	@ApiTags('promotions')
 	@ApiOperation({
 		summary: 'getOnePromotion',
+	})
+	@ApiResponse({
+		status: 200,
+		schema: {
+			example: {
+				items: [
+					{
+						targetId: 'string',
+						type: PromotionType.BILL,
+						name: 'string',
+						description: 'string',
+						couponCode: 'string',
+						value: 1,
+						method: PromotionMethod.NUMBER,
+						minPriceApply: 0,
+						maxQuantity: 0,
+						startDate: new Date(),
+						endDate: new Date(),
+						customerType: CustomerType.CUSTOMER,
+						status: PromotionStatus.ACTIVE,
+					},
+				] as Promotion[],
+				total: 1,
+				options: {
+					limit: 1,
+					offset: 0,
+					searchField: {},
+					searchValue: '',
+					sortField: 'createdAt',
+					sortOrder: 'asc',
+				} as ListOptions<Promotion>,
+			} as ListResponse<Promotion>,
+		},
+	})
+	@ApiResponse({
+		status: 403,
+		schema: {
+			example: {
+				code: 403,
+				message: `You don't have permission to this access`,
+				details: {},
+			},
+		},
+	})
+	@ApiResponse({
+		status: 403,
+		schema: {
+			example: {
+				code: 403,
+				message: `You don't have permission to this access`,
+				details: {},
+			},
+		},
+	})
+	@ApiResponse({
+		status: 404,
+		schema: {
+			example: {
+				code: 404,
+				message: 'Not found document with that ID',
+				details: {},
+			},
+		},
 	})
 	@ApiParam({ name: 'id', type: String, description: 'Promotion ID' })
 	getOnePromotion(@Param('id') id: string) {
@@ -82,6 +195,39 @@ export class PromotionsController {
 	@ApiOperation({
 		summary: 'getPromotionsByOwnerFacility',
 	})
+	@ApiResponse({
+		status: 200,
+		schema: {
+			example: {
+				items: [
+					{
+						targetId: 'string',
+						type: PromotionType.BILL,
+						name: 'string',
+						description: 'string',
+						couponCode: 'string',
+						value: 1,
+						method: PromotionMethod.NUMBER,
+						minPriceApply: 0,
+						maxQuantity: 0,
+						startDate: new Date(),
+						endDate: new Date(),
+						customerType: CustomerType.CUSTOMER,
+						status: PromotionStatus.ACTIVE,
+					},
+				] as Promotion[],
+				total: 1,
+				options: {
+					limit: 1,
+					offset: 0,
+					searchField: {},
+					searchValue: '',
+					sortField: 'createdAt',
+					sortOrder: 'asc',
+				} as ListOptions<Promotion>,
+			} as ListResponse<Promotion>,
+		},
+	})
 	getPromotionsByOwnerFacility(@Query() filter: ListOptions<Promotion>) {
 		return 'getPromotionsByOwnerFacility';
 	}
@@ -90,6 +236,39 @@ export class PromotionsController {
 	@ApiTags('facilities/promotions')
 	@ApiOperation({
 		summary: 'getPromotionByOwnerFacility',
+	})
+	@ApiResponse({
+		status: 200,
+		schema: {
+			example: {
+				items: [
+					{
+						targetId: 'string',
+						type: PromotionType.BILL,
+						name: 'string',
+						description: 'string',
+						couponCode: 'string',
+						value: 1,
+						method: PromotionMethod.NUMBER,
+						minPriceApply: 0,
+						maxQuantity: 0,
+						startDate: new Date(),
+						endDate: new Date(),
+						customerType: CustomerType.CUSTOMER,
+						status: PromotionStatus.ACTIVE,
+					},
+				] as Promotion[],
+				total: 1,
+				options: {
+					limit: 1,
+					offset: 0,
+					searchField: {},
+					searchValue: '',
+					sortField: 'createdAt',
+					sortOrder: 'asc',
+				} as ListOptions<Promotion>,
+			} as ListResponse<Promotion>,
+		},
 	})
 	@ApiParam({ name: 'facilityID', type: String, description: 'Facility ID' })
 	getPromotionByOwnerFacility(
@@ -209,6 +388,39 @@ export class PromotionsController {
 	@ApiTags('facilities/promotions')
 	@ApiOperation({
 		summary: 'getPromotionOfFacility',
+	})
+	@ApiResponse({
+		status: 200,
+		schema: {
+			example: {
+				items: [
+					{
+						targetId: 'string',
+						type: PromotionType.BILL,
+						name: 'string',
+						description: 'string',
+						couponCode: 'string',
+						value: 1,
+						method: PromotionMethod.NUMBER,
+						minPriceApply: 0,
+						maxQuantity: 0,
+						startDate: new Date(),
+						endDate: new Date(),
+						customerType: CustomerType.CUSTOMER,
+						status: PromotionStatus.ACTIVE,
+					},
+				] as Promotion[],
+				total: 1,
+				options: {
+					limit: 1,
+					offset: 0,
+					searchField: {},
+					searchValue: '',
+					sortField: 'createdAt',
+					sortOrder: 'asc',
+				} as ListOptions<Promotion>,
+			} as ListResponse<Promotion>,
+		},
 	})
 	@ApiParam({ name: 'facilityID', type: String, description: 'Facility ID' })
 	@ApiParam({ name: 'promotionID', type: String, description: 'Promotion ID' })

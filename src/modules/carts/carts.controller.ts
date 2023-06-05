@@ -20,7 +20,6 @@ import {
 	ApiResponse,
 	ApiTags,
 } from '@nestjs/swagger';
-import { ESortField, ESortOrder } from 'src/shared/enum/sort.enum';
 import { PurchaseCartDto } from './dto/purchase-cart.dto';
 import { ListOptions } from 'src/shared/response/common-response';
 import { Cart } from './schemas/cart.schema';
@@ -65,8 +64,8 @@ export class CartsController {
 					offset: 0,
 					searchField: {},
 					searchValue: '',
-					sortField: ESortField.CREATED_AT,
-					sortOrder: ESortOrder.ASC,
+					sortField: 'createdAt',
+					sortOrder: 'asc',
 				} as ListOptions<Cart>,
 			} as ListResponse<Cart>,
 		},
@@ -116,8 +115,8 @@ export class CartsController {
 					offset: 0,
 					searchField: {},
 					searchValue: '',
-					sortField: ESortField.CREATED_AT,
-					sortOrder: ESortOrder.ASC,
+					sortField: 'createdAt',
+					sortOrder: 'asc',
 				} as ListOptions<Cart>,
 			} as ListResponse<Cart>,
 		},

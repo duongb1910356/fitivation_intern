@@ -9,15 +9,40 @@ import {
 } from '@nestjs/common';
 import { ApiOperation, ApiParam, ApiResponse, ApiTags } from '@nestjs/swagger';
 import { ApiDocsPagination } from 'src/decorators/swagger-form-data.decorator';
-import { ListOptions } from 'src/shared/response/common-response';
+import { ListOptions, ListResponse } from 'src/shared/response/common-response';
 import { CartItem } from './schemas/cart-item.schema';
 
 @Controller('cart-items')
 export class CartItemsController {
 	@Get('cart-items')
-	@ApiDocsPagination('cart-item')
 	@ApiTags('cart-items')
+	@ApiDocsPagination('cart-item')
 	@ApiOperation({ summary: 'getManyCartItems' })
+	@ApiResponse({
+		status: 200,
+		schema: {
+			example: {
+				items: [
+					{
+						cartID: {},
+						packageID: {},
+						promotionIDs: [],
+						promotionPrice: 0,
+						totalPrice: 0,
+					},
+				] as CartItem[],
+				total: 1,
+				options: {
+					limit: 1,
+					offset: 0,
+					searchField: {},
+					searchValue: '',
+					sortField: 'createdAt',
+					sortOrder: 'asc',
+				} as ListOptions<CartItem>,
+			} as ListResponse<CartItem>,
+		},
+	})
 	getManyCartItems(@Query() filter: ListOptions<CartItem>) {
 		return 'getManyCartItems';
 	}
