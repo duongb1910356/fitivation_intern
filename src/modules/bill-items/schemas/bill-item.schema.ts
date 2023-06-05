@@ -62,7 +62,7 @@ export class BillItem extends BaseObject {
 	promotions?: Promotion[];
 
 	@Prop({ required: true, type: Number, min: 0 })
-	packgePrice: number;
+	packagePrice: number;
 
 	@Prop({ default: 0, type: Number, min: 0 })
 	promotionPrice: number;
