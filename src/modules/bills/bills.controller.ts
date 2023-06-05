@@ -14,15 +14,18 @@ import {
 	ApiResponse,
 	ApiTags,
 	ApiParam,
-	ApiQuery,
 } from '@nestjs/swagger';
 import { BillsService } from './bills.service';
 import { CreateBillDto } from './dto/create-bill.dto';
 import { UpdateBillDto } from './dto/update-bill.dto';
-import { GetBillDto } from './dto/get-bill.dto';
 import { ESortField, ESortOrder } from 'src/shared/enum/sort.enum';
-import { BillStatus, PaymentMethod } from './schemas/bill.schema';
-import { BillItemStatus } from '../bill-items/schemas/bill-item.schema';
+import { Bill, BillStatus, PaymentMethod } from './schemas/bill.schema';
+import {
+	BillItem,
+	BillItemStatus,
+} from '../bill-items/schemas/bill-item.schema';
+import { ApiDocsPagination } from 'src/decorators/swagger-form-data.decorator';
+import { ListOptions, ListResponse } from 'src/shared/response/common-response';
 
 @Controller()
 export class BillsController {
@@ -34,46 +37,21 @@ export class BillsController {
 		summary: 'getManyBills',
 		description: 'Get many bills',
 	})
-	@ApiQuery({
-		name: 'limit',
-		required: false,
-		type: Number,
-	})
-	@ApiQuery({
-		name: 'offset',
-		required: false,
-		type: Number,
-	})
-	@ApiQuery({
-		name: 'search',
-		required: false,
-		type: String,
-	})
-	@ApiQuery({
-		name: 'sortBy',
-		required: false,
-		type: ESortField.CREATED_AT,
-	})
-	@ApiQuery({
-		name: 'sortOrder',
-		required: false,
-		type: ESortOrder.ASC,
-	})
+	@ApiDocsPagination('bill')
 	@ApiResponse({
 		status: 200,
 		schema: {
 			example: {
 				items: [
 					{
-						_id: 'id',
-						accountID: 'accountID',
+						_id: '_id',
+						accountID: {},
 						billItems: [
 							{
-								_id: '_id',
-								brandID: 'string',
-								facilityID: 'string',
-								packageTypeID: 'string',
-								packageID: 'string',
+								brandID: {},
+								facilityID: {},
+								packageTypeID: {},
+								packageID: {},
 								packageName: 'string',
 								packageType: 'string',
 								packageDescription: 'string',
@@ -81,37 +59,38 @@ export class BillsController {
 								ownerFacilityName: 'string',
 								facilityName: 'string',
 								facilityAddress: {},
-								facilityCoordinatesLocation: [1, 1],
+								facilityCoordinatesLocation: [] as unknown,
 								facilityPhoto: 'string',
-								promotions: [{}],
-								packagePrice: 1,
-								promotionPrice: 1,
-								totalPrice: 1,
+								promotions: [],
+								packagePrice: 0,
+								promotionPrice: 0,
+								totalPrice: 0,
 								status: BillItemStatus.ACTIVE,
-								createdAt: Date.now(),
-								updatedAt: Date.now(),
+								createdAt: new Date(),
+								updatedAt: new Date(),
 							},
-						],
-						paymenMethod: PaymentMethod.CREDIT_CARD,
-						taxes: 0.02,
+						] as BillItem[],
+						paymentMethod: PaymentMethod.CREDIT_CARD,
+						taxes: 0,
 						description: 'string',
-						promotions: [{}],
-						promotionPrice: 1,
-						totalPrice: 1,
+						promotions: [],
+						promotionPrice: 0,
+						totalPrice: 0,
 						status: BillStatus.ACTIVE,
-						createdAt: Date.now(),
-						updatedAt: Date.now(),
+						createdAt: new Date(),
+						updatedAt: new Date(),
 					},
-				],
+				] as Bill[],
 				total: 1,
 				options: {
 					limit: 1,
 					offset: 0,
-					search: 'string',
-					sortBy: ESortField.CREATED_AT,
+					searchField: {},
+					searchValue: '',
+					sortField: ESortField.CREATED_AT,
 					sortOrder: ESortOrder.ASC,
-				},
-			},
+				} as ListOptions<Bill>,
+			} as ListResponse<Bill>,
 		},
 	})
 	@ApiResponse({
@@ -124,7 +103,7 @@ export class BillsController {
 			},
 		},
 	})
-	getManyBills(@Query() filter: GetBillDto) {
+	getManyBills(@Query() filter: ListOptions<Bill>) {
 		return 'getManyBills';
 	}
 
@@ -141,15 +120,14 @@ export class BillsController {
 			example: {
 				items: [
 					{
-						_id: 'id',
-						accountID: 'accountID',
+						_id: '_id',
+						accountID: {},
 						billItems: [
 							{
-								_id: '_id',
-								brandID: 'string',
-								facilityID: 'string',
-								packageTypeID: 'string',
-								packageID: 'string',
+								brandID: {},
+								facilityID: {},
+								packageTypeID: {},
+								packageID: {},
 								packageName: 'string',
 								packageType: 'string',
 								packageDescription: 'string',
@@ -157,36 +135,47 @@ export class BillsController {
 								ownerFacilityName: 'string',
 								facilityName: 'string',
 								facilityAddress: {},
-								facilityCoordinatesLocation: [1, 1],
+								facilityCoordinatesLocation: [] as unknown,
 								facilityPhoto: 'string',
-								promotions: [{}],
-								packagePrice: 1,
-								promotionPrice: 1,
-								totalPrice: 1,
+								promotions: [],
+								packagePrice: 0,
+								promotionPrice: 0,
+								totalPrice: 0,
 								status: BillItemStatus.ACTIVE,
-								createdAt: Date.now(),
-								updatedAt: Date.now(),
+								createdAt: new Date(),
+								updatedAt: new Date(),
 							},
-						],
-						paymenMethod: PaymentMethod.CREDIT_CARD,
-						taxes: 0.02,
+						] as BillItem[],
+						paymentMethod: PaymentMethod.CREDIT_CARD,
+						taxes: 0,
 						description: 'string',
-						promotions: [{}],
-						promotionPrice: 1,
-						totalPrice: 1,
+						promotions: [],
+						promotionPrice: 0,
+						totalPrice: 0,
 						status: BillStatus.ACTIVE,
-						createdAt: Date.now(),
-						updatedAt: Date.now(),
+						createdAt: new Date(),
+						updatedAt: new Date(),
 					},
-				],
+				] as Bill[],
 				total: 1,
 				options: {
 					limit: 1,
 					offset: 0,
-					search: 'string',
-					sortBy: ESortField.CREATED_AT,
+					searchField: {},
+					searchValue: '',
+					sortField: ESortField.CREATED_AT,
 					sortOrder: ESortOrder.ASC,
-				},
+				} as ListOptions<Bill>,
+			} as ListResponse<Bill>,
+		},
+	})
+	@ApiResponse({
+		status: 403,
+		schema: {
+			example: {
+				code: 403,
+				message: `You don't have permission to this access`,
+				details: {},
 			},
 		},
 	})
@@ -329,46 +318,21 @@ export class BillsController {
 		summary: 'getManyBillsByCustomer',
 		description: `Allow users to get many of their bills`,
 	})
-	@ApiQuery({
-		name: 'limit',
-		required: false,
-		type: Number,
-	})
-	@ApiQuery({
-		name: 'offset',
-		required: false,
-		type: Number,
-	})
-	@ApiQuery({
-		name: 'search',
-		required: false,
-		type: String,
-	})
-	@ApiQuery({
-		name: 'sortBy',
-		required: false,
-		type: ESortField.CREATED_AT,
-	})
-	@ApiQuery({
-		name: 'sortOrder',
-		required: false,
-		type: ESortOrder.ASC,
-	})
+	@ApiDocsPagination('bill')
 	@ApiResponse({
 		status: 200,
 		schema: {
 			example: {
 				items: [
 					{
-						_id: 'id',
-						accountID: 'accountID',
+						_id: '_id',
+						accountID: {},
 						billItems: [
 							{
-								_id: '_id',
-								brandID: 'string',
-								facilityID: 'string',
-								packageTypeID: 'string',
-								packageID: 'string',
+								brandID: {},
+								facilityID: {},
+								packageTypeID: {},
+								packageID: {},
 								packageName: 'string',
 								packageType: 'string',
 								packageDescription: 'string',
@@ -376,36 +340,47 @@ export class BillsController {
 								ownerFacilityName: 'string',
 								facilityName: 'string',
 								facilityAddress: {},
-								facilityCoordinatesLocation: [1, 1],
+								facilityCoordinatesLocation: [] as unknown,
 								facilityPhoto: 'string',
-								promotions: [{}],
-								packagePrice: 1,
-								promotionPrice: 1,
-								totalPrice: 1,
+								promotions: [],
+								packagePrice: 0,
+								promotionPrice: 0,
+								totalPrice: 0,
 								status: BillItemStatus.ACTIVE,
-								createdAt: Date.now(),
-								updatedAt: Date.now(),
+								createdAt: new Date(),
+								updatedAt: new Date(),
 							},
-						],
-						paymenMethod: PaymentMethod.CREDIT_CARD,
-						taxes: 0.02,
+						] as BillItem[],
+						paymentMethod: PaymentMethod.CREDIT_CARD,
+						taxes: 0,
 						description: 'string',
-						promotions: [{}],
-						promotionPrice: 1,
-						totalPrice: 1,
+						promotions: [],
+						promotionPrice: 0,
+						totalPrice: 0,
 						status: BillStatus.ACTIVE,
-						createdAt: Date.now(),
-						updatedAt: Date.now(),
+						createdAt: new Date(),
+						updatedAt: new Date(),
 					},
-				],
+				] as Bill[],
 				total: 1,
 				options: {
 					limit: 1,
 					offset: 0,
-					search: 'string',
-					sortBy: ESortField.CREATED_AT,
+					searchField: {},
+					searchValue: '',
+					sortField: ESortField.CREATED_AT,
 					sortOrder: ESortOrder.ASC,
-				},
+				} as ListOptions<Bill>,
+			} as ListResponse<Bill>,
+		},
+	})
+	@ApiResponse({
+		status: 403,
+		schema: {
+			example: {
+				code: 403,
+				message: `You don't have permission to this access`,
+				details: {},
 			},
 		},
 	})
@@ -419,93 +394,7 @@ export class BillsController {
 			},
 		},
 	})
-	getManyBillsByCustomer(@Query() filter: GetBillDto) {
+	getManyBillsByCustomer(@Query() filter: ListOptions<Bill>) {
 		return 'getManyBillsByCustomer';
-	}
-
-	@Get('bills/:id/me')
-	@ApiTags('bills')
-	@ApiOperation({
-		summary: 'getOneBillByCustomer',
-		description: `Allow users to get one of their bills`,
-	})
-	@ApiParam({ name: 'id', type: String, description: 'Bill ID' })
-	@ApiResponse({
-		status: 200,
-		schema: {
-			example: {
-				items: [
-					{
-						_id: 'id',
-						accountID: 'accountID',
-						billItems: [
-							{
-								_id: '_id',
-								brandID: 'string',
-								facilityID: 'string',
-								packageTypeID: 'string',
-								packageID: 'string',
-								packageName: 'string',
-								packageType: 'string',
-								packageDescription: 'string',
-								brandName: 'string',
-								ownerFacilityName: 'string',
-								facilityName: 'string',
-								facilityAddress: {},
-								facilityCoordinatesLocation: [1, 1],
-								facilityPhoto: 'string',
-								promotions: [{}],
-								packagePrice: 1,
-								promotionPrice: 1,
-								totalPrice: 1,
-								status: BillItemStatus.ACTIVE,
-								createdAt: Date.now(),
-								updatedAt: Date.now(),
-							},
-						],
-						paymenMethod: PaymentMethod.CREDIT_CARD,
-						taxes: 0.02,
-						description: 'string',
-						promotions: [{}],
-						promotionPrice: 1,
-						totalPrice: 1,
-						status: BillStatus.ACTIVE,
-						createdAt: Date.now(),
-						updatedAt: Date.now(),
-					},
-				],
-				total: 1,
-				options: {
-					limit: 1,
-					offset: 0,
-					search: 'string',
-					sortBy: ESortField.CREATED_AT,
-					sortOrder: ESortOrder.ASC,
-				},
-			},
-		},
-	})
-	@ApiResponse({
-		status: 403,
-		schema: {
-			example: {
-				code: 403,
-				message: `You don't have permission to this access`,
-				details: {},
-			},
-		},
-	})
-	@ApiResponse({
-		status: 404,
-		schema: {
-			example: {
-				code: 404,
-				message: 'Not found document with that ID',
-				details: {},
-			},
-		},
-	})
-	getOneBillByCustomer(@Param('id') id: string) {
-		return 'getOneBillByCustomer';
 	}
 }
