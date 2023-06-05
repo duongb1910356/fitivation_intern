@@ -1,4 +1,5 @@
 import {
+	Body,
 	Controller,
 	Delete,
 	Get,
@@ -7,7 +8,13 @@ import {
 	Post,
 	Query,
 } from '@nestjs/common';
-import { ApiOperation, ApiParam, ApiResponse, ApiTags } from '@nestjs/swagger';
+import {
+	ApiBody,
+	ApiOperation,
+	ApiParam,
+	ApiResponse,
+	ApiTags,
+} from '@nestjs/swagger';
 import { ApiDocsPagination } from 'src/decorators/swagger-form-data.decorator';
 import { ListOptions, ListResponse } from 'src/shared/response/common-response';
 import {
@@ -17,7 +24,7 @@ import {
 	PromotionStatus,
 	PromotionType,
 } from './schemas/promotion.schema';
-import { ESortField, ESortOrder } from 'src/shared/enum/sort.enum';
+import { CreatePromotionDto } from './dto/create-promotion.dto';
 
 @Controller('promotions')
 export class PromotionsController {
@@ -26,7 +33,9 @@ export class PromotionsController {
 	@ApiDocsPagination('promotion')
 	@ApiOperation({
 		summary: 'getManyPromotions',
+		description: 'Get many promotions',
 	})
+	@ApiBody({ type: CreatePromotionDto })
 	@ApiResponse({
 		status: 200,
 		schema: {
@@ -70,13 +79,17 @@ export class PromotionsController {
 			},
 		},
 	})
-	getManyPromotions(@Query() filter: ListOptions<Promotion>) {
+	getManyPromotions(
+		@Query() filter: ListOptions<Promotion>,
+		@Body() createPromotionDto: CreatePromotionDto,
+	) {
 		return 'getManyPromotions';
 	}
 	@Get('promotions/:id')
 	@ApiTags('promotions')
 	@ApiOperation({
 		summary: 'getOnePromotion',
+		description: 'Get one promotion',
 	})
 	@ApiResponse({
 		status: 200,
@@ -109,16 +122,6 @@ export class PromotionsController {
 					sortOrder: 'asc',
 				} as ListOptions<Promotion>,
 			} as ListResponse<Promotion>,
-		},
-	})
-	@ApiResponse({
-		status: 403,
-		schema: {
-			example: {
-				code: 403,
-				message: `You don't have permission to this access`,
-				details: {},
-			},
 		},
 	})
 	@ApiResponse({
@@ -149,6 +152,7 @@ export class PromotionsController {
 	@ApiTags('promotions')
 	@ApiOperation({
 		summary: 'createPromotion',
+		description: 'Create one promotion',
 	})
 	@ApiResponse({
 		status: 201,
@@ -175,6 +179,7 @@ export class PromotionsController {
 	@ApiTags('promotions')
 	@ApiOperation({
 		summary: 'updatePromotion',
+		description: 'Update one promotion',
 	})
 	@ApiParam({ name: 'id', type: String, description: 'Promotion ID' })
 	updatePromotion(@Param('id') id: string) {
@@ -184,8 +189,28 @@ export class PromotionsController {
 	@ApiTags('promotions')
 	@ApiOperation({
 		summary: 'deletePromotion',
+		description: 'Delete one promotion',
 	})
 	@ApiParam({ name: 'id', type: String, description: 'Promotion ID' })
+	@ApiResponse({
+		status: 200,
+		schema: {
+			example: {
+				code: 200,
+				message: 'Deleted successfully',
+			},
+		},
+	})
+	@ApiResponse({
+		status: 403,
+		schema: {
+			example: {
+				code: 403,
+				message: `You don't have permission to this access`,
+				details: {},
+			},
+		},
+	})
 	deletePromotion(@Param('id') id: string) {
 		return 'deletePromotion';
 	}
@@ -194,6 +219,8 @@ export class PromotionsController {
 	@ApiTags('facilities/promotions')
 	@ApiOperation({
 		summary: 'getPromotionsByOwnerFacility',
+		description:
+			'Allow user to get many promotions of all promotions of own facility',
 	})
 	@ApiResponse({
 		status: 200,
@@ -226,6 +253,16 @@ export class PromotionsController {
 					sortOrder: 'asc',
 				} as ListOptions<Promotion>,
 			} as ListResponse<Promotion>,
+		},
+	})
+	@ApiResponse({
+		status: 403,
+		schema: {
+			example: {
+				code: 403,
+				message: `You don't have permission to this access`,
+				details: {},
+			},
 		},
 	})
 	getPromotionsByOwnerFacility(@Query() filter: ListOptions<Promotion>) {
@@ -236,7 +273,10 @@ export class PromotionsController {
 	@ApiTags('facilities/promotions')
 	@ApiOperation({
 		summary: 'getPromotionByOwnerFacility',
+		description:
+			'Allow facility owner to get many promotions of own facility\n\nAllow customer/admin to get many promotions of one facility',
 	})
+	@ApiParam({ name: 'facilityID', type: String, description: 'Facility ID' })
 	@ApiResponse({
 		status: 200,
 		schema: {
@@ -270,7 +310,16 @@ export class PromotionsController {
 			} as ListResponse<Promotion>,
 		},
 	})
-	@ApiParam({ name: 'facilityID', type: String, description: 'Facility ID' })
+	@ApiResponse({
+		status: 403,
+		schema: {
+			example: {
+				code: 403,
+				message: `You don't have permission to this access`,
+				details: {},
+			},
+		},
+	})
 	getPromotionByOwnerFacility(
 		@Param('facilityID') facilityID: string,
 		@Query() filter: ListOptions<Promotion>,
@@ -281,6 +330,8 @@ export class PromotionsController {
 	@ApiTags('facilities/promotions')
 	@ApiOperation({
 		summary: 'createPromotionByOwnerFacility',
+		description:
+			'Allow facility owner to create many promotions of own facility',
 	})
 	@ApiParam({ name: 'facilityID', type: String, description: 'Facility ID' })
 	@ApiResponse({
@@ -310,6 +361,7 @@ export class PromotionsController {
 	@ApiParam({ name: 'promotionID', type: String, description: 'Promotion ID' })
 	@ApiOperation({
 		summary: 'updatePromotionByOwnerFacility',
+		description: 'Allow facility owner to update one promotion of own facility',
 	})
 	@ApiResponse({
 		status: 200,
@@ -351,6 +403,7 @@ export class PromotionsController {
 	@ApiParam({ name: 'promotionID', type: String, description: 'Promotion ID' })
 	@ApiOperation({
 		summary: 'deletePromotionByOwnerFacility',
+		description: 'Allow facility owner to delete one promotion of own facility',
 	})
 	@ApiResponse({
 		status: 200,
@@ -388,6 +441,8 @@ export class PromotionsController {
 	@ApiTags('facilities/promotions')
 	@ApiOperation({
 		summary: 'getPromotionOfFacility',
+		description:
+			'Allow facility owner to get one promotion of own facility\n\nAllow customer/admin to get one promotions of one facility',
 	})
 	@ApiResponse({
 		status: 200,
@@ -420,6 +475,26 @@ export class PromotionsController {
 					sortOrder: 'asc',
 				} as ListOptions<Promotion>,
 			} as ListResponse<Promotion>,
+		},
+	})
+	@ApiResponse({
+		status: 404,
+		schema: {
+			example: {
+				code: 404,
+				message: 'Not found document with that ID',
+				details: {},
+			},
+		},
+	})
+	@ApiResponse({
+		status: 403,
+		schema: {
+			example: {
+				code: 403,
+				message: `You don't have permission to this access`,
+				details: {},
+			},
 		},
 	})
 	@ApiParam({ name: 'facilityID', type: String, description: 'Facility ID' })
