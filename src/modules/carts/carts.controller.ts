@@ -63,8 +63,9 @@ export class CartsController {
 				options: {
 					limit: 1,
 					offset: 0,
-					search: 'string',
-					sortBy: ESortField.CREATED_AT,
+					searchField: {},
+					searchValue: '',
+					sortField: ESortField.CREATED_AT,
 					sortOrder: ESortOrder.ASC,
 				} as ListOptions<Cart>,
 			} as ListResponse<Cart>,
@@ -113,8 +114,9 @@ export class CartsController {
 				options: {
 					limit: 1,
 					offset: 0,
-					search: 'string',
-					sortBy: ESortField.CREATED_AT,
+					searchField: {},
+					searchValue: '',
+					sortField: ESortField.CREATED_AT,
 					sortOrder: ESortOrder.ASC,
 				} as ListOptions<Cart>,
 			} as ListResponse<Cart>,
