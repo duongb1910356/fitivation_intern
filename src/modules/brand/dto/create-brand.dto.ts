@@ -3,10 +3,6 @@ import { IsNotEmpty, IsOptional, IsString } from 'class-validator';
 
 export class CreateBrandDto {
 
-    @IsOptional()
-    @IsString()
-    accountID?: string
-
     @ApiProperty({ example: 'Example Name' })
     @IsString()
     name: string;

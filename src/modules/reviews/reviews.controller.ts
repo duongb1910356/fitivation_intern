@@ -23,7 +23,6 @@ export class ReviewsController {
         examples: {
             example1: {
                 value: {
-                    accountID: '1233456',
                     facilityID: '123456',
                     rating: 5,
                     comment: 'Great',
@@ -43,7 +42,6 @@ export class ReviewsController {
                 message: 'Success',
                 data: {
                     _id: '123456789',
-                    accountID: {},
                     facilityID: {},
                     comment: 'Đáng để trải nghiệm',
                     rating: 5,

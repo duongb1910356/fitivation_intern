@@ -2,7 +2,7 @@ import { Controller, Get, Post, Body, Patch, Param, Delete, UseInterceptors, Bad
 import { BrandService } from './brand.service';
 import { CreateBrandDto } from './dto/create-brand.dto';
 import { UpdateBrandDto } from './dto/update-brand.dto';
-import { ApiBadRequestResponse, ApiBody, ApiConsumes, ApiForbiddenResponse, ApiNotFoundResponse, ApiOkResponse, ApiOperation, ApiQuery, ApiTags } from '@nestjs/swagger';
+import { ApiBadRequestResponse, ApiBody, ApiConsumes, ApiForbiddenResponse, ApiNotFoundResponse, ApiOkResponse, ApiOperation, ApiParam, ApiQuery, ApiTags } from '@nestjs/swagger';
 import { FilesInterceptor } from '@nestjs/platform-express';
 import { Public } from '../auth/utils';
 import { ApiDocsPagination } from 'src/decorators/swagger-form-data.decorator';
@@ -24,7 +24,6 @@ export class BrandController {
     examples: {
       example1: {
         value: {
-          accountID: '1233',
           name: 'string'
         } as CreateBrandDto,
       }
@@ -64,29 +63,25 @@ export class BrandController {
     status: 200,
     schema: {
       example: {
-        code: 200,
-        message: 'Success',
-        data: {
-          items: [
-            {
-              _id: '123456',
-              accountID: {} as unknown as User,
-              name: 'City Gym',
-              createdAt: new Date(),
-              updatedAt: new Date()
-            } as Brand
-          ],
-          total: 1,
-          options: {
-            limit: 5,
-            offset: 5,
-            searchField: 'createdAt',
-            searchValue: 'string',
-            sortField: 'createdAt',
-            sortOrder: 'desc',
-          } as ListOptions<Brand>
-        } as ListResponse<Brand>,
-      },
+        items: [
+          {
+            _id: '123456',
+            accountID: {} as unknown as User,
+            name: 'City Gym',
+            createdAt: new Date(),
+            updatedAt: new Date()
+          } as Brand
+        ],
+        total: 1,
+        options: {
+          limit: 5,
+          offset: 5,
+          searchField: 'createdAt',
+          searchValue: 'string',
+          sortField: 'createdAt',
+          sortOrder: 'desc',
+        } as ListOptions<Brand>
+      } as ListResponse<Brand>,
     },
   })
   @ApiNotFoundResponse({
@@ -113,15 +108,11 @@ export class BrandController {
     status: 200,
     schema: {
       example: {
-        code: 200,
-        message: 'Success',
-        data: {
-          _id: '123456',
-          accountID: '123456',
-          name: 'City Gym',
-          createAt: new Date(),
-          updateAt: new Date()
-        }
+        _id: '123456',
+        accountID: '123456',
+        name: 'City Gym',
+        createAt: new Date(),
+        updateAt: new Date()
       },
     },
   })
@@ -143,12 +134,12 @@ export class BrandController {
   @ApiOperation({
     summary: 'Modified brand'
   })
-  @ApiQuery({ name: 'id', required: true, type: String, example: '123456' })
+  @ApiParam({ name: 'id', type: String, description: 'id brand' })
   @ApiBody({
     type: UpdateBrandDto,
     examples: {
       example1: {
-        value: { accountID: '123456', name: 'String'} as UpdateBrandDto,
+        value: { name: 'String' } as UpdateBrandDto,
       }
     }
   })
@@ -178,19 +169,19 @@ export class BrandController {
     description: '[Input] invalid'
   })
   @ApiForbiddenResponse({
-		schema: {
-			example: {
-				code: '403',
-				message: 'Forbidden resource',
-				details: null,
-			} as ErrorResponse<null>,
-		},
-	})
+    schema: {
+      example: {
+        code: '403',
+        message: 'Forbidden resource',
+        details: null,
+      } as ErrorResponse<null>,
+    },
+  })
   updateBrand(@Param('id') id: string, @Body() updateBrandDto: UpdateBrandDto) {
   }
 
   @Delete(':id')
-  @ApiQuery({ name: 'id', required: true, type: String, example: '123456' })
+  @ApiParam({ name: 'id', type: String, description: 'id brand' })
   @ApiOkResponse({
     status: 200,
     schema: {
@@ -207,14 +198,14 @@ export class BrandController {
     description: 'Brands not found!',
   })
   @ApiForbiddenResponse({
-		schema: {
-			example: {
-				code: '403',
-				message: 'Forbidden resource',
-				details: null,
-			} as ErrorResponse<null>,
-		},
-	})
+    schema: {
+      example: {
+        code: '403',
+        message: 'Forbidden resource',
+        details: null,
+      } as ErrorResponse<null>,
+    },
+  })
   deleteBrand(@Param('id') id: string) {
   }
 }

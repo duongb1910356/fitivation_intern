@@ -14,22 +14,7 @@ import { UpdateFacilityDto } from './dto/update-facility-dto';
 import { FileUploadDto } from '../photo/dto/file-upload-dto';
 import { ApiDocsPagination } from 'src/decorators/swagger-form-data.decorator';
 import { Photo } from '../photo/schemas/photo.schema';
-enum State {
-    ACTIVE = 'ACTIVE',
-    INACTIVE = 'INACTIVE',
-}
-
-enum Status {
-    PENDING = 'PENDING',
-    APPROVED = 'APPROVED',
-    REJECTED = 'REJECTED',
-}
-
-enum ScheduleType {
-    DAILY = 'DAILY',
-    WEEKLY = 'WEEKLY',
-    MONTHLY = 'MONTHLY',
-}
+import { State, Status, ScheduleType } from '../../shared/enum/facility.enum';
 
 @ApiTags('facilities')
 @Controller('facilities')
@@ -46,81 +31,77 @@ export class FacilityController {
         status: 200,
         schema: {
             example: {
-                code: 200,
-                message: 'Success',
-                data: {
-                    items: [
-                        {
-                            _id: '1233456',
-                            brandID: {},
-                            facilityCategoryID: {},
-                            ownerID: {},
-                            name: 'City gym',
-                            address: {
-                                province: {
-                                    name: 'TP Cần Thơ',
-                                    code: 65
-                                },
-                                district: {
-                                    name: 'Phường Xuân Khánh',
-                                    code: 56
-                                },
-                                commune: {
-                                    name: 'Quận Ninh Kiều',
-                                    code: 11
-                                }
+                items: [
+                    {
+                        _id: '1233456',
+                        brandID: {},
+                        facilityCategoryID: {},
+                        ownerID: {},
+                        name: 'City gym',
+                        address: {
+                            province: {
+                                name: 'TP Cần Thơ',
+                                code: 65
                             },
-                            summary: 'Phòng gym thân thiện',
-                            description: 'Nhiều dụng cụ tập luyện',
-                            coordinationLocation: [65, 56],
-                            state: State.ACTIVE,
-                            status: Status.APPROVED,
-                            averageStar: null,
-                            photos: [
-                                {
-                                    _id: '123456789',
-                                    buckets: 'id-bucket',
-                                    name: 'name-image',
-                                    linkURL: 'http://localhost:8080/id-bucket/name-image',
-                                    createdAt: new Date(),
-                                    updatedAt: new Date()
-                                }
-                            ],
-                            reviews: [
-                                {
-                                    _id: '123456789',
-                                    accountID: {},
-                                    facilityID: {},
-                                    comment: 'Đáng để trải nghiệm',
-                                    rating: 5,
-                                    photos: [
-                                        {
-                                            _id: '12345678dsgdgsdxdg4',
-                                            buckets: 'bucket1',
-                                            name: 'image-name',
-                                            linkURL: 'http://localhost:8080/bucket1/image-name',
-                                            createdAt: new Date(),
-                                            updatedAt: new Date()
-                                        }
-                                    ] as Photo[],
-                                    createdAt: new Date(),
-                                    updatedAt: new Date()
-                                }
-                            ],
-                            createdAt: new Date(),
-                            updatedAt: new Date()
-                        } as Facility
-                    ],
-                    total: 1,
-                    options: {
-                        limit: 1,
-                        offet: 1,
-                        search: 'string',
-                        sortBy: 'createdAt',
-                        sortOrder: 'asc'
-                    } as ListOptions<Facility>
-                } as ListResponse<Facility>,
-            },
+                            district: {
+                                name: 'Phường Xuân Khánh',
+                                code: 56
+                            },
+                            commune: {
+                                name: 'Quận Ninh Kiều',
+                                code: 11
+                            }
+                        },
+                        summary: 'Phòng gym thân thiện',
+                        description: 'Nhiều dụng cụ tập luyện',
+                        coordinationLocation: [65, 56],
+                        state: State.ACTIVE,
+                        status: Status.APPROVED,
+                        averageStar: null,
+                        photos: [
+                            {
+                                _id: '123456789',
+                                buckets: 'id-bucket',
+                                name: 'name-image',
+                                linkURL: 'http://localhost:8080/id-bucket/name-image',
+                                createdAt: new Date(),
+                                updatedAt: new Date()
+                            }
+                        ],
+                        reviews: [
+                            {
+                                _id: '123456789',
+                                accountID: {},
+                                facilityID: {},
+                                comment: 'Đáng để trải nghiệm',
+                                rating: 5,
+                                photos: [
+                                    {
+                                        _id: '12345678dsgdgsdxdg4',
+                                        buckets: 'bucket1',
+                                        name: 'image-name',
+                                        linkURL: 'http://localhost:8080/bucket1/image-name',
+                                        createdAt: new Date(),
+                                        updatedAt: new Date()
+                                    }
+                                ] as Photo[],
+                                createdAt: new Date(),
+                                updatedAt: new Date()
+                            }
+                        ],
+                        createdAt: new Date(),
+                        updatedAt: new Date()
+                    } as Facility
+                ],
+                total: 1,
+                options: {
+                    limit: 1,
+                    offet: 1,
+                    search: 'string',
+                    sortBy: 'createdAt',
+                    sortOrder: 'asc'
+                } as ListOptions<Facility>
+            } as ListResponse<Facility>,,
         },
     })
     @ApiNotFoundResponse({
@@ -145,71 +126,65 @@ export class FacilityController {
     @ApiOkResponse({
         status: 200,
         schema: {
-            example: {
-                code: 200,
-                message: 'Success',
-                data: {
-                    _id: '1233456',
-                    brandID: {},
-                    facilityCategoryID: {},
-                    ownerID: {},
-                    name: 'City gym',
-                    address: {
-                        province: {
-                            name: 'TP Cần Thơ',
-                            code: 65
-                        },
-                        district: {
-                            name: 'Phường Xuân Khánh',
-                            code: 56
-                        },
-                        commune: {
-                            name: 'Quận Ninh Kiều',
-                            code: 11
-                        }
-                    },
-                    summary: 'Phòng gym thân thiện',
-                    description: 'Nhiều dụng cụ tập luyện',
-                    coordinationLocation: [65, 56],
-                    state: State.ACTIVE,
-                    status: Status.APPROVED,
-                    averageStar: null,
-                    photos: [
-                        {
-                            _id: '123456789',
-                            buckets: 'id-bucket',
-                            name: 'name-image',
-                            linkURL: 'http://localhost:8080/id-bucket/name-image',
-                            createdAt: new Date(),
-                            updatedAt: new Date()
-                        }
-                    ],
-                    reviews: [
-                        {
-                            _id: '123456789',
-                            accountID: {},
-                            facilityID: {},
-                            comment: 'Đáng để trải nghiệm',
-                            rating: 5,
-                            photos: [
-                                {
-                                    _id: '12345678dsgdgsdxdg4',
-                                    buckets: 'bucket1',
-                                    name: 'image-name',
-                                    linkURL: 'http://localhost:8080/bucket1/image-name',
-                                    createdAt: new Date(),
-                                    updatedAt: new Date()
-                                }
-                            ] as Photo[],
-                            createdAt: new Date(),
-                            updatedAt: new Date()
-                        }
-                    ],
+            _id: '1233456',
+            brandID: {},
+            facilityCategoryID: {},
+            ownerID: {},
+            name: 'City gym',
+            address: {
+                province: {
+                    name: 'TP Cần Thơ',
+                    code: 65
+                },
+                district: {
+                    name: 'Phường Xuân Khánh',
+                    code: 56
+                },
+                commune: {
+                    name: 'Quận Ninh Kiều',
+                    code: 11
+                }
+            },
+            summary: 'Phòng gym thân thiện',
+            description: 'Nhiều dụng cụ tập luyện',
+            coordinationLocation: [65, 56],
+            state: State.ACTIVE,
+            status: Status.APPROVED,
+            averageStar: null,
+            photos: [
+                {
+                    _id: '123456789',
+                    buckets: 'id-bucket',
+                    name: 'name-image',
+                    linkURL: 'http://localhost:8080/id-bucket/name-image',
                     createdAt: new Date(),
                     updatedAt: new Date()
-                } as Facility
-            },
-        },
+                }
+            ],
+            reviews: [
+                {
+                    _id: '123456789',
+                    accountID: {},
+                    facilityID: {},
+                    comment: 'Đáng để trải nghiệm',
+                    rating: 5,
+                    photos: [
+                        {
+                            _id: '12345678dsgdgsdxdg4',
+                            buckets: 'bucket1',
+                            name: 'image-name',
+                            linkURL: 'http://localhost:8080/bucket1/image-name',
+                            createdAt: new Date(),
+                            updatedAt: new Date()
+                        }
+                    ] as Photo[],
+                    createdAt: new Date(),
+                    updatedAt: new Date()
+                }
+            ],
+            createdAt: new Date(),
+            updatedAt: new Date()
+        } as Facility
     })
     @ApiNotFoundResponse({
         type: NotFoundException,

@@ -17,10 +17,7 @@ import { isObjectIdOrHexString } from 'mongoose';
 import { FileUploadDto } from 'src/modules/photo/dto/file-upload-dto';
 
 export class CreateReviewDto {
-    
-    @IsOptional()
-    accountID?: string;
-
+   
     @IsNotEmpty()
     @IsString()
     facilityID: string;
