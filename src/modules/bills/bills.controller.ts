@@ -59,7 +59,7 @@ export class BillsController {
 								ownerFacilityName: 'string',
 								facilityName: 'string',
 								facilityAddress: {},
-								facilityCoordinatesLocation: [] as unknown,
+								facilityCoordinatesLocation: [1, 1],
 								facilityPhoto: 'string',
 								promotions: [],
 								packagePrice: 0,
