@@ -1,11 +1,4 @@
-import {
-	Controller,
-	Get,
-	Param,
-	Patch,
-	Request,
-	UseGuards,
-} from '@nestjs/common';
+import { Controller, Get, Param, Request, UseGuards } from '@nestjs/common';
 import {
 	ApiBadRequestResponse,
 	ApiBearerAuth,
@@ -143,75 +136,5 @@ export class AttendanceController {
 		const userId = req.user._id;
 		console.log(userId);
 		//
-	}
-
-	@ApiBearerAuth()
-	@UseGuards(RolesGuard)
-	@Roles(UserRole.MEMBER)
-	@Patch(':attendanceId')
-	@ApiOperation({
-		summary: 'Update Attendance by attendanceId',
-		description: `Member can use this API
-		- Without request body, server will add the current date to the date array
-		- Request to pass 'date = new Date()' to the request header`,
-	})
-	@ApiParam({
-		name: 'attendanceId',
-		type: String,
-		description: 'Attendance ID',
-	})
-	@ApiOkResponse({
-		schema: {
-			example: {
-				_id: '6476ef7d1f0419cd330fe128',
-				facilityID: {} as unknown as Facility,
-				accountID: {} as unknown as User,
-				date: [new Date(2023, 5, 3, 18), new Date(2023, 5, 4, 18, 3)],
-				createdAt: new Date(),
-				updatedAt: new Date(),
-			} as Attendance,
-		},
-	})
-	@ApiUnauthorizedResponse({
-		schema: {
-			example: {
-				code: '401',
-				message: 'Unauthorized',
-				details: null,
-			} as ErrorResponse<null>,
-		},
-	})
-	@ApiForbiddenResponse({
-		schema: {
-			example: {
-				code: '403',
-				message: 'Forbidden resource',
-				details: null,
-			} as ErrorResponse<null>,
-		},
-	})
-	@ApiNotFoundResponse({
-		schema: {
-			example: {
-				code: '404',
-				message: 'Not found Attendance to update!',
-				details: null,
-			} as ErrorResponse<null>,
-		},
-	})
-	@ApiBadRequestResponse({
-		schema: {
-			example: {
-				code: '400',
-				message: '[Input] invalid!',
-				details: null,
-			} as ErrorResponse<null>,
-		},
-	})
-	updateAttendance(@Request() req: any) {
-		const userid = req.user._id;
-		const currentDate = req.headers.date;
-		console.log(userid, currentDate);
-		//Logic: thuc chat chi la cong them ngay goi api vao update
 	}
 }

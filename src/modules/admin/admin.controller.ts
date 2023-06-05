@@ -33,7 +33,6 @@ import {
 } from 'src/shared/response/common-response';
 import { Attendance } from '../attendance/entities/attendance.entity';
 import { Facility } from '../facility/schemas/facility.schema';
-import { CreateAttendanceDto } from '../attendance/dto/create-attendance-dto';
 import { CreateCategoryDto } from '../facility-category/dto/create-category-dto';
 import { UpdateCategoryDto } from '../facility-category/dto/update-category-dto';
 import { FacilityCategory } from '../facility-category/entities/facility-category';
@@ -105,60 +104,6 @@ export class AdminController {
 	})
 	getAllAttendances(@Query() filter: ListOptions<Attendance>) {
 		console.log(filter);
-		//
-	}
-
-	@ApiBearerAuth()
-	@UseGuards(RolesGuard)
-	@Roles(UserRole.ADMIN)
-	@Post('attendances')
-	@ApiOperation({
-		summary: 'Create new Attendance',
-		description: `Only Admin can use this API`,
-	})
-	@ApiBody({
-		type: CreateAttendanceDto,
-		examples: {
-			test: {
-				value: {
-					accountID: '6476ef7d10fe128f0419cd33',
-					facilityID: '64419cd3376ef7d10fe128f0',
-				} as CreateAttendanceDto,
-			},
-		},
-	})
-	@ApiCreatedResponse({
-		schema: {
-			example: {
-				_id: '6476ef7d1f0419cd330fe128',
-				facilityID: {} as unknown as Facility,
-				accountID: {} as unknown as User,
-				date: [],
-				createdAt: new Date(),
-				updatedAt: new Date(),
-			} as Attendance,
-		},
-	})
-	@ApiUnauthorizedResponse({
-		schema: {
-			example: {
-				code: '401',
-				message: 'Unauthorized',
-				details: null,
-			} as ErrorResponse<null>,
-		},
-	})
-	@ApiForbiddenResponse({
-		schema: {
-			example: {
-				code: '403',
-				message: 'Forbidden resource',
-				details: null,
-			} as ErrorResponse<null>,
-		},
-	})
-	createAttendance(@Body() data: CreateAttendanceDto) {
-		console.log(data);
 		//
 	}
 
