@@ -76,7 +76,7 @@ export class AttendanceController {
 	@ApiBearerAuth()
 	@UseGuards(RolesGuard)
 	@Roles(UserRole.MEMBER)
-	@Get('me')
+	@Get()
 	@ApiOperation({
 		summary: 'Get All Attendance by User',
 		description: `Member can use this API`,
