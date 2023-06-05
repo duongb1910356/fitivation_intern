@@ -53,10 +53,15 @@ import { TimeType, Package } from '../package/entities/package.entity';
 @Controller('admin')
 export class AdminController {
 	// ATTENDANCES
-	@Get('attendances')
+	@Get('facillities/:facilityId/attendances')
 	@ApiOperation({
-		summary: 'Get All Attendances',
+		summary: 'Get All Attendances by facilityId',
 		description: `Only admin can use this API`,
+	})
+	@ApiParam({
+		name: 'facilityId',
+		type: String,
+		description: 'Facility ID',
 	})
 	@ApiDocsPagination('Attendance')
 	@ApiOkResponse({
@@ -102,14 +107,76 @@ export class AdminController {
 			} as ErrorResponse<null>,
 		},
 	})
-	getAllAttendances(@Query() filter: ListOptions<Attendance>) {
-		console.log(filter);
+	getAllAttendancesByFacility(
+		@Query() filter: ListOptions<Attendance>,
+		@Param('facilityId') facilityId: string,
+	) {
+		console.log(filter, facilityId);
 		//
 	}
 
-	@ApiBearerAuth()
-	@UseGuards(RolesGuard)
-	@Roles(UserRole.ADMIN)
+	@Get('users/:userId/attendances')
+	@ApiOperation({
+		summary: 'Get All Attendances by userId',
+		description: `Only admin can use this API`,
+	})
+	@ApiParam({
+		name: 'userId',
+		type: String,
+		description: 'User ID',
+	})
+	@ApiDocsPagination('Attendance')
+	@ApiOkResponse({
+		schema: {
+			example: {
+				items: [
+					{
+						_id: '6476ef7d1f0419cd330fe128',
+						facilityID: {} as unknown as Facility,
+						accountID: {} as unknown as User,
+						date: [],
+						createdAt: new Date(),
+						updatedAt: new Date(),
+					} as Attendance,
+				],
+				total: 1,
+				options: {
+					limit: 10,
+					offset: 0,
+					searchField: 'facilityID',
+					searchValue: 'string',
+					sortField: 'accountID',
+					sortOrder: 'asc',
+				} as ListOptions<Attendance>,
+			} as ListResponse<Attendance>,
+		},
+	})
+	@ApiUnauthorizedResponse({
+		schema: {
+			example: {
+				code: '401',
+				message: 'Unauthorized',
+				details: null,
+			} as ErrorResponse<null>,
+		},
+	})
+	@ApiForbiddenResponse({
+		schema: {
+			example: {
+				code: '403',
+				message: 'Forbidden resource',
+				details: null,
+			} as ErrorResponse<null>,
+		},
+	})
+	getAllAttendancesByUser(
+		@Query() filter: ListOptions<Attendance>,
+		@Param('userId') userId: string,
+	) {
+		console.log(filter, userId);
+		//
+	}
+
 	@Delete('attendances/:attendanceId')
 	@ApiOperation({
 		summary: 'Delete Attendance by attendanceId',
