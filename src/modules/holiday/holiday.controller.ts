@@ -5,7 +5,6 @@ import {
 	Get,
 	Param,
 	Patch,
-	Post,
 	Query,
 	UseGuards,
 } from '@nestjs/common';
@@ -13,7 +12,6 @@ import {
 	ApiBadRequestResponse,
 	ApiBearerAuth,
 	ApiBody,
-	ApiCreatedResponse,
 	ApiForbiddenResponse,
 	ApiNotFoundResponse,
 	ApiOkResponse,
@@ -37,12 +35,12 @@ import { Public } from '../auth/utils';
 import { HolidayDto } from './dto/holiday-dto';
 
 @ApiTags('holidays')
-@Controller()
+@Controller('holidays')
 export class HolidayController {
 	@ApiBearerAuth()
 	@UseGuards(RolesGuard)
 	@Roles(UserRole.ADMIN)
-	@Get('holidays')
+	@Get()
 	@ApiOperation({
 		summary: 'Get All Holidays',
 		description: `Only admin can use this API`,
@@ -98,7 +96,7 @@ export class HolidayController {
 	}
 
 	@Public()
-	@Get('holidays/holidayId')
+	@Get(':holidayId')
 	@ApiOperation({
 		summary: 'Get holiday by holidayId',
 		description: `All role can use this API`,
@@ -140,146 +138,10 @@ export class HolidayController {
 		//
 	}
 
-	@Public()
-	@Get('facilities/:facilityId/holidays')
-	@ApiOperation({
-		summary: 'Get All Holidays by facilityId',
-		description: `All role can use this API`,
-	})
-	@ApiParam({
-		name: 'facilityId',
-		type: String,
-		description: 'Facility ID',
-	})
-	@ApiOkResponse({
-		schema: {
-			example: {
-				items: [
-					{
-						_id: '6476ef7d1f0419cd330fe128',
-						facilityID: {} as unknown as Facility,
-						startDate: new Date(),
-						endDate: new Date(),
-						content: 'string',
-						createdAt: new Date(),
-						updatedAt: new Date(),
-					} as Holiday,
-				],
-				total: 1,
-				options: {
-					limit: 10,
-					offset: 0,
-					searchField: 'facilityID',
-					searchValue: 'string',
-					sortField: 'startDate',
-					sortOrder: 'asc',
-				} as ListOptions<Holiday>,
-			} as ListResponse<Holiday>,
-		},
-	})
-	@ApiNotFoundResponse({
-		schema: {
-			example: {
-				code: '404',
-				message: 'Facility not found!',
-				details: null,
-			} as ErrorResponse<null>,
-		},
-	})
-	@ApiBadRequestResponse({
-		schema: {
-			example: {
-				code: '400',
-				message: '[Input] invalid!',
-				details: null,
-			} as ErrorResponse<null>,
-		},
-	})
-	getAllHolidaysByFacility(
-		@Param('facilityId') facilityId: string,
-		@Query() filter: ListOptions<Holiday>,
-	) {
-		console.log(facilityId, filter);
-		//
-	}
-
 	@ApiBearerAuth()
 	@UseGuards(RolesGuard)
 	@Roles(UserRole.ADMIN, UserRole.FACILITY_OWNER)
-	@Post('facilities/:facilityId/holidays')
-	@ApiOperation({
-		summary: 'Create new Holiday by facilityId',
-		description: `Facility Owner can use this API`,
-	})
-	@ApiParam({
-		name: 'facilityId',
-		type: String,
-		description: 'Facility ID',
-	})
-	@ApiBody({
-		type: HolidayDto,
-		examples: {
-			test: {
-				value: {
-					startDate: new Date(),
-					endDate: new Date(),
-					content: 'string',
-				} as HolidayDto,
-			},
-		},
-	})
-	@ApiCreatedResponse({
-		schema: {
-			example: {
-				_id: '6476ef7d1f0419cd330fe128',
-				facilityID: {} as unknown as Facility,
-				startDate: new Date(),
-				endDate: new Date(),
-				content: 'string',
-				createdAt: new Date(),
-				updatedAt: new Date(),
-			} as Holiday,
-		},
-	})
-	@ApiUnauthorizedResponse({
-		schema: {
-			example: {
-				code: '401',
-				message: 'Unauthorized',
-				details: null,
-			} as ErrorResponse<null>,
-		},
-	})
-	@ApiForbiddenResponse({
-		schema: {
-			example: {
-				code: '403',
-				message: 'Forbidden resource',
-				details: null,
-			} as ErrorResponse<null>,
-		},
-	})
-	@ApiBadRequestResponse({
-		schema: {
-			example: {
-				code: '400',
-				message: '[Input] invalid!',
-				details: null,
-			} as ErrorResponse<null>,
-		},
-	})
-	createHolidayByFacility(
-		@Param('facilityId') facilityId: string,
-		@Body() data: HolidayDto,
-	) {
-		console.log(facilityId, data);
-		//
-	}
-
-	@ApiBearerAuth()
-	@UseGuards(RolesGuard)
-	@Roles(UserRole.ADMIN, UserRole.FACILITY_OWNER)
-	@Patch('holiday/:holidayId')
+	@Patch(':holidayId')
 	@ApiOperation({
 		summary: 'Update Holiday by holidayId',
 		description: `Facility Owner can use this API`,
@@ -361,7 +223,7 @@ export class HolidayController {
 	@ApiBearerAuth()
 	@UseGuards(RolesGuard)
 	@Roles(UserRole.ADMIN, UserRole.FACILITY_OWNER)
-	@Delete('holidays/:holidayId')
+	@Delete(':holidayId')
 	@ApiOperation({
 		summary: 'Delete Holiday by holidayId',
 		description: `Facility Owner can use this API`,

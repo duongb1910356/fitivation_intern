@@ -73,12 +73,12 @@ export class FacilityCategoryController {
 	}
 
 	@Public()
-	@Get(':id')
+	@Get(':categoryId')
 	@ApiOperation({
 		summary: 'Get Category',
 		description: `All roles can use this API`,
 	})
-	@ApiParam({ name: 'id', type: String, description: 'Category ID' })
+	@ApiParam({ name: 'categoryId', type: String, description: 'Category ID' })
 	@ApiOkResponse({
 		schema: {
 			example: {
@@ -108,8 +108,8 @@ export class FacilityCategoryController {
 			} as ErrorResponse<null>,
 		},
 	})
-	getCategory(@Param('id') id: string) {
-		console.log(id);
+	getCategory(@Param('categoryId') categoryId: string) {
+		console.log(categoryId);
 		//
 	}
 
@@ -178,13 +178,13 @@ export class FacilityCategoryController {
 	@ApiBearerAuth()
 	@UseGuards(RolesGuard)
 	@Roles(UserRole.ADMIN)
-	@Patch(':id')
+	@Patch(':categoryId')
 	@ApiOperation({
 		summary: 'Update category',
 		description: `Only admin can use this API`,
 	})
 	@ApiParam({
-		name: 'id',
+		name: 'categoryId',
 		type: String,
 		description: 'Category ID',
 	})
@@ -245,21 +245,24 @@ export class FacilityCategoryController {
 			} as ErrorResponse<null>,
 		},
 	})
-	updateCategory(@Param('id') id: string, @Body() data: UpdateCategoryDto) {
-		console.log(id, data);
+	updateCategory(
+		@Param('categoryId') categoryId: string,
+		@Body() data: UpdateCategoryDto,
+	) {
+		console.log(categoryId, data);
 		//
 	}
 
 	@ApiBearerAuth()
 	@UseGuards(RolesGuard)
 	@Roles(UserRole.ADMIN)
-	@Delete(':id')
+	@Delete(':categoryId')
 	@ApiOperation({
 		summary: 'Delete category',
 		description: `Only admin can use this API`,
 	})
 	@ApiParam({
-		name: 'id',
+		name: 'categoryId',
 		type: String,
 		description: 'Category ID',
 	})
@@ -306,8 +309,8 @@ export class FacilityCategoryController {
 			} as ErrorResponse<null>,
 		},
 	})
-	deleteCategory(@Param('id') id: string) {
-		console.log(id);
+	deleteCategory(@Param('categoryId') categoryId: string) {
+		console.log(categoryId);
 		//
 	}
 }
