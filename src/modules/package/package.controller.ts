@@ -5,7 +5,6 @@ import {
 	Get,
 	Param,
 	Patch,
-	Query,
 	UseGuards,
 } from '@nestjs/common';
 import { Public } from '../auth/utils';
@@ -24,78 +23,15 @@ import {
 import { Package, TimeType } from './entities/package.entity';
 import { UpdatePackageDto } from './dto/update-package-dto';
 import { Roles } from 'src/decorators/role-decorator/role.decorator';
-import { ApiDocsPagination } from 'src/decorators/swagger-form-data.decorator';
 import { PackageType } from '../package-type/entities/package-type.entity';
 import { Facility } from '../facility/schemas/facility.schema';
-import {
-	ErrorResponse,
-	ListOptions,
-	ListResponse,
-} from 'src/shared/response/common-response';
+import { ErrorResponse } from 'src/shared/response/common-response';
 import { UserRole } from '../users/schemas/user.schema';
 import { RolesGuard } from 'src/decorators/role-decorator/role.guard';
 
 @ApiTags('packages')
 @Controller('packages')
 export class PackageController {
-	@ApiBearerAuth()
-	@UseGuards(RolesGuard)
-	@Roles(UserRole.ADMIN)
-	@Get()
-	@ApiOperation({
-		summary: 'Get All Packages',
-		description: `Only admin can use this API`,
-	})
-	@ApiDocsPagination('Package')
-	@ApiOkResponse({
-		schema: {
-			example: {
-				items: [
-					{
-						_id: '6476ef7d1f0419cd330fe128',
-						packageTypeID: {} as unknown as PackageType,
-						facilityID: {} as unknown as Facility,
-						type: TimeType.ONE_MONTH,
-						price: 100000,
-						createdAt: new Date(),
-						updatedAt: new Date(),
-					} as Package,
-				],
-				total: 1,
-				options: {
-					limit: 10,
-					offset: 0,
-					searchField: 'facilityID',
-					searchValue: 'string',
-					sortField: '_id',
-					sortOrder: 'asc',
-				} as ListOptions<Package>,
-			} as ListResponse<Package>,
-		},
-	})
-	@ApiUnauthorizedResponse({
-		schema: {
-			example: {
-				code: '401',
-				message: 'Unauthorized',
-				details: null,
-			} as ErrorResponse<null>,
-		},
-	})
-	@ApiForbiddenResponse({
-		schema: {
-			example: {
-				code: '403',
-				message: 'Forbidden resource',
-				details: null,
-			} as ErrorResponse<null>,
-		},
-	})
-	getAllPackages(@Query() filter: ListOptions<Package>) {
-		console.log(filter);
-		//
-	}
-
 	@Public()
 	@Get(':packageId')
 	@ApiOperation({
@@ -141,7 +77,7 @@ export class PackageController {
 
 	@ApiBearerAuth()
 	@UseGuards(RolesGuard)
-	@Roles(UserRole.ADMIN, UserRole.FACILITY_OWNER)
+	@Roles(UserRole.FACILITY_OWNER)
 	@Patch(':packageId')
 	@ApiOperation({
 		summary: 'Update Package by packageId',
@@ -226,7 +162,7 @@ export class PackageController {
 
 	@ApiBearerAuth()
 	@UseGuards(RolesGuard)
-	@Roles(UserRole.ADMIN, UserRole.FACILITY_OWNER)
+	@Roles(UserRole.FACILITY_OWNER)
 	@Delete(':packageId')
 	@ApiOperation({
 		summary: 'Delete Package by packageId',

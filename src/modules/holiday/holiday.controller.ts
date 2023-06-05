@@ -5,7 +5,6 @@ import {
 	Get,
 	Param,
 	Patch,
-	Query,
 	UseGuards,
 } from '@nestjs/common';
 import {
@@ -22,12 +21,7 @@ import {
 } from '@nestjs/swagger';
 import { Roles } from 'src/decorators/role-decorator/role.decorator';
 import { RolesGuard } from 'src/decorators/role-decorator/role.guard';
-import { ApiDocsPagination } from 'src/decorators/swagger-form-data.decorator';
-import {
-	ListOptions,
-	ListResponse,
-	ErrorResponse,
-} from 'src/shared/response/common-response';
+import { ErrorResponse } from 'src/shared/response/common-response';
 import { Facility } from '../facility/schemas/facility.schema';
 import { UserRole } from '../users/schemas/user.schema';
 import { Holiday } from './entities/holiday.entity';
@@ -37,64 +31,6 @@ import { HolidayDto } from './dto/holiday-dto';
 @ApiTags('holidays')
 @Controller('holidays')
 export class HolidayController {
-	@ApiBearerAuth()
-	@UseGuards(RolesGuard)
-	@Roles(UserRole.ADMIN)
-	@Get()
-	@ApiOperation({
-		summary: 'Get All Holidays',
-		description: `Only admin can use this API`,
-	})
-	@ApiDocsPagination('Holiday')
-	@ApiOkResponse({
-		schema: {
-			example: {
-				items: [
-					{
-						_id: '6476ef7d1f0419cd330fe128',
-						facilityID: {} as unknown as Facility,
-						startDate: new Date(),
-						endDate: new Date(),
-						content: 'string',
-						createdAt: new Date(),
-						updatedAt: new Date(),
-					} as Holiday,
-				],
-				total: 1,
-				options: {
-					limit: 10,
-					offset: 0,
-					searchField: 'facilityID',
-					searchValue: 'string',
-					sortField: 'startDate',
-					sortOrder: 'asc',
-				} as ListOptions<Holiday>,
-			} as ListResponse<Holiday>,
-		},
-	})
-	@ApiUnauthorizedResponse({
-		schema: {
-			example: {
-				code: '401',
-				message: 'Unauthorized',
-				details: null,
-			} as ErrorResponse<null>,
-		},
-	})
-	@ApiForbiddenResponse({
-		schema: {
-			example: {
-				code: '403',
-				message: 'Forbidden resource',
-				details: null,
-			} as ErrorResponse<null>,
-		},
-	})
-	getAllHolidays(@Query() filter: ListOptions<Holiday>) {
-		console.log(filter);
-		//
-	}
-
 	@Public()
 	@Get(':holidayId')
 	@ApiOperation({
@@ -140,7 +76,7 @@ export class HolidayController {
 
 	@ApiBearerAuth()
 	@UseGuards(RolesGuard)
-	@Roles(UserRole.ADMIN, UserRole.FACILITY_OWNER)
+	@Roles(UserRole.FACILITY_OWNER)
 	@Patch(':holidayId')
 	@ApiOperation({
 		summary: 'Update Holiday by holidayId',
@@ -222,7 +158,7 @@ export class HolidayController {
 
 	@ApiBearerAuth()
 	@UseGuards(RolesGuard)
-	@Roles(UserRole.ADMIN, UserRole.FACILITY_OWNER)
+	@Roles(UserRole.FACILITY_OWNER)
 	@Delete(':holidayId')
 	@ApiOperation({
 		summary: 'Delete Holiday by holidayId',

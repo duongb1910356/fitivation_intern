@@ -5,7 +5,6 @@ import {
 	Get,
 	Param,
 	Patch,
-	Query,
 	UseGuards,
 } from '@nestjs/common';
 import {
@@ -21,12 +20,7 @@ import {
 	ApiUnauthorizedResponse,
 } from '@nestjs/swagger';
 import { Roles } from 'src/decorators/role-decorator/role.decorator';
-import { ApiDocsPagination } from 'src/decorators/swagger-form-data.decorator';
-import {
-	ErrorResponse,
-	ListOptions,
-	ListResponse,
-} from 'src/shared/response/common-response';
+import { ErrorResponse } from 'src/shared/response/common-response';
 import { UserRole } from '../users/schemas/user.schema';
 import { RolesGuard } from 'src/decorators/role-decorator/role.guard';
 import {
@@ -44,70 +38,6 @@ import { Facility } from '../facility/schemas/facility.schema';
 @ApiTags('schedules')
 @Controller('schedules')
 export class FacilityScheduleController {
-	@ApiBearerAuth()
-	@UseGuards(RolesGuard)
-	@Roles(UserRole.ADMIN)
-	@Get()
-	@ApiOperation({
-		summary: 'Get All Schedules',
-		description: `Only admin can use this API`,
-	})
-	@ApiDocsPagination('Schedule')
-	@ApiOkResponse({
-		schema: {
-			example: {
-				items: [
-					{
-						_id: '6476ef7d1f0419cd330fe128',
-						facilityID: {} as unknown as Facility,
-						type: ScheduleType.DAILY,
-						openTime: [
-							{
-								shift: {
-									startTime: new Date(),
-									endTime: new Date(),
-								} as ShiftTime,
-							} as OpenTime,
-						],
-						createdAt: new Date(),
-						updatedAt: new Date(),
-					} as FacilitySchedule,
-				],
-				total: 1,
-				options: {
-					limit: 10,
-					offset: 0,
-					searchField: 'facilityID',
-					searchValue: 'string',
-					sortField: 'type',
-					sortOrder: 'asc',
-				} as ListOptions<FacilitySchedule>,
-			} as ListResponse<FacilitySchedule>,
-		},
-	})
-	@ApiUnauthorizedResponse({
-		schema: {
-			example: {
-				code: '401',
-				message: 'Unauthorized',
-				details: null,
-			} as ErrorResponse<null>,
-		},
-	})
-	@ApiForbiddenResponse({
-		schema: {
-			example: {
-				code: '403',
-				message: 'Forbidden resource',
-				details: null,
-			} as ErrorResponse<null>,
-		},
-	})
-	getAllSchedules(@Query() filter: ListOptions<FacilitySchedule>) {
-		console.log(filter);
-		//
-	}
-
 	@Public()
 	@Get(':scheduleId')
 	@ApiOperation({
@@ -159,7 +89,7 @@ export class FacilityScheduleController {
 
 	@ApiBearerAuth()
 	@UseGuards(RolesGuard)
-	@Roles(UserRole.ADMIN, UserRole.FACILITY_OWNER)
+	@Roles(UserRole.FACILITY_OWNER)
 	@Patch(':scheduleId')
 	@ApiOperation({
 		summary: 'Update Schedule by scheduleId',
@@ -308,7 +238,7 @@ export class FacilityScheduleController {
 
 	@ApiBearerAuth()
 	@UseGuards(RolesGuard)
-	@Roles(UserRole.ADMIN, UserRole.FACILITY_OWNER)
+	@Roles(UserRole.FACILITY_OWNER)
 	@Delete(':scheduleId')
 	@ApiOperation({
 		summary: 'Delete Schedule Type by scheduleId',

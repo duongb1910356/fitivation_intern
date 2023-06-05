@@ -1,0 +1,649 @@
+import {
+	Body,
+	Controller,
+	Delete,
+	Get,
+	Param,
+	Patch,
+	Post,
+	Query,
+	UseGuards,
+} from '@nestjs/common';
+import {
+	ApiBadRequestResponse,
+	ApiBearerAuth,
+	ApiBody,
+	ApiCreatedResponse,
+	ApiForbiddenResponse,
+	ApiNotFoundResponse,
+	ApiOkResponse,
+	ApiOperation,
+	ApiParam,
+	ApiTags,
+	ApiUnauthorizedResponse,
+} from '@nestjs/swagger';
+import { Roles } from 'src/decorators/role-decorator/role.decorator';
+import { RolesGuard } from 'src/decorators/role-decorator/role.guard';
+import { User, UserRole } from '../users/schemas/user.schema';
+import { ApiDocsPagination } from 'src/decorators/swagger-form-data.decorator';
+import {
+	ListOptions,
+	ListResponse,
+	ErrorResponse,
+} from 'src/shared/response/common-response';
+import { Attendance } from '../attendance/entities/attendance.entity';
+import { Facility } from '../facility/schemas/facility.schema';
+import { CreateAttendanceDto } from '../attendance/dto/create-attendance-dto';
+import { CreateCategoryDto } from '../facility-category/dto/create-category-dto';
+import { UpdateCategoryDto } from '../facility-category/dto/update-category-dto';
+import { FacilityCategory } from '../facility-category/entities/facility-category';
+import {
+	ScheduleType,
+	FacilitySchedule,
+} from '../facility-schedule/entities/facility-schedule.entity';
+import { OpenTime } from '../facility-schedule/entities/open-time.entity';
+import { ShiftTime } from '../facility-schedule/entities/shift-time.entity';
+import { Holiday } from '../holiday/entities/holiday.entity';
+import { PackageType } from '../package-type/entities/package-type.entity';
+import { TimeType, Package } from '../package/entities/package.entity';
+
+@ApiTags('admin')
+@ApiBearerAuth()
+@UseGuards(RolesGuard)
+@Roles(UserRole.ADMIN)
+@Controller('admin')
+export class AdminController {
+	// ATTENDANCES
+	@Get('attendances')
+	@ApiOperation({
+		summary: 'Get All Attendances',
+		description: `Only admin can use this API`,
+	})
+	@ApiDocsPagination('Attendance')
+	@ApiOkResponse({
+		schema: {
+			example: {
+				items: [
+					{
+						_id: '6476ef7d1f0419cd330fe128',
+						facilityID: {} as unknown as Facility,
+						accountID: {} as unknown as User,
+						date: [],
+						createdAt: new Date(),
+						updatedAt: new Date(),
+					} as Attendance,
+				],
+				total: 1,
+				options: {
+					limit: 10,
+					offset: 0,
+					searchField: 'facilityID',
+					searchValue: 'string',
+					sortField: 'accountID',
+					sortOrder: 'asc',
+				} as ListOptions<Attendance>,
+			} as ListResponse<Attendance>,
+		},
+	})
+	@ApiUnauthorizedResponse({
+		schema: {
+			example: {
+				code: '401',
+				message: 'Unauthorized',
+				details: null,
+			} as ErrorResponse<null>,
+		},
+	})
+	@ApiForbiddenResponse({
+		schema: {
+			example: {
+				code: '403',
+				message: 'Forbidden resource',
+				details: null,
+			} as ErrorResponse<null>,
+		},
+	})
+	getAllAttendances(@Query() filter: ListOptions<Attendance>) {
+		console.log(filter);
+		//
+	}
+
+	@ApiBearerAuth()
+	@UseGuards(RolesGuard)
+	@Roles(UserRole.ADMIN)
+	@Post('attendances')
+	@ApiOperation({
+		summary: 'Create new Attendance',
+		description: `Only Admin can use this API`,
+	})
+	@ApiBody({
+		type: CreateAttendanceDto,
+		examples: {
+			test: {
+				value: {
+					accountID: '6476ef7d10fe128f0419cd33',
+					facilityID: '64419cd3376ef7d10fe128f0',
+				} as CreateAttendanceDto,
+			},
+		},
+	})
+	@ApiCreatedResponse({
+		schema: {
+			example: {
+				_id: '6476ef7d1f0419cd330fe128',
+				facilityID: {} as unknown as Facility,
+				accountID: {} as unknown as User,
+				date: [],
+				createdAt: new Date(),
+				updatedAt: new Date(),
+			} as Attendance,
+		},
+	})
+	@ApiUnauthorizedResponse({
+		schema: {
+			example: {
+				code: '401',
+				message: 'Unauthorized',
+				details: null,
+			} as ErrorResponse<null>,
+		},
+	})
+	@ApiForbiddenResponse({
+		schema: {
+			example: {
+				code: '403',
+				message: 'Forbidden resource',
+				details: null,
+			} as ErrorResponse<null>,
+		},
+	})
+	createAttendance(@Body() data: CreateAttendanceDto) {
+		console.log(data);
+		//
+	}
+
+	@ApiBearerAuth()
+	@UseGuards(RolesGuard)
+	@Roles(UserRole.ADMIN)
+	@Delete('attendances/:attendanceId')
+	@ApiOperation({
+		summary: 'Delete Attendance by attendanceId',
+		description: `Only Admin can use this API`,
+	})
+	@ApiParam({
+		name: 'attendanceId',
+		type: String,
+		description: 'Attendance ID',
+	})
+	@ApiOkResponse({
+		schema: {
+			example: {
+				message: 'Delete Attendance successful!',
+			},
+		},
+	})
+	@ApiUnauthorizedResponse({
+		schema: {
+			example: {
+				code: '401',
+				message: 'Unauthorized',
+				details: null,
+			} as ErrorResponse<null>,
+		},
+	})
+	@ApiForbiddenResponse({
+		schema: {
+			example: {
+				code: '403',
+				message: 'Forbidden resource',
+				details: null,
+			} as ErrorResponse<null>,
+		},
+	})
+	@ApiNotFoundResponse({
+		schema: {
+			example: {
+				code: '404',
+				message: 'Holiday not found!',
+				details: null,
+			} as ErrorResponse<null>,
+		},
+	})
+	@ApiBadRequestResponse({
+		schema: {
+			example: {
+				code: '400',
+				message: '[Input] invalid!',
+				details: null,
+			} as ErrorResponse<null>,
+		},
+	})
+	deteleAttendance(@Param('attendanceId') attendanceId: string) {
+		console.log(attendanceId);
+		//
+	}
+
+	// CATEGORIES
+	@Post('categories')
+	@ApiOperation({
+		summary: 'Create category',
+		description: `Only admin can use this API`,
+	})
+	@ApiBody({
+		type: CreateCategoryDto,
+		examples: {
+			test: {
+				value: {
+					type: 'SPA',
+					name: 'SPA',
+				} as CreateCategoryDto,
+			},
+		},
+	})
+	@ApiCreatedResponse({
+		schema: {
+			example: {
+				_id: '6476ef7d1f0419cd330fe128',
+				type: 'SPA',
+				name: 'SPA',
+				createdAt: new Date(),
+				updatedAt: new Date(),
+			} as FacilityCategory,
+		},
+	})
+	@ApiUnauthorizedResponse({
+		schema: {
+			example: {
+				code: '401',
+				message: 'Unauthorized',
+				details: null,
+			} as ErrorResponse<null>,
+		},
+	})
+	@ApiForbiddenResponse({
+		schema: {
+			example: {
+				code: '403',
+				message: 'Forbidden resource',
+				details: null,
+			} as ErrorResponse<null>,
+		},
+	})
+	@ApiBadRequestResponse({
+		schema: {
+			example: {
+				code: '400',
+				message: '[Input] invalid!',
+				details: null,
+			} as ErrorResponse<null>,
+		},
+	})
+	createCategory(@Body() data: CreateCategoryDto) {
+		console.log(data);
+		//
+	}
+
+	@Patch('categories/:categoryId')
+	@ApiOperation({
+		summary: 'Update category',
+		description: `Only admin can use this API`,
+	})
+	@ApiParam({
+		name: 'categoryId',
+		type: String,
+		description: 'Category ID',
+	})
+	@ApiBody({
+		type: UpdateCategoryDto,
+		examples: {
+			test: {
+				value: {
+					name: 'string',
+				} as UpdateCategoryDto,
+			},
+		},
+	})
+	@ApiOkResponse({
+		schema: {
+			example: {
+				_id: '6476ef7d1f0419cd330fe128',
+				type: 'GYM',
+				name: 'GYM',
+				createdAt: new Date(),
+				updatedAt: new Date(),
+			} as FacilityCategory,
+		},
+	})
+	@ApiUnauthorizedResponse({
+		schema: {
+			example: {
+				code: '401',
+				message: 'Unauthorized',
+				details: null,
+			} as ErrorResponse<null>,
+		},
+	})
+	@ApiForbiddenResponse({
+		schema: {
+			example: {
+				code: '403',
+				message: 'Forbidden resource',
+				details: null,
+			} as ErrorResponse<null>,
+		},
+	})
+	@ApiNotFoundResponse({
+		schema: {
+			example: {
+				code: '404',
+				message: 'Not found category to update!',
+				details: null,
+			} as ErrorResponse<null>,
+		},
+	})
+	@ApiBadRequestResponse({
+		schema: {
+			example: {
+				code: '400',
+				message: '[Input] invalid!',
+				details: null,
+			} as ErrorResponse<null>,
+		},
+	})
+	updateCategory(
+		@Param('categoryId') categoryId: string,
+		@Body() data: UpdateCategoryDto,
+	) {
+		console.log(categoryId, data);
+		//
+	}
+
+	@Delete('categories/:categoryId')
+	@ApiOperation({
+		summary: 'Delete category',
+		description: `Only admin can use this API`,
+	})
+	@ApiParam({
+		name: 'categoryId',
+		type: String,
+		description: 'Category ID',
+	})
+	@ApiOkResponse({
+		schema: {
+			example: {
+				message: 'Delete Category successful!',
+			},
+		},
+	})
+	@ApiUnauthorizedResponse({
+		schema: {
+			example: {
+				code: '401',
+				message: 'Unauthorized',
+				details: null,
+			} as ErrorResponse<null>,
+		},
+	})
+	@ApiForbiddenResponse({
+		schema: {
+			example: {
+				code: '403',
+				message: 'Forbidden resource',
+				details: null,
+			} as ErrorResponse<null>,
+		},
+	})
+	@ApiNotFoundResponse({
+		schema: {
+			example: {
+				code: '404',
+				message: 'Category not found!',
+				details: null,
+			} as ErrorResponse<null>,
+		},
+	})
+	@ApiBadRequestResponse({
+		schema: {
+			example: {
+				code: '400',
+				message: '[Input] invalid!',
+				details: null,
+			} as ErrorResponse<null>,
+		},
+	})
+	deleteCategory(@Param('categoryId') categoryId: string) {
+		console.log(categoryId);
+		//
+	}
+
+	//SCHEDULES
+	@Get('schedules')
+	@ApiOperation({
+		summary: 'Get All Schedules',
+		description: `Only admin can use this API`,
+	})
+	@ApiDocsPagination('Schedule')
+	@ApiOkResponse({
+		schema: {
+			example: {
+				items: [
+					{
+						_id: '6476ef7d1f0419cd330fe128',
+						facilityID: {} as unknown as Facility,
+						type: ScheduleType.DAILY,
+						openTime: [
+							{
+								shift: {
+									startTime: new Date(),
+									endTime: new Date(),
+								} as ShiftTime,
+							} as OpenTime,
+						],
+						createdAt: new Date(),
+						updatedAt: new Date(),
+					} as FacilitySchedule,
+				],
+				total: 1,
+				options: {
+					limit: 10,
+					offset: 0,
+					searchField: 'facilityID',
+					searchValue: 'string',
+					sortField: 'type',
+					sortOrder: 'asc',
+				} as ListOptions<FacilitySchedule>,
+			} as ListResponse<FacilitySchedule>,
+		},
+	})
+	@ApiUnauthorizedResponse({
+		schema: {
+			example: {
+				code: '401',
+				message: 'Unauthorized',
+				details: null,
+			} as ErrorResponse<null>,
+		},
+	})
+	@ApiForbiddenResponse({
+		schema: {
+			example: {
+				code: '403',
+				message: 'Forbidden resource',
+				details: null,
+			} as ErrorResponse<null>,
+		},
+	})
+	getAllSchedules(@Query() filter: ListOptions<FacilitySchedule>) {
+		console.log(filter);
+		//
+	}
+
+	//HOLIDAYS
+	@Get('holidays')
+	@ApiOperation({
+		summary: 'Get All Holidays',
+		description: `Only admin can use this API`,
+	})
+	@ApiDocsPagination('Holiday')
+	@ApiOkResponse({
+		schema: {
+			example: {
+				items: [
+					{
+						_id: '6476ef7d1f0419cd330fe128',
+						facilityID: {} as unknown as Facility,
+						startDate: new Date(),
+						endDate: new Date(),
+						content: 'string',
+						createdAt: new Date(),
+						updatedAt: new Date(),
+					} as Holiday,
+				],
+				total: 1,
+				options: {
+					limit: 10,
+					offset: 0,
+					searchField: 'facilityID',
+					searchValue: 'string',
+					sortField: 'startDate',
+					sortOrder: 'asc',
+				} as ListOptions<Holiday>,
+			} as ListResponse<Holiday>,
+		},
+	})
+	@ApiUnauthorizedResponse({
+		schema: {
+			example: {
+				code: '401',
+				message: 'Unauthorized',
+				details: null,
+			} as ErrorResponse<null>,
+		},
+	})
+	@ApiForbiddenResponse({
+		schema: {
+			example: {
+				code: '403',
+				message: 'Forbidden resource',
+				details: null,
+			} as ErrorResponse<null>,
+		},
+	})
+	getAllHolidays(@Query() filter: ListOptions<Holiday>) {
+		console.log(filter);
+		//
+	}
+
+	//PACKAGES
+	@Get('packages')
+	@ApiOperation({
+		summary: 'Get All Packages',
+		description: `Only admin can use this API`,
+	})
+	@ApiDocsPagination('Package')
+	@ApiOkResponse({
+		schema: {
+			example: {
+				items: [
+					{
+						_id: '6476ef7d1f0419cd330fe128',
+						packageTypeID: {} as unknown as PackageType,
+						facilityID: {} as unknown as Facility,
+						type: TimeType.ONE_MONTH,
+						price: 100000,
+						createdAt: new Date(),
+						updatedAt: new Date(),
+					} as Package,
+				],
+				total: 1,
+				options: {
+					limit: 10,
+					offset: 0,
+					searchField: 'facilityID',
+					searchValue: 'string',
+					sortField: '_id',
+					sortOrder: 'asc',
+				} as ListOptions<Package>,
+			} as ListResponse<Package>,
+		},
+	})
+	@ApiUnauthorizedResponse({
+		schema: {
+			example: {
+				code: '401',
+				message: 'Unauthorized',
+				details: null,
+			} as ErrorResponse<null>,
+		},
+	})
+	@ApiForbiddenResponse({
+		schema: {
+			example: {
+				code: '403',
+				message: 'Forbidden resource',
+				details: null,
+			} as ErrorResponse<null>,
+		},
+	})
+	getAllPackages(@Query() filter: ListOptions<Package>) {
+		console.log(filter);
+		//
+	}
+
+	//PACKAGE TYPE
+	@Get('package-types')
+	@ApiOperation({
+		summary: 'Get All Package Type',
+		description: `Only admin can use this API`,
+	})
+	@ApiDocsPagination('PackageType')
+	@ApiOkResponse({
+		schema: {
+			example: {
+				items: [
+					{
+						_id: '6476ef7d1f0419cd330fe128',
+						facilityID: {} as unknown as Facility,
+						name: 'GYM GYM 1',
+						description: 'cơ sở tập gym chất lượng',
+						price: 100000,
+						order: 0,
+						createdAt: new Date(),
+						updatedAt: new Date(),
+					} as PackageType,
+				],
+				total: 1,
+				options: {
+					limit: 10,
+					offset: 0,
+					searchField: 'name',
+					searchValue: 'string',
+					sortField: 'name',
+					sortOrder: 'asc',
+				} as ListOptions<PackageType>,
+			} as ListResponse<PackageType>,
+		},
+	})
+	@ApiUnauthorizedResponse({
+		schema: {
+			example: {
+				code: '401',
+				message: 'Unauthorized',
+				details: null,
+			} as ErrorResponse<null>,
+		},
+	})
+	@ApiForbiddenResponse({
+		schema: {
+			example: {
+				code: '403',
+				message: 'Forbidden resource',
+				details: null,
+			} as ErrorResponse<null>,
+		},
+	})
+	getAllPackageTypes(@Query() filter: ListOptions<PackageType>) {
+		//
+		console.log(filter);
+	}
+}

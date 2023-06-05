@@ -1,20 +1,14 @@
 import {
-	Body,
 	Controller,
-	Delete,
 	Get,
 	Param,
 	Patch,
-	Post,
-	Query,
 	Request,
 	UseGuards,
 } from '@nestjs/common';
 import {
 	ApiBadRequestResponse,
 	ApiBearerAuth,
-	ApiBody,
-	ApiCreatedResponse,
 	ApiForbiddenResponse,
 	ApiNotFoundResponse,
 	ApiOkResponse,
@@ -36,68 +30,10 @@ import { Attendance } from './entities/attendance.entity';
 import { Facility } from '../facility/schemas/facility.schema';
 import RequestWithUser from 'src/interfaces/requestWithUser.interface';
 import { Public } from '../auth/utils';
-import { CreateAttendanceDto } from './dto/create-attendance-dto';
 
 @ApiTags('attendances')
 @Controller('attendances')
 export class AttendanceController {
-	@ApiBearerAuth()
-	@UseGuards(RolesGuard)
-	@Roles(UserRole.ADMIN)
-	@Get()
-	@ApiOperation({
-		summary: 'Get All Attendances',
-		description: `Only admin can use this API`,
-	})
-	@ApiDocsPagination('Attendance')
-	@ApiOkResponse({
-		schema: {
-			example: {
-				items: [
-					{
-						_id: '6476ef7d1f0419cd330fe128',
-						facilityID: {} as unknown as Facility,
-						accountID: {} as unknown as User,
-						date: [],
-						createdAt: new Date(),
-						updatedAt: new Date(),
-					} as Attendance,
-				],
-				total: 1,
-				options: {
-					limit: 10,
-					offset: 0,
-					searchField: 'facilityID',
-					searchValue: 'string',
-					sortField: 'accountID',
-					sortOrder: 'asc',
-				} as ListOptions<Attendance>,
-			} as ListResponse<Attendance>,
-		},
-	})
-	@ApiUnauthorizedResponse({
-		schema: {
-			example: {
-				code: '401',
-				message: 'Unauthorized',
-				details: null,
-			} as ErrorResponse<null>,
-		},
-	})
-	@ApiForbiddenResponse({
-		schema: {
-			example: {
-				code: '403',
-				message: 'Forbidden resource',
-				details: null,
-			} as ErrorResponse<null>,
-		},
-	})
-	getAllAttendances(@Query() filter: ListOptions<Attendance>) {
-		console.log(filter);
-		//
-	}
-
 	@Public()
 	@Get(':attendanceId')
 	@ApiOperation({
@@ -146,7 +82,7 @@ export class AttendanceController {
 
 	@ApiBearerAuth()
 	@UseGuards(RolesGuard)
-	@Roles(UserRole.ADMIN, UserRole.MEMBER)
+	@Roles(UserRole.MEMBER)
 	@Get('me')
 	@ApiOperation({
 		summary: 'Get All Attendance by User',
@@ -206,60 +142,6 @@ export class AttendanceController {
 	getAllAttendancesByUser(@Request() req: RequestWithUser) {
 		const userId = req.user._id;
 		console.log(userId);
-		//
-	}
-
-	@ApiBearerAuth()
-	@UseGuards(RolesGuard)
-	@Roles(UserRole.ADMIN)
-	@Post()
-	@ApiOperation({
-		summary: 'Create new Attendance',
-		description: `Only Admin can use this API`,
-	})
-	@ApiBody({
-		type: CreateAttendanceDto,
-		examples: {
-			test: {
-				value: {
-					accountID: '6476ef7d10fe128f0419cd33',
-					facilityID: '64419cd3376ef7d10fe128f0',
-				} as CreateAttendanceDto,
-			},
-		},
-	})
-	@ApiCreatedResponse({
-		schema: {
-			example: {
-				_id: '6476ef7d1f0419cd330fe128',
-				facilityID: {} as unknown as Facility,
-				accountID: {} as unknown as User,
-				date: [],
-				createdAt: new Date(),
-				updatedAt: new Date(),
-			} as Attendance,
-		},
-	})
-	@ApiUnauthorizedResponse({
-		schema: {
-			example: {
-				code: '401',
-				message: 'Unauthorized',
-				details: null,
-			} as ErrorResponse<null>,
-		},
-	})
-	@ApiForbiddenResponse({
-		schema: {
-			example: {
-				code: '403',
-				message: 'Forbidden resource',
-				details: null,
-			} as ErrorResponse<null>,
-		},
-	})
-	createAttendance(@Body() data: CreateAttendanceDto) {
-		console.log(data);
 		//
 	}
 
@@ -331,66 +213,5 @@ export class AttendanceController {
 		const currentDate = req.headers.date;
 		console.log(userid, currentDate);
 		//Logic: thuc chat chi la cong them ngay goi api vao update
-	}
-
-	@ApiBearerAuth()
-	@UseGuards(RolesGuard)
-	@Roles(UserRole.ADMIN)
-	@Delete(':attendanceId')
-	@ApiOperation({
-		summary: 'Delete Attendance by attendanceId',
-		description: `Only Admin can use this API`,
-	})
-	@ApiParam({
-		name: 'attendanceId',
-		type: String,
-		description: 'Attendance ID',
-	})
-	@ApiOkResponse({
-		schema: {
-			example: {
-				message: 'Delete Attendance successful!',
-			},
-		},
-	})
-	@ApiUnauthorizedResponse({
-		schema: {
-			example: {
-				code: '401',
-				message: 'Unauthorized',
-				details: null,
-			} as ErrorResponse<null>,
-		},
-	})
-	@ApiForbiddenResponse({
-		schema: {
-			example: {
-				code: '403',
-				message: 'Forbidden resource',
-				details: null,
-			} as ErrorResponse<null>,
-		},
-	})
-	@ApiNotFoundResponse({
-		schema: {
-			example: {
-				code: '404',
-				message: 'Holiday not found!',
-				details: null,
-			} as ErrorResponse<null>,
-		},
-	})
-	@ApiBadRequestResponse({
-		schema: {
-			example: {
-				code: '400',
-				message: '[Input] invalid!',
-				details: null,
-			} as ErrorResponse<null>,
-		},
-	})
-	deteleAttendance(@Param('attendanceId') attendanceId: string) {
-		console.log(attendanceId);
-		//
 	}
 }
