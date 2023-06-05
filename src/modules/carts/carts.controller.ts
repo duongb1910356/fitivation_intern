@@ -253,53 +253,6 @@ export class CartsController {
 		return 'deleteCart';
 	}
 
-	@Get('carts/me')
-	@ApiTags('carts')
-	@ApiOperation({
-		summary: 'getCartByCustomer',
-		description: 'Allow customers to get their cart',
-	})
-	@ApiResponse({
-		status: 200,
-		schema: {
-			example: {
-				items: [
-					{
-						_id: '_id',
-						accountID: {},
-						cartItemIDs: [],
-						promotionIDs: {},
-						promotionPrice: 0,
-						totalPrice: 0,
-						createdAt: new Date(),
-						updatedAt: new Date(),
-					},
-				] as Cart[],
-				total: 1,
-				options: {
-					limit: 1,
-					offset: 0,
-					search: 'string',
-					sortBy: ESortField.CREATED_AT,
-					sortOrder: ESortOrder.ASC,
-				} as ListOptions<Cart>,
-			} as ListResponse<Cart>,
-		},
-	})
-	@ApiResponse({
-		status: 403,
-		schema: {
-			example: {
-				code: 403,
-				message: `You don't have permisstion to this access`,
-				details: {},
-			},
-		},
-	})
-	getCartByCustomer() {
-		return 'getCartByCustomer';
-	}
-
 	@Post('carts/purchase')
 	@ApiTags('carts')
 	@ApiOperation({
