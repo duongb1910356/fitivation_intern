@@ -101,7 +101,7 @@ export class FacilityController {
                     sortBy: 'createdAt',
                     sortOrder: 'asc'
                 } as ListOptions<Facility>
-            } as ListResponse<Facility>,,
+            } as ListResponse<Facility>,
         },
     })
     @ApiNotFoundResponse({
@@ -389,7 +389,6 @@ export class FacilityController {
                 value: {
                     brandID: '1123456',
                     facilityCategoryID: '1233',
-                    ownerID: 'ownerID is optional',
                     name: 'City gym',
                     address: 65,
                     summary: 'CHẤT LƯỢNG LÀ DANH DỰ',
@@ -523,7 +522,7 @@ export class FacilityController {
                     _id: 'string',
                     brandID: '123456',
                     facilityCategoryID: '123456',
-                    ownerID: '123456',
+                    // ownerID: '123456',
                     name: 'City Gym',
                     address: {
                         province: {

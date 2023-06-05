@@ -25,9 +25,9 @@ export class CreateFacilityDto {
     @IsString()
     facilityCategoryID: string;
 
-    @IsNotEmpty()
-    @IsString()
-    ownerID?: string;
+    // @IsNotEmpty()
+    // @IsString()
+    // ownerID?: string;
 
     @IsNotEmpty()
     @IsString()
