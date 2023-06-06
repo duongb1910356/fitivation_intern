@@ -46,7 +46,7 @@ export class PromotionsController {
 			example: {
 				items: [
 					{
-						targetId: 'string',
+						targetID: 'string',
 						type: PromotionType.BILL,
 						name: 'string',
 						description: 'string',
@@ -121,7 +121,7 @@ export class PromotionsController {
 			example: {
 				items: [
 					{
-						targetId: 'string',
+						targetID: 'string',
 						type: PromotionType.BILL,
 						name: 'string',
 						description: 'string',
@@ -202,7 +202,7 @@ export class PromotionsController {
 		status: 201,
 		schema: {
 			example: {
-				targetId: 'string',
+				targetID: 'string',
 				type: PromotionType.BILL,
 				name: 'string',
 				description: 'string',
@@ -261,7 +261,7 @@ export class PromotionsController {
 		status: 201,
 		schema: {
 			example: {
-				targetId: 'string',
+				targetID: 'string',
 				type: PromotionType.BILL,
 				name: 'string',
 				description: 'string',
@@ -394,7 +394,7 @@ export class PromotionsController {
 			example: {
 				items: [
 					{
-						targetId: 'string',
+						targetID: 'string',
 						type: PromotionType.BILL,
 						name: 'string',
 						description: 'string',
@@ -469,7 +469,7 @@ export class PromotionsController {
 			example: {
 				items: [
 					{
-						targetId: 'string',
+						targetID: 'string',
 						type: PromotionType.BILL,
 						name: 'string',
 						description: 'string',
@@ -554,7 +554,7 @@ export class PromotionsController {
 		status: 201,
 		schema: {
 			example: {
-				targetId: 'string',
+				targetID: 'string',
 				type: PromotionType.BILL,
 				name: 'string',
 				description: 'string',
@@ -625,7 +625,7 @@ export class PromotionsController {
 		status: 201,
 		schema: {
 			example: {
-				targetId: 'string',
+				targetID: 'string',
 				type: PromotionType.BILL,
 				name: 'string',
 				description: 'string',
@@ -760,7 +760,7 @@ export class PromotionsController {
 			example: {
 				items: [
 					{
-						targetId: 'string',
+						targetID: 'string',
 						type: PromotionType.BILL,
 						name: 'string',
 						description: 'string',
