@@ -16,7 +16,11 @@ import {
 	ApiTags,
 } from '@nestjs/swagger';
 import { ApiDocsPagination } from 'src/decorators/swagger-form-data.decorator';
-import { ListOptions, ListResponse } from 'src/shared/response/common-response';
+import {
+	ErrorResponse,
+	ListOptions,
+	ListResponse,
+} from 'src/shared/response/common-response';
 import {
 	CustomerType,
 	Promotion,
@@ -76,7 +80,7 @@ export class PromotionsController {
 				code: '400',
 				message: 'Bad request',
 				details: null,
-			},
+			} as ErrorResponse<null>,
 		},
 	})
 	@ApiResponse({
@@ -86,7 +90,7 @@ export class PromotionsController {
 				code: '401',
 				message: 'Unauthorized',
 				details: null,
-			},
+			} as ErrorResponse<null>,
 		},
 	})
 	@ApiResponse({
@@ -96,7 +100,7 @@ export class PromotionsController {
 				code: '403',
 				message: `Forbidden resource`,
 				details: null,
-			},
+			} as ErrorResponse<null>,
 		},
 	})
 	getManyPromotions(
@@ -151,7 +155,7 @@ export class PromotionsController {
 				code: '400',
 				message: 'Bad request',
 				details: null,
-			},
+			} as ErrorResponse<null>,
 		},
 	})
 	@ApiResponse({
@@ -161,7 +165,7 @@ export class PromotionsController {
 				code: '401',
 				message: 'Unauthorized',
 				details: null,
-			},
+			} as ErrorResponse<null>,
 		},
 	})
 	@ApiResponse({
@@ -171,7 +175,7 @@ export class PromotionsController {
 				code: '403',
 				message: `Forbidden resource`,
 				details: null,
-			},
+			} as ErrorResponse<null>,
 		},
 	})
 	@ApiResponse({
@@ -181,7 +185,7 @@ export class PromotionsController {
 				code: '404',
 				message: 'Not found document with that ID',
 				details: null,
-			},
+			} as ErrorResponse<null>,
 		},
 	})
 	@ApiParam({ name: 'id', type: String, description: 'Promotion ID' })
@@ -209,7 +213,7 @@ export class PromotionsController {
 				code: '400',
 				message: 'Bad request',
 				details: null,
-			},
+			} as ErrorResponse<null>,
 		},
 	})
 	@ApiResponse({
@@ -219,7 +223,7 @@ export class PromotionsController {
 				code: '401',
 				message: 'Unauthorized',
 				details: null,
-			},
+			} as ErrorResponse<null>,
 		},
 	})
 	@ApiResponse({
@@ -229,7 +233,7 @@ export class PromotionsController {
 				code: '403',
 				message: `Forbidden resource`,
 				details: null,
-			},
+			} as ErrorResponse<null>,
 		},
 	})
 	createPromotion() {
@@ -256,7 +260,7 @@ export class PromotionsController {
 				code: '400',
 				message: 'Bad request',
 				details: null,
-			},
+			} as ErrorResponse<null>,
 		},
 	})
 	@ApiResponse({
@@ -266,7 +270,7 @@ export class PromotionsController {
 				code: '401',
 				message: 'Unauthorized',
 				details: null,
-			},
+			} as ErrorResponse<null>,
 		},
 	})
 	@ApiResponse({
@@ -276,7 +280,7 @@ export class PromotionsController {
 				code: '403',
 				message: `Forbidden resource`,
 				details: null,
-			},
+			} as ErrorResponse<null>,
 		},
 	})
 	@ApiResponse({
@@ -286,7 +290,7 @@ export class PromotionsController {
 				code: '404',
 				message: 'Not found document with that ID',
 				details: null,
-			},
+			} as ErrorResponse<null>,
 		},
 	})
 	@ApiParam({ name: 'id', type: String, description: 'Promotion ID' })
@@ -316,7 +320,7 @@ export class PromotionsController {
 				code: '400',
 				message: 'Bad request',
 				details: null,
-			},
+			} as ErrorResponse<null>,
 		},
 	})
 	@ApiResponse({
@@ -326,7 +330,7 @@ export class PromotionsController {
 				code: '401',
 				message: 'Unauthorized',
 				details: null,
-			},
+			} as ErrorResponse<null>,
 		},
 	})
 	@ApiResponse({
@@ -336,7 +340,7 @@ export class PromotionsController {
 				code: '403',
 				message: `Forbidden resource`,
 				details: null,
-			},
+			} as ErrorResponse<null>,
 		},
 	})
 	@ApiResponse({
@@ -346,7 +350,7 @@ export class PromotionsController {
 				code: '404',
 				message: 'Not found document with that ID',
 				details: null,
-			},
+			} as ErrorResponse<null>,
 		},
 	})
 	deletePromotion(@Param('id') id: string) {
@@ -400,7 +404,7 @@ export class PromotionsController {
 				code: '400',
 				message: 'Bad request',
 				details: null,
-			},
+			} as ErrorResponse<null>,
 		},
 	})
 	@ApiResponse({
@@ -410,7 +414,7 @@ export class PromotionsController {
 				code: '401',
 				message: 'Unauthorized',
 				details: null,
-			},
+			} as ErrorResponse<null>,
 		},
 	})
 	@ApiResponse({
@@ -420,7 +424,7 @@ export class PromotionsController {
 				code: '403',
 				message: `Forbidden resource`,
 				details: null,
-			},
+			} as ErrorResponse<null>,
 		},
 	})
 	getPromotionsByOwnerFacility(@Query() filter: ListOptions<Promotion>) {
@@ -475,7 +479,7 @@ export class PromotionsController {
 				code: '400',
 				message: 'Bad request',
 				details: null,
-			},
+			} as ErrorResponse<null>,
 		},
 	})
 	@ApiResponse({
@@ -485,7 +489,7 @@ export class PromotionsController {
 				code: '401',
 				message: 'Unauthorized',
 				details: null,
-			},
+			} as ErrorResponse<null>,
 		},
 	})
 	@ApiResponse({
@@ -495,7 +499,7 @@ export class PromotionsController {
 				code: '403',
 				message: `Forbidden resource`,
 				details: null,
-			},
+			} as ErrorResponse<null>,
 		},
 	})
 	@ApiResponse({
@@ -505,7 +509,7 @@ export class PromotionsController {
 				code: '404',
 				message: 'Not found document with that ID',
 				details: null,
-			},
+			} as ErrorResponse<null>,
 		},
 	})
 	getPromotionByOwnerFacility(
@@ -537,7 +541,7 @@ export class PromotionsController {
 				code: '400',
 				message: 'Bad request',
 				details: null,
-			},
+			} as ErrorResponse<null>,
 		},
 	})
 	@ApiResponse({
@@ -547,7 +551,7 @@ export class PromotionsController {
 				code: '401',
 				message: 'Unauthorized',
 				details: null,
-			},
+			} as ErrorResponse<null>,
 		},
 	})
 	@ApiResponse({
@@ -557,7 +561,7 @@ export class PromotionsController {
 				code: '403',
 				message: `Forbidden resource`,
 				details: null,
-			},
+			} as ErrorResponse<null>,
 		},
 	})
 	@ApiResponse({
@@ -567,7 +571,7 @@ export class PromotionsController {
 				code: '404',
 				message: 'Not found document with that ID',
 				details: null,
-			},
+			} as ErrorResponse<null>,
 		},
 	})
 	createPromotionByOwnerFacility() {
@@ -596,7 +600,7 @@ export class PromotionsController {
 				code: '400',
 				message: 'Bad request',
 				details: null,
-			},
+			} as ErrorResponse<null>,
 		},
 	})
 	@ApiResponse({
@@ -606,7 +610,7 @@ export class PromotionsController {
 				code: '401',
 				message: 'Unauthorized',
 				details: null,
-			},
+			} as ErrorResponse<null>,
 		},
 	})
 	@ApiResponse({
@@ -616,7 +620,7 @@ export class PromotionsController {
 				code: '403',
 				message: `Forbidden resource`,
 				details: null,
-			},
+			} as ErrorResponse<null>,
 		},
 	})
 	@ApiResponse({
@@ -626,7 +630,7 @@ export class PromotionsController {
 				code: '404',
 				message: 'Not found document with that ID',
 				details: null,
-			},
+			} as ErrorResponse<null>,
 		},
 	})
 	updatePromotionByOwnerFacility(
@@ -659,7 +663,7 @@ export class PromotionsController {
 				code: '400',
 				message: 'Bad request',
 				details: null,
-			},
+			} as ErrorResponse<null>,
 		},
 	})
 	@ApiResponse({
@@ -669,7 +673,7 @@ export class PromotionsController {
 				code: '401',
 				message: 'Unauthorized',
 				details: null,
-			},
+			} as ErrorResponse<null>,
 		},
 	})
 	@ApiResponse({
@@ -679,7 +683,7 @@ export class PromotionsController {
 				code: '403',
 				message: `Forbidden resource`,
 				details: null,
-			},
+			} as ErrorResponse<null>,
 		},
 	})
 	@ApiResponse({
@@ -689,7 +693,7 @@ export class PromotionsController {
 				code: '404',
 				message: 'Not found document with that ID',
 				details: null,
-			},
+			} as ErrorResponse<null>,
 		},
 	})
 	deletePromotionByOwnerFacility() {
@@ -742,7 +746,7 @@ export class PromotionsController {
 				code: '400',
 				message: 'Bad request',
 				details: null,
-			},
+			} as ErrorResponse<null>,
 		},
 	})
 	@ApiResponse({
@@ -752,7 +756,7 @@ export class PromotionsController {
 				code: '401',
 				message: 'Unauthorized',
 				details: null,
-			},
+			} as ErrorResponse<null>,
 		},
 	})
 	@ApiResponse({
@@ -762,7 +766,7 @@ export class PromotionsController {
 				code: '403',
 				message: `Forbidden resource`,
 				details: null,
-			},
+			} as ErrorResponse<null>,
 		},
 	})
 	@ApiResponse({
@@ -772,7 +776,7 @@ export class PromotionsController {
 				code: '404',
 				message: 'Not found document with that ID',
 				details: null,
-			},
+			} as ErrorResponse<null>,
 		},
 	})
 	@ApiParam({ name: 'facilityID', type: String, description: 'Facility ID' })

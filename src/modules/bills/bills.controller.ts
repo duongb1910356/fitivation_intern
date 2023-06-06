@@ -24,7 +24,11 @@ import {
 	BillItemStatus,
 } from '../bill-items/schemas/bill-item.schema';
 import { ApiDocsPagination } from 'src/decorators/swagger-form-data.decorator';
-import { ListOptions, ListResponse } from 'src/shared/response/common-response';
+import {
+	ErrorResponse,
+	ListOptions,
+	ListResponse,
+} from 'src/shared/response/common-response';
 
 @Controller()
 export class BillsController {
@@ -195,7 +199,7 @@ export class BillsController {
 				code: '400',
 				message: 'Bad request',
 				details: null,
-			},
+			} as ErrorResponse<null>,
 		},
 	})
 	@ApiResponse({
@@ -205,7 +209,7 @@ export class BillsController {
 				code: '401',
 				message: 'Unauthorized',
 				details: null,
-			},
+			} as ErrorResponse<null>,
 		},
 	})
 	@ApiResponse({
@@ -215,7 +219,7 @@ export class BillsController {
 				code: '403',
 				message: `Forbidden resource`,
 				details: null,
-			},
+			} as ErrorResponse<null>,
 		},
 	})
 	@ApiResponse({
@@ -225,7 +229,7 @@ export class BillsController {
 				code: '404',
 				message: 'Not found document with that ID',
 				details: null,
-			},
+			} as ErrorResponse<null>,
 		},
 	})
 	getOneBill(@Param('id') id: string) {
@@ -304,7 +308,7 @@ export class BillsController {
 				code: '400',
 				message: 'Bad request',
 				details: null,
-			},
+			} as ErrorResponse<null>,
 		},
 	})
 	@ApiResponse({
@@ -314,7 +318,7 @@ export class BillsController {
 				code: '401',
 				message: 'Unauthorized',
 				details: null,
-			},
+			} as ErrorResponse<null>,
 		},
 	})
 	@ApiResponse({
@@ -324,7 +328,7 @@ export class BillsController {
 				code: '403',
 				message: `Forbidden resource`,
 				details: null,
-			},
+			} as ErrorResponse<null>,
 		},
 	})
 	@ApiResponse({
@@ -334,7 +338,7 @@ export class BillsController {
 				code: '404',
 				message: 'Not found document with that ID',
 				details: null,
-			},
+			} as ErrorResponse<null>,
 		},
 	})
 	updateBill(@Param('id') id: string, @Body() updateBillDto: UpdateBillDto) {
@@ -364,7 +368,7 @@ export class BillsController {
 				code: '400',
 				message: 'Bad request',
 				details: null,
-			},
+			} as ErrorResponse<null>,
 		},
 	})
 	@ApiResponse({
@@ -374,7 +378,7 @@ export class BillsController {
 				code: '401',
 				message: 'Unauthorized',
 				details: null,
-			},
+			} as ErrorResponse<null>,
 		},
 	})
 	@ApiResponse({
@@ -384,7 +388,7 @@ export class BillsController {
 				code: '403',
 				message: `Forbidden resource`,
 				details: null,
-			},
+			} as ErrorResponse<null>,
 		},
 	})
 	@ApiResponse({
@@ -394,7 +398,7 @@ export class BillsController {
 				code: '404',
 				message: 'Not found document with that ID',
 				details: null,
-			},
+			} as ErrorResponse<null>,
 		},
 	})
 	deleteBill(@Param('id') id: string) {

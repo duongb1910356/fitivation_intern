@@ -16,7 +16,11 @@ import {
 	ApiTags,
 } from '@nestjs/swagger';
 import { ApiDocsPagination } from 'src/decorators/swagger-form-data.decorator';
-import { ListOptions, ListResponse } from 'src/shared/response/common-response';
+import {
+	ErrorResponse,
+	ListOptions,
+	ListResponse,
+} from 'src/shared/response/common-response';
 import {
 	Subscription,
 	SubscriptionStatus,
@@ -67,7 +71,7 @@ export class SubscriptionsController {
 				code: '400',
 				message: 'Bad request',
 				details: null,
-			},
+			} as ErrorResponse<null>,
 		},
 	})
 	@ApiResponse({
@@ -77,7 +81,7 @@ export class SubscriptionsController {
 				code: '401',
 				message: 'Unauthorized',
 				details: null,
-			},
+			} as ErrorResponse<null>,
 		},
 	})
 	@ApiResponse({
@@ -87,7 +91,7 @@ export class SubscriptionsController {
 				code: '403',
 				message: `Forbidden resource`,
 				details: null,
-			},
+			} as ErrorResponse<null>,
 		},
 	})
 	getManySubscriptions(
@@ -136,7 +140,7 @@ export class SubscriptionsController {
 				code: '400',
 				message: 'Bad request',
 				details: null,
-			},
+			} as ErrorResponse<null>,
 		},
 	})
 	@ApiResponse({
@@ -146,7 +150,7 @@ export class SubscriptionsController {
 				code: '401',
 				message: 'Unauthorized',
 				details: null,
-			},
+			} as ErrorResponse<null>,
 		},
 	})
 	@ApiResponse({
@@ -156,7 +160,7 @@ export class SubscriptionsController {
 				code: '403',
 				message: `Forbidden resource`,
 				details: null,
-			},
+			} as ErrorResponse<null>,
 		},
 	})
 	@ApiResponse({
@@ -166,7 +170,7 @@ export class SubscriptionsController {
 				code: '404',
 				message: 'Not found document with that ID',
 				details: null,
-			},
+			} as ErrorResponse<null>,
 		},
 	})
 	getOneSubscription(@Param('id') id: string) {
@@ -195,7 +199,7 @@ export class SubscriptionsController {
 				code: '400',
 				message: 'Bad request',
 				details: null,
-			},
+			} as ErrorResponse<null>,
 		},
 	})
 	@ApiResponse({
@@ -205,7 +209,7 @@ export class SubscriptionsController {
 				code: '401',
 				message: 'Unauthorized',
 				details: null,
-			},
+			} as ErrorResponse<null>,
 		},
 	})
 	@ApiResponse({
@@ -215,7 +219,7 @@ export class SubscriptionsController {
 				code: '403',
 				message: `Forbidden resource`,
 				details: null,
-			},
+			} as ErrorResponse<null>,
 		},
 	})
 	createSubscription(@Body() createSubscriptionDto: CreateSubscriptionDto) {
@@ -244,7 +248,7 @@ export class SubscriptionsController {
 				code: '400',
 				message: 'Bad request',
 				details: null,
-			},
+			} as ErrorResponse<null>,
 		},
 	})
 	@ApiResponse({
@@ -254,7 +258,7 @@ export class SubscriptionsController {
 				code: '401',
 				message: 'Unauthorized',
 				details: null,
-			},
+			} as ErrorResponse<null>,
 		},
 	})
 	@ApiResponse({
@@ -264,7 +268,7 @@ export class SubscriptionsController {
 				code: '403',
 				message: `Forbidden resource`,
 				details: null,
-			},
+			} as ErrorResponse<null>,
 		},
 	})
 	@ApiResponse({
@@ -274,7 +278,7 @@ export class SubscriptionsController {
 				code: '404',
 				message: 'Not found document with that ID',
 				details: null,
-			},
+			} as ErrorResponse<null>,
 		},
 	})
 	updateSubscription(
@@ -306,7 +310,7 @@ export class SubscriptionsController {
 				code: '400',
 				message: 'Bad request',
 				details: null,
-			},
+			} as ErrorResponse<null>,
 		},
 	})
 	@ApiResponse({
@@ -316,7 +320,7 @@ export class SubscriptionsController {
 				code: '401',
 				message: 'Unauthorized',
 				details: null,
-			},
+			} as ErrorResponse<null>,
 		},
 	})
 	@ApiResponse({
@@ -326,7 +330,7 @@ export class SubscriptionsController {
 				code: '403',
 				message: `Forbidden resource`,
 				details: null,
-			},
+			} as ErrorResponse<null>,
 		},
 	})
 	@ApiResponse({
@@ -336,7 +340,7 @@ export class SubscriptionsController {
 				code: '404',
 				message: 'Not found document with that ID',
 				details: null,
-			},
+			} as ErrorResponse<null>,
 		},
 	})
 	deleteSubscription(@Param('id') id: string) {
@@ -365,7 +369,7 @@ export class SubscriptionsController {
 				code: '400',
 				message: 'Bad request',
 				details: null,
-			},
+			} as ErrorResponse<null>,
 		},
 	})
 	@ApiResponse({
@@ -375,7 +379,7 @@ export class SubscriptionsController {
 				code: '401',
 				message: 'Unauthorized',
 				details: null,
-			},
+			} as ErrorResponse<null>,
 		},
 	})
 	@ApiResponse({
@@ -385,7 +389,7 @@ export class SubscriptionsController {
 				code: '403',
 				message: `Forbidden resource`,
 				details: null,
-			},
+			} as ErrorResponse<null>,
 		},
 	})
 	@ApiResponse({
@@ -395,7 +399,7 @@ export class SubscriptionsController {
 				code: '404',
 				message: 'Not found document with that ID',
 				details: null,
-			},
+			} as ErrorResponse<null>,
 		},
 	})
 	createSubscriptionForBillItem(

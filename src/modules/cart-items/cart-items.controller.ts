@@ -16,7 +16,11 @@ import {
 	ApiTags,
 } from '@nestjs/swagger';
 import { ApiDocsPagination } from 'src/decorators/swagger-form-data.decorator';
-import { ListOptions, ListResponse } from 'src/shared/response/common-response';
+import {
+	ErrorResponse,
+	ListOptions,
+	ListResponse,
+} from 'src/shared/response/common-response';
 import { CartItem } from './schemas/cart-item.schema';
 import { CreateCartItemDto } from './dto/create-cart-item.dto';
 import { UpdateCartItemDto } from './dto/update-cart-item.dto';
@@ -62,7 +66,7 @@ export class CartItemsController {
 				code: '400',
 				message: 'Bad request',
 				details: null,
-			},
+			} as ErrorResponse<null>,
 		},
 	})
 	@ApiResponse({
@@ -72,7 +76,7 @@ export class CartItemsController {
 				code: '401',
 				message: 'Unauthorized',
 				details: null,
-			},
+			} as ErrorResponse<null>,
 		},
 	})
 	@ApiResponse({
@@ -82,7 +86,7 @@ export class CartItemsController {
 				code: '403',
 				message: `Forbidden resource`,
 				details: null,
-			},
+			} as ErrorResponse<null>,
 		},
 	})
 	getManyCartItems(@Query() filter: ListOptions<CartItem>) {
@@ -124,7 +128,7 @@ export class CartItemsController {
 				code: '400',
 				message: 'Bad request',
 				details: null,
-			},
+			} as ErrorResponse<null>,
 		},
 	})
 	@ApiResponse({
@@ -134,7 +138,7 @@ export class CartItemsController {
 				code: '401',
 				message: 'Unauthorized',
 				details: null,
-			},
+			} as ErrorResponse<null>,
 		},
 	})
 	@ApiResponse({
@@ -144,7 +148,7 @@ export class CartItemsController {
 				code: '403',
 				message: `Forbidden resource`,
 				details: null,
-			},
+			} as ErrorResponse<null>,
 		},
 	})
 	@ApiResponse({
@@ -154,7 +158,7 @@ export class CartItemsController {
 				code: '404',
 				message: 'Not found document with that ID',
 				details: null,
-			},
+			} as ErrorResponse<null>,
 		},
 	})
 	getOneCartItem(@Param('id') id: string) {
@@ -182,7 +186,7 @@ export class CartItemsController {
 				code: '400',
 				message: 'Bad request',
 				details: null,
-			},
+			} as ErrorResponse<null>,
 		},
 	})
 	@ApiResponse({
@@ -192,7 +196,7 @@ export class CartItemsController {
 				code: '401',
 				message: 'Unauthorized',
 				details: null,
-			},
+			} as ErrorResponse<null>,
 		},
 	})
 	@ApiResponse({
@@ -202,7 +206,7 @@ export class CartItemsController {
 				code: '403',
 				message: `Forbidden resource`,
 				details: null,
-			},
+			} as ErrorResponse<null>,
 		},
 	})
 	createCartItem(@Body() createCartItemDto: CreateCartItemDto) {
@@ -231,7 +235,7 @@ export class CartItemsController {
 				code: '400',
 				message: 'Bad request',
 				details: null,
-			},
+			} as ErrorResponse<null>,
 		},
 	})
 	@ApiResponse({
@@ -241,7 +245,7 @@ export class CartItemsController {
 				code: '401',
 				message: 'Unauthorized',
 				details: null,
-			},
+			} as ErrorResponse<null>,
 		},
 	})
 	@ApiResponse({
@@ -251,7 +255,7 @@ export class CartItemsController {
 				code: '403',
 				message: `Forbidden resource`,
 				details: null,
-			},
+			} as ErrorResponse<null>,
 		},
 	})
 	@ApiResponse({
@@ -261,7 +265,7 @@ export class CartItemsController {
 				code: '404',
 				message: 'Not found document with that ID',
 				details: null,
-			},
+			} as ErrorResponse<null>,
 		},
 	})
 	updateCartItem(
@@ -293,7 +297,7 @@ export class CartItemsController {
 				code: '400',
 				message: 'Bad request',
 				details: null,
-			},
+			} as ErrorResponse<null>,
 		},
 	})
 	@ApiResponse({
@@ -303,7 +307,7 @@ export class CartItemsController {
 				code: '401',
 				message: 'Unauthorized',
 				details: null,
-			},
+			} as ErrorResponse<null>,
 		},
 	})
 	@ApiResponse({
@@ -313,7 +317,7 @@ export class CartItemsController {
 				code: '403',
 				message: `Forbidden resource`,
 				details: null,
-			},
+			} as ErrorResponse<null>,
 		},
 	})
 	@ApiResponse({
@@ -323,7 +327,7 @@ export class CartItemsController {
 				code: '404',
 				message: 'Not found document with that ID',
 				details: null,
-			},
+			} as ErrorResponse<null>,
 		},
 	})
 	deleteCartItem(@Param('id') id: string) {
@@ -352,7 +356,7 @@ export class CartItemsController {
 				code: '400',
 				message: 'Bad request',
 				details: null,
-			},
+			} as ErrorResponse<null>,
 		},
 	})
 	@ApiResponse({
@@ -362,7 +366,7 @@ export class CartItemsController {
 				code: '401',
 				message: 'Unauthorized',
 				details: null,
-			},
+			} as ErrorResponse<null>,
 		},
 	})
 	@ApiResponse({
@@ -372,7 +376,7 @@ export class CartItemsController {
 				code: '403',
 				message: `Forbidden resource`,
 				details: null,
-			},
+			} as ErrorResponse<null>,
 		},
 	})
 	@ApiResponse({
@@ -382,7 +386,7 @@ export class CartItemsController {
 				code: '404',
 				message: 'Not found document with that ID',
 				details: null,
-			},
+			} as ErrorResponse<null>,
 		},
 	})
 	createCartItemForCart(
@@ -414,7 +418,7 @@ export class CartItemsController {
 				code: '400',
 				message: 'Bad request',
 				details: null,
-			},
+			} as ErrorResponse<null>,
 		},
 	})
 	@ApiResponse({
@@ -424,7 +428,7 @@ export class CartItemsController {
 				code: '401',
 				message: 'Unauthorized',
 				details: null,
-			},
+			} as ErrorResponse<null>,
 		},
 	})
 	@ApiResponse({
@@ -434,7 +438,7 @@ export class CartItemsController {
 				code: '403',
 				message: `Forbidden resource`,
 				details: null,
-			},
+			} as ErrorResponse<null>,
 		},
 	})
 	@ApiResponse({
@@ -444,7 +448,7 @@ export class CartItemsController {
 				code: '404',
 				message: 'Not found document with that ID',
 				details: null,
-			},
+			} as ErrorResponse<null>,
 		},
 	})
 	updateCartItemForCart(
@@ -477,7 +481,7 @@ export class CartItemsController {
 				code: '400',
 				message: 'Bad request',
 				details: null,
-			},
+			} as ErrorResponse<null>,
 		},
 	})
 	@ApiResponse({
@@ -487,7 +491,7 @@ export class CartItemsController {
 				code: '401',
 				message: 'Unauthorized',
 				details: null,
-			},
+			} as ErrorResponse<null>,
 		},
 	})
 	@ApiResponse({
@@ -497,7 +501,7 @@ export class CartItemsController {
 				code: '403',
 				message: `Forbidden resource`,
 				details: null,
-			},
+			} as ErrorResponse<null>,
 		},
 	})
 	@ApiResponse({
@@ -507,7 +511,7 @@ export class CartItemsController {
 				code: '404',
 				message: 'Not found document with that ID',
 				details: null,
-			},
+			} as ErrorResponse<null>,
 		},
 	})
 	deleteCartItemForCart(
