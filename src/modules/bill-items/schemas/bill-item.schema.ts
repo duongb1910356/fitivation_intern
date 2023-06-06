@@ -24,9 +24,9 @@ export class BillItem extends BaseObject {
 			facilityID: { type: mongoose.Schema.Types.ObjectId, ref: 'Facility' },
 			brandID: { type: mongoose.Schema.Types.ObjectId, ref: 'Brand' },
 			brandName: { type: String },
-			ownerFacilityName: { required: true, type: String },
-			facilityName: { required: true, type: String },
-			facilityAddress: { required: true, type: Object },
+			ownerFacilityName: { type: String },
+			facilityName: { type: String },
+			facilityAddress: { type: Object },
 			facilityCoordinatesLocation: {
 				type: [Number],
 				required: true,
@@ -52,9 +52,9 @@ export class BillItem extends BaseObject {
 				type: mongoose.Schema.Types.ObjectId,
 				ref: 'PackageType',
 			},
-			name: { required: true, type: String },
+			name: { type: String },
 			description: { type: String },
-			price: { required: true, type: Number, min: 0 },
+			price: { type: Number, min: 0 },
 		},
 	})
 	packageTypeInfo: {
@@ -70,8 +70,8 @@ export class BillItem extends BaseObject {
 				type: mongoose.Schema.Types.ObjectId,
 				ref: 'Package',
 			},
-			type: { required: true, enum: TimeType },
-			price: { required: true, type: Number, min: 0 },
+			type: { enum: TimeType, type: String },
+			price: { type: Number, min: 0 },
 		},
 	})
 	packageInfo: {
