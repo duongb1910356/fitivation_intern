@@ -46,7 +46,6 @@ export class SubscriptionsController {
 					{
 						accountID: {},
 						billItemID: {},
-						packageID: {},
 						expires: new Date(),
 						status: SubscriptionStatus.ACTIVE,
 						renew: false,
@@ -115,7 +114,6 @@ export class SubscriptionsController {
 					{
 						accountID: {},
 						billItemID: {},
-						packageID: {},
 						expires: new Date(),
 						status: SubscriptionStatus.ACTIVE,
 						renew: false,
@@ -190,7 +188,6 @@ export class SubscriptionsController {
 			example: {
 				accountID: {},
 				billItemID: {},
-				packageID: {},
 				expires: new Date(),
 				status: SubscriptionStatus.ACTIVE,
 				renew: false,
@@ -244,7 +241,6 @@ export class SubscriptionsController {
 			example: {
 				accountID: {},
 				billItemID: {},
-				packageID: {},
 				expires: new Date(),
 				status: SubscriptionStatus.ACTIVE,
 				renew: false,
@@ -370,7 +366,6 @@ export class SubscriptionsController {
 			example: {
 				accountID: {},
 				billItemID: {},
-				packageID: {},
 				expires: new Date(),
 				status: SubscriptionStatus.ACTIVE,
 				renew: false,
