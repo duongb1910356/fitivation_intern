@@ -10,6 +10,7 @@ import {
 	IsPositive,
 	MinLength,
 	MaxLength,
+	Min,
 } from 'class-validator';
 import { ApiProperty } from '@nestjs/swagger';
 import { BillStatus, PaymentMethod } from '../schemas/bill.schema';
@@ -33,7 +34,7 @@ export class CreateBillDto {
 
 	@ApiProperty()
 	@IsNumber()
-	@IsPositive()
+	@Min(0)
 	taxes: number;
 
 	@ApiProperty()
@@ -51,7 +52,7 @@ export class CreateBillDto {
 	@ApiProperty()
 	@IsNumber()
 	@IsNotEmpty()
-	@IsPositive()
+	@Min(0)
 	promotionsPrice: number;
 
 	@ApiProperty()

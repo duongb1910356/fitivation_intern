@@ -11,6 +11,7 @@ import {
 	IsOptional,
 	IsPositive,
 	IsString,
+	Min,
 } from 'class-validator';
 
 export class CreateBillItemDto {
@@ -92,6 +93,7 @@ export class CreateBillItemDto {
 
 	@ApiProperty()
 	@IsNumber()
+	@Min(0)
 	promotionPrice: number;
 
 	@ApiProperty()

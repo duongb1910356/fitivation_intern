@@ -5,6 +5,7 @@ import {
 	IsNumber,
 	IsOptional,
 	IsString,
+	Min,
 } from 'class-validator';
 
 export class CreateCartDto {
@@ -21,6 +22,7 @@ export class CreateCartDto {
 	@ApiProperty()
 	@IsNumber()
 	@IsOptional()
+	@Min(0)
 	promotionPrice?: number;
 
 	@ApiProperty()
