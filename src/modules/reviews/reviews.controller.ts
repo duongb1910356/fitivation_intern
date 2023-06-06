@@ -48,7 +48,7 @@ export class ReviewsController {
                     photos: [
                         {
                             _id: '12345678dsgdgsdxdg4',
-                            buckets: 'bucket1',
+                            bucketID: 'bucket1',
                             name: 'image-name',
                             linkURL: 'http://localhost:8080/bucket1/image-name',
                             createdAt: new Date(),
@@ -107,7 +107,7 @@ export class ReviewsController {
                     photos: [
                         {
                             _id: '12345678dsgdgsdxdg4',
-                            buckets: 'bucket1',
+                            bucketID: 'bucket1',
                             name: 'image-name',
                             linkURL: 'http://localhost:8080/bucket1/image-name',
                             createdAt: new Date(),

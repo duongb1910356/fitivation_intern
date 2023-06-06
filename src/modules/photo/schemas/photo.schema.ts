@@ -8,7 +8,7 @@ export type PhotoDocument = HydratedDocument<Photo>;
 @Schema({ timestamps: true })
 export class Photo extends BaseObject {
   @Prop({ type: String, required: true })
-  buckets: string;
+  bucketID: string;
 
   @Prop({ type: String, required: true })
   name: string;
@@ -17,7 +17,7 @@ export class Photo extends BaseObject {
   describe: string;
 
   get linkURL(): string {
-    return `http://localhost:8080/${this.buckets}/${this.name}`;
+    return `http://localhost:8080/${this.bucketID}/${this.name}`;
   }
 }
 

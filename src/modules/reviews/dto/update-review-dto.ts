@@ -5,7 +5,7 @@ import { IsArray, IsEnum, IsOptional, IsString } from 'class-validator';
 import { CreateReviewDto } from './create-review-dto';
 
 export class UpdateReviewDto extends PartialType(
-    PickType(CreateReviewDto, ['facilityID', 'accountID']),
+    PickType(CreateReviewDto, ['facilityID']),
 ) {
     
     @IsOptional()
