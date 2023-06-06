@@ -53,7 +53,6 @@ export class CartsController {
 					{
 						_id: '_id',
 						accountID: {},
-						cartItemIDs: [],
 						promotionIDs: {},
 						promotionPrice: 0,
 						totalPrice: 0,
@@ -124,7 +123,6 @@ export class CartsController {
 					{
 						_id: '_id',
 						accountID: {},
-						cartItemIDs: [],
 						promotionIDs: {},
 						promotionPrice: 0,
 						totalPrice: 0,
@@ -204,7 +202,6 @@ export class CartsController {
 			example: {
 				_id: '_id',
 				accountID: {},
-				cartItemIDs: [],
 				promotionIDs: {},
 				promotionPrice: 0,
 				totalPrice: 0,
@@ -273,7 +270,6 @@ export class CartsController {
 			example: {
 				_id: '_id',
 				accountID: {},
-				cartItemIDs: [],
 				promotionIDs: {},
 				promotionPrice: 0,
 				totalPrice: 0,
