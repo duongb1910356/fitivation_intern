@@ -8,7 +8,7 @@ export class Province extends BaseObject {
   name: string;
 
   @Prop({ required: true, unique: true, index: true })
-  code: number;
+  code: string;
 }
 
 export const ProvinceSchema = SchemaFactory.createForClass(Province);

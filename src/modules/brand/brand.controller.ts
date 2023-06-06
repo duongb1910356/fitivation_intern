@@ -9,6 +9,10 @@ import { ApiDocsPagination } from 'src/decorators/swagger-form-data.decorator';
 import { ErrorResponse, ListOptions, ListResponse } from 'src/shared/response/common-response';
 import { Brand } from './schemas/brand.schema';
 import { User } from '../users/schemas/user.schema';
+import { Facility } from '../facility/schemas/facility.schema';
+import { Photo } from '../photo/schemas/photo.schema';
+import { ScheduleType } from '../facility-schedule/entities/facility-schedule.entity';
+import { State, Status } from 'src/shared/enum/facility.enum';
 
 @ApiTags('brands')
 @Controller('brands')
@@ -100,21 +104,82 @@ export class BrandController {
   }
 
   @Public()
-  @Get(':id')
+  @Get(':id/facilities')
   @ApiOperation({
-    summary: 'Get infomation of a brand'
+    summary: 'Get facilities of a brand'
   })
   @ApiQuery({ name: 'id', required: true, type: String, example: '123456' })
   @ApiOkResponse({
     status: 200,
     schema: {
       example: {
-        _id: '123456',
-        accountID: '123456',
-        name: 'City Gym',
-        createAt: new Date(),
-        updateAt: new Date()
-      },
+        items: [
+          {
+            _id: '1233456',
+            brandID: {},
+            facilityCategoryID: {},
+            ownerID: {},
+            name: 'City gym',
+            address: {
+              street: '30/4',
+              commune: 'Phường Xuân Khánh',
+              communeCode: '011',
+              district: 'Quận Ninh Kiều',
+              districtCode: '056',
+              province: 'Thành phố Cần Thơ',
+              provinceCode: '065'
+            },
+            summary: 'Phòng gym thân thiện',
+            description: 'Nhiều dụng cụ tập luyện',
+            coordinationLocation: [65, 56],
+            state: State.ACTIVE,
+            status: Status.APPROVED,
+            averageStar: null,
+            photos: [
+              {
+                _id: '123456789',
+                bucketID: 'id-bucket',
+                name: 'name-image',
+                linkURL: 'http://localhost:8080/id-bucket/name-image',
+                createdAt: new Date(),
+                updatedAt: new Date()
+              }
+            ],
+            reviews: [
+              {
+                _id: '123456789',
+                accountID: {},
+                facilityID: {},
+                comment: 'Đáng để trải nghiệm',
+                rating: 5,
+                photos: [
+                  {
+                    _id: '12345678dsgdgsdxdg4',
+                    bucketID: 'bucket1',
+                    name: 'image-name',
+                    linkURL: 'http://localhost:8080/bucket1/image-name',
+                    createdAt: new Date(),
+                    updatedAt: new Date()
+                  }
+                ] as Photo[],
+                createdAt: new Date(),
+                updatedAt: new Date()
+              }
+            ],
+            scheduleType: ScheduleType.DAILY,
+            createdAt: new Date(),
+            updatedAt: new Date()
+          } as Facility
+        ],
+        total: 1,
+        options: {
+          limit: 1,
+          offet: 1,
+          search: 'string',
+          sortBy: 'createdAt',
+          sortOrder: 'asc'
+        } as ListOptions<Facility>
+      } as ListResponse<Facility>,
     },
   })
   @ApiNotFoundResponse({
