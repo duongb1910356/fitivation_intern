@@ -32,6 +32,7 @@ import {
 	PromotionStatus,
 	PromotionType,
 } from '../promotions/schemas/promotion.schema';
+import { TimeType } from '../package/entities/package.entity';
 
 @Controller()
 export class BillItemsController {
@@ -60,6 +61,17 @@ export class BillItemsController {
 							facilityAddress: {},
 							facilityCoordinatesLocation: [1, 1],
 							facilityPhoto: 'string',
+						},
+						packageTypeInfo: {
+							packageTypeID: {},
+							name: 'string',
+							desctiption: 'string',
+							price: 1,
+						},
+						packageInfo: {
+							packageID: {},
+							type: TimeType.ONE_MONTH,
+							price: 1,
 						},
 						promotions: [
 							{
@@ -157,6 +169,17 @@ export class BillItemsController {
 							facilityAddress: {},
 							facilityCoordinatesLocation: [1, 1],
 							facilityPhoto: 'string',
+						},
+						packageTypeInfo: {
+							packageTypeID: {},
+							name: 'string',
+							desctiption: 'string',
+							price: 1,
+						},
+						packageInfo: {
+							packageID: {},
+							type: TimeType.ONE_MONTH,
+							price: 1,
 						},
 						promotions: [
 							{
@@ -262,6 +285,17 @@ export class BillItemsController {
 					facilityCoordinatesLocation: [1, 1],
 					facilityPhoto: 'string',
 				},
+				packageTypeInfo: {
+					packageTypeID: {},
+					name: 'string',
+					desctiption: 'string',
+					price: 1,
+				},
+				packageInfo: {
+					packageID: {},
+					type: TimeType.ONE_MONTH,
+					price: 1,
+				},
 				promotions: [
 					{
 						targetID: {},
@@ -278,6 +312,8 @@ export class BillItemsController {
 						endDate: new Date(),
 						customerType: CustomerType.CUSTOMER,
 						status: PromotionStatus.ACTIVE,
+						createdAt: new Date(),
+						updatedAt: new Date(),
 					},
 				] as Promotion[],
 				promotionPrice: 1,
@@ -345,6 +381,17 @@ export class BillItemsController {
 					facilityCoordinatesLocation: [1, 1],
 					facilityPhoto: 'string',
 				},
+				packageTypeInfo: {
+					packageTypeID: {},
+					name: 'string',
+					desctiption: 'string',
+					price: 1,
+				},
+				packageInfo: {
+					packageID: {},
+					type: TimeType.ONE_MONTH,
+					price: 1,
+				},
 				promotions: [
 					{
 						targetID: {},
@@ -361,6 +408,8 @@ export class BillItemsController {
 						endDate: new Date(),
 						customerType: CustomerType.CUSTOMER,
 						status: PromotionStatus.ACTIVE,
+						createdAt: new Date(),
+						updatedAt: new Date(),
 					},
 				] as Promotion[],
 				promotionPrice: 1,
@@ -502,6 +551,17 @@ export class BillItemsController {
 							facilityCoordinatesLocation: [1, 1],
 							facilityPhoto: 'string',
 						},
+						packageTypeInfo: {
+							packageTypeID: {},
+							name: 'string',
+							desctiption: 'string',
+							price: 1,
+						},
+						packageInfo: {
+							packageID: {},
+							type: TimeType.ONE_MONTH,
+							price: 1,
+						},
 						promotions: [
 							{
 								targetID: {},
@@ -597,6 +657,17 @@ export class BillItemsController {
 					facilityCoordinatesLocation: [1, 1],
 					facilityPhoto: 'string',
 				},
+				packageTypeInfo: {
+					packageTypeID: {},
+					name: 'string',
+					desctiption: 'string',
+					price: 1,
+				},
+				packageInfo: {
+					packageID: {},
+					type: TimeType.ONE_MONTH,
+					price: 1,
+				},
 				promotions: [
 					{
 						targetID: {},
@@ -613,6 +684,8 @@ export class BillItemsController {
 						endDate: new Date(),
 						customerType: CustomerType.CUSTOMER,
 						status: PromotionStatus.ACTIVE,
+						createdAt: new Date(),
+						updatedAt: new Date(),
 					},
 				] as Promotion[],
 				promotionPrice: 1,
@@ -691,6 +764,17 @@ export class BillItemsController {
 							facilityAddress: {},
 							facilityCoordinatesLocation: [1, 1],
 							facilityPhoto: 'string',
+						},
+						packageTypeInfo: {
+							packageTypeID: {},
+							name: 'string',
+							desctiption: 'string',
+							price: 1,
+						},
+						packageInfo: {
+							packageID: {},
+							type: TimeType.ONE_MONTH,
+							price: 1,
 						},
 						promotions: [
 							{
@@ -790,6 +874,17 @@ export class BillItemsController {
 							facilityAddress: {},
 							facilityCoordinatesLocation: [1, 1],
 							facilityPhoto: 'string',
+						},
+						packageTypeInfo: {
+							packageTypeID: {},
+							name: 'string',
+							desctiption: 'string',
+							price: 1,
+						},
+						packageInfo: {
+							packageID: {},
+							type: TimeType.ONE_MONTH,
+							price: 1,
 						},
 						promotions: [
 							{
@@ -903,6 +998,17 @@ export class BillItemsController {
 							facilityCoordinatesLocation: [1, 1],
 							facilityPhoto: 'string',
 						},
+						packageTypeInfo: {
+							packageTypeID: {},
+							name: 'string',
+							desctiption: 'string',
+							price: 1,
+						},
+						packageInfo: {
+							packageID: {},
+							type: TimeType.ONE_MONTH,
+							price: 1,
+						},
 						promotions: [
 							{
 								targetID: {},
@@ -1014,6 +1120,17 @@ export class BillItemsController {
 							facilityCoordinatesLocation: [1, 1],
 							facilityPhoto: 'string',
 						},
+						packageTypeInfo: {
+							packageTypeID: {},
+							name: 'string',
+							desctiption: 'string',
+							price: 1,
+						},
+						packageInfo: {
+							packageID: {},
+							type: TimeType.ONE_MONTH,
+							price: 1,
+						},
 						promotions: [
 							{
 								targetID: {},
@@ -1112,6 +1229,17 @@ export class BillItemsController {
 							facilityAddress: {},
 							facilityCoordinatesLocation: [1, 1],
 							facilityPhoto: 'string',
+						},
+						packageTypeInfo: {
+							packageTypeID: {},
+							name: 'string',
+							desctiption: 'string',
+							price: 1,
+						},
+						packageInfo: {
+							packageID: {},
+							type: TimeType.ONE_MONTH,
+							price: 1,
 						},
 						promotions: [
 							{
@@ -1225,6 +1353,17 @@ export class BillItemsController {
 							facilityCoordinatesLocation: [1, 1],
 							facilityPhoto: 'string',
 						},
+						packageTypeInfo: {
+							packageTypeID: {},
+							name: 'string',
+							desctiption: 'string',
+							price: 1,
+						},
+						packageInfo: {
+							packageID: {},
+							type: TimeType.ONE_MONTH,
+							price: 1,
+						},
 						promotions: [
 							{
 								targetID: {},
@@ -1336,6 +1475,17 @@ export class BillItemsController {
 							facilityCoordinatesLocation: [1, 1],
 							facilityPhoto: 'string',
 						},
+						packageTypeInfo: {
+							packageTypeID: {},
+							name: 'string',
+							desctiption: 'string',
+							price: 1,
+						},
+						packageInfo: {
+							packageID: {},
+							type: TimeType.ONE_MONTH,
+							price: 1,
+						},
 						promotions: [
 							{
 								targetID: {},
@@ -1434,6 +1584,17 @@ export class BillItemsController {
 							facilityAddress: {},
 							facilityCoordinatesLocation: [1, 1],
 							facilityPhoto: 'string',
+						},
+						packageTypeInfo: {
+							packageTypeID: {},
+							name: 'string',
+							desctiption: 'string',
+							price: 1,
+						},
+						packageInfo: {
+							packageID: {},
+							type: TimeType.ONE_MONTH,
+							price: 1,
 						},
 						promotions: [
 							{
@@ -1546,6 +1707,17 @@ export class BillItemsController {
 							facilityAddress: {},
 							facilityCoordinatesLocation: [1, 1],
 							facilityPhoto: 'string',
+						},
+						packageTypeInfo: {
+							packageTypeID: {},
+							name: 'string',
+							desctiption: 'string',
+							price: 1,
+						},
+						packageInfo: {
+							packageID: {},
+							type: TimeType.ONE_MONTH,
+							price: 1,
 						},
 						promotions: [
 							{

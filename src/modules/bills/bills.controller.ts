@@ -36,6 +36,7 @@ import {
 	PromotionStatus,
 	PromotionType,
 } from '../promotions/schemas/promotion.schema';
+import { TimeType } from '../package/entities/package.entity';
 
 @Controller()
 export class BillsController {
@@ -68,6 +69,17 @@ export class BillsController {
 									facilityAddress: {},
 									facilityCoordinatesLocation: [1, 1],
 									facilityPhoto: 'string',
+								},
+								packageTypeInfo: {
+									packageTypeID: {},
+									name: 'string',
+									desctiption: 'string',
+									price: 1,
+								},
+								packageInfo: {
+									packageID: {},
+									type: TimeType.ONE_MONTH,
+									price: 1,
 								},
 								promotions: [
 									{
@@ -180,6 +192,17 @@ export class BillsController {
 									facilityAddress: {},
 									facilityCoordinatesLocation: [1, 1],
 									facilityPhoto: 'string',
+								},
+								packageTypeInfo: {
+									packageTypeID: {},
+									name: 'string',
+									desctiption: 'string',
+									price: 1,
+								},
+								packageInfo: {
+									packageID: {},
+									type: TimeType.ONE_MONTH,
+									price: 1,
 								},
 								promotions: [
 									{
@@ -301,6 +324,17 @@ export class BillsController {
 							facilityCoordinatesLocation: [1, 1],
 							facilityPhoto: 'string',
 						},
+						packageTypeInfo: {
+							packageTypeID: {},
+							name: 'string',
+							desctiption: 'string',
+							price: 1,
+						},
+						packageInfo: {
+							packageID: {},
+							type: TimeType.ONE_MONTH,
+							price: 1,
+						},
 						promotions: [
 							{
 								targetID: {},
@@ -400,6 +434,17 @@ export class BillsController {
 							facilityAddress: {},
 							facilityCoordinatesLocation: [1, 1],
 							facilityPhoto: 'string',
+						},
+						packageTypeInfo: {
+							packageTypeID: {},
+							name: 'string',
+							desctiption: 'string',
+							price: 1,
+						},
+						packageInfo: {
+							packageID: {},
+							type: TimeType.ONE_MONTH,
+							price: 1,
 						},
 						promotions: [
 							{
