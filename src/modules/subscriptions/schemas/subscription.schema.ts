@@ -24,9 +24,6 @@ export class Subscription extends BaseObject {
 	})
 	billItemID: BillItem;
 
-	@Prop({ type: mongoose.Schema.Types.ObjectId, ref: 'Package' })
-	packageID: Package;
-
 	@Prop({ required: true, type: Date })
 	expires: Date;
 
