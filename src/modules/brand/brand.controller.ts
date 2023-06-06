@@ -2,7 +2,7 @@ import { Controller, Get, Post, Body, Patch, Param, Delete, UseInterceptors, Bad
 import { BrandService } from './brand.service';
 import { CreateBrandDto } from './dto/create-brand.dto';
 import { UpdateBrandDto } from './dto/update-brand.dto';
-import { ApiBadRequestResponse, ApiBody, ApiConsumes, ApiForbiddenResponse, ApiNotFoundResponse, ApiOkResponse, ApiOperation, ApiParam, ApiQuery, ApiTags } from '@nestjs/swagger';
+import { ApiBadRequestResponse, ApiBearerAuth, ApiBody, ApiConsumes, ApiForbiddenResponse, ApiNotFoundResponse, ApiOkResponse, ApiOperation, ApiParam, ApiQuery, ApiTags } from '@nestjs/swagger';
 import { FilesInterceptor } from '@nestjs/platform-express';
 import { Public } from '../auth/utils';
 import { ApiDocsPagination } from 'src/decorators/swagger-form-data.decorator';
@@ -16,6 +16,7 @@ export class BrandController {
   constructor(private readonly brandService: BrandService) { }
 
   @Post()
+  @ApiBearerAuth()
   @ApiOperation({
     summary: 'Create a new brand'
   })
@@ -131,6 +132,7 @@ export class BrandController {
   }
 
   @Patch(':id')
+  @ApiBearerAuth()
   @ApiOperation({
     summary: 'Modified brand'
   })
@@ -181,6 +183,7 @@ export class BrandController {
   }
 
   @Delete(':id')
+  @ApiBearerAuth()
   @ApiParam({ name: 'id', type: String, description: 'id brand' })
   @ApiOkResponse({
     status: 200,

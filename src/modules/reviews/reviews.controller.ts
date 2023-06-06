@@ -1,5 +1,5 @@
 import { BadRequestException, Controller, Delete, Get, NotFoundException, Patch, Post, Query, UseInterceptors } from '@nestjs/common';
-import { ApiBadRequestResponse, ApiBody, ApiConsumes, ApiNotFoundResponse, ApiOkResponse, ApiOperation, ApiParam, ApiQuery, ApiResponse, ApiTags } from '@nestjs/swagger';
+import { ApiBadRequestResponse, ApiBearerAuth, ApiBody, ApiConsumes, ApiNotFoundResponse, ApiOkResponse, ApiOperation, ApiParam, ApiQuery, ApiResponse, ApiTags } from '@nestjs/swagger';
 import { Public } from '../auth/utils';
 import { CreateReviewDto } from './dto/create-review-dto';
 import { Review } from './schemas/reviews.schema';
@@ -13,6 +13,7 @@ import { Photo } from '../photo/schemas/photo.schema';
 export class ReviewsController {
 
     @Post()
+    @ApiBearerAuth()
     @UseInterceptors(FilesInterceptor('files', 5))
     @ApiConsumes('multipart/form-data')
     @ApiOperation({
@@ -70,6 +71,7 @@ export class ReviewsController {
     }
 
     @Patch(':id')
+    @ApiBearerAuth()
     @ApiOperation({
         summary: 'Modified review'
     })
@@ -131,6 +133,7 @@ export class ReviewsController {
 
 
     @Delete(':id')
+    @ApiBearerAuth()
     @ApiOperation({
         summary: 'Delete Review by id'
     })

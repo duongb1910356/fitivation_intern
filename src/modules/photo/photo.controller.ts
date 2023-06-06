@@ -1,5 +1,5 @@
 import { BadRequestException, Controller, Delete, FileTypeValidator, Get, HttpException, HttpStatus, MaxFileSizeValidator, NotFoundException, Param, ParseFilePipe, Post, UnsupportedMediaTypeException, UploadedFiles, UseInterceptors } from '@nestjs/common';
-import { ApiBadRequestResponse, ApiBody, ApiConsumes, ApiNotFoundResponse, ApiOkResponse, ApiOperation, ApiParam, ApiResponse, ApiTags, ApiUnsupportedMediaTypeResponse } from '@nestjs/swagger';
+import { ApiBadRequestResponse, ApiBearerAuth, ApiBody, ApiConsumes, ApiNotFoundResponse, ApiOkResponse, ApiOperation, ApiParam, ApiResponse, ApiTags, ApiUnsupportedMediaTypeResponse } from '@nestjs/swagger';
 import { Public } from '../auth/utils';
 import { FileInterceptor, FilesInterceptor } from '@nestjs/platform-express';
 import { FileUploadDto } from './dto/file-upload-dto';
@@ -11,8 +11,9 @@ import { Photo } from './schemas/photo.schema';
 @ApiTags('photo')
 export class PhotoController {
 
-	@Post(':buckets/file')
 	// @ApiConsumes('multipart/form-data')
+	@Post(':buckets/file')
+	@ApiBearerAuth()
 	@ApiParam({ name: 'buckets', type: String })
 	@ApiOperation({
 		summary: 'Add image into bucket',
@@ -62,6 +63,7 @@ export class PhotoController {
 	}
 
 	@Delete(':id')
+	@ApiBearerAuth()
     @ApiOperation({
         summary: 'Delete image by id'
     })

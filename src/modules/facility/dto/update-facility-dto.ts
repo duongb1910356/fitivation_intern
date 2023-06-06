@@ -5,26 +5,16 @@ import { ScheduleType, State, Status } from 'src/shared/enum/facility.enum';
 import { IsArray, IsEnum, IsOptional, IsString } from 'class-validator';
 
 export class UpdateFacilityDto extends PartialType(
-    PickType(CreateFacilityDto, []),
+    PickType(CreateFacilityDto, [
+        'brandID',
+        'facilityCategoryID',
+        'name',
+        'address',
+        'summary',
+        'description',
+        'coordinatesLocation',
+        'photos',
+        'scheduleType',
+        'state']),
 ) {
-    // @ApiProperty({ required: true, type: String })
-    // id: string;
-
-    @IsEnum(State)
-    @IsOptional()
-    state?: State;
-
-    @IsOptional()
-    @IsEnum(Status)
-    status?: Status;
-
-    @IsOptional()
-    @IsArray()
-    @IsString({ each: true })
-    deletedImages?: string[];
-
-    @IsOptional()
-    @IsArray()
-    reviews?: []
-
 }

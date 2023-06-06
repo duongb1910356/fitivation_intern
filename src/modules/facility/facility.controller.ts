@@ -6,18 +6,14 @@ import { FilesInterceptor } from '@nestjs/platform-express';
 import { CreateFacilityDto } from './dto/create-facility-dto';
 import { Facility } from './schemas/facility.schema';
 import { ErrorResponse, ListOptions, ListResponse } from 'src/shared/response/common-response';
-import { Brand } from '../brand/schemas/brand.schema';
-import { FacilityCategory } from '../facility-category/entities/facility-category';
-import { User, UserRole } from '../users/schemas/user.schema';
+import { UserRole } from '../users/schemas/user.schema';
 import { Review } from '../reviews/schemas/reviews.schema'
 import { UpdateFacilityDto } from './dto/update-facility-dto';
-import { FileUploadDto } from '../photo/dto/file-upload-dto';
 import { ApiDocsPagination } from 'src/decorators/swagger-form-data.decorator';
 import { Photo } from '../photo/schemas/photo.schema';
 import { State, Status, ScheduleType } from '../../shared/enum/facility.enum';
 import { Roles } from 'src/decorators/role-decorator/role.decorator';
 import { RolesGuard } from 'src/decorators/role-decorator/role.guard';
-import { Attendance } from '../attendance/entities/attendance.entity';
 import { ShiftTime } from '../facility-schedule/entities/shift-time.entity';
 import { OpenTime } from '../facility-schedule/entities/open-time.entity';
 import { FacilitySchedule } from '../facility-schedule/entities/facility-schedule.entity';
@@ -30,6 +26,8 @@ import { dayOfWeek } from '../facility-schedule/entities/open-time.entity'
 import { HolidayDto } from '../holiday/dto/holiday-dto';
 import { CreatePackageTypeDto } from '../package-type/dto/create-package-type-dto';
 import { UpdateOrderDto } from '../package-type/dto/update-order-dto';
+import { UpdatePhotoOfFacilityDto } from './dto/update-photo-facility';
+
 @ApiTags('facilities')
 @Controller('facilities')
 export class FacilityController {
@@ -53,18 +51,13 @@ export class FacilityController {
                         ownerID: {},
                         name: 'City gym',
                         address: {
-                            province: {
-                                name: 'TP Cần Thơ',
-                                code: 65
-                            },
-                            district: {
-                                name: 'Phường Xuân Khánh',
-                                code: 56
-                            },
-                            commune: {
-                                name: 'Quận Ninh Kiều',
-                                code: 11
-                            }
+                            street: '30/4',
+                            commune: 'Phường Xuân Khánh',
+                            communeCode: '011',
+                            district: 'Quận Ninh Kiều',
+                            districtCode: '056',
+                            province: 'Thành phố Cần Thơ',
+                            provinceCode: '065'
                         },
                         summary: 'Phòng gym thân thiện',
                         description: 'Nhiều dụng cụ tập luyện',
@@ -103,6 +96,7 @@ export class FacilityController {
                                 updatedAt: new Date()
                             }
                         ],
+                        scheduleType: ScheduleType.DAILY,
                         createdAt: new Date(),
                         updatedAt: new Date()
                     } as Facility
@@ -146,18 +140,13 @@ export class FacilityController {
             ownerID: {},
             name: 'City gym',
             address: {
-                province: {
-                    name: 'TP Cần Thơ',
-                    code: 65
-                },
-                district: {
-                    name: 'Phường Xuân Khánh',
-                    code: 56
-                },
-                commune: {
-                    name: 'Quận Ninh Kiều',
-                    code: 11
-                }
+                street: '30/4',
+                commune: 'Phường Xuân Khánh',
+                communeCode: '011',
+                district: 'Quận Ninh Kiều',
+                districtCode: '056',
+                province: 'Thành phố Cần Thơ',
+                provinceCode: '065'
             },
             summary: 'Phòng gym thân thiện',
             description: 'Nhiều dụng cụ tập luyện',
@@ -296,18 +285,13 @@ export class FacilityController {
                             ownerID: {},
                             name: 'City gym',
                             address: {
-                                province: {
-                                    name: 'TP Cần Thơ',
-                                    code: 65
-                                },
-                                district: {
-                                    name: 'Phường Xuân Khánh',
-                                    code: 56
-                                },
-                                commune: {
-                                    name: 'Quận Ninh Kiều',
-                                    code: 11
-                                }
+                                street: '30/4',
+                                commune: 'Phường Xuân Khánh',
+                                communeCode: '011',
+                                district: 'Quận Ninh Kiều',
+                                districtCode: '056',
+                                province: 'Thành phố Cần Thơ',
+                                provinceCode: '065'
                             },
                             summary: 'Phòng gym thân thiện',
                             description: 'Nhiều dụng cụ tập luyện',
@@ -1013,6 +997,7 @@ export class FacilityController {
     }
 
     @Post()
+    @ApiBearerAuth()
     @ApiOperation({
         summary: 'Create a new facility'
     })
@@ -1025,7 +1010,15 @@ export class FacilityController {
                     brandID: '1123456',
                     facilityCategoryID: '1233',
                     name: 'City gym',
-                    address: 65,
+                    address: {
+                        street: 'string',
+                        province: 'string',
+                        provinceCode: 'string',
+                        district: 'string',
+                        districtCode: 'string',
+                        commune: 'string',
+                        communeCode: 'string'
+                    },
                     summary: 'CHẤT LƯỢNG LÀ DANH DỰ',
                     description: 'HIỆN ĐẠI BẬT NHẤT',
                     coordinatesLocation: [45, 54],
@@ -1050,18 +1043,13 @@ export class FacilityController {
                     ownerID: {},
                     name: 'City gym',
                     address: {
-                        province: {
-                            name: 'TP Cần Thơ',
-                            code: 65
-                        },
-                        district: {
-                            name: 'Phường Xuân Khánh',
-                            code: 56
-                        },
-                        commune: {
-                            name: 'Quận Ninh Kiều',
-                            code: 11
-                        }
+                        street: '30/4',
+                        commune: 'Phường Xuân Khánh',
+                        communeCode: '011',
+                        district: 'Quận Ninh Kiều',
+                        districtCode: '056',
+                        province: 'Thành phố Cần Thơ',
+                        provinceCode: '065'
                     },
                     summary: 'Phòng gym thân thiện',
                     description: 'Nhiều dụng cụ tập luyện',
@@ -1087,6 +1075,7 @@ export class FacilityController {
     }
 
     @Delete(':id')
+    @ApiBearerAuth()
     @ApiOperation({
         summary: 'Delete Facility by id'
     })
@@ -1193,6 +1182,7 @@ export class FacilityController {
     }
 
     @Patch(':id')
+    @ApiBearerAuth()
     @ApiOperation({
         summary: 'Modified facility'
     })
@@ -1204,21 +1194,20 @@ export class FacilityController {
                 value: {
                     brandID: '1123456',
                     facilityCategoryID: '1233',
-                    ownerID: 'sdsgs4',
                     name: 'City gym',
-                    address: 'Object ID của Commune',
+                    address: {
+                        street: '30/4',
+                        commune: 'Phường Xuân Khánh',
+                        communeCode: '011',
+                        district: 'Quận Ninh Kiều',
+                        districtCode: '056',
+                        province: 'Thành phố Cần Thơ',
+                        provinceCode: '065'
+                    },
                     summary: 'CHẤT LƯỢNG LÀ DANH DỰ',
                     description: 'HIỆN ĐẠI BẬT NHẤT',
                     coordinatesLocation: [45, 54],
                     state: State.ACTIVE,
-                    status: Status.APPROVED,
-                    photos: [
-                        { fileName: 'abc', file: null } as FileUploadDto
-                    ],
-                    deletedImages: [
-                        'name-image1',
-                        'name-image2',
-                    ],
                     scheduleType: ScheduleType.WEEKLY,
                 } as UpdateFacilityDto,
             }
@@ -1232,23 +1221,18 @@ export class FacilityController {
                 message: 'Success',
                 data: {
                     _id: 'string',
-                    brandID: '123456',
-                    facilityCategoryID: '123456',
-                    // ownerID: '123456',
+                    brandID: {},
+                    facilityCategoryID: {},
+                    ownerID: {},
                     name: 'City Gym',
                     address: {
-                        province: {
-                            name: 'TP Cần Thơ',
-                            code: 65
-                        },
-                        district: {
-                            name: 'Phường Xuân Khánh',
-                            code: 56
-                        },
-                        commune: {
-                            name: 'Quận Ninh Kiều',
-                            code: 11
-                        }
+                        street: '30/4',
+                        commune: 'Phường Xuân Khánh',
+                        communeCode: '011',
+                        district: 'Quận Ninh Kiều',
+                        districtCode: '056',
+                        province: 'Thành phố Cần Thơ',
+                        provinceCode: '065'
                     },
                     averageStar: null,
                     summary: 'CHẤT LƯỢNG LÀ DANH DỰ',
@@ -1261,7 +1245,7 @@ export class FacilityController {
                     scheduleType: ScheduleType.WEEKLY,
                     createdAt: new Date(),
                     updatedAt: new Date()
-                } as unknown as Facility,
+                } as Facility,
             },
         },
     })
@@ -1271,6 +1255,73 @@ export class FacilityController {
         description: '[Input] invalid!',
     })
     updateFacility() {
+
+    }
+
+    @Patch(':id/photos')
+    @ApiBearerAuth()
+    @ApiOperation({
+        summary: 'Update photo of facility'
+    })
+    @ApiParam({ name: 'id', type: String, description: 'Facility ID' })
+    @ApiBody({
+        type: UpdatePhotoOfFacilityDto,
+        examples: {
+            example1: {
+                value: {
+                    photos: [
+                        {file: null, describe: 'tuỳ chọn có cũng được'}
+                    ],
+                    deletedImages: [
+                        'name_image1',
+                        'name_image2'
+                    ]
+                } as UpdatePhotoOfFacilityDto,
+            }
+        }
+    })
+    @ApiOkResponse({
+        status: 200,
+        schema: {
+            example: {
+                code: 200,
+                message: 'Success',
+                data: {
+                    _id: 'string',
+                    brandID: {},
+                    facilityCategoryID: {},
+                    ownerID: {},
+                    name: 'City Gym',
+                    address: {
+                        street: '30/4',
+                        commune: 'Phường Xuân Khánh',
+                        communeCode: '011',
+                        district: 'Quận Ninh Kiều',
+                        districtCode: '056',
+                        province: 'Thành phố Cần Thơ',
+                        provinceCode: '065'
+                    },
+                    averageStar: null,
+                    summary: 'CHẤT LƯỢNG LÀ DANH DỰ',
+                    description: 'ABC',
+                    coordinationLocation: [45, 54],
+                    state: State.ACTIVE,
+                    status: Status.APPROVED,
+                    photos: [],
+                    reviews: [],
+                    scheduleType: ScheduleType.WEEKLY,
+                    createdAt: new Date(),
+                    updatedAt: new Date()
+                } as Facility,
+            },
+        },
+    })
+    @ApiBadRequestResponse({
+        type: BadRequestException,
+        status: 400,
+        description: '[Input] invalid!',
+    })
+    updatePhotoOfFacility() {
 
     }
 

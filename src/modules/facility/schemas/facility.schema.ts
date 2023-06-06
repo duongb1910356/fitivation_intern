@@ -6,7 +6,7 @@ import { Brand, BrandSchema } from '../../brand/schemas/brand.schema';
 import { Photo, PhotoSchema } from 'src/modules/photo/schemas/photo.schema';
 import { FacilityCategory } from 'src/modules/facility-category/entities/facility-category';
 import { User } from 'src/modules/users/schemas/user.schema';
-import { State, Status, ScheduleType  } from '../../../shared/enum/facility.enum';
+import { State, Status, ScheduleType } from '../../../shared/enum/facility.enum';
 
 export interface Address {
     province: {
@@ -40,13 +40,21 @@ export class Facility extends BaseObject {
     @Prop({ type: String, required: true })
     name: string;
 
-    @Prop({type: Object, required: true })
-    address: Address
+    @Prop({ type: Object, required: true })
+    address: {
+        street: string;
+        province: string;
+        provinceCode: string;
+        district: string;
+        districtCode: string;
+        commune: string;
+        communeCode: string;
+    }
 
-    @Prop({ default: ''})
+    @Prop({ default: '' })
     summary: string;
 
-    @Prop({ default: ''})
+    @Prop({ default: '' })
     description: string;
 
     @Prop({ type: [Number], required: false, default: [] })
@@ -62,7 +70,7 @@ export class Facility extends BaseObject {
     averageStar: number;
 
     @Prop({
-        type: [{type: mongoose.Schema.Types.ObjectId, ref: 'Photo', required: true}],
+        type: [{ type: mongoose.Schema.Types.ObjectId, ref: 'Photo', required: true }],
         validate: {
             validator: (photos: any[]) => photos.length <= 5,
             message: 'Facility have 5 photo latest'
@@ -72,7 +80,7 @@ export class Facility extends BaseObject {
     photos: Photo[];
 
     @Prop({
-        type: [{type: mongoose.Schema.Types.ObjectId, ref: 'Review', required: false}],
+        type: [{ type: mongoose.Schema.Types.ObjectId, ref: 'Review', required: false }],
         validate: {
             validator: (reviews: any[]) => reviews.length <= 5,
             message: 'Facility have 5 reviews latest'
