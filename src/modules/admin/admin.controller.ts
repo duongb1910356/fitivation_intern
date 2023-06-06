@@ -32,7 +32,7 @@ import {
 	ErrorResponse,
 } from 'src/shared/response/common-response';
 import { Attendance } from '../attendance/entities/attendance.entity';
-import { Facility } from '../facility/schemas/facility.schema';
+import { Facility, State } from '../facility/schemas/facility.schema';
 import { CreateCategoryDto } from '../facility-category/dto/create-category-dto';
 import { UpdateCategoryDto } from '../facility-category/dto/update-category-dto';
 import { FacilityCategory } from '../facility-category/entities/facility-category';
@@ -45,6 +45,7 @@ import { ShiftTime } from '../facility-schedule/entities/shift-time.entity';
 import { Holiday } from '../holiday/entities/holiday.entity';
 import { PackageType } from '../package-type/entities/package-type.entity';
 import { TimeType, Package } from '../package/entities/package.entity';
+import { UpdateFacilityStateDto } from './dto/update-facility-state-dto';
 
 @ApiTags('admin')
 @ApiBearerAuth()
@@ -52,6 +53,84 @@ import { TimeType, Package } from '../package/entities/package.entity';
 @Roles(UserRole.ADMIN)
 @Controller('admin')
 export class AdminController {
+	//FACILITIES
+	@Patch('facilities/:facilityID/changeState')
+	@ApiOperation({
+		summary: 'Update facility state',
+		description: `Only admin can use this API`,
+	})
+	@ApiParam({
+		name: 'facilityID',
+		type: String,
+		description: 'Facility ID',
+	})
+	@ApiBody({
+		type: UpdateFacilityStateDto,
+		examples: {
+			ACTIVE: {
+				summary: 'ACTIVE',
+				value: {
+					state: State.ACTIVE,
+				} as UpdateFacilityStateDto,
+			},
+			INACTIVE: {
+				summary: 'INACTIVE',
+				value: {
+					state: State.INACTIVE,
+				} as UpdateFacilityStateDto,
+			},
+		},
+	})
+	@ApiOkResponse({
+		schema: {
+			example: {
+				message: 'Update facility state successful!',
+			},
+		},
+	})
+	@ApiUnauthorizedResponse({
+		schema: {
+			example: {
+				code: '401',
+				message: 'Unauthorized',
+				details: null,
+			} as ErrorResponse<null>,
+		},
+	})
+	@ApiForbiddenResponse({
+		schema: {
+			example: {
+				code: '403',
+				message: 'Forbidden resource',
+				details: null,
+			} as ErrorResponse<null>,
+		},
+	})
+	@ApiNotFoundResponse({
+		schema: {
+			example: {
+				code: '404',
+				message: 'Not found category to update!',
+				details: null,
+			} as ErrorResponse<null>,
+		},
+	})
+	@ApiBadRequestResponse({
+		schema: {
+			example: {
+				code: '400',
+				message: '[Input] invalid!',
+				details: null,
+			} as ErrorResponse<null>,
+		},
+	})
+	updateFacilityState(
+		@Param('facilityID') facilityID: string,
+		@Body() data: UpdateFacilityStateDto,
+	) {
+		console.log(facilityID, data);
+	}
+
 	// ATTENDANCES
 	@Get('facillities/:facilityID/attendances')
 	@ApiOperation({
