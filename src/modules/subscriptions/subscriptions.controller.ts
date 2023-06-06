@@ -188,8 +188,13 @@ export class SubscriptionsController {
 		status: 201,
 		schema: {
 			example: {
-				message: 'Created successfully',
-			},
+				accountID: {},
+				billItemID: {},
+				packageID: {},
+				expires: new Date(),
+				status: SubscriptionStatus.ACTIVE,
+				renew: false,
+			} as Subscription,
 		},
 	})
 	@ApiResponse({
@@ -234,11 +239,16 @@ export class SubscriptionsController {
 	@ApiParam({ name: 'id', type: String, description: 'Subscription ID' })
 	@ApiBody({ type: UpdateSubscriptionDto })
 	@ApiResponse({
-		status: 200,
+		status: 201,
 		schema: {
 			example: {
-				message: 'Updated successfully',
-			},
+				accountID: {},
+				billItemID: {},
+				packageID: {},
+				expires: new Date(),
+				status: SubscriptionStatus.ACTIVE,
+				renew: false,
+			} as Subscription,
 		},
 	})
 	@ApiResponse({
@@ -358,8 +368,13 @@ export class SubscriptionsController {
 		status: 201,
 		schema: {
 			example: {
-				message: 'Created successfully',
-			},
+				accountID: {},
+				billItemID: {},
+				packageID: {},
+				expires: new Date(),
+				status: SubscriptionStatus.ACTIVE,
+				renew: false,
+			} as Subscription,
 		},
 	})
 	@ApiResponse({

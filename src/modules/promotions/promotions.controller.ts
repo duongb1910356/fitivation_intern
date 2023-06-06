@@ -202,8 +202,20 @@ export class PromotionsController {
 		status: 201,
 		schema: {
 			example: {
-				message: 'Created successfully',
-			},
+				targetId: 'string',
+				type: PromotionType.BILL,
+				name: 'string',
+				description: 'string',
+				couponCode: 'string',
+				value: 1,
+				method: PromotionMethod.NUMBER,
+				minPriceApply: 0,
+				maxQuantity: 0,
+				startDate: new Date(),
+				endDate: new Date(),
+				customerType: CustomerType.CUSTOMER,
+				status: PromotionStatus.ACTIVE,
+			} as Promotion,
 		},
 	})
 	@ApiResponse({
@@ -249,8 +261,20 @@ export class PromotionsController {
 		status: 201,
 		schema: {
 			example: {
-				message: 'Updated successfully',
-			},
+				targetId: 'string',
+				type: PromotionType.BILL,
+				name: 'string',
+				description: 'string',
+				couponCode: 'string',
+				value: 1,
+				method: PromotionMethod.NUMBER,
+				minPriceApply: 0,
+				maxQuantity: 0,
+				startDate: new Date(),
+				endDate: new Date(),
+				customerType: CustomerType.CUSTOMER,
+				status: PromotionStatus.ACTIVE,
+			} as Promotion,
 		},
 	})
 	@ApiResponse({
@@ -530,8 +554,20 @@ export class PromotionsController {
 		status: 201,
 		schema: {
 			example: {
-				message: 'Created successfully',
-			},
+				targetId: 'string',
+				type: PromotionType.BILL,
+				name: 'string',
+				description: 'string',
+				couponCode: 'string',
+				value: 1,
+				method: PromotionMethod.NUMBER,
+				minPriceApply: 0,
+				maxQuantity: 0,
+				startDate: new Date(),
+				endDate: new Date(),
+				customerType: CustomerType.CUSTOMER,
+				status: PromotionStatus.ACTIVE,
+			} as Promotion,
 		},
 	})
 	@ApiResponse({
@@ -586,11 +622,23 @@ export class PromotionsController {
 		description: 'Allow facility owner to update one promotion of own facility',
 	})
 	@ApiResponse({
-		status: 200,
+		status: 201,
 		schema: {
 			example: {
-				message: 'Updated successfully',
-			},
+				targetId: 'string',
+				type: PromotionType.BILL,
+				name: 'string',
+				description: 'string',
+				couponCode: 'string',
+				value: 1,
+				method: PromotionMethod.NUMBER,
+				minPriceApply: 0,
+				maxQuantity: 0,
+				startDate: new Date(),
+				endDate: new Date(),
+				customerType: CustomerType.CUSTOMER,
+				status: PromotionStatus.ACTIVE,
+			} as Promotion,
 		},
 	})
 	@ApiResponse({

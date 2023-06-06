@@ -175,8 +175,12 @@ export class CartItemsController {
 		status: 201,
 		schema: {
 			example: {
-				message: 'Created successfully',
-			},
+				cartID: {},
+				packageID: {},
+				promotionIDs: [],
+				promotionPrice: 0,
+				totalPrice: 0,
+			} as CartItem,
 		},
 	})
 	@ApiResponse({
@@ -221,11 +225,15 @@ export class CartItemsController {
 	@ApiParam({ name: 'cartID', type: String, description: 'Cart ID' })
 	@ApiBody({ type: UpdateCartItemDto })
 	@ApiResponse({
-		status: 200,
+		status: 201,
 		schema: {
 			example: {
-				message: 'Updated successfully',
-			},
+				cartID: {},
+				packageID: {},
+				promotionIDs: [],
+				promotionPrice: 0,
+				totalPrice: 0,
+			} as CartItem,
 		},
 	})
 	@ApiResponse({
@@ -345,8 +353,12 @@ export class CartItemsController {
 		status: 201,
 		schema: {
 			example: {
-				message: 'Created successfully',
-			},
+				cartID: {},
+				packageID: {},
+				promotionIDs: [],
+				promotionPrice: 0,
+				totalPrice: 0,
+			} as CartItem,
 		},
 	})
 	@ApiResponse({
@@ -404,11 +416,15 @@ export class CartItemsController {
 	@ApiParam({ name: 'cartID', type: String, description: 'Cart ID' })
 	@ApiBody({ type: UpdateCartItemDto })
 	@ApiResponse({
-		status: 200,
+		status: 201,
 		schema: {
 			example: {
-				message: 'Updated successfully',
-			},
+				cartID: {},
+				packageID: {},
+				promotionIDs: [],
+				promotionPrice: 0,
+				totalPrice: 0,
+			} as CartItem,
 		},
 	})
 	@ApiResponse({

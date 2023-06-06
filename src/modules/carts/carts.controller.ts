@@ -202,8 +202,15 @@ export class CartsController {
 		status: 201,
 		schema: {
 			example: {
-				message: 'Created successfully',
-			},
+				_id: '_id',
+				accountID: {},
+				cartItemIDs: [],
+				promotionIDs: {},
+				promotionPrice: 0,
+				totalPrice: 0,
+				createdAt: new Date(),
+				updatedAt: new Date(),
+			} as Cart,
 		},
 	})
 	@ApiResponse({
@@ -264,8 +271,15 @@ export class CartsController {
 		status: 201,
 		schema: {
 			example: {
-				message: 'Updated successfully',
-			},
+				_id: '_id',
+				accountID: {},
+				cartItemIDs: [],
+				promotionIDs: {},
+				promotionPrice: 0,
+				totalPrice: 0,
+				createdAt: new Date(),
+				updatedAt: new Date(),
+			} as Cart,
 		},
 	})
 	@ApiResponse({
@@ -386,7 +400,7 @@ export class CartsController {
 		status: 201,
 		schema: {
 			example: {
-				message: 'purchase successfully',
+				message: 'Purchase successfully',
 			},
 		},
 	})
