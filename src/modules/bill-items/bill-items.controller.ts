@@ -107,6 +107,7 @@ export class BillItemsController {
 	getManyBillItems(@Query() filter: ListOptions<BillItem>) {
 		return 'getManyBillItems';
 	}
+
 	@Get('bill-items/:id')
 	@ApiTags('bill-items')
 	@ApiOperation({
@@ -194,6 +195,7 @@ export class BillItemsController {
 	getOneBillItems(@Param('id') id: string) {
 		return 'getOneBillItems';
 	}
+
 	@Post('bill-items')
 	@ApiTags('bill-items')
 	@ApiOperation({
@@ -201,40 +203,27 @@ export class BillItemsController {
 		description: 'Create one bill-item',
 	})
 	@ApiResponse({
-		status: 200,
+		status: 201,
 		schema: {
 			example: {
-				items: [
-					{
-						_id: '_id',
-						facilityInfo: {
-							facilityID: {},
-							brandID: {},
-							brandName: 'string',
-							ownerFacilityName: 'string',
-							facilityName: 'string',
-							facilityAddress: {},
-							facilityCoordinatesLocation: [1, 1],
-							facilityPhoto: 'string',
-						},
-						promotions: [],
-						promotionPrice: 1,
-						totalPrice: 1,
-						status: BillItemStatus.ACTIVE,
-						createdAt: new Date(),
-						updatedAt: new Date(),
-					},
-				] as BillItem[],
-				total: 1,
-				options: {
-					limit: 1,
-					offset: 0,
-					searchField: {},
-					searchValue: '',
-					sortField: 'createdAt',
-					sortOrder: 'asc',
-				} as ListOptions<BillItem>,
-			} as ListResponse<BillItem>,
+				_id: '_id',
+				facilityInfo: {
+					facilityID: {},
+					brandID: {},
+					brandName: 'string',
+					ownerFacilityName: 'string',
+					facilityName: 'string',
+					facilityAddress: {},
+					facilityCoordinatesLocation: [1, 1],
+					facilityPhoto: 'string',
+				},
+				promotions: [],
+				promotionPrice: 1,
+				totalPrice: 1,
+				status: BillItemStatus.ACTIVE,
+				createdAt: new Date(),
+				updatedAt: new Date(),
+			} as BillItem,
 		},
 	})
 	@ApiResponse({
@@ -270,6 +259,7 @@ export class BillItemsController {
 	createBillItem(@Body() createBillItemDto: CreateBillItemDto) {
 		return 'createBillItem';
 	}
+
 	@Patch('bill-items/:id')
 	@ApiTags('bill-items')
 	@ApiOperation({
@@ -279,40 +269,27 @@ export class BillItemsController {
 	@ApiParam({ name: 'id', type: String, description: 'Bill-item ID' })
 	@ApiBody({ type: UpdateBillItemDto })
 	@ApiResponse({
-		status: 200,
+		status: 201,
 		schema: {
 			example: {
-				items: [
-					{
-						_id: '_id',
-						facilityInfo: {
-							facilityID: {},
-							brandID: {},
-							brandName: 'string',
-							ownerFacilityName: 'string',
-							facilityName: 'string',
-							facilityAddress: {},
-							facilityCoordinatesLocation: [1, 1],
-							facilityPhoto: 'string',
-						},
-						promotions: [],
-						promotionPrice: 1,
-						totalPrice: 1,
-						status: BillItemStatus.ACTIVE,
-						createdAt: new Date(),
-						updatedAt: new Date(),
-					},
-				] as BillItem[],
-				total: 1,
-				options: {
-					limit: 1,
-					offset: 0,
-					searchField: {},
-					searchValue: '',
-					sortField: 'createdAt',
-					sortOrder: 'asc',
-				} as ListOptions<BillItem>,
-			} as ListResponse<BillItem>,
+				_id: '_id',
+				facilityInfo: {
+					facilityID: {},
+					brandID: {},
+					brandName: 'string',
+					ownerFacilityName: 'string',
+					facilityName: 'string',
+					facilityAddress: {},
+					facilityCoordinatesLocation: [1, 1],
+					facilityPhoto: 'string',
+				},
+				promotions: [],
+				promotionPrice: 1,
+				totalPrice: 1,
+				status: BillItemStatus.ACTIVE,
+				createdAt: new Date(),
+				updatedAt: new Date(),
+			} as BillItem,
 		},
 	})
 	@ApiResponse({
@@ -361,6 +338,7 @@ export class BillItemsController {
 	) {
 		return 'updateBillItem';
 	}
+
 	@Delete('bill-items/:id')
 	@ApiTags('bill-items')
 	@ApiOperation({
@@ -507,40 +485,27 @@ export class BillItemsController {
 	})
 	@ApiParam({ name: 'billID', type: String, description: 'Bill ID' })
 	@ApiResponse({
-		status: 200,
+		status: 201,
 		schema: {
 			example: {
-				items: [
-					{
-						_id: '_id',
-						facilityInfo: {
-							facilityID: {},
-							brandID: {},
-							brandName: 'string',
-							ownerFacilityName: 'string',
-							facilityName: 'string',
-							facilityAddress: {},
-							facilityCoordinatesLocation: [1, 1],
-							facilityPhoto: 'string',
-						},
-						promotions: [],
-						promotionPrice: 1,
-						totalPrice: 1,
-						status: BillItemStatus.ACTIVE,
-						createdAt: new Date(),
-						updatedAt: new Date(),
-					},
-				] as BillItem[],
-				total: 1,
-				options: {
-					limit: 1,
-					offset: 0,
-					searchField: {},
-					searchValue: '',
-					sortField: 'createdAt',
-					sortOrder: 'asc',
-				} as ListOptions<BillItem>,
-			} as ListResponse<BillItem>,
+				_id: '_id',
+				facilityInfo: {
+					facilityID: {},
+					brandID: {},
+					brandName: 'string',
+					ownerFacilityName: 'string',
+					facilityName: 'string',
+					facilityAddress: {},
+					facilityCoordinatesLocation: [1, 1],
+					facilityPhoto: 'string',
+				},
+				promotions: [],
+				promotionPrice: 1,
+				totalPrice: 1,
+				status: BillItemStatus.ACTIVE,
+				createdAt: new Date(),
+				updatedAt: new Date(),
+			} as BillItem,
 		},
 	})
 	@ApiResponse({
@@ -665,6 +630,7 @@ export class BillItemsController {
 	getManyBillItemsAllOwnFacility(@Query() filter: ListOptions<BillItem>) {
 		return 'getManyBillItemsAllOwnFacility';
 	}
+
 	@Get('facilities/:facilityID/bill-items')
 	@ApiParam({ name: 'facilityID', type: String, description: 'facility ID' })
 	@ApiTags('facilities/bill-items')
@@ -757,6 +723,7 @@ export class BillItemsController {
 	) {
 		return 'getManyBillItemsOneOwnFacility';
 	}
+
 	@Get('facilities/:facilityID/bill-items/:billItemID')
 	@ApiTags('facilities/bill-items')
 	@ApiOperation({
@@ -849,6 +816,7 @@ export class BillItemsController {
 	) {
 		return 'getOneBillItemOneOwnFacility';
 	}
+
 	@Get('package/bill-items')
 	@ApiTags('packages/bill-items')
 	@ApiOperation({
@@ -927,6 +895,7 @@ export class BillItemsController {
 	getManyBillItemsAllOwnPackage(@Query() filter: ListOptions<BillItem>) {
 		return 'getManyBillItemsAllOwnPackage';
 	}
+
 	@Get('package/:packageID/bill-items')
 	@ApiTags('packages/bill-items')
 	@ApiOperation({
@@ -1019,6 +988,7 @@ export class BillItemsController {
 	) {
 		return 'getManyBillItemsOneOwnPackage';
 	}
+
 	@Get('package/:packageID/bill-items/:billItemID')
 	@ApiTags('packages/bill-items')
 	@ApiOperation({
@@ -1111,6 +1081,7 @@ export class BillItemsController {
 	) {
 		return 'getOneBillItemOneOwnPackage';
 	}
+
 	@Get('brands/bill-items')
 	@ApiTags('brands/bill-items')
 	@ApiOperation({
@@ -1189,6 +1160,7 @@ export class BillItemsController {
 	getManyBillItemsAllOwnBrand(@Query() filter: ListOptions<BillItem>) {
 		return 'getManyBillItemsAllOwnBrand';
 	}
+
 	@Get('brands/:brandID/bill-items')
 	@ApiTags('brands/bill-items')
 	@ApiOperation({
@@ -1281,6 +1253,7 @@ export class BillItemsController {
 	) {
 		return 'getManyBillItemsOneOwnBrand';
 	}
+
 	@Get('brands/:brandID/bill-items/:billItemID')
 	@ApiTags('brands/bill-items')
 	@ApiOperation({
