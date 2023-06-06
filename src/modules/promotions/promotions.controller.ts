@@ -70,12 +70,32 @@ export class PromotionsController {
 		},
 	})
 	@ApiResponse({
+		status: 400,
+		schema: {
+			example: {
+				code: '400',
+				message: 'Bad request',
+				details: null,
+			},
+		},
+	})
+	@ApiResponse({
+		status: 401,
+		schema: {
+			example: {
+				code: '401',
+				message: 'Unauthorized',
+				details: null,
+			},
+		},
+	})
+	@ApiResponse({
 		status: 403,
 		schema: {
 			example: {
-				code: 403,
-				message: `You don't have permission to this access`,
-				details: {},
+				code: '403',
+				message: `Forbidden resource`,
+				details: null,
 			},
 		},
 	})
@@ -125,12 +145,32 @@ export class PromotionsController {
 		},
 	})
 	@ApiResponse({
+		status: 400,
+		schema: {
+			example: {
+				code: '400',
+				message: 'Bad request',
+				details: null,
+			},
+		},
+	})
+	@ApiResponse({
+		status: 401,
+		schema: {
+			example: {
+				code: '401',
+				message: 'Unauthorized',
+				details: null,
+			},
+		},
+	})
+	@ApiResponse({
 		status: 403,
 		schema: {
 			example: {
-				code: 403,
-				message: `You don't have permission to this access`,
-				details: {},
+				code: '403',
+				message: `Forbidden resource`,
+				details: null,
 			},
 		},
 	})
@@ -138,9 +178,9 @@ export class PromotionsController {
 		status: 404,
 		schema: {
 			example: {
-				code: 404,
+				code: '404',
 				message: 'Not found document with that ID',
-				details: {},
+				details: null,
 			},
 		},
 	})
@@ -163,12 +203,32 @@ export class PromotionsController {
 		},
 	})
 	@ApiResponse({
+		status: 400,
+		schema: {
+			example: {
+				code: '400',
+				message: 'Bad request',
+				details: null,
+			},
+		},
+	})
+	@ApiResponse({
+		status: 401,
+		schema: {
+			example: {
+				code: '401',
+				message: 'Unauthorized',
+				details: null,
+			},
+		},
+	})
+	@ApiResponse({
 		status: 403,
 		schema: {
 			example: {
-				code: 403,
-				message: `You don't have permission to this access`,
-				details: {},
+				code: '403',
+				message: `Forbidden resource`,
+				details: null,
 			},
 		},
 	})
@@ -180,6 +240,54 @@ export class PromotionsController {
 	@ApiOperation({
 		summary: 'updatePromotion',
 		description: 'Update one promotion',
+	})
+	@ApiResponse({
+		status: 201,
+		schema: {
+			example: {
+				message: 'Updated successfully',
+			},
+		},
+	})
+	@ApiResponse({
+		status: 400,
+		schema: {
+			example: {
+				code: '400',
+				message: 'Bad request',
+				details: null,
+			},
+		},
+	})
+	@ApiResponse({
+		status: 401,
+		schema: {
+			example: {
+				code: '401',
+				message: 'Unauthorized',
+				details: null,
+			},
+		},
+	})
+	@ApiResponse({
+		status: 403,
+		schema: {
+			example: {
+				code: '403',
+				message: `Forbidden resource`,
+				details: null,
+			},
+		},
+	})
+	@ApiResponse({
+		status: 404,
+		schema: {
+			example: {
+				code: '404',
+				message: 'Not found document with that ID',
+				details: null,
+			},
+		},
 	})
 	@ApiParam({ name: 'id', type: String, description: 'Promotion ID' })
 	updatePromotion(@Param('id') id: string) {
@@ -202,12 +310,42 @@ export class PromotionsController {
 		},
 	})
 	@ApiResponse({
+		status: 400,
+		schema: {
+			example: {
+				code: '400',
+				message: 'Bad request',
+				details: null,
+			},
+		},
+	})
+	@ApiResponse({
+		status: 401,
+		schema: {
+			example: {
+				code: '401',
+				message: 'Unauthorized',
+				details: null,
+			},
+		},
+	})
+	@ApiResponse({
 		status: 403,
 		schema: {
 			example: {
-				code: 403,
-				message: `You don't have permission to this access`,
-				details: {},
+				code: '403',
+				message: `Forbidden resource`,
+				details: null,
+			},
+		},
+	})
+	@ApiResponse({
+		status: 404,
+		schema: {
+			example: {
+				code: '404',
+				message: 'Not found document with that ID',
+				details: null,
 			},
 		},
 	})
@@ -256,12 +394,32 @@ export class PromotionsController {
 		},
 	})
 	@ApiResponse({
+		status: 400,
+		schema: {
+			example: {
+				code: '400',
+				message: 'Bad request',
+				details: null,
+			},
+		},
+	})
+	@ApiResponse({
+		status: 401,
+		schema: {
+			example: {
+				code: '401',
+				message: 'Unauthorized',
+				details: null,
+			},
+		},
+	})
+	@ApiResponse({
 		status: 403,
 		schema: {
 			example: {
-				code: 403,
-				message: `You don't have permission to this access`,
-				details: {},
+				code: '403',
+				message: `Forbidden resource`,
+				details: null,
 			},
 		},
 	})
@@ -311,12 +469,42 @@ export class PromotionsController {
 		},
 	})
 	@ApiResponse({
+		status: 400,
+		schema: {
+			example: {
+				code: '400',
+				message: 'Bad request',
+				details: null,
+			},
+		},
+	})
+	@ApiResponse({
+		status: 401,
+		schema: {
+			example: {
+				code: '401',
+				message: 'Unauthorized',
+				details: null,
+			},
+		},
+	})
+	@ApiResponse({
 		status: 403,
 		schema: {
 			example: {
-				code: 403,
-				message: `You don't have permission to this access`,
-				details: {},
+				code: '403',
+				message: `Forbidden resource`,
+				details: null,
+			},
+		},
+	})
+	@ApiResponse({
+		status: 404,
+		schema: {
+			example: {
+				code: '404',
+				message: 'Not found document with that ID',
+				details: null,
 			},
 		},
 	})
@@ -343,12 +531,42 @@ export class PromotionsController {
 		},
 	})
 	@ApiResponse({
+		status: 400,
+		schema: {
+			example: {
+				code: '400',
+				message: 'Bad request',
+				details: null,
+			},
+		},
+	})
+	@ApiResponse({
+		status: 401,
+		schema: {
+			example: {
+				code: '401',
+				message: 'Unauthorized',
+				details: null,
+			},
+		},
+	})
+	@ApiResponse({
 		status: 403,
 		schema: {
 			example: {
-				code: 403,
-				message: `You don't have permission to this access`,
-				details: {},
+				code: '403',
+				message: `Forbidden resource`,
+				details: null,
+			},
+		},
+	})
+	@ApiResponse({
+		status: 404,
+		schema: {
+			example: {
+				code: '404',
+				message: 'Not found document with that ID',
+				details: null,
 			},
 		},
 	})
@@ -372,12 +590,32 @@ export class PromotionsController {
 		},
 	})
 	@ApiResponse({
+		status: 400,
+		schema: {
+			example: {
+				code: '400',
+				message: 'Bad request',
+				details: null,
+			},
+		},
+	})
+	@ApiResponse({
+		status: 401,
+		schema: {
+			example: {
+				code: '401',
+				message: 'Unauthorized',
+				details: null,
+			},
+		},
+	})
+	@ApiResponse({
 		status: 403,
 		schema: {
 			example: {
-				code: 403,
-				message: `You don't have permission to this access`,
-				details: {},
+				code: '403',
+				message: `Forbidden resource`,
+				details: null,
 			},
 		},
 	})
@@ -385,9 +623,9 @@ export class PromotionsController {
 		status: 404,
 		schema: {
 			example: {
-				code: 404,
+				code: '404',
 				message: 'Not found document with that ID',
-				details: {},
+				details: null,
 			},
 		},
 	})
@@ -415,12 +653,32 @@ export class PromotionsController {
 		},
 	})
 	@ApiResponse({
+		status: 400,
+		schema: {
+			example: {
+				code: '400',
+				message: 'Bad request',
+				details: null,
+			},
+		},
+	})
+	@ApiResponse({
+		status: 401,
+		schema: {
+			example: {
+				code: '401',
+				message: 'Unauthorized',
+				details: null,
+			},
+		},
+	})
+	@ApiResponse({
 		status: 403,
 		schema: {
 			example: {
-				code: 403,
-				message: `You don't have permission to this access`,
-				details: {},
+				code: '403',
+				message: `Forbidden resource`,
+				details: null,
 			},
 		},
 	})
@@ -428,9 +686,9 @@ export class PromotionsController {
 		status: 404,
 		schema: {
 			example: {
-				code: 404,
+				code: '404',
 				message: 'Not found document with that ID',
-				details: {},
+				details: null,
 			},
 		},
 	})
@@ -478,12 +736,22 @@ export class PromotionsController {
 		},
 	})
 	@ApiResponse({
-		status: 404,
+		status: 400,
 		schema: {
 			example: {
-				code: 404,
-				message: 'Not found document with that ID',
-				details: {},
+				code: '400',
+				message: 'Bad request',
+				details: null,
+			},
+		},
+	})
+	@ApiResponse({
+		status: 401,
+		schema: {
+			example: {
+				code: '401',
+				message: 'Unauthorized',
+				details: null,
 			},
 		},
 	})
@@ -491,9 +759,19 @@ export class PromotionsController {
 		status: 403,
 		schema: {
 			example: {
-				code: 403,
-				message: `You don't have permission to this access`,
-				details: {},
+				code: '403',
+				message: `Forbidden resource`,
+				details: null,
+			},
+		},
+	})
+	@ApiResponse({
+		status: 404,
+		schema: {
+			example: {
+				code: '404',
+				message: 'Not found document with that ID',
+				details: null,
 			},
 		},
 	})
