@@ -78,7 +78,7 @@ export class AttendanceController {
 	@Roles(UserRole.MEMBER)
 	@Get()
 	@ApiOperation({
-		summary: 'Get All Attendance by User',
+		summary: 'Get All Attendance by Member',
 		description: `Member can use this API`,
 	})
 	@ApiDocsPagination('Attendance')
@@ -132,7 +132,7 @@ export class AttendanceController {
 			} as ErrorResponse<null>,
 		},
 	})
-	getAllAttendancesByUser(@Request() req: RequestWithUser) {
+	getAllAttendancesByMember(@Request() req: RequestWithUser) {
 		const userId = req.user._id;
 		console.log(userId);
 		//
