@@ -10,7 +10,7 @@ export class UserAddress extends BaseObject {
 	province: string;
 
 	@Prop({ require: true, minlength: 0, maxlength: 50 })
-	distince: string;
+	district: string;
 
 	@Prop({ require: true, minlength: 0, maxlength: 50 })
 	commune: string;
