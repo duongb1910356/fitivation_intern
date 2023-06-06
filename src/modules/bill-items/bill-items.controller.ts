@@ -74,6 +74,36 @@ export class BillItemsController {
 			} as ListResponse<BillItem>,
 		},
 	})
+	@ApiResponse({
+		status: 400,
+		schema: {
+			example: {
+				code: '400',
+				message: 'Bad request',
+				details: null,
+			},
+		},
+	})
+	@ApiResponse({
+		status: 401,
+		schema: {
+			example: {
+				code: '401',
+				message: 'Unauthorized',
+				details: null,
+			},
+		},
+	})
+	@ApiResponse({
+		status: 403,
+		schema: {
+			example: {
+				code: 403,
+				message: `Forbidden resource`,
+				details: null,
+			},
+		},
+	})
 	getManyBillItems(@Query() filter: ListOptions<BillItem>) {
 		return 'getManyBillItems';
 	}
@@ -179,6 +209,36 @@ export class BillItemsController {
 		schema: {
 			example: {
 				message: 'Created successfully',
+			},
+		},
+	})
+	@ApiResponse({
+		status: 400,
+		schema: {
+			example: {
+				code: '400',
+				message: 'Bad request',
+				details: null,
+			},
+		},
+	})
+	@ApiResponse({
+		status: 401,
+		schema: {
+			example: {
+				code: '401',
+				message: 'Unauthorized',
+				details: null,
+			},
+		},
+	})
+	@ApiResponse({
+		status: 403,
+		schema: {
+			example: {
+				code: 403,
+				message: `Forbidden resource`,
+				details: null,
 			},
 		},
 	})
