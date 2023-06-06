@@ -2,15 +2,35 @@ import {
 	IsNotEmpty,
 	IsString,
 	IsNumber,
-	IsEnum,
 	IsArray,
 	IsOptional,
-	ArrayNotEmpty,
-	ArrayMinSize,
-	IsPositive,
-	MinLength,
-	MaxLength,
+	Min,
 } from 'class-validator';
 import { ApiProperty } from '@nestjs/swagger';
 
-export class CreateCartItemDto {}
+export class CreateCartItemDto {
+	@ApiProperty()
+	@IsString()
+	@IsNotEmpty()
+	cartID: string;
+
+	@ApiProperty()
+	@IsString()
+	@IsNotEmpty()
+	packageID: string;
+
+	@ApiProperty()
+	@IsOptional()
+	@IsArray()
+	promotionIDs: string[];
+
+	@ApiProperty()
+	@IsNumber()
+	@Min(0)
+	promotionPrice: number;
+
+	@ApiProperty()
+	@IsNumber()
+	@Min(0)
+	totalPrice: number;
+}
