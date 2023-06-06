@@ -497,7 +497,7 @@ export class BillItemsController {
 	@ApiTags('bills/bill-items')
 	@ApiOperation({
 		summary: 'createBillItemForBill',
-		description: 'Create one bill-item for specific bIll',
+		description: 'Create one bill-item for specific bill',
 	})
 	@ApiParam({ name: 'billID', type: String, description: 'Bill ID' })
 	@ApiResponse({
