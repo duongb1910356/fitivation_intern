@@ -98,7 +98,7 @@ export class BillItemsController {
 		status: 403,
 		schema: {
 			example: {
-				code: 403,
+				code: '403',
 				message: `Forbidden resource`,
 				details: null,
 			},
@@ -179,7 +179,7 @@ export class BillItemsController {
 		status: 403,
 		schema: {
 			example: {
-				code: 403,
+				code: '403',
 				message: `Forbidden resource`,
 				details: null,
 			},
@@ -189,7 +189,7 @@ export class BillItemsController {
 		status: 404,
 		schema: {
 			example: {
-				code: 404,
+				code: '404',
 				message: 'Not found document with that ID',
 				details: null,
 			},
@@ -236,7 +236,7 @@ export class BillItemsController {
 		status: 403,
 		schema: {
 			example: {
-				code: 403,
+				code: '403',
 				message: `Forbidden resource`,
 				details: null,
 			},
@@ -285,7 +285,7 @@ export class BillItemsController {
 		status: 403,
 		schema: {
 			example: {
-				code: 403,
+				code: '403',
 				message: `Forbidden resource`,
 				details: null,
 			},
@@ -295,7 +295,7 @@ export class BillItemsController {
 		status: 404,
 		schema: {
 			example: {
-				code: 404,
+				code: '404',
 				message: 'Not found document with that ID',
 				details: null,
 			},
@@ -347,7 +347,7 @@ export class BillItemsController {
 		status: 403,
 		schema: {
 			example: {
-				code: 403,
+				code: '403',
 				message: `Forbidden resource`,
 				details: null,
 			},
@@ -357,7 +357,7 @@ export class BillItemsController {
 		status: 404,
 		schema: {
 			example: {
-				code: 404,
+				code: '404',
 				message: 'Not found document with that ID',
 				details: null,
 			},
@@ -439,7 +439,7 @@ export class BillItemsController {
 		status: 403,
 		schema: {
 			example: {
-				code: 403,
+				code: '403',
 				message: `Forbidden resource`,
 				details: null,
 			},
@@ -488,7 +488,7 @@ export class BillItemsController {
 		status: 403,
 		schema: {
 			example: {
-				code: 403,
+				code: '403',
 				message: `Forbidden resource`,
 				details: null,
 			},
@@ -498,7 +498,7 @@ export class BillItemsController {
 		status: 404,
 		schema: {
 			example: {
-				code: 404,
+				code: '404',
 				message: 'Not found document with that ID',
 				details: null,
 			},
@@ -581,7 +581,7 @@ export class BillItemsController {
 		status: 403,
 		schema: {
 			example: {
-				code: 403,
+				code: '403',
 				message: `Forbidden resource`,
 				details: null,
 			},
@@ -664,7 +664,7 @@ export class BillItemsController {
 		status: 403,
 		schema: {
 			example: {
-				code: 403,
+				code: '403',
 				message: `Forbidden resource`,
 				details: null,
 			},
@@ -674,7 +674,7 @@ export class BillItemsController {
 		status: 404,
 		schema: {
 			example: {
-				code: 404,
+				code: '404',
 				message: 'Not found document with that ID',
 				details: null,
 			},
@@ -760,7 +760,7 @@ export class BillItemsController {
 		status: 403,
 		schema: {
 			example: {
-				code: 403,
+				code: '403',
 				message: `Forbidden resource`,
 				details: null,
 			},
@@ -770,7 +770,7 @@ export class BillItemsController {
 		status: 404,
 		schema: {
 			example: {
-				code: 404,
+				code: '404',
 				message: 'Not found document with that ID',
 				details: null,
 			},
@@ -855,7 +855,7 @@ export class BillItemsController {
 		status: 403,
 		schema: {
 			example: {
-				code: 403,
+				code: '403',
 				message: `Forbidden resource`,
 				details: null,
 			},
@@ -938,7 +938,7 @@ export class BillItemsController {
 		status: 403,
 		schema: {
 			example: {
-				code: 403,
+				code: '403',
 				message: `Forbidden resource`,
 				details: null,
 			},
@@ -948,7 +948,7 @@ export class BillItemsController {
 		status: 404,
 		schema: {
 			example: {
-				code: 404,
+				code: '404',
 				message: 'Not found document with that ID',
 				details: null,
 			},
@@ -1034,7 +1034,7 @@ export class BillItemsController {
 		status: 403,
 		schema: {
 			example: {
-				code: 403,
+				code: '403',
 				message: `Forbidden resource`,
 				details: null,
 			},
@@ -1044,7 +1044,7 @@ export class BillItemsController {
 		status: 404,
 		schema: {
 			example: {
-				code: 404,
+				code: '404',
 				message: 'Not found document with that ID',
 				details: null,
 			},
@@ -1129,7 +1129,7 @@ export class BillItemsController {
 		status: 403,
 		schema: {
 			example: {
-				code: 403,
+				code: '403',
 				message: `Forbidden resource`,
 				details: null,
 			},
@@ -1212,7 +1212,7 @@ export class BillItemsController {
 		status: 403,
 		schema: {
 			example: {
-				code: 403,
+				code: '403',
 				message: `Forbidden resource`,
 				details: null,
 			},
@@ -1222,7 +1222,7 @@ export class BillItemsController {
 		status: 404,
 		schema: {
 			example: {
-				code: 404,
+				code: '404',
 				message: 'Not found document with that ID',
 				details: null,
 			},
@@ -1308,7 +1308,7 @@ export class BillItemsController {
 		status: 403,
 		schema: {
 			example: {
-				code: 403,
+				code: '403',
 				message: `Forbidden resource`,
 				details: null,
 			},
@@ -1318,7 +1318,7 @@ export class BillItemsController {
 		status: 404,
 		schema: {
 			example: {
-				code: 404,
+				code: '404',
 				message: 'Not found document with that ID',
 				details: null,
 			},
