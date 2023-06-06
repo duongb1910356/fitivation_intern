@@ -3,7 +3,7 @@ import mongoose, { HydratedDocument } from 'mongoose';
 import { Brand } from 'src/modules/brand/schemas/brand.schema';
 import { Facility } from 'src/modules/facility/schemas/facility.schema';
 import { PackageType } from 'src/modules/package-type/entities/package-type.entity';
-import { Package } from 'src/modules/package/entities/package.entity';
+import { Package, TimeType } from 'src/modules/package/entities/package.entity';
 import {
 	Promotion,
 	PromotionSchema,
@@ -19,50 +19,69 @@ export enum BillItemStatus {
 
 @Schema({ timestamps: true })
 export class BillItem extends BaseObject {
-	@Prop({ type: mongoose.Schema.Types.ObjectId, ref: 'Brand' })
-	brandID: Brand;
+	@Prop({
+		type: {
+			facilityID: { type: mongoose.Schema.Types.ObjectId, ref: 'Facility' },
+			brandID: { type: mongoose.Schema.Types.ObjectId, ref: 'Brand' },
+			brandName: { type: String },
+			ownerFacilityName: { required: true, type: String },
+			facilityName: { required: true, type: String },
+			facilityAddress: { required: true, type: Object },
+			facilityCoordinatesLocation: {
+				type: [Number],
+				required: true,
+				default: [],
+			},
+			facilityPhoto: { default: '', type: String },
+		},
+	})
+	facilityInfo: {
+		facilityID: Facility;
+		brandID: Brand;
+		brandName: string;
+		ownerFacilityName: string;
+		facilityName: string;
+		facilityAddress: object;
+		facilityCoordinatesLocation: [number, number];
+		facilityPhoto: string;
+	};
 
-	@Prop({ type: mongoose.Schema.Types.ObjectId, ref: 'Facility' })
-	facilityID: Facility;
+	@Prop({
+		type: {
+			packageTypeID: {
+				type: mongoose.Schema.Types.ObjectId,
+				ref: 'PackageType',
+			},
+			name: { required: true, type: String },
+			description: { type: String },
+			price: { required: true, type: Number, min: 0 },
+		},
+	})
+	packageTypeInfo: {
+		packageTypeID: PackageType;
+		name: string;
+		desctiption?: string;
+		price: number;
+	};
 
-	@Prop({ type: mongoose.Schema.Types.ObjectId, ref: 'PackageType' })
-	packageTypeID: PackageType;
-
-	@Prop({ type: mongoose.Schema.Types.ObjectId, ref: 'Package' })
-	packageID: Package;
-
-	@Prop({ required: true, type: String })
-	packageName: string;
-
-	@Prop({ required: true, type: String })
-	packageType: string;
-
-	@Prop({ required: true, type: String })
-	packageDescription: string;
-
-	@Prop({ required: true, type: String })
-	brandName: string;
-
-	@Prop({ required: true, type: String })
-	ownerFacilityName: string;
-
-	@Prop({ required: true, type: String })
-	facilityName: string;
-
-	@Prop({ required: true, type: Object })
-	facilityAddress: object;
-
-	@Prop({ type: [Number], required: true, default: [] })
-	facilityCoordinatesLocation: [number, number];
-
-	@Prop({ required: true, type: String })
-	facilityPhoto: string;
+	@Prop({
+		type: {
+			packageID: {
+				type: mongoose.Schema.Types.ObjectId,
+				ref: 'Package',
+			},
+			type: { required: true, enum: TimeType },
+			price: { required: true, type: Number, min: 0 },
+		},
+	})
+	packageInfo: {
+		packageID: Package;
+		type: TimeType;
+		price: number;
+	};
 
 	@Prop({ type: [PromotionSchema] })
 	promotions?: Promotion[];
-
-	@Prop({ required: true, type: Number, min: 0 })
-	packagePrice: number;
 
 	@Prop({ default: 0, type: Number, min: 0 })
 	promotionPrice: number;
