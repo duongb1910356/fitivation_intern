@@ -177,7 +177,7 @@ export class CartsController {
 			example: {
 				code: 404,
 				message: 'Not found document with that ID',
-				details: {},
+				details: null,
 			},
 		},
 	})
@@ -239,7 +239,7 @@ export class CartsController {
 			example: {
 				code: 404,
 				message: 'Not found document with that ID',
-				details: {},
+				details: null,
 			},
 		},
 	})
@@ -301,7 +301,7 @@ export class CartsController {
 			example: {
 				code: 404,
 				message: 'Not found document with that ID',
-				details: {},
+				details: null,
 			},
 		},
 	})
@@ -362,7 +362,7 @@ export class CartsController {
 			example: {
 				code: 404,
 				message: 'Not found document with that ID',
-				details: {},
+				details: null,
 			},
 		},
 	})
