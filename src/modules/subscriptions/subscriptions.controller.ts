@@ -191,6 +191,8 @@ export class SubscriptionsController {
 				expires: new Date(),
 				status: SubscriptionStatus.ACTIVE,
 				renew: false,
+				createdAt: new Date(),
+				updatedAt: new Date(),
 			} as Subscription,
 		},
 	})
@@ -244,6 +246,8 @@ export class SubscriptionsController {
 				expires: new Date(),
 				status: SubscriptionStatus.ACTIVE,
 				renew: false,
+				createdAt: new Date(),
+				updatedAt: new Date(),
 			} as Subscription,
 		},
 	})
@@ -369,6 +373,8 @@ export class SubscriptionsController {
 				expires: new Date(),
 				status: SubscriptionStatus.ACTIVE,
 				renew: false,
+				createdAt: new Date(),
+				updatedAt: new Date(),
 			} as Subscription,
 		},
 	})

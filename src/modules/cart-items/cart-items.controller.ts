@@ -45,6 +45,8 @@ export class CartItemsController {
 						promotionIDs: [],
 						promotionPrice: 0,
 						totalPrice: 0,
+						createdAt: new Date(),
+						updatedAt: new Date(),
 					},
 				] as CartItem[],
 				total: 1,
@@ -107,6 +109,8 @@ export class CartItemsController {
 						promotionIDs: [],
 						promotionPrice: 0,
 						totalPrice: 0,
+						createdAt: new Date(),
+						updatedAt: new Date(),
 					},
 				] as CartItem[],
 				total: 1,
@@ -180,6 +184,8 @@ export class CartItemsController {
 				promotionIDs: [],
 				promotionPrice: 0,
 				totalPrice: 0,
+				createdAt: new Date(),
+				updatedAt: new Date(),
 			} as CartItem,
 		},
 	})
@@ -233,6 +239,8 @@ export class CartItemsController {
 				promotionIDs: [],
 				promotionPrice: 0,
 				totalPrice: 0,
+				createdAt: new Date(),
+				updatedAt: new Date(),
 			} as CartItem,
 		},
 	})
@@ -358,6 +366,8 @@ export class CartItemsController {
 				promotionIDs: [],
 				promotionPrice: 0,
 				totalPrice: 0,
+				createdAt: new Date(),
+				updatedAt: new Date(),
 			} as CartItem,
 		},
 	})
@@ -424,6 +434,8 @@ export class CartItemsController {
 				promotionIDs: [],
 				promotionPrice: 0,
 				totalPrice: 0,
+				createdAt: new Date(),
+				updatedAt: new Date(),
 			} as CartItem,
 		},
 	})
