@@ -18,7 +18,6 @@ import {
 import { BillsService } from './bills.service';
 import { CreateBillDto } from './dto/create-bill.dto';
 import { UpdateBillDto } from './dto/update-bill.dto';
-import { ESortField, ESortOrder } from 'src/shared/enum/sort.enum';
 import { Bill, BillStatus, PaymentMethod } from './schemas/bill.schema';
 import {
 	BillItem,
@@ -94,12 +93,32 @@ export class BillsController {
 		},
 	})
 	@ApiResponse({
+		status: 400,
+		schema: {
+			example: {
+				code: '400',
+				message: 'Bad request',
+				details: null,
+			},
+		},
+	})
+	@ApiResponse({
+		status: 401,
+		schema: {
+			example: {
+				code: '401',
+				message: 'Unauthorized',
+				details: null,
+			},
+		},
+	})
+	@ApiResponse({
 		status: 403,
 		schema: {
 			example: {
 				code: 403,
-				message: `You don't have permission to this access`,
-				details: {},
+				message: `Forbidden resource`,
+				details: null,
 			},
 		},
 	})
@@ -170,12 +189,22 @@ export class BillsController {
 		},
 	})
 	@ApiResponse({
-		status: 403,
+		status: 400,
 		schema: {
 			example: {
-				code: 403,
-				message: `You don't have permission to this access`,
-				details: {},
+				code: '400',
+				message: 'Bad request',
+				details: null,
+			},
+		},
+	})
+	@ApiResponse({
+		status: 401,
+		schema: {
+			example: {
+				code: '401',
+				message: 'Unauthorized',
+				details: null,
 			},
 		},
 	})
@@ -184,8 +213,8 @@ export class BillsController {
 		schema: {
 			example: {
 				code: 403,
-				message: `You don't have permission to this access`,
-				details: {},
+				message: `Forbidden resource`,
+				details: null,
 			},
 		},
 	})
@@ -195,7 +224,7 @@ export class BillsController {
 			example: {
 				code: 404,
 				message: 'Not found document with that ID',
-				details: {},
+				details: null,
 			},
 		},
 	})
@@ -219,12 +248,32 @@ export class BillsController {
 		},
 	})
 	@ApiResponse({
+		status: 400,
+		schema: {
+			example: {
+				code: '400',
+				message: 'Bad request',
+				details: null,
+			},
+		},
+	})
+	@ApiResponse({
+		status: 401,
+		schema: {
+			example: {
+				code: '401',
+				message: 'Unauthorized',
+				details: null,
+			},
+		},
+	})
+	@ApiResponse({
 		status: 403,
 		schema: {
 			example: {
 				code: 403,
-				message: `You don't have permission to this access`,
-				details: {},
+				message: `Forbidden resource`,
+				details: null,
 			},
 		},
 	})
@@ -249,12 +298,32 @@ export class BillsController {
 		},
 	})
 	@ApiResponse({
+		status: 400,
+		schema: {
+			example: {
+				code: '400',
+				message: 'Bad request',
+				details: null,
+			},
+		},
+	})
+	@ApiResponse({
+		status: 401,
+		schema: {
+			example: {
+				code: '401',
+				message: 'Unauthorized',
+				details: null,
+			},
+		},
+	})
+	@ApiResponse({
 		status: 403,
 		schema: {
 			example: {
 				code: 403,
-				message: `You don't have permission to this access`,
-				details: {},
+				message: `Forbidden resource`,
+				details: null,
 			},
 		},
 	})
@@ -264,7 +333,7 @@ export class BillsController {
 			example: {
 				code: 404,
 				message: 'Not found document with that ID',
-				details: {},
+				details: null,
 			},
 		},
 	})
@@ -289,12 +358,32 @@ export class BillsController {
 		},
 	})
 	@ApiResponse({
+		status: 400,
+		schema: {
+			example: {
+				code: '400',
+				message: 'Bad request',
+				details: null,
+			},
+		},
+	})
+	@ApiResponse({
+		status: 401,
+		schema: {
+			example: {
+				code: '401',
+				message: 'Unauthorized',
+				details: null,
+			},
+		},
+	})
+	@ApiResponse({
 		status: 403,
 		schema: {
 			example: {
 				code: 403,
-				message: `You don't have permission to this access`,
-				details: {},
+				message: `Forbidden resource`,
+				details: null,
 			},
 		},
 	})
@@ -304,7 +393,7 @@ export class BillsController {
 			example: {
 				code: 404,
 				message: 'Not found document with that ID',
-				details: {},
+				details: null,
 			},
 		},
 	})
