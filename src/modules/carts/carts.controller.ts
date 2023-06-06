@@ -71,12 +71,32 @@ export class CartsController {
 		},
 	})
 	@ApiResponse({
+		status: 400,
+		schema: {
+			example: {
+				code: '400',
+				message: 'Bad request',
+				details: null,
+			},
+		},
+	})
+	@ApiResponse({
+		status: 401,
+		schema: {
+			example: {
+				code: '401',
+				message: 'Unauthorized',
+				details: null,
+			},
+		},
+	})
+	@ApiResponse({
 		status: 403,
 		schema: {
 			example: {
 				code: 403,
-				message: `You don't have permission to this access`,
-				details: {},
+				message: `Forbidden resource`,
+				details: null,
 			},
 		},
 	})
@@ -122,12 +142,32 @@ export class CartsController {
 		},
 	})
 	@ApiResponse({
+		status: 400,
+		schema: {
+			example: {
+				code: '400',
+				message: 'Bad request',
+				details: null,
+			},
+		},
+	})
+	@ApiResponse({
+		status: 401,
+		schema: {
+			example: {
+				code: '401',
+				message: 'Unauthorized',
+				details: null,
+			},
+		},
+	})
+	@ApiResponse({
 		status: 403,
 		schema: {
 			example: {
 				code: 403,
-				message: `You don't have permisstion to this access`,
-				details: {},
+				message: `Forbidden resource`,
+				details: null,
 			},
 		},
 	})
@@ -156,12 +196,40 @@ export class CartsController {
 	@ApiParam({ name: 'id', type: String, description: 'Cart ID' })
 	@ApiBody({ type: CreateCartDto })
 	@ApiResponse({
+		status: 201,
+		schema: {
+			example: {
+				message: 'Created successfully',
+			},
+		},
+	})
+	@ApiResponse({
+		status: 400,
+		schema: {
+			example: {
+				code: '400',
+				message: 'Bad request',
+				details: null,
+			},
+		},
+	})
+	@ApiResponse({
+		status: 401,
+		schema: {
+			example: {
+				code: '401',
+				message: 'Unauthorized',
+				details: null,
+			},
+		},
+	})
+	@ApiResponse({
 		status: 403,
 		schema: {
 			example: {
 				code: 403,
-				message: `You don't have permisstion to this access`,
-				details: {},
+				message: `Forbidden resource`,
+				details: null,
 			},
 		},
 	})
@@ -190,12 +258,40 @@ export class CartsController {
 	@ApiParam({ name: 'id', type: String, description: 'Cart ID' })
 	@ApiBody({ type: UpdateCartDto })
 	@ApiResponse({
+		status: 201,
+		schema: {
+			example: {
+				message: 'Updated successfully',
+			},
+		},
+	})
+	@ApiResponse({
+		status: 400,
+		schema: {
+			example: {
+				code: '400',
+				message: 'Bad request',
+				details: null,
+			},
+		},
+	})
+	@ApiResponse({
+		status: 401,
+		schema: {
+			example: {
+				code: '401',
+				message: 'Unauthorized',
+				details: null,
+			},
+		},
+	})
+	@ApiResponse({
 		status: 403,
 		schema: {
 			example: {
 				code: 403,
-				message: `You don't have permisstion to this access`,
-				details: {},
+				message: `Forbidden resource`,
+				details: null,
 			},
 		},
 	})
@@ -223,12 +319,40 @@ export class CartsController {
 	})
 	@ApiParam({ name: 'id', type: String, description: 'Cart ID' })
 	@ApiResponse({
+		status: 201,
+		schema: {
+			example: {
+				message: 'Updated successfully',
+			},
+		},
+	})
+	@ApiResponse({
+		status: 400,
+		schema: {
+			example: {
+				code: '400',
+				message: 'Bad request',
+				details: null,
+			},
+		},
+	})
+	@ApiResponse({
+		status: 401,
+		schema: {
+			example: {
+				code: '401',
+				message: 'Unauthorized',
+				details: null,
+			},
+		},
+	})
+	@ApiResponse({
 		status: 403,
 		schema: {
 			example: {
 				code: 403,
-				message: `You don't have permisstion to this access`,
-				details: {},
+				message: `Forbidden resource`,
+				details: null,
 			},
 		},
 	})
@@ -256,11 +380,49 @@ export class CartsController {
 	})
 	@ApiBody({ type: PurchaseCartDto })
 	@ApiResponse({
+		status: 201,
+		schema: {
+			example: {
+				message: 'purchase successfully',
+			},
+		},
+	})
+	@ApiResponse({
+		status: 400,
+		schema: {
+			example: {
+				code: '400',
+				message: 'Bad request',
+				details: null,
+			},
+		},
+	})
+	@ApiResponse({
+		status: 401,
+		schema: {
+			example: {
+				code: '401',
+				message: 'Unauthorized',
+				details: null,
+			},
+		},
+	})
+	@ApiResponse({
+		status: 402,
+		schema: {
+			example: {
+				code: '402',
+				message: 'Payment Required',
+				details: null,
+			},
+		},
+	})
+	@ApiResponse({
 		status: 403,
 		schema: {
 			example: {
 				code: 403,
-				message: `You don't have permisstion to this access`,
+				message: `Forbidden resource`,
 				details: null,
 			},
 		},
