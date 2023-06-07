@@ -417,13 +417,14 @@ export class CartItemsController {
 	) {
 		return 'createCartItemForCart';
 	}
-	@Patch('carts/:cartID/cart-items')
+	@Patch('carts/:cartID/cart-items/:cartItemID')
 	@ApiTags('cart-items')
 	@ApiOperation({
 		summary: 'updateCartItemForCart',
 		description: 'Update cart-item for specific cart',
 	})
 	@ApiParam({ name: 'cartID', type: String, description: 'Cart ID' })
+	@ApiParam({ name: 'cartItemID', type: String, description: 'Cart-Item ID' })
 	@ApiBody({ type: UpdateCartItemDto })
 	@ApiResponse({
 		status: 201,
@@ -481,6 +482,7 @@ export class CartItemsController {
 	})
 	updateCartItemForCart(
 		@Param('cartID') cartID: string,
+		@Param('cartItemID') cartItemID: string,
 		@Body() updateCartItemDto: UpdateCartItemDto,
 	) {
 		return 'updateCartItemForCart';
