@@ -12,7 +12,7 @@ export class PackageType extends BaseObject {
 		ref: 'Facility',
 		required: true,
 	})
-	facilityID: Facility; //
+	facilityID: Facility;
 
 	@Prop({ type: String, required: true, minlength: 2, maxlength: 50 })
 	name: string;

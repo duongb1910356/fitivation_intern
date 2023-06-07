@@ -1,7 +1,7 @@
 import { Prop, Schema, SchemaFactory } from '@nestjs/mongoose';
 import { ShiftTime, ShiftTimeSchema } from './shift-time.entity';
 
-enum dayOfWeek {
+export enum dayOfWeek {
 	MONDAY = 'MONDAY',
 	TUESDAY = 'TUESDAY',
 	WEDNESDAY = 'WEDNESDAY',

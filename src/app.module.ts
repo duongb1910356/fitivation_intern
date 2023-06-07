@@ -23,11 +23,13 @@ import { FacilityScheduleModule } from './modules/facility-schedule/facility-sch
 import { HolidayModule } from './modules/holiday/holiday.module';
 import { AttendanceModule } from './modules/attendance/attendance.module';
 import { CounterModule } from './modules/counter/counter.module';
+import { AdminModule } from './modules/admin/admin.module';
 
 @Module({
 	imports: [
 		// Make it look good and work well
 		MongooseModule.forRoot(appConfig.mongoURI),
+		AdminModule,
 		AuthModule,
 		UsersModule,
 		PromotionsModule,
