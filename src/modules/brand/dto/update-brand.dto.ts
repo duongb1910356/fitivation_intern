@@ -4,5 +4,5 @@ import { ApiProperty } from '@nestjs/swagger';
 import { IsString } from 'class-validator';
 
 export class UpdateBrandDto extends PartialType(
-    PickType(CreateBrandDto, []),
+    PickType(CreateBrandDto, ['name']),
 ){}

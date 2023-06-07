@@ -6,7 +6,23 @@ import { Brand, BrandSchema } from '../../brand/schemas/brand.schema';
 import { Photo, PhotoSchema } from 'src/modules/photo/schemas/photo.schema';
 import { FacilityCategory } from 'src/modules/facility-category/entities/facility-category';
 import { User } from 'src/modules/users/schemas/user.schema';
-import { State, Status, ScheduleType } from '../../../shared/enum/facility.enum';
+
+export enum State {
+    ACTIVE = 'ACTIVE',
+    INACTIVE = 'INACTIVE',
+}
+
+export enum Status {
+    PENDING = 'PENDING',
+    APPROVED = 'APPROVED',
+    REJECTED = 'REJECTED',
+}
+
+export enum ScheduleType {
+    DAILY = 'DAILY',
+    WEEKLY = 'WEEKLY',
+    MONTHLY = 'MONTHLY',
+}
 
 export interface Address {
     province: {

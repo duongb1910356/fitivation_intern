@@ -23,6 +23,8 @@ import { HolidayModule } from './modules/holiday/holiday.module';
 import { AttendanceModule } from './modules/attendance/attendance.module';
 import { CounterModule } from './modules/counter/counter.module';
 import { AdminModule } from './modules/admin/admin.module';
+import { ReviewsModule } from './modules/reviews/reviews.module';
+import { BrandModule } from './modules/brand/brand.module';
 
 @Module({
 	imports: [

@@ -10,4 +10,4 @@ export class FacilityCategory extends BaseObject {
 	name: string;
 }
 
-export const PackageSchema = SchemaFactory.createForClass(FacilityCategory);
+export const FacilityCategorySchema = SchemaFactory.createForClass(FacilityCategory);
