@@ -204,23 +204,22 @@ export class PromotionsController {
 		description: 'Create one promotion',
 	})
 	@ApiBody({
-		schema: {
-			examples: {
-				ADMIN: {
-					value: {
-						targetID: 'string',
-						type: PromotionType.BILL,
-						name: 'string',
-						description: 'string',
-						couponCode: 'string',
-						value: 1,
-						method: PromotionMethod.NUMBER,
-						minPriceApply: 0,
-						maxQuantity: 0,
-						startDate: new Date(),
-						endDate: new Date(),
-						customerType: CustomerType.CUSTOMER,
-					},
+		type: 'object',
+		examples: {
+			ADMIN: {
+				value: {
+					targetID: 'string',
+					type: PromotionType.BILL,
+					name: 'string',
+					description: 'string',
+					couponCode: 'string',
+					value: 1,
+					method: PromotionMethod.NUMBER,
+					minPriceApply: 0,
+					maxQuantity: 0,
+					startDate: new Date(),
+					endDate: new Date(),
+					customerType: CustomerType.CUSTOMER,
 				},
 			},
 		},
@@ -288,23 +287,22 @@ export class PromotionsController {
 	})
 	@ApiParam({ name: 'id', type: String, description: 'Promotion ID' })
 	@ApiBody({
-		schema: {
-			examples: {
-				ADMIN: {
-					value: {
-						targetID: 'string',
-						type: PromotionType.BILL,
-						name: 'string',
-						description: 'string',
-						couponCode: 'string',
-						value: 1,
-						method: PromotionMethod.NUMBER,
-						minPriceApply: 0,
-						maxQuantity: 0,
-						startDate: new Date(),
-						endDate: new Date(),
-						customerType: CustomerType.CUSTOMER,
-					},
+		type: 'object',
+		examples: {
+			ADMIN: {
+				value: {
+					targetID: 'string',
+					type: PromotionType.BILL,
+					name: 'string',
+					description: 'string',
+					couponCode: 'string',
+					value: 1,
+					method: PromotionMethod.NUMBER,
+					minPriceApply: 0,
+					maxQuantity: 0,
+					startDate: new Date(),
+					endDate: new Date(),
+					customerType: CustomerType.CUSTOMER,
 				},
 			},
 		},
@@ -611,23 +609,22 @@ export class PromotionsController {
 	})
 	@ApiParam({ name: 'facilityID', type: String, description: 'Facility ID' })
 	@ApiBody({
-		schema: {
-			examples: {
-				ADMIN: {
-					value: {
-						targetID: 'string',
-						type: PromotionType.BILL,
-						name: 'string',
-						description: 'string',
-						couponCode: 'string',
-						value: 1,
-						method: PromotionMethod.NUMBER,
-						minPriceApply: 0,
-						maxQuantity: 0,
-						startDate: new Date(),
-						endDate: new Date(),
-						customerType: CustomerType.CUSTOMER,
-					},
+		type: 'object',
+		examples: {
+			ADMIN: {
+				value: {
+					targetID: 'string',
+					type: PromotionType.BILL,
+					name: 'string',
+					description: 'string',
+					couponCode: 'string',
+					value: 1,
+					method: PromotionMethod.NUMBER,
+					minPriceApply: 0,
+					maxQuantity: 0,
+					startDate: new Date(),
+					endDate: new Date(),
+					customerType: CustomerType.CUSTOMER,
 				},
 			},
 		},
@@ -706,23 +703,22 @@ export class PromotionsController {
 	@ApiParam({ name: 'facilityID', type: String, description: 'Facility ID' })
 	@ApiParam({ name: 'promotionID', type: String, description: 'Promotion ID' })
 	@ApiBody({
-		schema: {
-			examples: {
-				ADMIN: {
-					value: {
-						targetID: 'string',
-						type: PromotionType.BILL,
-						name: 'string',
-						description: 'string',
-						couponCode: 'string',
-						value: 1,
-						method: PromotionMethod.NUMBER,
-						minPriceApply: 0,
-						maxQuantity: 0,
-						startDate: new Date(),
-						endDate: new Date(),
-						customerType: CustomerType.CUSTOMER,
-					},
+		type: 'object',
+		examples: {
+			ADMIN: {
+				value: {
+					targetID: 'string',
+					type: PromotionType.BILL,
+					name: 'string',
+					description: 'string',
+					couponCode: 'string',
+					value: 1,
+					method: PromotionMethod.NUMBER,
+					minPriceApply: 0,
+					maxQuantity: 0,
+					startDate: new Date(),
+					endDate: new Date(),
+					customerType: CustomerType.CUSTOMER,
 				},
 			},
 		},
