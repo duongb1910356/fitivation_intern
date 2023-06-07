@@ -1,23 +1,6 @@
-import {
-	Controller,
-	Get,
-	Post,
-	Body,
-	Patch,
-	Param,
-	Delete,
-	Query,
-} from '@nestjs/common';
+import { Controller, Get, Param, Query } from '@nestjs/common';
 import { BillItemsService } from './bill-items.service';
-import { CreateBillItemDto } from './dto/create-bill-item.dto';
-import { UpdateBillItemDto } from './dto/update-bill-item.dto';
-import {
-	ApiBody,
-	ApiOperation,
-	ApiParam,
-	ApiResponse,
-	ApiTags,
-} from '@nestjs/swagger';
+import { ApiOperation, ApiParam, ApiResponse, ApiTags } from '@nestjs/swagger';
 import { BillItem, BillItemStatus } from './schemas/bill-item.schema';
 import {
 	ErrorResponse,
@@ -264,268 +247,264 @@ export class BillItemsController {
 		return 'getOneBillItems';
 	}
 
-	@Post('bill-items')
-	@ApiTags('bill-items')
-	@ApiOperation({
-		summary: 'createBillItem',
-		description: 'Create one bill-item',
-	})
-	@ApiResponse({
-		status: 201,
-		schema: {
-			example: {
-				_id: '_id',
-				facilityInfo: {
-					facilityID: {},
-					brandID: {},
-					brandName: 'string',
-					ownerFacilityName: 'string',
-					facilityName: 'string',
-					facilityAddress: {},
-					facilityCoordinatesLocation: [1, 1],
-					facilityPhoto: 'string',
-				},
-				packageTypeInfo: {
-					packageTypeID: {},
-					name: 'string',
-					desctiption: 'string',
-					price: 1,
-				},
-				packageInfo: {
-					packageID: {},
-					type: TimeType.ONE_MONTH,
-					price: 1,
-				},
-				promotions: [
-					{
-						targetID: {},
-						type: PromotionType.FACILITY,
-						name: 'string',
-						description: 'string',
-						couponCode: 'string',
-						value: 1,
-						method: PromotionMethod.NUMBER,
-						minPriceApply: 1,
-						maxValue: 1,
-						maxQuantity: 1,
-						startDate: new Date(),
-						endDate: new Date(),
-						customerType: CustomerType.CUSTOMER,
-						status: PromotionStatus.ACTIVE,
-						createdAt: new Date(),
-						updatedAt: new Date(),
-					},
-				] as Promotion[],
-				promotionPrice: 1,
-				totalPrice: 1,
-				status: BillItemStatus.ACTIVE,
-				createdAt: new Date(),
-				updatedAt: new Date(),
-			} as BillItem,
-		},
-	})
-	@ApiResponse({
-		status: 400,
-		schema: {
-			example: {
-				code: '400',
-				message: 'Bad request',
-				details: null,
-			} as ErrorResponse<null>,
-		},
-	})
-	@ApiResponse({
-		status: 401,
-		schema: {
-			example: {
-				code: '401',
-				message: 'Unauthorized',
-				details: null,
-			} as ErrorResponse<null>,
-		},
-	})
-	@ApiResponse({
-		status: 403,
-		schema: {
-			example: {
-				code: '403',
-				message: `Forbidden resource`,
-				details: null,
-			} as ErrorResponse<null>,
-		},
-	})
-	createBillItem(@Body() createBillItemDto: CreateBillItemDto) {
-		return 'createBillItem';
-	}
+	// @Post('bill-items')
+	// @ApiTags('bill-items')
+	// @ApiOperation({
+	// 	summary: 'createBillItem',
+	// 	description: 'Create one bill-item',
+	// })
+	// @ApiResponse({
+	// 	status: 201,
+	// 	schema: {
+	// 		example: {
+	// 			_id: '_id',
+	// 			facilityInfo: {
+	// 				facilityID: {},
+	// 				brandID: {},
+	// 				brandName: 'string',
+	// 				ownerFacilityName: 'string',
+	// 				facilityName: 'string',
+	// 				facilityAddress: {},
+	// 				facilityCoordinatesLocation: [1, 1],
+	// 				facilityPhoto: 'string',
+	// 			},
+	// 			packageTypeInfo: {
+	// 				packageTypeID: {},
+	// 				name: 'string',
+	// 				desctiption: 'string',
+	// 				price: 1,
+	// 			},
+	// 			packageInfo: {
+	// 				packageID: {},
+	// 				type: TimeType.ONE_MONTH,
+	// 				price: 1,
+	// 			},
+	// 			promotions: [
+	// 				{
+	// 					targetID: {},
+	// 					type: PromotionType.FACILITY,
+	// 					name: 'string',
+	// 					description: 'string',
+	// 					couponCode: 'string',
+	// 					value: 1,
+	// 					method: PromotionMethod.NUMBER,
+	// 					minPriceApply: 1,
+	// 					maxValue: 1,
+	// 					maxQuantity: 1,
+	// 					startDate: new Date(),
+	// 					endDate: new Date(),
+	// 					customerType: CustomerType.CUSTOMER,
+	// 					status: PromotionStatus.ACTIVE,
+	// 					createdAt: new Date(),
+	// 					updatedAt: new Date(),
+	// 				},
+	// 			] as Promotion[],
+	// 			promotionPrice: 1,
+	// 			totalPrice: 1,
+	// 			status: BillItemStatus.ACTIVE,
+	// 			createdAt: new Date(),
+	// 			updatedAt: new Date(),
+	// 		} as BillItem,
+	// 	},
+	// })
+	// @ApiResponse({
+	// 	status: 400,
+	// 	schema: {
+	// 		example: {
+	// 			code: '400',
+	// 			message: 'Bad request',
+	// 			details: null,
+	// 		} as ErrorResponse<null>,
+	// 	},
+	// })
+	// @ApiResponse({
+	// 	status: 401,
+	// 	schema: {
+	// 		example: {
+	// 			code: '401',
+	// 			message: 'Unauthorized',
+	// 			details: null,
+	// 		} as ErrorResponse<null>,
+	// 	},
+	// })
+	// @ApiResponse({
+	// 	status: 403,
+	// 	schema: {
+	// 		example: {
+	// 			code: '403',
+	// 			message: `Forbidden resource`,
+	// 			details: null,
+	// 		} as ErrorResponse<null>,
+	// 	},
+	// })
+	// createBillItem() {
+	// 	return 'createBillItem';
+	// }
 
-	@Patch('bill-items/:id')
-	@ApiTags('bill-items')
-	@ApiOperation({
-		summary: 'updateBillItem',
-		description: 'Update one bill-item',
-	})
-	@ApiParam({ name: 'id', type: String, description: 'Bill-item ID' })
-	@ApiBody({ type: UpdateBillItemDto })
-	@ApiResponse({
-		status: 201,
-		schema: {
-			example: {
-				_id: '_id',
-				facilityInfo: {
-					facilityID: {},
-					brandID: {},
-					brandName: 'string',
-					ownerFacilityName: 'string',
-					facilityName: 'string',
-					facilityAddress: {},
-					facilityCoordinatesLocation: [1, 1],
-					facilityPhoto: 'string',
-				},
-				packageTypeInfo: {
-					packageTypeID: {},
-					name: 'string',
-					desctiption: 'string',
-					price: 1,
-				},
-				packageInfo: {
-					packageID: {},
-					type: TimeType.ONE_MONTH,
-					price: 1,
-				},
-				promotions: [
-					{
-						targetID: {},
-						type: PromotionType.FACILITY,
-						name: 'string',
-						description: 'string',
-						couponCode: 'string',
-						value: 1,
-						method: PromotionMethod.NUMBER,
-						minPriceApply: 1,
-						maxValue: 1,
-						maxQuantity: 1,
-						startDate: new Date(),
-						endDate: new Date(),
-						customerType: CustomerType.CUSTOMER,
-						status: PromotionStatus.ACTIVE,
-						createdAt: new Date(),
-						updatedAt: new Date(),
-					},
-				] as Promotion[],
-				promotionPrice: 1,
-				totalPrice: 1,
-				status: BillItemStatus.ACTIVE,
-				createdAt: new Date(),
-				updatedAt: new Date(),
-			} as BillItem,
-		},
-	})
-	@ApiResponse({
-		status: 400,
-		schema: {
-			example: {
-				code: '400',
-				message: 'Bad request',
-				details: null,
-			} as ErrorResponse<null>,
-		},
-	})
-	@ApiResponse({
-		status: 401,
-		schema: {
-			example: {
-				code: '401',
-				message: 'Unauthorized',
-				details: null,
-			} as ErrorResponse<null>,
-		},
-	})
-	@ApiResponse({
-		status: 403,
-		schema: {
-			example: {
-				code: '403',
-				message: `Forbidden resource`,
-				details: null,
-			} as ErrorResponse<null>,
-		},
-	})
-	@ApiResponse({
-		status: 404,
-		schema: {
-			example: {
-				code: '404',
-				message: 'Not found document with that ID',
-				details: null,
-			} as ErrorResponse<null>,
-		},
-	})
-	updateBillItem(
-		@Param('id') id: string,
-		@Body() updateBillItemDto: UpdateBillItemDto,
-	) {
-		return 'updateBillItem';
-	}
+	// @Patch('bill-items/:id')
+	// @ApiTags('bill-items')
+	// @ApiOperation({
+	// 	summary: 'updateBillItem',
+	// 	description: 'Update one bill-item',
+	// })
+	// @ApiParam({ name: 'id', type: String, description: 'Bill-item ID' })
+	// @ApiResponse({
+	// 	status: 201,
+	// 	schema: {
+	// 		example: {
+	// 			_id: '_id',
+	// 			facilityInfo: {
+	// 				facilityID: {},
+	// 				brandID: {},
+	// 				brandName: 'string',
+	// 				ownerFacilityName: 'string',
+	// 				facilityName: 'string',
+	// 				facilityAddress: {},
+	// 				facilityCoordinatesLocation: [1, 1],
+	// 				facilityPhoto: 'string',
+	// 			},
+	// 			packageTypeInfo: {
+	// 				packageTypeID: {},
+	// 				name: 'string',
+	// 				desctiption: 'string',
+	// 				price: 1,
+	// 			},
+	// 			packageInfo: {
+	// 				packageID: {},
+	// 				type: TimeType.ONE_MONTH,
+	// 				price: 1,
+	// 			},
+	// 			promotions: [
+	// 				{
+	// 					targetID: {},
+	// 					type: PromotionType.FACILITY,
+	// 					name: 'string',
+	// 					description: 'string',
+	// 					couponCode: 'string',
+	// 					value: 1,
+	// 					method: PromotionMethod.NUMBER,
+	// 					minPriceApply: 1,
+	// 					maxValue: 1,
+	// 					maxQuantity: 1,
+	// 					startDate: new Date(),
+	// 					endDate: new Date(),
+	// 					customerType: CustomerType.CUSTOMER,
+	// 					status: PromotionStatus.ACTIVE,
+	// 					createdAt: new Date(),
+	// 					updatedAt: new Date(),
+	// 				},
+	// 			] as Promotion[],
+	// 			promotionPrice: 1,
+	// 			totalPrice: 1,
+	// 			status: BillItemStatus.ACTIVE,
+	// 			createdAt: new Date(),
+	// 			updatedAt: new Date(),
+	// 		} as BillItem,
+	// 	},
+	// })
+	// @ApiResponse({
+	// 	status: 400,
+	// 	schema: {
+	// 		example: {
+	// 			code: '400',
+	// 			message: 'Bad request',
+	// 			details: null,
+	// 		} as ErrorResponse<null>,
+	// 	},
+	// })
+	// @ApiResponse({
+	// 	status: 401,
+	// 	schema: {
+	// 		example: {
+	// 			code: '401',
+	// 			message: 'Unauthorized',
+	// 			details: null,
+	// 		} as ErrorResponse<null>,
+	// 	},
+	// })
+	// @ApiResponse({
+	// 	status: 403,
+	// 	schema: {
+	// 		example: {
+	// 			code: '403',
+	// 			message: `Forbidden resource`,
+	// 			details: null,
+	// 		} as ErrorResponse<null>,
+	// 	},
+	// })
+	// @ApiResponse({
+	// 	status: 404,
+	// 	schema: {
+	// 		example: {
+	// 			code: '404',
+	// 			message: 'Not found document with that ID',
+	// 			details: null,
+	// 		} as ErrorResponse<null>,
+	// 	},
+	// })
+	// updateBillItem(@Param('id') id: string) {
+	// 	return 'updateBillItem';
+	// }
 
-	@Delete('bill-items/:id')
-	@ApiTags('bill-items')
-	@ApiOperation({
-		summary: 'deleteBillItem',
-		description: 'Delete one bill-item',
-	})
-	@ApiParam({ name: 'id', type: String, description: 'Bill-item ID' })
-	@ApiResponse({
-		status: 200,
-		schema: {
-			example: {
-				code: 200,
-				message: 'Deleted successfully',
-			},
-		},
-	})
-	@ApiResponse({
-		status: 400,
-		schema: {
-			example: {
-				code: '400',
-				message: 'Bad request',
-				details: null,
-			} as ErrorResponse<null>,
-		},
-	})
-	@ApiResponse({
-		status: 401,
-		schema: {
-			example: {
-				code: '401',
-				message: 'Unauthorized',
-				details: null,
-			} as ErrorResponse<null>,
-		},
-	})
-	@ApiResponse({
-		status: 403,
-		schema: {
-			example: {
-				code: '403',
-				message: `Forbidden resource`,
-				details: null,
-			} as ErrorResponse<null>,
-		},
-	})
-	@ApiResponse({
-		status: 404,
-		schema: {
-			example: {
-				code: '404',
-				message: 'Not found document with that ID',
-				details: null,
-			} as ErrorResponse<null>,
-		},
-	})
-	deleteBillItem(@Param('id') id: string) {
-		return 'deleteBillItem';
-	}
+	// @Delete('bill-items/:id')
+	// @ApiTags('bill-items')
+	// @ApiOperation({
+	// 	summary: 'deleteBillItem',
+	// 	description: 'Delete one bill-item',
+	// })
+	// @ApiParam({ name: 'id', type: String, description: 'Bill-item ID' })
+	// @ApiResponse({
+	// 	status: 200,
+	// 	schema: {
+	// 		example: {
+	// 			code: 200,
+	// 			message: 'Deleted successfully',
+	// 		},
+	// 	},
+	// })
+	// @ApiResponse({
+	// 	status: 400,
+	// 	schema: {
+	// 		example: {
+	// 			code: '400',
+	// 			message: 'Bad request',
+	// 			details: null,
+	// 		} as ErrorResponse<null>,
+	// 	},
+	// })
+	// @ApiResponse({
+	// 	status: 401,
+	// 	schema: {
+	// 		example: {
+	// 			code: '401',
+	// 			message: 'Unauthorized',
+	// 			details: null,
+	// 		} as ErrorResponse<null>,
+	// 	},
+	// })
+	// @ApiResponse({
+	// 	status: 403,
+	// 	schema: {
+	// 		example: {
+	// 			code: '403',
+	// 			message: `Forbidden resource`,
+	// 			details: null,
+	// 		} as ErrorResponse<null>,
+	// 	},
+	// })
+	// @ApiResponse({
+	// 	status: 404,
+	// 	schema: {
+	// 		example: {
+	// 			code: '404',
+	// 			message: 'Not found document with that ID',
+	// 			details: null,
+	// 		} as ErrorResponse<null>,
+	// 	},
+	// })
+	// deleteBillItem(@Param('id') id: string) {
+	// 	return 'deleteBillItem';
+	// }
 
 	@Get('bills/:billID/bill-items')
 	@ApiTags('bills/bill-items')
@@ -635,110 +614,110 @@ export class BillItemsController {
 		return 'getBillItemsForBill';
 	}
 
-	@Post('bills/:billID/bill-items')
-	@ApiTags('bills/bill-items')
-	@ApiOperation({
-		summary: 'createBillItemForBill',
-		description: 'Create one bill-item for specific bill',
-	})
-	@ApiParam({ name: 'billID', type: String, description: 'Bill ID' })
-	@ApiResponse({
-		status: 201,
-		schema: {
-			example: {
-				_id: '_id',
-				facilityInfo: {
-					facilityID: {},
-					brandID: {},
-					brandName: 'string',
-					ownerFacilityName: 'string',
-					facilityName: 'string',
-					facilityAddress: {},
-					facilityCoordinatesLocation: [1, 1],
-					facilityPhoto: 'string',
-				},
-				packageTypeInfo: {
-					packageTypeID: {},
-					name: 'string',
-					desctiption: 'string',
-					price: 1,
-				},
-				packageInfo: {
-					packageID: {},
-					type: TimeType.ONE_MONTH,
-					price: 1,
-				},
-				promotions: [
-					{
-						targetID: {},
-						type: PromotionType.FACILITY,
-						name: 'string',
-						description: 'string',
-						couponCode: 'string',
-						value: 1,
-						method: PromotionMethod.NUMBER,
-						minPriceApply: 1,
-						maxValue: 1,
-						maxQuantity: 1,
-						startDate: new Date(),
-						endDate: new Date(),
-						customerType: CustomerType.CUSTOMER,
-						status: PromotionStatus.ACTIVE,
-						createdAt: new Date(),
-						updatedAt: new Date(),
-					},
-				] as Promotion[],
-				promotionPrice: 1,
-				totalPrice: 1,
-				status: BillItemStatus.ACTIVE,
-				createdAt: new Date(),
-				updatedAt: new Date(),
-			} as BillItem,
-		},
-	})
-	@ApiResponse({
-		status: 400,
-		schema: {
-			example: {
-				code: '400',
-				message: 'Bad request',
-				details: null,
-			} as ErrorResponse<null>,
-		},
-	})
-	@ApiResponse({
-		status: 401,
-		schema: {
-			example: {
-				code: '401',
-				message: 'Unauthorized',
-				details: null,
-			} as ErrorResponse<null>,
-		},
-	})
-	@ApiResponse({
-		status: 403,
-		schema: {
-			example: {
-				code: '403',
-				message: `Forbidden resource`,
-				details: null,
-			} as ErrorResponse<null>,
-		},
-	})
-	@ApiResponse({
-		status: 404,
-		schema: {
-			example: {
-				code: '404',
-				message: 'Not found document with that ID',
-				details: null,
-			} as ErrorResponse<null>,
-		},
-	})
-	createBillItemForBill(@Param('billID') billID: string) {
-		return 'createBillItemForBill';
-	}
+	// @Post('bills/:billID/bill-items')
+	// @ApiTags('bills/bill-items')
+	// @ApiOperation({
+	// 	summary: 'createBillItemForBill',
+	// 	description: 'Create one bill-item for specific bill',
+	// })
+	// @ApiParam({ name: 'billID', type: String, description: 'Bill ID' })
+	// @ApiResponse({
+	// 	status: 201,
+	// 	schema: {
+	// 		example: {
+	// 			_id: '_id',
+	// 			facilityInfo: {
+	// 				facilityID: {},
+	// 				brandID: {},
+	// 				brandName: 'string',
+	// 				ownerFacilityName: 'string',
+	// 				facilityName: 'string',
+	// 				facilityAddress: {},
+	// 				facilityCoordinatesLocation: [1, 1],
+	// 				facilityPhoto: 'string',
+	// 			},
+	// 			packageTypeInfo: {
+	// 				packageTypeID: {},
+	// 				name: 'string',
+	// 				desctiption: 'string',
+	// 				price: 1,
+	// 			},
+	// 			packageInfo: {
+	// 				packageID: {},
+	// 				type: TimeType.ONE_MONTH,
+	// 				price: 1,
+	// 			},
+	// 			promotions: [
+	// 				{
+	// 					targetID: {},
+	// 					type: PromotionType.FACILITY,
+	// 					name: 'string',
+	// 					description: 'string',
+	// 					couponCode: 'string',
+	// 					value: 1,
+	// 					method: PromotionMethod.NUMBER,
+	// 					minPriceApply: 1,
+	// 					maxValue: 1,
+	// 					maxQuantity: 1,
+	// 					startDate: new Date(),
+	// 					endDate: new Date(),
+	// 					customerType: CustomerType.CUSTOMER,
+	// 					status: PromotionStatus.ACTIVE,
+	// 					createdAt: new Date(),
+	// 					updatedAt: new Date(),
+	// 				},
+	// 			] as Promotion[],
+	// 			promotionPrice: 1,
+	// 			totalPrice: 1,
+	// 			status: BillItemStatus.ACTIVE,
+	// 			createdAt: new Date(),
+	// 			updatedAt: new Date(),
+	// 		} as BillItem,
+	// 	},
+	// })
+	// @ApiResponse({
+	// 	status: 400,
+	// 	schema: {
+	// 		example: {
+	// 			code: '400',
+	// 			message: 'Bad request',
+	// 			details: null,
+	// 		} as ErrorResponse<null>,
+	// 	},
+	// })
+	// @ApiResponse({
+	// 	status: 401,
+	// 	schema: {
+	// 		example: {
+	// 			code: '401',
+	// 			message: 'Unauthorized',
+	// 			details: null,
+	// 		} as ErrorResponse<null>,
+	// 	},
+	// })
+	// @ApiResponse({
+	// 	status: 403,
+	// 	schema: {
+	// 		example: {
+	// 			code: '403',
+	// 			message: `Forbidden resource`,
+	// 			details: null,
+	// 		} as ErrorResponse<null>,
+	// 	},
+	// })
+	// @ApiResponse({
+	// 	status: 404,
+	// 	schema: {
+	// 		example: {
+	// 			code: '404',
+	// 			message: 'Not found document with that ID',
+	// 			details: null,
+	// 		} as ErrorResponse<null>,
+	// 	},
+	// })
+	// createBillItemForBill(@Param('billID') billID: string) {
+	// 	return 'createBillItemForBill';
+	// }
 
 	@Get('facilities/bill-items')
 	@ApiTags('facilities/bill-items')
