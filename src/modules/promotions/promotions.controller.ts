@@ -30,6 +30,7 @@ import {
 } from './schemas/promotion.schema';
 import { CreatePromotionDto } from './dto/create-promotion.dto';
 import { UpdatePromotionDto } from './dto/update-promotion.dto';
+import { Schema } from '@nestjs/mongoose';
 
 @Controller('promotions')
 export class PromotionsController {
@@ -204,22 +205,23 @@ export class PromotionsController {
 		description: 'Create one promotion',
 	})
 	@ApiBody({
-		type: CreatePromotionDto,
-		examples: {
-			ADMIN: {
-				targetID: 'string',
-				type: PromotionType.BILL,
-				name: 'string',
-				description: 'string',
-				couponCode: 'string',
-				value: 1,
-				method: PromotionMethod.NUMBER,
-				minPriceApply: 0,
-				maxQuantity: 0,
-				startDate: new Date(),
-				endDate: new Date(),
-				customerType: CustomerType.CUSTOMER,
-			} as Promotion,
+		schema: {
+			examples: {
+				ADMIN: {
+					targetID: 'string',
+					type: PromotionType.BILL,
+					name: 'string',
+					description: 'string',
+					couponCode: 'string',
+					value: 1,
+					method: PromotionMethod.NUMBER,
+					minPriceApply: 0,
+					maxQuantity: 0,
+					startDate: new Date(),
+					endDate: new Date(),
+					customerType: CustomerType.CUSTOMER,
+				} as Promotion,
+			},
 		},
 	})
 	@ApiResponse({
@@ -285,22 +287,23 @@ export class PromotionsController {
 	})
 	@ApiParam({ name: 'id', type: String, description: 'Promotion ID' })
 	@ApiBody({
-		type: UpdatePromotionDto,
-		examples: {
-			ADMIN: {
-				targetID: 'string',
-				type: PromotionType.BILL,
-				name: 'string',
-				description: 'string',
-				couponCode: 'string',
-				value: 1,
-				method: PromotionMethod.NUMBER,
-				minPriceApply: 0,
-				maxQuantity: 0,
-				startDate: new Date(),
-				endDate: new Date(),
-				customerType: CustomerType.CUSTOMER,
-			} as Promotion,
+		schema: {
+			examples: {
+				ADMIN: {
+					targetID: 'string',
+					type: PromotionType.BILL,
+					name: 'string',
+					description: 'string',
+					couponCode: 'string',
+					value: 1,
+					method: PromotionMethod.NUMBER,
+					minPriceApply: 0,
+					maxQuantity: 0,
+					startDate: new Date(),
+					endDate: new Date(),
+					customerType: CustomerType.CUSTOMER,
+				} as Promotion,
+			},
 		},
 	})
 	@ApiResponse({
@@ -605,22 +608,23 @@ export class PromotionsController {
 	})
 	@ApiParam({ name: 'facilityID', type: String, description: 'Facility ID' })
 	@ApiBody({
-		type: CreatePromotionDto,
-		examples: {
-			OwnerFacility: {
-				targetID: 'string',
-				type: PromotionType.FACILITY,
-				name: 'string',
-				description: 'string',
-				couponCode: 'string',
-				value: 1,
-				method: PromotionMethod.NUMBER,
-				minPriceApply: 0,
-				maxQuantity: 0,
-				startDate: new Date(),
-				endDate: new Date(),
-				customerType: CustomerType.CUSTOMER,
-			} as Promotion,
+		schema: {
+			examples: {
+				ADMIN: {
+					targetID: 'string',
+					type: PromotionType.BILL,
+					name: 'string',
+					description: 'string',
+					couponCode: 'string',
+					value: 1,
+					method: PromotionMethod.NUMBER,
+					minPriceApply: 0,
+					maxQuantity: 0,
+					startDate: new Date(),
+					endDate: new Date(),
+					customerType: CustomerType.CUSTOMER,
+				} as Promotion,
+			},
 		},
 	})
 	@ApiResponse({
@@ -697,22 +701,23 @@ export class PromotionsController {
 	@ApiParam({ name: 'facilityID', type: String, description: 'Facility ID' })
 	@ApiParam({ name: 'promotionID', type: String, description: 'Promotion ID' })
 	@ApiBody({
-		type: UpdatePromotionDto,
-		examples: {
-			OwnerFacility: {
-				targetID: 'string',
-				type: PromotionType.FACILITY,
-				name: 'string',
-				description: 'string',
-				couponCode: 'string',
-				value: 1,
-				method: PromotionMethod.NUMBER,
-				minPriceApply: 0,
-				maxQuantity: 0,
-				startDate: new Date(),
-				endDate: new Date(),
-				customerType: CustomerType.CUSTOMER,
-			} as Promotion,
+		schema: {
+			examples: {
+				ADMIN: {
+					targetID: 'string',
+					type: PromotionType.BILL,
+					name: 'string',
+					description: 'string',
+					couponCode: 'string',
+					value: 1,
+					method: PromotionMethod.NUMBER,
+					minPriceApply: 0,
+					maxQuantity: 0,
+					startDate: new Date(),
+					endDate: new Date(),
+					customerType: CustomerType.CUSTOMER,
+				} as Promotion,
+			},
 		},
 	})
 	@ApiResponse({

@@ -97,6 +97,7 @@ export class AuthController {
 				value: {
 					email: 'test1@test.com',
 					password: '123123123',
+					displayName: 'User1',
 				} as RegisterDto,
 			},
 		},
