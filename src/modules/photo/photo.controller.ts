@@ -38,9 +38,9 @@ export class PhotoController {
 				message: 'Success',
 				data: {
 					_id: '123456789',
-					bucketID: 'id-bucket',
+					ownerID: 'id-bucket',
 					name: 'name-image',
-					linkURL: 'http://localhost:8080/id-bucket/name-image',
+					imageURL: 'http://localhost:8080/id-bucket/name-image',
 					createdAt: new Date(),
 					updatedAt: new Date()
 				} as Photo,

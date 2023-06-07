@@ -2,13 +2,14 @@ import { Prop, Schema, SchemaFactory } from '@nestjs/mongoose';
 import mongoose, { HydratedDocument } from 'mongoose';
 import { BaseObject } from 'src/shared/schemas/base-object.schema';
 import { Facility } from 'src/modules/facility/schemas/facility.schema';
+import { appConfig } from 'src/app.config';
 
 export type PhotoDocument = HydratedDocument<Photo>;
 
 @Schema({ timestamps: true })
 export class Photo extends BaseObject {
   @Prop({ type: String, required: true })
-  bucketID: string;
+  ownerID: string;
 
   @Prop({ type: String, required: true })
   name: string;
@@ -16,8 +17,9 @@ export class Photo extends BaseObject {
   @Prop({ type: String, required: false, default: '' })
   describe: string;
 
-  get linkURL(): string {
-    return `http://localhost:8080/${this.bucketID}/${this.name}`;
+  get imageURL(): string {
+    let fileHost = appConfig.fileHost;
+    return `${fileHost}/${this.ownerID}/${this.name}`;
   }
 }
 

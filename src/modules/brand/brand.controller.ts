@@ -138,9 +138,9 @@ export class BrandController {
             photos: [
               {
                 _id: '123456789',
-                bucketID: 'id-bucket',
+                ownerID: 'id-bucket',
                 name: 'name-image',
-                linkURL: 'http://localhost:8080/id-bucket/name-image',
+                imageURL: 'http://localhost:8080/id-bucket/name-image',
                 createdAt: new Date(),
                 updatedAt: new Date()
               }
@@ -155,9 +155,9 @@ export class BrandController {
                 photos: [
                   {
                     _id: '12345678dsgdgsdxdg4',
-                    bucketID: 'bucket1',
+                    ownerID: 'bucket1',
                     name: 'image-name',
-                    linkURL: 'http://localhost:8080/bucket1/image-name',
+                    imageURL: 'http://localhost:8080/bucket1/image-name',
                     createdAt: new Date(),
                     updatedAt: new Date()
                   }
