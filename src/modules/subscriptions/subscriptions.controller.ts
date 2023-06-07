@@ -12,6 +12,7 @@ import {
 } from './schemas/subscription.schema';
 
 @Controller('subscriptions')
+@ApiTags('subscriptions')
 export class SubscriptionsController {
 	@Get()
 	@ApiDocsPagination('subscription')
