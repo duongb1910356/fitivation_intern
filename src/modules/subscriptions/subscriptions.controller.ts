@@ -93,10 +93,7 @@ export class SubscriptionsController {
 			} as ErrorResponse<null>,
 		},
 	})
-	getManySubscriptions(
-		@Query() filter: ListOptions<Subscription>,
-		@Body() createSubscriptionDto: CreateSubscriptionDto,
-	) {
+	getManySubscriptions(@Query() filter: ListOptions<Subscription>) {
 		return 'getManySubscriptions';
 	}
 	@Get('subscriptions/:id')
@@ -174,254 +171,254 @@ export class SubscriptionsController {
 	getOneSubscription(@Param('id') id: string) {
 		return 'getOneSubscription';
 	}
-	@Post('subscriptions')
-	@ApiTags('subscriptions')
-	@ApiOperation({
-		summary: 'createSubscription',
-		description: 'Create one subscription',
-	})
-	@ApiParam({ name: 'id', type: String, description: 'Subscription ID' })
-	@ApiBody({ type: CreateSubscriptionDto })
-	@ApiResponse({
-		status: 201,
-		schema: {
-			example: {
-				accountID: {},
-				billItemID: {},
-				expires: new Date(),
-				status: SubscriptionStatus.ACTIVE,
-				renew: false,
-				createdAt: new Date(),
-				updatedAt: new Date(),
-			} as Subscription,
-		},
-	})
-	@ApiResponse({
-		status: 400,
-		schema: {
-			example: {
-				code: '400',
-				message: 'Bad request',
-				details: null,
-			} as ErrorResponse<null>,
-		},
-	})
-	@ApiResponse({
-		status: 401,
-		schema: {
-			example: {
-				code: '401',
-				message: 'Unauthorized',
-				details: null,
-			} as ErrorResponse<null>,
-		},
-	})
-	@ApiResponse({
-		status: 403,
-		schema: {
-			example: {
-				code: '403',
-				message: `Forbidden resource`,
-				details: null,
-			} as ErrorResponse<null>,
-		},
-	})
-	createSubscription(@Body() createSubscriptionDto: CreateSubscriptionDto) {
-		return 'createSubscription';
-	}
-	@Patch('subscriptions/:id')
-	@ApiTags('subscriptions')
-	@ApiOperation({
-		summary: 'updateSubscription',
-		description: 'Update one subscription',
-	})
-	@ApiParam({ name: 'id', type: String, description: 'Subscription ID' })
-	@ApiBody({ type: UpdateSubscriptionDto })
-	@ApiResponse({
-		status: 201,
-		schema: {
-			example: {
-				accountID: {},
-				billItemID: {},
-				expires: new Date(),
-				status: SubscriptionStatus.ACTIVE,
-				renew: false,
-				createdAt: new Date(),
-				updatedAt: new Date(),
-			} as Subscription,
-		},
-	})
-	@ApiResponse({
-		status: 400,
-		schema: {
-			example: {
-				code: '400',
-				message: 'Bad request',
-				details: null,
-			} as ErrorResponse<null>,
-		},
-	})
-	@ApiResponse({
-		status: 401,
-		schema: {
-			example: {
-				code: '401',
-				message: 'Unauthorized',
-				details: null,
-			} as ErrorResponse<null>,
-		},
-	})
-	@ApiResponse({
-		status: 403,
-		schema: {
-			example: {
-				code: '403',
-				message: `Forbidden resource`,
-				details: null,
-			} as ErrorResponse<null>,
-		},
-	})
-	@ApiResponse({
-		status: 404,
-		schema: {
-			example: {
-				code: '404',
-				message: 'Not found document with that ID',
-				details: null,
-			} as ErrorResponse<null>,
-		},
-	})
-	updateSubscription(
-		@Param('id') id: string,
-		@Body() updateSubscriptionDto: UpdateSubscriptionDto,
-	) {
-		return 'updateSubscription';
-	}
-	@Delete('subscriptions/:id')
-	@ApiTags('subscriptions')
-	@ApiOperation({
-		summary: 'deleteSubscription',
-		description: 'Delete one subscription',
-	})
-	@ApiParam({ name: 'id', type: String, description: 'Subscription ID' })
-	@ApiResponse({
-		status: 200,
-		schema: {
-			example: {
-				code: 200,
-				message: 'Deleted successfully',
-			},
-		},
-	})
-	@ApiResponse({
-		status: 400,
-		schema: {
-			example: {
-				code: '400',
-				message: 'Bad request',
-				details: null,
-			} as ErrorResponse<null>,
-		},
-	})
-	@ApiResponse({
-		status: 401,
-		schema: {
-			example: {
-				code: '401',
-				message: 'Unauthorized',
-				details: null,
-			} as ErrorResponse<null>,
-		},
-	})
-	@ApiResponse({
-		status: 403,
-		schema: {
-			example: {
-				code: '403',
-				message: `Forbidden resource`,
-				details: null,
-			} as ErrorResponse<null>,
-		},
-	})
-	@ApiResponse({
-		status: 404,
-		schema: {
-			example: {
-				code: '404',
-				message: 'Not found document with that ID',
-				details: null,
-			} as ErrorResponse<null>,
-		},
-	})
-	deleteSubscription(@Param('id') id: string) {
-		return 'deleteSubscription';
-	}
-	@Post('bill-items/:billItemID/subscriptions')
-	@ApiTags('bill-items/subscriptions')
-	@ApiOperation({
-		summary: 'createSubscriptionForBillItem',
-		description: 'Create Subscription when user purchase',
-	})
-	@ApiParam({ name: 'billItemID', type: String, description: 'Bill-item ID' })
-	@ApiBody({ type: CreateSubscriptionDto })
-	@ApiResponse({
-		status: 201,
-		schema: {
-			example: {
-				accountID: {},
-				billItemID: {},
-				expires: new Date(),
-				status: SubscriptionStatus.ACTIVE,
-				renew: false,
-				createdAt: new Date(),
-				updatedAt: new Date(),
-			} as Subscription,
-		},
-	})
-	@ApiResponse({
-		status: 400,
-		schema: {
-			example: {
-				code: '400',
-				message: 'Bad request',
-				details: null,
-			} as ErrorResponse<null>,
-		},
-	})
-	@ApiResponse({
-		status: 401,
-		schema: {
-			example: {
-				code: '401',
-				message: 'Unauthorized',
-				details: null,
-			} as ErrorResponse<null>,
-		},
-	})
-	@ApiResponse({
-		status: 403,
-		schema: {
-			example: {
-				code: '403',
-				message: `Forbidden resource`,
-				details: null,
-			} as ErrorResponse<null>,
-		},
-	})
-	@ApiResponse({
-		status: 404,
-		schema: {
-			example: {
-				code: '404',
-				message: 'Not found document with that ID',
-				details: null,
-			} as ErrorResponse<null>,
-		},
-	})
-	createSubscriptionForBillItem(
-		@Param('billItemID') billItemID: string,
-		@Body() createSubscriptionDto: CreateSubscriptionDto,
-	) {
-		return 'createSubscription';
-	}
+	// @Post('subscriptions')
+	// @ApiTags('subscriptions')
+	// @ApiOperation({
+	// 	summary: 'createSubscription',
+	// 	description: 'Create one subscription',
+	// })
+	// @ApiParam({ name: 'id', type: String, description: 'Subscription ID' })
+	// @ApiBody({ type: CreateSubscriptionDto })
+	// @ApiResponse({
+	// 	status: 201,
+	// 	schema: {
+	// 		example: {
+	// 			accountID: {},
+	// 			billItemID: {},
+	// 			expires: new Date(),
+	// 			status: SubscriptionStatus.ACTIVE,
+	// 			renew: false,
+	// 			createdAt: new Date(),
+	// 			updatedAt: new Date(),
+	// 		} as Subscription,
+	// 	},
+	// })
+	// @ApiResponse({
+	// 	status: 400,
+	// 	schema: {
+	// 		example: {
+	// 			code: '400',
+	// 			message: 'Bad request',
+	// 			details: null,
+	// 		} as ErrorResponse<null>,
+	// 	},
+	// })
+	// @ApiResponse({
+	// 	status: 401,
+	// 	schema: {
+	// 		example: {
+	// 			code: '401',
+	// 			message: 'Unauthorized',
+	// 			details: null,
+	// 		} as ErrorResponse<null>,
+	// 	},
+	// })
+	// @ApiResponse({
+	// 	status: 403,
+	// 	schema: {
+	// 		example: {
+	// 			code: '403',
+	// 			message: `Forbidden resource`,
+	// 			details: null,
+	// 		} as ErrorResponse<null>,
+	// 	},
+	// })
+	// createSubscription(@Body() createSubscriptionDto: CreateSubscriptionDto) {
+	// 	return 'createSubscription';
+	// }
+	// @Patch('subscriptions/:id')
+	// @ApiTags('subscriptions')
+	// @ApiOperation({
+	// 	summary: 'updateSubscription',
+	// 	description: 'Update one subscription',
+	// })
+	// @ApiParam({ name: 'id', type: String, description: 'Subscription ID' })
+	// @ApiBody({ type: UpdateSubscriptionDto })
+	// @ApiResponse({
+	// 	status: 201,
+	// 	schema: {
+	// 		example: {
+	// 			accountID: {},
+	// 			billItemID: {},
+	// 			expires: new Date(),
+	// 			status: SubscriptionStatus.ACTIVE,
+	// 			renew: false,
+	// 			createdAt: new Date(),
+	// 			updatedAt: new Date(),
+	// 		} as Subscription,
+	// 	},
+	// })
+	// @ApiResponse({
+	// 	status: 400,
+	// 	schema: {
+	// 		example: {
+	// 			code: '400',
+	// 			message: 'Bad request',
+	// 			details: null,
+	// 		} as ErrorResponse<null>,
+	// 	},
+	// })
+	// @ApiResponse({
+	// 	status: 401,
+	// 	schema: {
+	// 		example: {
+	// 			code: '401',
+	// 			message: 'Unauthorized',
+	// 			details: null,
+	// 		} as ErrorResponse<null>,
+	// 	},
+	// })
+	// @ApiResponse({
+	// 	status: 403,
+	// 	schema: {
+	// 		example: {
+	// 			code: '403',
+	// 			message: `Forbidden resource`,
+	// 			details: null,
+	// 		} as ErrorResponse<null>,
+	// 	},
+	// })
+	// @ApiResponse({
+	// 	status: 404,
+	// 	schema: {
+	// 		example: {
+	// 			code: '404',
+	// 			message: 'Not found document with that ID',
+	// 			details: null,
+	// 		} as ErrorResponse<null>,
+	// 	},
+	// })
+	// updateSubscription(
+	// 	@Param('id') id: string,
+	// 	@Body() updateSubscriptionDto: UpdateSubscriptionDto,
+	// ) {
+	// 	return 'updateSubscription';
+	// }
+	// @Delete('subscriptions/:id')
+	// @ApiTags('subscriptions')
+	// @ApiOperation({
+	// 	summary: 'deleteSubscription',
+	// 	description: 'Delete one subscription',
+	// })
+	// @ApiParam({ name: 'id', type: String, description: 'Subscription ID' })
+	// @ApiResponse({
+	// 	status: 200,
+	// 	schema: {
+	// 		example: {
+	// 			code: 200,
+	// 			message: 'Deleted successfully',
+	// 		},
+	// 	},
+	// })
+	// @ApiResponse({
+	// 	status: 400,
+	// 	schema: {
+	// 		example: {
+	// 			code: '400',
+	// 			message: 'Bad request',
+	// 			details: null,
+	// 		} as ErrorResponse<null>,
+	// 	},
+	// })
+	// @ApiResponse({
+	// 	status: 401,
+	// 	schema: {
+	// 		example: {
+	// 			code: '401',
+	// 			message: 'Unauthorized',
+	// 			details: null,
+	// 		} as ErrorResponse<null>,
+	// 	},
+	// })
+	// @ApiResponse({
+	// 	status: 403,
+	// 	schema: {
+	// 		example: {
+	// 			code: '403',
+	// 			message: `Forbidden resource`,
+	// 			details: null,
+	// 		} as ErrorResponse<null>,
+	// 	},
+	// })
+	// @ApiResponse({
+	// 	status: 404,
+	// 	schema: {
+	// 		example: {
+	// 			code: '404',
+	// 			message: 'Not found document with that ID',
+	// 			details: null,
+	// 		} as ErrorResponse<null>,
+	// 	},
+	// })
+	// deleteSubscription(@Param('id') id: string) {
+	// 	return 'deleteSubscription';
+	// }
+	// @Post('bill-items/:billItemID/subscriptions')
+	// @ApiTags('bill-items/subscriptions')
+	// @ApiOperation({
+	// 	summary: 'createSubscriptionForBillItem',
+	// 	description: 'Create Subscription when user purchase',
+	// })
+	// @ApiParam({ name: 'billItemID', type: String, description: 'Bill-item ID' })
+	// @ApiBody({ type: CreateSubscriptionDto })
+	// @ApiResponse({
+	// 	status: 201,
+	// 	schema: {
+	// 		example: {
+	// 			accountID: {},
+	// 			billItemID: {},
+	// 			expires: new Date(),
+	// 			status: SubscriptionStatus.ACTIVE,
+	// 			renew: false,
+	// 			createdAt: new Date(),
+	// 			updatedAt: new Date(),
+	// 		} as Subscription,
+	// 	},
+	// })
+	// @ApiResponse({
+	// 	status: 400,
+	// 	schema: {
+	// 		example: {
+	// 			code: '400',
+	// 			message: 'Bad request',
+	// 			details: null,
+	// 		} as ErrorResponse<null>,
+	// 	},
+	// })
+	// @ApiResponse({
+	// 	status: 401,
+	// 	schema: {
+	// 		example: {
+	// 			code: '401',
+	// 			message: 'Unauthorized',
+	// 			details: null,
+	// 		} as ErrorResponse<null>,
+	// 	},
+	// })
+	// @ApiResponse({
+	// 	status: 403,
+	// 	schema: {
+	// 		example: {
+	// 			code: '403',
+	// 			message: `Forbidden resource`,
+	// 			details: null,
+	// 		} as ErrorResponse<null>,
+	// 	},
+	// })
+	// @ApiResponse({
+	// 	status: 404,
+	// 	schema: {
+	// 		example: {
+	// 			code: '404',
+	// 			message: 'Not found document with that ID',
+	// 			details: null,
+	// 		} as ErrorResponse<null>,
+	// 	},
+	// })
+	// createSubscriptionForBillItem(
+	// 	@Param('billItemID') billItemID: string,
+	// 	@Body() createSubscriptionDto: CreateSubscriptionDto,
+	// ) {
+	// 	return 'createSubscription';
+	// }
 }
