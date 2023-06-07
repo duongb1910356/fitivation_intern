@@ -29,6 +29,7 @@ import {
 	PromotionType,
 } from './schemas/promotion.schema';
 import { CreatePromotionDto } from './dto/create-promotion.dto';
+import { UpdatePromotionDto } from './dto/update-promotion.dto';
 
 @Controller('promotions')
 export class PromotionsController {
@@ -203,7 +204,7 @@ export class PromotionsController {
 		description: 'Create one promotion',
 	})
 	@ApiBody({
-		type: Promotion,
+		type: CreatePromotionDto,
 		examples: {
 			ADMIN: {
 				targetID: 'string',
@@ -284,7 +285,7 @@ export class PromotionsController {
 	})
 	@ApiParam({ name: 'id', type: String, description: 'Promotion ID' })
 	@ApiBody({
-		type: Promotion,
+		type: UpdatePromotionDto,
 		examples: {
 			ADMIN: {
 				targetID: 'string',
@@ -364,7 +365,10 @@ export class PromotionsController {
 			} as ErrorResponse<null>,
 		},
 	})
-	updatePromotion(@Param('id') id: string) {
+	updatePromotion(
+		@Param('id') id: string,
+		@Body() updatePromotionDto: UpdatePromotionDto,
+	) {
 		return 'updatePromotion';
 	}
 	@Delete('promotions/:id')
@@ -601,7 +605,7 @@ export class PromotionsController {
 	})
 	@ApiParam({ name: 'facilityID', type: String, description: 'Facility ID' })
 	@ApiBody({
-		type: Promotion,
+		type: CreatePromotionDto,
 		examples: {
 			OwnerFacility: {
 				targetID: 'string',
@@ -693,7 +697,7 @@ export class PromotionsController {
 	@ApiParam({ name: 'facilityID', type: String, description: 'Facility ID' })
 	@ApiParam({ name: 'promotionID', type: String, description: 'Promotion ID' })
 	@ApiBody({
-		type: Promotion,
+		type: UpdatePromotionDto,
 		examples: {
 			OwnerFacility: {
 				targetID: 'string',
@@ -776,6 +780,7 @@ export class PromotionsController {
 	updatePromotionByOwnerFacility(
 		@Param('facilityID') facilityID: string,
 		@Param('promotionID') promotionID: string,
+		@Body() updatePromotionDto: UpdatePromotionDto,
 	) {
 		return 'updatePromotionByOwnerFacility';
 	}
