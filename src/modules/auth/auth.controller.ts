@@ -89,6 +89,18 @@ export class AuthController {
 	@Public()
 	@Post('register')
 	@ApiOperation({ summary: 'register', description: 'Allow user sign up' })
+	@ApiBody({
+		type: RegisterDto,
+		examples: {
+			USER: {
+				summary: 'User',
+				value: {
+					email: 'test1@test.com',
+					password: '123123123',
+				} as RegisterDto,
+			},
+		},
+	})
 	@ApiCreatedResponse({
 		schema: {
 			example: {
