@@ -25,13 +25,13 @@ import {
 	ApiCreatedResponse,
 	ApiNotFoundResponse,
 	ApiOkResponse,
+	ApiOperation,
 	ApiParam,
 	ApiResponse,
 	ApiTags,
 	ApiUnsupportedMediaTypeResponse,
 } from '@nestjs/swagger';
 import { mkdirSync, writeFileSync } from 'fs';
-import { ESortField, ESortOrder } from 'src/shared/enum/sort.enum';
 import { appConfig } from '../../app.config';
 import { SuccessResponse } from '../../shared/response/success-response';
 import { GenFileName } from '../../utils/gen-filename';
@@ -39,8 +39,16 @@ import { AvatarUploadDto } from './dto/avatar-upload-dto';
 import { CreateUserDto } from './dto/create-user-dto';
 import { GetUserDto } from './dto/get-user-dto';
 import { UpdateUserDto } from './dto/update-user-dto';
-import { User, UserRole } from './schemas/user.schema';
+import { Gender, User, UserRole, UserStatus } from './schemas/user.schema';
 import { UsersService } from './users.service';
+import { UserAddressDto } from './dto/user-address.dto';
+import { UserAddress } from './schemas/user-address.schema';
+import {
+	ErrorResponse,
+	ListOptions,
+	ListResponse,
+} from 'src/shared/response/common-response';
+import { ApiDocsPagination } from 'src/decorators/swagger-form-data.decorator';
 
 @ApiTags('users')
 @ApiBearerAuth()
@@ -49,81 +57,197 @@ export class UsersController {
 	constructor(private readonly userService: UsersService) {}
 
 	@Get(':id')
+	@ApiOperation({ summary: 'getUserById', description: 'Get one user by ID' })
 	@ApiParam({ name: 'id', type: String, description: 'User ID' })
-	@ApiOkResponse({ type: User, status: 200 })
-	@ApiNotFoundResponse({
-		type: NotFoundException,
+	@ApiOkResponse({
+		schema: {
+			example: {
+				_id: '',
+				role: UserRole.MEMBER,
+				username: 'member',
+				email: 'member@test.com',
+				password: '123123123123',
+				displayName: 'Admin user',
+				firstName: 'string',
+				lastName: 'string',
+				gender: Gender.MALE,
+				birthDate: new Date(),
+				tel: '0888888888',
+				address: {
+					province: 'Can Tho',
+					district: 'Ninh Kieu',
+					commune: 'Xuan Khanh',
+				} as unknown as UserAddress,
+				status: UserStatus.ACTIVE,
+				createdAt: new Date(),
+				updatedAt: new Date(),
+			} as User,
+		},
+	})
+	@ApiResponse({
 		status: 400,
-		description: 'User not found!',
+		schema: {
+			example: {
+				code: '400',
+				message: 'User not found',
+				details: null,
+			} as ErrorResponse<null>,
+		},
+	})
+	@ApiResponse({
+		status: 401,
+		schema: {
+			example: {
+				code: '401',
+				message: 'Unauthorized',
+				details: null,
+			} as ErrorResponse<null>,
+		},
+	})
+	@ApiResponse({
+		status: 403,
+		schema: {
+			example: {
+				code: '403',
+				message: `Forbidden resource`,
+				details: null,
+			} as ErrorResponse<null>,
+		},
+	})
+	@ApiResponse({
+		status: 404,
+		schema: {
+			example: {
+				code: '404',
+				message: 'Not found document with that ID',
+				details: null,
+			} as ErrorResponse<null>,
+		},
 	})
 	getUserById(@Param('id') id) {
 		return this.userService.findOne({ _id: id });
 	}
 
 	@Get()
+	@ApiDocsPagination('user')
+	@ApiOperation({ summary: 'getAllUsers', description: 'Get many users' })
 	@ApiResponse({
 		schema: {
 			example: {
-				code: 200,
-				message: 'Success',
-				data: {
-					total: 0,
-					filter: {
-						limit: 10,
-						offset: 0,
-						role: UserRole.ADMIN,
-						searchField: 'string',
-						searchValue: 'string',
-						sortField: ESortField.CREATED_AT,
-						sortOrder: ESortOrder.ASC,
-					} as GetUserDto,
-					data: [
-						{
-							_id: '_id',
-							displayName: 'string',
-							email: 'string',
-							role: UserRole.MEMBER,
-							createdAt: new Date(),
-							updatedAt: new Date(),
-							avatar: '',
-						},
-					] as User[],
-				},
-			} as SuccessResponse<User[], GetUserDto>,
+				items: [
+					{
+						_id: '',
+						role: UserRole.MEMBER,
+						username: 'member',
+						email: 'member@test.com',
+						password: '123123123123',
+						displayName: 'Admin user',
+						firstName: 'string',
+						lastName: 'string',
+						gender: Gender.MALE,
+						birthDate: new Date(),
+						tel: '0888888888',
+						address: {
+							province: 'Can Tho',
+							district: 'Ninh Kieu',
+							commune: 'Xuan Khanh',
+						} as unknown as UserAddress,
+						status: UserStatus.ACTIVE,
+						createdAt: new Date(),
+						updatedAt: new Date(),
+					} as User,
+				],
+				total: 1,
+				options: {
+					limit: 10,
+					offset: 0,
+					searchField: '_id',
+					searchValue: 'string',
+					sortField: '_id',
+					sortOrder: 'asc',
+				} as ListOptions<User>,
+			} as ListResponse<User>,
 		},
-		status: 200,
 	})
-	@ApiBadRequestResponse({
-		type: BadRequestException,
+	@ApiResponse({
 		status: 400,
-		description: '[Input] invalid!',
+		schema: {
+			example: {
+				code: '400',
+				message: 'Input invalid',
+				details: null,
+			} as ErrorResponse<null>,
+		},
+	})
+	@ApiResponse({
+		status: 401,
+		schema: {
+			example: {
+				code: '401',
+				message: 'Unauthorized',
+				details: null,
+			} as ErrorResponse<null>,
+		},
+	})
+	@ApiResponse({
+		status: 403,
+		schema: {
+			example: {
+				code: '403',
+				message: `Forbidden resource`,
+				details: null,
+			} as ErrorResponse<null>,
+		},
 	})
 	getAllUsers(@Query() filter: GetUserDto) {
 		return this.userService.findAll(filter);
 	}
 
 	@Post()
+	@ApiOperation({ summary: 'createUser', description: 'Create new user' })
 	@ApiBody({
 		type: CreateUserDto,
 		examples: {
 			ADMIN: {
 				summary: 'Admin',
 				value: {
-					displayName: 'Admin user',
+					role: UserRole.ADMIN,
+					username: 'admin',
 					email: 'admin@test.com',
 					password: '123123123123',
-					role: UserRole.ADMIN,
-					avatar: '',
+					displayName: 'Admin user',
+					firstName: 'string',
+					lastName: 'string',
+					gender: Gender.MALE,
+					birthDate: new Date(),
+					tel: '0888888888',
+					address: {
+						province: 'Can Tho',
+						district: 'Ninh Kieu',
+						commune: 'Xuan Khanh',
+					} as UserAddressDto,
+					status: UserStatus.ACTIVE,
 				} as CreateUserDto,
 			},
 			USER: {
 				summary: 'User',
 				value: {
-					displayName: 'User',
-					email: 'user@test.com',
-					password: '123123123123',
 					role: UserRole.MEMBER,
-					avatar: '',
+					username: 'member',
+					email: 'member@test.com',
+					password: '123123123123',
+					displayName: 'Admin user',
+					firstName: 'string',
+					lastName: 'string',
+					gender: Gender.MALE,
+					birthDate: new Date(),
+					tel: '0888888888',
+					address: {
+						province: 'Can Tho',
+						district: 'Ninh Kieu',
+						commune: 'Xuan Khanh',
+					} as UserAddressDto,
+					status: UserStatus.ACTIVE,
 				} as CreateUserDto,
 			},
 		},
@@ -134,50 +258,161 @@ export class UsersController {
 				code: 200,
 				message: 'Success',
 				data: {
-					displayName: 'User',
-					email: 'user@test.com',
+					_id: '',
 					role: UserRole.MEMBER,
-					avatar: '',
-				},
+					username: 'member',
+					email: 'member@test.com',
+					password: '123123123123',
+					displayName: 'Admin user',
+					firstName: 'string',
+					lastName: 'string',
+					gender: Gender.MALE,
+					birthDate: new Date(),
+					tel: '0888888888',
+					address: {
+						province: 'Can Tho',
+						district: 'Ninh Kieu',
+						commune: 'Xuan Khanh',
+					} as unknown as UserAddress,
+					status: UserStatus.ACTIVE,
+					createdAt: new Date(),
+					updatedAt: new Date(),
+				} as User,
 			},
 		},
 	})
-	@ApiBadRequestResponse({
-		type: BadRequestException,
+	@ApiResponse({
 		status: 400,
-		description: '[Input] invalid!',
+		schema: {
+			example: {
+				code: '400',
+				message: 'Input invalid',
+				details: null,
+			} as ErrorResponse<null>,
+		},
+	})
+	@ApiResponse({
+		status: 401,
+		schema: {
+			example: {
+				code: '401',
+				message: 'Unauthorized',
+				details: null,
+			} as ErrorResponse<null>,
+		},
+	})
+	@ApiResponse({
+		status: 403,
+		schema: {
+			example: {
+				code: '403',
+				message: `Forbidden resource`,
+				details: null,
+			} as ErrorResponse<null>,
+		},
 	})
 	createUser(@Body() input: CreateUserDto) {
 		return this.userService.createOne(input);
 	}
 
-	@Patch()
-	@ApiOkResponse({
-		// type: User,
-		status: 200,
-		schema: {
-			example: {
-				code: 200,
-				message: 'Success',
-				data: {
-					displayName: 'User',
-					email: 'user@test.com',
+	@Patch('/:id')
+	@ApiOperation({ summary: 'updateUser', description: '' })
+	@ApiParam({ name: 'id', type: String, description: 'User ID' })
+	@ApiBody({
+		type: UpdateUserDto,
+		examples: {
+			example1: {
+				value: {
 					role: UserRole.MEMBER,
-					avatar: '',
+					username: 'member',
+					email: 'member@test.com',
+					displayName: 'Admin user',
+					firstName: 'string',
+					lastName: 'string',
+					gender: Gender.MALE,
+					birthDate: new Date(),
+					tel: '0888888888',
+					address: {
+						province: 'Can Tho',
+						district: 'Ninh Kieu',
+						commune: 'Xuan Khanh',
+					} as unknown as UserAddress,
+					status: UserStatus.ACTIVE,
 				},
 			},
 		},
 	})
-	@ApiBadRequestResponse({
-		type: BadRequestException,
-		status: 400,
-		description: '[Input] invalid!',
+	@ApiOkResponse({
+		schema: {
+			example: {
+				_id: '',
+				role: UserRole.MEMBER,
+				username: 'member',
+				email: 'member@test.com',
+				password: '123123123123',
+				displayName: 'Admin user',
+				firstName: 'string',
+				lastName: 'string',
+				gender: Gender.MALE,
+				birthDate: new Date(),
+				tel: '0888888888',
+				address: {
+					province: 'Can Tho',
+					district: 'Ninh Kieu',
+					commune: 'Xuan Khanh',
+				} as unknown as UserAddress,
+				status: UserStatus.ACTIVE,
+				createdAt: new Date(),
+				updatedAt: new Date(),
+			} as User,
+		},
 	})
-	updateUser(@Body() updateUserDto: UpdateUserDto) {
+	@ApiResponse({
+		status: 400,
+		schema: {
+			example: {
+				code: '400',
+				message: 'Input invalid',
+				details: null,
+			} as ErrorResponse<null>,
+		},
+	})
+	@ApiResponse({
+		status: 401,
+		schema: {
+			example: {
+				code: '401',
+				message: 'Unauthorized',
+				details: null,
+			} as ErrorResponse<null>,
+		},
+	})
+	@ApiResponse({
+		status: 403,
+		schema: {
+			example: {
+				code: '403',
+				message: `Forbidden resource`,
+				details: null,
+			} as ErrorResponse<null>,
+		},
+	})
+	@ApiResponse({
+		status: 404,
+		schema: {
+			example: {
+				code: '404',
+				message: 'Not found document with that ID',
+				details: null,
+			} as ErrorResponse<null>,
+		},
+	})
+	updateUser(@Body() updateUserDto: UpdateUserDto, @Param('id') id: string) {
 		return this.userService.updateOne(updateUserDto);
 	}
 
 	@Delete(':id')
+	@ApiOperation({ summary: '', description: '' })
 	@ApiParam({ name: 'id', type: String, description: 'User ID' })
 	@ApiResponse({
 		schema: {
@@ -191,51 +426,62 @@ export class UsersController {
 	@ApiBadRequestResponse({
 		type: BadRequestException,
 		status: 400,
-		description: '[Input] invalid!',
+		description: '[Input] invalid',
 	})
 	@ApiNotFoundResponse({
 		type: NotFoundException,
 		status: 404,
-		description: 'User not found!',
+		description: 'User not found',
 	})
 	deleteUser(@Param() id: string) {
 		return this.userService.deleteOne(id);
 	}
 
 	@Post(':id/avatar')
+	@ApiOperation({ summary: '', description: '' })
 	@UseInterceptors(FileInterceptor('avatar'))
 	@ApiConsumes('multipart/form-data')
-	@ApiParam({ name: 'id', type: String })
+	@ApiParam({ name: 'id', type: String, description: 'User ID' })
 	@ApiBody({ type: AvatarUploadDto })
 	@ApiOkResponse({
-		status: 200,
 		schema: {
 			example: {
-				code: 200,
-				message: 'Success',
-				data: {
-					displayName: 'User',
-					email: 'user@test.com',
-					role: UserRole.MEMBER,
-					avatar: '',
-				},
-			},
+				_id: '',
+				role: UserRole.MEMBER,
+				username: 'member',
+				email: 'member@test.com',
+				password: '123123123123',
+				displayName: 'Admin user',
+				firstName: 'string',
+				lastName: 'string',
+				gender: Gender.MALE,
+				birthDate: new Date(),
+				tel: '0888888888',
+				address: {
+					province: 'Can Tho',
+					district: 'Ninh Kieu',
+					commune: 'Xuan Khanh',
+				} as unknown as UserAddress,
+				status: UserStatus.ACTIVE,
+				createdAt: new Date(),
+				updatedAt: new Date(),
+			} as User,
 		},
 	})
 	@ApiNotFoundResponse({
 		type: NotFoundException,
 		status: 404,
-		description: 'User not found!',
+		description: 'User not found',
 	})
 	@ApiUnsupportedMediaTypeResponse({
 		type: UnsupportedMediaTypeException,
 		status: 415,
-		description: 'File invalid!',
+		description: 'File invalid',
 	})
 	@ApiBadRequestResponse({
 		type: BadRequestException,
 		status: 400,
-		description: 'File size invalid!',
+		description: 'File size invalid',
 	})
 	uploadFile(
 		@Param('id') id,
