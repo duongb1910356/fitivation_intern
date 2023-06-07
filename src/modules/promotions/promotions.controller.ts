@@ -30,9 +30,8 @@ import {
 } from './schemas/promotion.schema';
 import { CreatePromotionDto } from './dto/create-promotion.dto';
 import { UpdatePromotionDto } from './dto/update-promotion.dto';
-import { Schema } from '@nestjs/mongoose';
 
-@Controller('promotions')
+@Controller()
 export class PromotionsController {
 	@Get('promotions')
 	@ApiTags('promotions')
@@ -220,7 +219,7 @@ export class PromotionsController {
 					startDate: new Date(),
 					endDate: new Date(),
 					customerType: CustomerType.CUSTOMER,
-				} as Promotion,
+				},
 			},
 		},
 	})
@@ -302,7 +301,7 @@ export class PromotionsController {
 					startDate: new Date(),
 					endDate: new Date(),
 					customerType: CustomerType.CUSTOMER,
-				} as Promotion,
+				},
 			},
 		},
 	})
@@ -623,7 +622,7 @@ export class PromotionsController {
 					startDate: new Date(),
 					endDate: new Date(),
 					customerType: CustomerType.CUSTOMER,
-				} as Promotion,
+				},
 			},
 		},
 	})
@@ -716,7 +715,7 @@ export class PromotionsController {
 					startDate: new Date(),
 					endDate: new Date(),
 					customerType: CustomerType.CUSTOMER,
-				} as Promotion,
+				},
 			},
 		},
 	})
