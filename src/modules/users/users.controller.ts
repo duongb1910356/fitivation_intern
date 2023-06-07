@@ -37,7 +37,6 @@ import { SuccessResponse } from '../../shared/response/success-response';
 import { GenFileName } from '../../utils/gen-filename';
 import { AvatarUploadDto } from './dto/avatar-upload-dto';
 import { CreateUserDto } from './dto/create-user-dto';
-import { GetUserDto } from './dto/get-user-dto';
 import { UpdateUserDto } from './dto/update-user-dto';
 import { Gender, User, UserRole, UserStatus } from './schemas/user.schema';
 import { UsersService } from './users.service';
@@ -199,7 +198,7 @@ export class UsersController {
 			} as ErrorResponse<null>,
 		},
 	})
-	getAllUsers(@Query() filter: GetUserDto) {
+	getAllUsers(@Query() filter: ListOptions<User>) {
 		return this.userService.findAll(filter);
 	}
 
