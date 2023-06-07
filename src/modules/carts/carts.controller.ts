@@ -2,6 +2,7 @@ import { Controller, Get, Post, Param, Query, UseGuards } from '@nestjs/common';
 import { CartsService } from './carts.service';
 import {
 	ApiBearerAuth,
+	ApiBody,
 	ApiOperation,
 	ApiParam,
 	ApiResponse,
@@ -39,6 +40,7 @@ export class CartsController {
 					{
 						_id: '_id',
 						accountID: {},
+						CartItemIDs: {},
 						promotionIDs: {},
 						promotionPrice: 0,
 						totalPrice: 0,
@@ -109,6 +111,7 @@ export class CartsController {
 					{
 						_id: '_id',
 						accountID: {},
+						CartItemIDs: {},
 						promotionIDs: {},
 						promotionPrice: 0,
 						totalPrice: 0,
@@ -179,6 +182,19 @@ export class CartsController {
 	@ApiOperation({
 		summary: 'purchaseInCart',
 		description: 'Allow customers to purchase packages in their cart',
+	})
+	@ApiBody({
+		type: Cart,
+		examples: {
+			example1: {
+				value: {
+					CartItemIDs: {},
+					promotionIDs: [],
+					createdAt: new Date(),
+					updatedAt: new Date(),
+				},
+			},
+		},
 	})
 	@ApiResponse({
 		status: 201,

@@ -40,7 +40,6 @@ export class CartItemsController {
 			example: {
 				items: [
 					{
-						cartID: {},
 						packageID: {},
 						promotionIDs: [],
 						promotionPrice: 0,
@@ -104,7 +103,6 @@ export class CartItemsController {
 			example: {
 				items: [
 					{
-						cartID: {},
 						packageID: {},
 						promotionIDs: [],
 						promotionPrice: 0,
@@ -174,12 +172,21 @@ export class CartItemsController {
 		summary: 'createCartItem',
 		description: 'Create one cart-item',
 	})
-	@ApiBody({ type: CreateCartItemDto })
+	@ApiBody({
+		type: CreateCartItemDto,
+		examples: {
+			example1: {
+				value: {
+					packageID: 'string',
+					promotionIDs: [],
+				},
+			},
+		},
+	})
 	@ApiResponse({
 		status: 201,
 		schema: {
 			example: {
-				cartID: {},
 				packageID: {},
 				promotionIDs: [],
 				promotionPrice: 0,
@@ -229,12 +236,21 @@ export class CartItemsController {
 		description: 'Update one cart-item',
 	})
 	@ApiParam({ name: 'cartID', type: String, description: 'Cart ID' })
-	@ApiBody({ type: UpdateCartItemDto })
+	@ApiBody({
+		type: UpdateCartItemDto,
+		examples: {
+			example1: {
+				value: {
+					packageID: 'string',
+					promotionIDs: [],
+				},
+			},
+		},
+	})
 	@ApiResponse({
 		status: 201,
 		schema: {
 			example: {
-				cartID: {},
 				packageID: {},
 				promotionIDs: [],
 				promotionPrice: 0,
