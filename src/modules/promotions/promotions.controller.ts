@@ -204,7 +204,7 @@ export class PromotionsController {
 		description: 'Create one promotion',
 	})
 	@ApiBody({
-		type: 'object',
+		type: CreatePromotionDto,
 		examples: {
 			ADMIN: {
 				value: {
@@ -287,7 +287,7 @@ export class PromotionsController {
 	})
 	@ApiParam({ name: 'id', type: String, description: 'Promotion ID' })
 	@ApiBody({
-		type: 'object',
+		type: UpdatePromotionDto,
 		examples: {
 			ADMIN: {
 				value: {
@@ -609,7 +609,7 @@ export class PromotionsController {
 	})
 	@ApiParam({ name: 'facilityID', type: String, description: 'Facility ID' })
 	@ApiBody({
-		type: 'object',
+		type: CreatePromotionDto,
 		examples: {
 			ADMIN: {
 				value: {
@@ -703,7 +703,7 @@ export class PromotionsController {
 	@ApiParam({ name: 'facilityID', type: String, description: 'Facility ID' })
 	@ApiParam({ name: 'promotionID', type: String, description: 'Promotion ID' })
 	@ApiBody({
-		type: 'object',
+		type: CreatePromotionDto,
 		examples: {
 			ADMIN: {
 				value: {
