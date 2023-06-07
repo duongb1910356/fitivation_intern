@@ -207,7 +207,7 @@ export class PromotionsController {
 		schema: {
 			examples: {
 				ADMIN: {
-					values: {
+					value: {
 						targetID: 'string',
 						type: PromotionType.BILL,
 						name: 'string',
@@ -291,7 +291,7 @@ export class PromotionsController {
 		schema: {
 			examples: {
 				ADMIN: {
-					values: {
+					value: {
 						targetID: 'string',
 						type: PromotionType.BILL,
 						name: 'string',
@@ -614,7 +614,7 @@ export class PromotionsController {
 		schema: {
 			examples: {
 				ADMIN: {
-					values: {
+					value: {
 						targetID: 'string',
 						type: PromotionType.BILL,
 						name: 'string',
@@ -709,7 +709,7 @@ export class PromotionsController {
 		schema: {
 			examples: {
 				ADMIN: {
-					values: {
+					value: {
 						targetID: 'string',
 						type: PromotionType.BILL,
 						name: 'string',
