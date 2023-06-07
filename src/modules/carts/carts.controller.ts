@@ -1,22 +1,12 @@
-import {
-	Controller,
-	Get,
-	Post,
-	Body,
-	Param,
-	Query,
-	UseGuards,
-} from '@nestjs/common';
+import { Controller, Get, Post, Param, Query, UseGuards } from '@nestjs/common';
 import { CartsService } from './carts.service';
 import {
 	ApiBearerAuth,
-	ApiBody,
 	ApiOperation,
 	ApiParam,
 	ApiResponse,
 	ApiTags,
 } from '@nestjs/swagger';
-import { PurchaseCartDto } from './dto/purchase-cart.dto';
 import {
 	ErrorResponse,
 	ListOptions,
@@ -190,7 +180,6 @@ export class CartsController {
 		summary: 'purchaseInCart',
 		description: 'Allow customers to purchase packages in their cart',
 	})
-	@ApiBody({ type: PurchaseCartDto })
 	@ApiResponse({
 		status: 201,
 		schema: {
@@ -239,7 +228,7 @@ export class CartsController {
 			} as ErrorResponse<null>,
 		},
 	})
-	purchaseInCart(@Body() purchaseCartDto: PurchaseCartDto) {
+	purchaseInCart() {
 		return 'purchaseInCart';
 	}
 }
