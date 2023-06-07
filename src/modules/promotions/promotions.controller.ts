@@ -202,6 +202,25 @@ export class PromotionsController {
 		summary: 'createPromotion',
 		description: 'Create one promotion',
 	})
+	@ApiBody({
+		type: Promotion,
+		examples: {
+			ADMIN: {
+				targetID: 'string',
+				type: PromotionType.BILL,
+				name: 'string',
+				description: 'string',
+				couponCode: 'string',
+				value: 1,
+				method: PromotionMethod.NUMBER,
+				minPriceApply: 0,
+				maxQuantity: 0,
+				startDate: new Date(),
+				endDate: new Date(),
+				customerType: CustomerType.CUSTOMER,
+			} as Promotion,
+		},
+	})
 	@ApiResponse({
 		status: 201,
 		schema: {
@@ -262,6 +281,26 @@ export class PromotionsController {
 	@ApiOperation({
 		summary: 'updatePromotion',
 		description: 'Update one promotion',
+	})
+	@ApiParam({ name: 'id', type: String, description: 'Promotion ID' })
+	@ApiBody({
+		type: Promotion,
+		examples: {
+			ADMIN: {
+				targetID: 'string',
+				type: PromotionType.BILL,
+				name: 'string',
+				description: 'string',
+				couponCode: 'string',
+				value: 1,
+				method: PromotionMethod.NUMBER,
+				minPriceApply: 0,
+				maxQuantity: 0,
+				startDate: new Date(),
+				endDate: new Date(),
+				customerType: CustomerType.CUSTOMER,
+			} as Promotion,
+		},
 	})
 	@ApiResponse({
 		status: 201,
@@ -325,7 +364,6 @@ export class PromotionsController {
 			} as ErrorResponse<null>,
 		},
 	})
-	@ApiParam({ name: 'id', type: String, description: 'Promotion ID' })
 	updatePromotion(@Param('id') id: string) {
 		return 'updatePromotion';
 	}
@@ -562,6 +600,25 @@ export class PromotionsController {
 			'Allow facility owner to create many promotions of own facility',
 	})
 	@ApiParam({ name: 'facilityID', type: String, description: 'Facility ID' })
+	@ApiBody({
+		type: Promotion,
+		examples: {
+			OwnerFacility: {
+				targetID: 'string',
+				type: PromotionType.FACILITY,
+				name: 'string',
+				description: 'string',
+				couponCode: 'string',
+				value: 1,
+				method: PromotionMethod.NUMBER,
+				minPriceApply: 0,
+				maxQuantity: 0,
+				startDate: new Date(),
+				endDate: new Date(),
+				customerType: CustomerType.CUSTOMER,
+			} as Promotion,
+		},
+	})
 	@ApiResponse({
 		status: 201,
 		schema: {
@@ -629,11 +686,30 @@ export class PromotionsController {
 	}
 	@Patch('facilities/:facilityID/promotions/:promotionID')
 	@ApiTags('facilities/promotions')
-	@ApiParam({ name: 'facilityID', type: String, description: 'Facility ID' })
-	@ApiParam({ name: 'promotionID', type: String, description: 'Promotion ID' })
 	@ApiOperation({
 		summary: 'updatePromotionByOwnerFacility',
 		description: 'Allow facility owner to update one promotion of own facility',
+	})
+	@ApiParam({ name: 'facilityID', type: String, description: 'Facility ID' })
+	@ApiParam({ name: 'promotionID', type: String, description: 'Promotion ID' })
+	@ApiBody({
+		type: Promotion,
+		examples: {
+			OwnerFacility: {
+				targetID: 'string',
+				type: PromotionType.FACILITY,
+				name: 'string',
+				description: 'string',
+				couponCode: 'string',
+				value: 1,
+				method: PromotionMethod.NUMBER,
+				minPriceApply: 0,
+				maxQuantity: 0,
+				startDate: new Date(),
+				endDate: new Date(),
+				customerType: CustomerType.CUSTOMER,
+			} as Promotion,
+		},
 	})
 	@ApiResponse({
 		status: 201,
