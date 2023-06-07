@@ -56,7 +56,7 @@ export class UsersController {
 	constructor(private readonly userService: UsersService) {}
 
 	@Get(':id')
-	@ApiOperation({ summary: 'getUserById', description: 'Get one user by ID' })
+	@ApiOperation({ summary: 'getUserByID', description: 'Get one user by ID' })
 	@ApiParam({ name: 'id', type: String, description: 'User ID' })
 	@ApiOkResponse({
 		schema: {
@@ -123,13 +123,13 @@ export class UsersController {
 			} as ErrorResponse<null>,
 		},
 	})
-	getUserById(@Param('id') id) {
+	getUserByID(@Param('id') id) {
 		return this.userService.findOne({ _id: id });
 	}
 
 	@Get()
 	@ApiDocsPagination('user')
-	@ApiOperation({ summary: 'getAllUsers', description: 'Get many users' })
+	@ApiOperation({ summary: 'getManyUsers', description: 'Get many users' })
 	@ApiResponse({
 		schema: {
 			example: {
@@ -198,7 +198,7 @@ export class UsersController {
 			} as ErrorResponse<null>,
 		},
 	})
-	getAllUsers(@Query() filter: ListOptions<User>) {
+	getManyUsers(@Query() filter: ListOptions<User>) {
 		return this.userService.findAll(filter);
 	}
 
