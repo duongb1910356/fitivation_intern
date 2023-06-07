@@ -14,7 +14,6 @@ import {
 @Controller('subscriptions')
 export class SubscriptionsController {
 	@Get()
-	@ApiTags('subscriptions')
 	@ApiDocsPagination('subscription')
 	@ApiOperation({
 		summary: 'getManySubscriptions',
@@ -79,7 +78,6 @@ export class SubscriptionsController {
 		return 'getManySubscriptions';
 	}
 	@Get(':id')
-	@ApiTags('subscriptions')
 	@ApiOperation({
 		summary: 'getOneSubscription',
 		description: 'Get one subscription',
@@ -154,7 +152,7 @@ export class SubscriptionsController {
 		return 'getOneSubscription';
 	}
 
-	@Patch('/:id/renew')
+	@Patch(':id/renew')
 	@ApiParam({ name: 'id', type: String, description: 'Subscription ID' })
 	@ApiResponse({
 		status: 200,
