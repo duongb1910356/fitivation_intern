@@ -1,4 +1,4 @@
-import { Controller, Get, Param, Query } from '@nestjs/common';
+import { Controller, Get, Param, Patch, Query } from '@nestjs/common';
 import { ApiOperation, ApiParam, ApiResponse, ApiTags } from '@nestjs/swagger';
 import { ApiDocsPagination } from 'src/decorators/swagger-form-data.decorator';
 import {
@@ -152,5 +152,73 @@ export class SubscriptionsController {
 	})
 	getOneSubscription(@Param('id') id: string) {
 		return 'getOneSubscription';
+	}
+
+	@Patch('/:id/renew')
+	@ApiParam({ name: 'id', type: String, description: 'Subscription ID' })
+	@ApiResponse({
+		status: 200,
+		schema: {
+			example: {
+				accountID: {},
+				billItemID: {},
+				expires: new Date(),
+				status: SubscriptionStatus.ACTIVE,
+				renew: false,
+			} as Subscription,
+		},
+	})
+	@ApiResponse({
+		status: 400,
+		schema: {
+			example: {
+				code: '400',
+				message: 'Bad request',
+				details: null,
+			} as ErrorResponse<null>,
+		},
+	})
+	@ApiResponse({
+		status: 401,
+		schema: {
+			example: {
+				code: '401',
+				message: 'Unauthorized',
+				details: null,
+			} as ErrorResponse<null>,
+		},
+	})
+	@ApiResponse({
+		status: 402,
+		schema: {
+			example: {
+				code: '402',
+				message: 'Payment Required',
+				details: null,
+			} as ErrorResponse<null>,
+		},
+	})
+	@ApiResponse({
+		status: 403,
+		schema: {
+			example: {
+				code: '403',
+				message: `Forbidden resource`,
+				details: null,
+			} as ErrorResponse<null>,
+		},
+	})
+	@ApiResponse({
+		status: 404,
+		schema: {
+			example: {
+				code: '404',
+				message: 'Not found document with that ID',
+				details: null,
+			} as ErrorResponse<null>,
+		},
+	})
+	renew(@Param('id') id: string) {
+		return 'renew';
 	}
 }
