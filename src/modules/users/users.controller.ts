@@ -315,7 +315,10 @@ export class UsersController {
 	}
 
 	@Patch('/:id')
-	@ApiOperation({ summary: 'updateUser', description: '' })
+	@ApiOperation({
+		summary: 'updateUser',
+		description: 'Update user information',
+	})
 	@ApiParam({ name: 'id', type: String, description: 'User ID' })
 	@ApiBody({
 		type: UpdateUserDto,
@@ -411,7 +414,7 @@ export class UsersController {
 	}
 
 	@Delete(':id')
-	@ApiOperation({ summary: '', description: '' })
+	@ApiOperation({ summary: 'deleteUser', description: 'Delete user ' })
 	@ApiParam({ name: 'id', type: String, description: 'User ID' })
 	@ApiResponse({
 		schema: {
@@ -437,7 +440,10 @@ export class UsersController {
 	}
 
 	@Post(':id/avatar')
-	@ApiOperation({ summary: '', description: '' })
+	@ApiOperation({
+		summary: 'uploadFile',
+		description: 'Upload user avatar file',
+	})
 	@UseInterceptors(FileInterceptor('avatar'))
 	@ApiConsumes('multipart/form-data')
 	@ApiParam({ name: 'id', type: String, description: 'User ID' })
