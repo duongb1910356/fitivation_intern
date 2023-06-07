@@ -20,7 +20,7 @@ export class FacilitySchedule extends BaseObject {
 		ref: 'Facility',
 		required: true,
 	})
-	facilityID: Facility; //Faccility
+	facilityID: Facility;
 
 	@Prop({ type: String, enum: ScheduleType, required: true })
 	type: ScheduleType;

@@ -19,7 +19,7 @@ export class Holiday extends BaseObject {
 	endDate: Date;
 
 	@Prop({ type: String })
-	content: string;
+	content?: string;
 }
 
 export const HolidaySchema = SchemaFactory.createForClass(Holiday);

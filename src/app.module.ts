@@ -16,12 +16,19 @@ import { FacilityModule } from './modules/facility/facility.module';
 import { AddressModule } from './modules/address/address.module';
 import { PhotoModule } from './modules/photo/photo.module';
 import { PackageTypeModule } from './modules/package-type/package-type.module';
-import { ReviewsModule } from './modules/reviews/reviews.module';
-import { BrandModule } from './modules/brand/brand.module';
+import { PackageModule } from './modules/package/package.module';
+import { FacilityCategoryModule } from './modules/facility-category/facility-category.module';
+import { FacilityScheduleModule } from './modules/facility-schedule/facility-schedule.module';
+import { HolidayModule } from './modules/holiday/holiday.module';
+import { AttendanceModule } from './modules/attendance/attendance.module';
+import { CounterModule } from './modules/counter/counter.module';
+import { AdminModule } from './modules/admin/admin.module';
+
 @Module({
 	imports: [
 		// Make it look good and work well
 		MongooseModule.forRoot(appConfig.mongoURI),
+		AdminModule,
 		AuthModule,
 		UsersModule,
 		PromotionsModule,

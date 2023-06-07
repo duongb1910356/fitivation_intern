@@ -22,11 +22,9 @@ import {
 	ApiTags,
 	ApiUnauthorizedResponse,
 } from '@nestjs/swagger';
-import { CreatePackageTypeDto } from './dto/create-package-type-dto';
 import { Public } from '../auth/utils';
 import { PackageType } from './entities/package-type.entity';
 import { UpdatePackageTypeDto } from './dto/update-package-type-dto';
-import { UpdateOrderDto } from './dto/update-order-dto';
 import {
 	ErrorResponse,
 	ListOptions,
@@ -37,59 +35,20 @@ import { ApiDocsPagination } from 'src/decorators/swagger-form-data.decorator';
 import { Roles } from 'src/decorators/role-decorator/role.decorator';
 import { UserRole } from '../users/schemas/user.schema';
 import { RolesGuard } from 'src/decorators/role-decorator/role.guard';
+import { Package, TimeType } from '../package/entities/package.entity';
+import { CreatePackageDto } from '../package/dto/create-package-dto';
 
 @ApiTags('package-types')
-@Controller()
+@Controller('package-types')
 export class PackageTypeController {
-	@ApiBearerAuth()
-	@UseGuards(RolesGuard)
-	@Roles(UserRole.ADMIN, UserRole.FACILITY_OWNER)
-	@Get('/package-types')
-	@ApiOperation({
-		summary: 'Get All Package Type',
-		description: `Only admin can use this API`,
-	})
-	@ApiDocsPagination('PackageTypes')
-	@ApiOkResponse({
-		schema: {
-			example: {
-				items: [
-					{
-						_id: '6476ef7d1f0419cd330fe128',
-						facilityID: {} as unknown as Facility,
-						name: 'GYM GYM 1',
-						description: 'cơ sở tập gym chất lượng',
-						price: 100000,
-						order: 0,
-						createdAt: new Date(),
-						updatedAt: new Date(),
-					} as PackageType,
-				],
-				total: 1,
-				options: {
-					limit: 10,
-					offset: 0,
-					searchField: 'name',
-					searchValue: 'string',
-					sortField: 'name',
-					sortOrder: 'asc',
-				} as ListOptions<PackageType>,
-			} as ListResponse<PackageType>,
-		},
-	})
-	getAllPackageTypes(@Query() filter: ListOptions<PackageType>) {
-		//
-		console.log(filter);
-	}
-
 	@Public()
-	@Get('/package-types/:packageTypeId')
+	@Get(':packageTypeID')
 	@ApiOperation({
-		summary: 'Get Package Type by packageTypeId',
+		summary: 'Get Package Type by packageTypeID',
 		description: `All role can use this API`,
 	})
 	@ApiParam({
-		name: 'packageTypeId',
+		name: 'packageTypeID',
 		type: String,
 		description: 'PackageType ID',
 	})
@@ -125,51 +84,54 @@ export class PackageTypeController {
 			} as ErrorResponse<null>,
 		},
 	})
-	getPackageType(@Param('packageTypeId') packageTypeId: string) {
+	getPackageType(@Param('packageTypeID') packageTypeID: string) {
 		//
-		console.log(packageTypeId);
+		console.log(packageTypeID);
 	}
 
 	@Public()
-	@Get('facilities/:facilityId/package-types')
+	@Get('package-type/:packageTypeID/packages')
 	@ApiOperation({
-		summary: 'Get all Package Type by facilityId',
+		summary: 'Get all Package by packageTypeID',
 		description: `All role can use this API`,
 	})
-	@ApiDocsPagination('PackageTypes')
-	@ApiParam({ name: 'facilityId', type: String, description: 'Facility ID' })
+	@ApiDocsPagination('Package')
+	@ApiParam({
+		name: 'packageTypeID',
+		type: String,
+		description: 'Package Type ID',
+	})
 	@ApiOkResponse({
 		schema: {
 			example: {
 				items: [
 					{
 						_id: '6476ef7d1f0419cd330fe128',
+						packageTypeID: {} as unknown as PackageType,
 						facilityID: {} as unknown as Facility,
-						name: 'GYM GYM 1',
-						description: 'cơ sở tập gym chất lượng',
+						type: TimeType.ONE_MONTH,
 						price: 100000,
-						order: 0,
 						createdAt: new Date(),
 						updatedAt: new Date(),
-					} as PackageType,
+					} as Package,
 				],
 				total: 1,
 				options: {
 					limit: 10,
 					offset: 0,
-					searchField: 'name',
+					searchField: 'facilityID',
 					searchValue: 'string',
 					sortField: '_id',
 					sortOrder: 'asc',
-				} as ListOptions<PackageType>,
-			} as ListResponse<PackageType>,
+				} as ListOptions<Package>,
+			} as ListResponse<Package>,
 		},
 	})
 	@ApiNotFoundResponse({
 		schema: {
 			example: {
 				code: '404',
-				message: 'Facility not found!',
+				message: 'PackageType not found!',
 				details: null,
 			} as ErrorResponse<null>,
 		},
@@ -183,39 +145,41 @@ export class PackageTypeController {
 			} as ErrorResponse<null>,
 		},
 	})
-	getAllPackageTypeByFacility(
-		@Param('facilityId') facilityId: string,
-		@Query() filter: ListOptions<PackageType>,
+	getAllPackages(
+		@Param('packageTypeID') packageTypeID: string,
+		@Query() filter: ListOptions<Package>,
 	) {
 		//
-		console.log(facilityId, filter);
+		console.log(packageTypeID, filter);
 	}
 
 	@ApiBearerAuth()
 	@UseGuards(RolesGuard)
-	@Roles(UserRole.ADMIN, UserRole.FACILITY_OWNER)
-	@Post('facilities/:facilityId/package-types')
+	@Roles(UserRole.FACILITY_OWNER)
+	@Post('package-type/:packageTypeID/packages')
 	@ApiOperation({
-		summary: 'Create new Package Type by facilityId',
+		summary: 'Create new Package by packageTypeID',
 		description: `Facility Owner can use this API`,
 	})
-	@ApiParam({ name: 'facilityId', type: String, description: 'Facility ID' })
+	@ApiParam({
+		name: 'packageTypeID',
+		type: String,
+		description: 'Package Type ID',
+	})
 	@ApiBody({
-		type: CreatePackageTypeDto,
+		type: CreatePackageDto,
 		examples: {
 			test1: {
 				value: {
-					name: 'Standard Package 1',
-					description: 'This is a standard package 1',
-					price: 998.99,
-				} as CreatePackageTypeDto,
+					type: TimeType.ONE_MONTH,
+					price: 90000,
+				} as CreatePackageDto,
 			},
 			test2: {
 				value: {
-					name: 'Standard Package 2',
-					description: 'This is a standard package 2',
-					price: 888.88,
-				} as CreatePackageTypeDto,
+					type: TimeType.SIX_MONTH,
+					price: 540000,
+				} as CreatePackageDto,
 			},
 		},
 	})
@@ -223,14 +187,13 @@ export class PackageTypeController {
 		schema: {
 			example: {
 				_id: '6476ef7d1f0419cd330fe128',
+				packageTypeID: {} as unknown as PackageType,
 				facilityID: {} as unknown as Facility,
-				name: 'GYM GYM 1',
-				description: 'cơ sở tập gym chất lượng',
+				type: TimeType.ONE_MONTH,
 				price: 100000,
-				order: 0,
 				createdAt: new Date(),
 				updatedAt: new Date(),
-			} as PackageType,
+			} as Package,
 		},
 	})
 	@ApiUnauthorizedResponse({
@@ -260,23 +223,23 @@ export class PackageTypeController {
 			} as ErrorResponse<null>,
 		},
 	})
-	createPackageType(
-		@Param('facilityId') id: string,
-		@Body() data: CreatePackageTypeDto,
+	createPackage(
+		@Param('packageTypeID') packageTypeID: string,
+		@Body() data: CreatePackageDto,
 	) {
-		console.log(id, data);
+		console.log(packageTypeID, data);
 	}
 
 	@ApiBearerAuth()
 	@UseGuards(RolesGuard)
-	@Roles(UserRole.ADMIN, UserRole.FACILITY_OWNER)
-	@Patch('package-types/:packageTypeId')
+	@Roles(UserRole.FACILITY_OWNER)
+	@Patch(':packageTypeID')
 	@ApiOperation({
-		summary: 'Update Package Type by packageTypeId',
+		summary: 'Update Package Type by packageTypeID',
 		description: `Facility Owner can use this API`,
 	})
 	@ApiParam({
-		name: 'packageTypeId',
+		name: 'packageTypeID',
 		type: String,
 		description: 'Package Type ID',
 	})
@@ -350,23 +313,23 @@ export class PackageTypeController {
 		},
 	})
 	updatePackageType(
-		@Param('packageTypeId') packageTypeId: string,
+		@Param('packageTypeID') packageTypeID: string,
 		@Body() data: UpdatePackageTypeDto,
 	) {
-		console.log(packageTypeId, data);
+		console.log(packageTypeID, data);
 		// Logic để cập nhật package type theo ID
 	}
 
 	@ApiBearerAuth()
 	@UseGuards(RolesGuard)
-	@Roles(UserRole.ADMIN, UserRole.FACILITY_OWNER)
-	@Delete('package-types/:packageTypeId')
+	@Roles(UserRole.FACILITY_OWNER)
+	@Delete(':packageTypeID')
 	@ApiOperation({
-		summary: 'Delete Package Type by packageTypeId',
+		summary: 'Delete Package Type by packageTypeID',
 		description: `Facility Owner can use this API`,
 	})
 	@ApiParam({
-		name: 'packageTypeId',
+		name: 'packageTypeID',
 		type: String,
 		description: 'Package Type ID',
 	})
@@ -413,85 +376,8 @@ export class PackageTypeController {
 			} as ErrorResponse<null>,
 		},
 	})
-	deletePackageType(@Param('packageTypeId') packageTypeId: string) {
-		console.log(packageTypeId);
+	deletePackageType(@Param('packageTypeID') packageTypeID: string) {
+		console.log(packageTypeID);
 		// Logic để xóa package type theo ID
-	}
-
-	@ApiBearerAuth()
-	@UseGuards(RolesGuard)
-	@Roles(UserRole.ADMIN, UserRole.FACILITY_OWNER)
-	@Patch('facilities/:facilityId/package-types/swap-order')
-	@ApiOperation({
-		summary: 'Swap Package Type order by facilityId',
-		description: `Facility Owner can use this API`,
-	})
-	@ApiParam({ name: 'facilityId', type: String, description: 'Facility ID' })
-	@ApiBody({
-		type: UpdateOrderDto,
-		examples: {
-			Test1: {
-				value: {
-					order1: 0,
-					order2: 1,
-				} as UpdateOrderDto,
-			},
-			Test2: {
-				value: {
-					order1: 1,
-					order2: 3,
-				} as UpdateOrderDto,
-			},
-		},
-	})
-	@ApiOkResponse({
-		schema: {
-			example: {
-				message: 'Swap order successful!',
-			},
-		},
-	})
-	@ApiUnauthorizedResponse({
-		schema: {
-			example: {
-				code: '401',
-				message: 'Unauthorized',
-				details: null,
-			} as ErrorResponse<null>,
-		},
-	})
-	@ApiForbiddenResponse({
-		schema: {
-			example: {
-				code: '403',
-				message: 'Forbidden resource',
-				details: null,
-			} as ErrorResponse<null>,
-		},
-	})
-	@ApiNotFoundResponse({
-		schema: {
-			example: {
-				code: '404',
-				message: 'Facility not found!',
-				details: null,
-			} as ErrorResponse<null>,
-		},
-	})
-	@ApiBadRequestResponse({
-		schema: {
-			example: {
-				code: '400',
-				message: '[Input] invalid!',
-				details: null,
-			} as ErrorResponse<null>,
-		},
-	})
-	swapPackageTypeInList(
-		@Param('facilityId') facilityId: string,
-		@Body() data: UpdateOrderDto,
-	) {
-		console.log(facilityId, data);
-		//Logic để hoán đổi order của 2 TackageType
 	}
 }
