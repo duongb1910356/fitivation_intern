@@ -13,7 +13,7 @@ import {
 
 @Controller('subscriptions')
 export class SubscriptionsController {
-	@Get('subscriptions')
+	@Get()
 	@ApiTags('subscriptions')
 	@ApiDocsPagination('subscription')
 	@ApiOperation({
@@ -78,7 +78,7 @@ export class SubscriptionsController {
 	getManySubscriptions(@Query() filter: ListOptions<Subscription>) {
 		return 'getManySubscriptions';
 	}
-	@Get('subscriptions/:id')
+	@Get(':id')
 	@ApiTags('subscriptions')
 	@ApiOperation({
 		summary: 'getOneSubscription',
