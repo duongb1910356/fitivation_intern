@@ -421,19 +421,49 @@ export class UsersController {
 			example: {
 				code: 200,
 				message: 'Success',
-			} as SuccessResponse<null>,
+			},
 		},
 		status: 200,
 	})
-	@ApiBadRequestResponse({
-		type: BadRequestException,
+	@ApiResponse({
 		status: 400,
-		description: '[Input] invalid',
+		schema: {
+			example: {
+				code: '400',
+				message: 'Input invalid',
+				details: null,
+			} as ErrorResponse<null>,
+		},
 	})
-	@ApiNotFoundResponse({
-		type: NotFoundException,
+	@ApiResponse({
+		status: 401,
+		schema: {
+			example: {
+				code: '401',
+				message: 'Unauthorized',
+				details: null,
+			} as ErrorResponse<null>,
+		},
+	})
+	@ApiResponse({
+		status: 403,
+		schema: {
+			example: {
+				code: '403',
+				message: `Forbidden resource`,
+				details: null,
+			} as ErrorResponse<null>,
+		},
+	})
+	@ApiResponse({
 		status: 404,
-		description: 'User not found',
+		schema: {
+			example: {
+				code: '404',
+				message: 'Not found user with that ID',
+				details: null,
+			} as ErrorResponse<null>,
+		},
 	})
 	deleteUser(@Param() id: string) {
 		return this.userService.deleteOne(id);
@@ -473,20 +503,55 @@ export class UsersController {
 			} as User,
 		},
 	})
-	@ApiNotFoundResponse({
-		type: NotFoundException,
-		status: 404,
-		description: 'User not found',
-	})
-	@ApiUnsupportedMediaTypeResponse({
-		type: UnsupportedMediaTypeException,
-		status: 415,
-		description: 'File invalid',
-	})
-	@ApiBadRequestResponse({
-		type: BadRequestException,
+	@ApiResponse({
 		status: 400,
-		description: 'File size invalid',
+		schema: {
+			example: {
+				code: '400',
+				message: 'File size invalid',
+				details: null,
+			} as ErrorResponse<null>,
+		},
+	})
+	@ApiResponse({
+		status: 401,
+		schema: {
+			example: {
+				code: '401',
+				message: 'Unauthorized',
+				details: null,
+			} as ErrorResponse<null>,
+		},
+	})
+	@ApiResponse({
+		status: 403,
+		schema: {
+			example: {
+				code: '403',
+				message: `Forbidden resource`,
+				details: null,
+			} as ErrorResponse<null>,
+		},
+	})
+	@ApiResponse({
+		status: 404,
+		schema: {
+			example: {
+				code: '404',
+				message: 'Not found user with that ID',
+				details: null,
+			} as ErrorResponse<null>,
+		},
+	})
+	@ApiResponse({
+		status: 415,
+		schema: {
+			example: {
+				code: '415',
+				message: 'File invalid',
+				details: null,
+			} as ErrorResponse<null>,
+		},
 	})
 	uploadFile(
 		@Param('id') id,
