@@ -3,7 +3,19 @@ import { CreateUserDto } from './create-user-dto';
 import { IsString } from 'class-validator';
 
 export class UpdateUserDto extends PartialType(
-	PickType(CreateUserDto, ['displayName', 'password']),
+	PickType(CreateUserDto, [
+		'email',
+		'password',
+		'displayName',
+		'lastName',
+		'firstName',
+		'birthDate',
+		'avatar',
+		'gender',
+		'role',
+		'isMember',
+		'status',
+	]),
 ) {
 	@IsString()
 	id: string;
