@@ -11,7 +11,7 @@ export class District extends BaseObject {
   @Prop({ required: true, unique: true, index: true })
   code: string;
 
-  @Prop({ type: mongoose.Schema.Types.ObjectId, ref: 'Province', required: true })
+  @Prop({ type: String, ref: 'Province', required: true })
   province: Province;
 }
 

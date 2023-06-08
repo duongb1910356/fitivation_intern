@@ -4,7 +4,7 @@ import { Model } from 'mongoose';
 import { Province } from './schemas/province.schema';
 import { District } from './schemas/district.schema';
 import { Commune } from './schemas/commune.schema';
-import { CreateProvinceDto } from './dto/province-dto';
+import { ProvinceDto } from './dto/province-dto';
 
 @Injectable()
 export class ProvinceService {
@@ -12,7 +12,7 @@ export class ProvinceService {
         @InjectModel(Province.name) private provinceModel: Model<Province>,
     ) { }
 
-    async createMany(input: CreateProvinceDto): Promise<Province> {
+    async createMany(input: ProvinceDto): Promise<Province> {
         try {
             const createdProvince = new this.provinceModel(input);
             return await createdProvince.save();

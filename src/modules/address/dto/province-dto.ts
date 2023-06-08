@@ -1,6 +1,6 @@
 import { IsString, IsNotEmpty} from 'class-validator';
 
-export class CreateProvinceDto {
+export class ProvinceDto {
     @IsString()
     @IsNotEmpty()
     name: string;
