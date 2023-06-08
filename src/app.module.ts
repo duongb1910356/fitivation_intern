@@ -42,7 +42,13 @@ import { BrandModule } from './modules/brand/brand.module';
 		PhotoModule,
 		ReviewsModule,
 		PackageTypeModule,
-		BrandModule
+		BrandModule,
+		FacilityScheduleModule,
+		PackageModule,
+		FacilityCategoryModule,
+		HolidayModule,
+		AttendanceModule,
+		CounterModule,
 	],
 	providers: [
 		{
