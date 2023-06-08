@@ -41,8 +41,14 @@ import { BrandModule } from './modules/brand/brand.module';
 		AddressModule,
 		PhotoModule,
 		ReviewsModule,
+		BrandModule,
 		PackageTypeModule,
-		BrandModule
+		PackageModule,
+		FacilityCategoryModule,
+		FacilityScheduleModule,
+		HolidayModule,
+		AttendanceModule,
+		CounterModule,
 	],
 	providers: [
 		{
