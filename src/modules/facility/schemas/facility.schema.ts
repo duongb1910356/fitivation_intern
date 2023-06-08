@@ -4,25 +4,27 @@ import { BaseObject } from '../../../shared/schemas/base-object.schema';
 import { Review, ReviewSchema } from 'src/modules/reviews/schemas/reviews.schema';
 import { Brand, BrandSchema } from '../../brand/schemas/brand.schema';
 import { Photo, PhotoSchema } from 'src/modules/photo/schemas/photo.schema';
+import { FacilityCategory } from 'src/modules/facility-category/entities/facility-category';
+import { User } from 'src/modules/users/schemas/user.schema';
 
-enum State {
+export enum State {
     ACTIVE = 'ACTIVE',
     INACTIVE = 'INACTIVE',
 }
 
-enum Status {
+export enum Status {
     PENDING = 'PENDING',
     APPROVED = 'APPROVED',
     REJECTED = 'REJECTED',
 }
 
-enum ScheduleType {
+export enum ScheduleType {
     DAILY = 'DAILY',
     WEEKLY = 'WEEKLY',
     MONTHLY = 'MONTHLY',
 }
 
-interface Address {
+export interface Address {
     province: {
         name: string;
         code: number;
@@ -46,16 +48,24 @@ export class Facility extends BaseObject {
     brandID: Brand;
 
     @Prop({ type: mongoose.Schema.Types.ObjectId, ref: 'FacilityCategory', required: true })
-    facilityCategoryID: string;
+    facilityCategoryID: FacilityCategory;
 
-    @Prop({ type: mongoose.Schema.Types.ObjectId, ref: 'Account', required: true })
-    ownerID: string;
+    @Prop({ type: mongoose.Schema.Types.ObjectId, ref: 'User', required: true })
+    ownerID: User;
 
     @Prop({ type: String, required: true })
     name: string;
 
-    @Prop({type: Object, required: true })
-    address: Address
+    @Prop({ type: Object, required: true })
+    address: {
+        street: string;
+        province: string;
+        provinceCode: string;
+        district: string;
+        districtCode: string;
+        commune: string;
+        communeCode: string;
+    }
 
     @Prop({ default: '' })
     summary: string;
@@ -63,7 +73,7 @@ export class Facility extends BaseObject {
     @Prop({ default: '' })
     description: string;
 
-    @Prop({ type: [Number], required: true, default: [] })
+    @Prop({ type: [Number], required: false, default: [] })
     coordinationLocation: [number, number];
 
     @Prop({ enum: State, default: State.ACTIVE })
@@ -76,13 +86,21 @@ export class Facility extends BaseObject {
     averageStar: number;
 
     @Prop({
-        type: [PhotoSchema],
+        type: [{ type: mongoose.Schema.Types.ObjectId, ref: 'Photo', required: true }],
+        validate: {
+            validator: (photos: any[]) => photos.length <= 5,
+            message: 'Facility have 5 photo latest'
+        },
         default: [],
     })
     photos: Photo[];
 
     @Prop({
-        type: [ReviewSchema],
+        type: [{ type: mongoose.Schema.Types.ObjectId, ref: 'Review', required: false }],
+        validate: {
+            validator: (reviews: any[]) => reviews.length <= 5,
+            message: 'Facility have 5 reviews latest'
+        },
         default: [],
     })
     reviews: Review[];

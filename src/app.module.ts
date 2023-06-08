@@ -14,7 +14,6 @@ import { SubscriptionsModule } from './modules/subscriptions/subscriptions.modul
 import { CartsModule } from './modules/carts/carts.module';
 import { FacilityModule } from './modules/facility/facility.module';
 import { AddressModule } from './modules/address/address.module';
-import { Review } from './modules/reviews/schemas/reviews.schema';
 import { PhotoModule } from './modules/photo/photo.module';
 import { PackageTypeModule } from './modules/package-type/package-type.module';
 import { PackageModule } from './modules/package/package.module';
@@ -24,6 +23,8 @@ import { HolidayModule } from './modules/holiday/holiday.module';
 import { AttendanceModule } from './modules/attendance/attendance.module';
 import { CounterModule } from './modules/counter/counter.module';
 import { AdminModule } from './modules/admin/admin.module';
+import { ReviewsModule } from './modules/reviews/reviews.module';
+import { BrandModule } from './modules/brand/brand.module';
 
 @Module({
 	imports: [
@@ -39,14 +40,9 @@ import { AdminModule } from './modules/admin/admin.module';
 		FacilityModule,
 		AddressModule,
 		PhotoModule,
-		Review,
+		ReviewsModule,
 		PackageTypeModule,
-		PackageModule,
-		FacilityCategoryModule,
-		FacilityScheduleModule,
-		HolidayModule,
-		AttendanceModule,
-		CounterModule,
+		BrandModule
 	],
 	providers: [
 		{

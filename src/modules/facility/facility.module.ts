@@ -10,7 +10,7 @@ import { Brand, BrandSchema } from '../brand/schemas/brand.schema';
     MongooseModule.forFeature([{ name: Facility.name, schema: FacilitySchema }]),
     MongooseModule.forFeature([{ name: Brand.name, schema: BrandSchema }]),
   ],
-  controllers: [],
+  controllers: [FacilityController],
   providers: []
 })
 export class FacilityModule { }
