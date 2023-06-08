@@ -1332,7 +1332,7 @@ export class PromotionsController {
 		schema: {
 			example: {
 				targetID: 'string',
-				type: PromotionType.FACILITY,
+				type: PromotionType.PACKAGE,
 				name: 'string',
 				description: 'string',
 				couponCode: 'string',
