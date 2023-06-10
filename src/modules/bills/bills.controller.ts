@@ -447,6 +447,7 @@ export class BillsController {
 		summary: 'getOneBillPromotion',
 		description: 'Allow user to get one bill promotion',
 	})
+	@ApiParam({ name: 'id', type: String, description: 'Promotion ID' })
 	@ApiResponse({
 		status: 200,
 		schema: {
@@ -522,7 +523,6 @@ export class BillsController {
 			} as ErrorResponse<null>,
 		},
 	})
-	@ApiParam({ name: 'id', type: String, description: 'Promotion ID' })
 	getOneBillPromotion(@Param('id') id: string) {
 		return 'getOneBillPromotion';
 	}
