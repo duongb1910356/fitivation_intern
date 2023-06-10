@@ -154,6 +154,10 @@ export class SubscriptionsController {
 	}
 
 	@Patch(':id/renew')
+	@ApiOperation({
+		summary: 'renew',
+		description: 'Allow customer to extend package when package was expired',
+	})
 	@ApiParam({ name: 'id', type: String, description: 'Subscription ID' })
 	@ApiResponse({
 		status: 200,
