@@ -1,13 +1,4 @@
-import {
-	Body,
-	Controller,
-	Delete,
-	Get,
-	Param,
-	Patch,
-	Post,
-	Query,
-} from '@nestjs/common';
+import { Controller, Get, Param, Post, Query } from '@nestjs/common';
 import {
 	ApiOperation,
 	ApiResponse,
@@ -35,8 +26,10 @@ import {
 	PromotionType,
 } from '../promotions/schemas/promotion.schema';
 import { TimeType } from '../package/entities/package.entity';
-import { UpdatePromotionDto } from '../promotions/dto/update-promotion.dto';
 import { CreatePromotionDto } from '../promotions/dto/create-promotion.dto';
+import { BillItemPackage } from '../bill-items/schemas/bill-item-package.schema';
+import { BillItemPackageType } from '../bill-items/schemas/bill-item-package-type.schema';
+import { BillItemFacility } from '../bill-items/schemas/bill-item-facility.schema';
 
 @Controller('bills')
 export class BillsController {
@@ -60,31 +53,31 @@ export class BillsController {
 						billItems: [
 							{
 								_id: '_id',
+								brandID: {},
+								facilityID: {},
+								packageTypeID: {},
+								packageID: {},
 								facilityInfo: {
-									facilityID: {},
-									brandID: {},
 									brandName: 'string',
 									ownerFacilityName: 'string',
 									facilityName: 'string',
 									facilityAddress: {},
 									facilityCoordinatesLocation: [1, 1],
 									facilityPhoto: 'string',
-								},
+								} as BillItemFacility,
 								packageTypeInfo: {
-									packageTypeID: {},
 									name: 'string',
-									desctiption: 'string',
+									description: 'string',
 									price: 1,
-								},
+								} as BillItemPackageType,
 								packageInfo: {
-									packageID: {},
 									type: TimeType.ONE_MONTH,
 									price: 1,
-								},
+								} as BillItemPackage,
 								promotions: [
 									{
 										targetID: {},
-										type: PromotionType.FACILITY,
+										type: PromotionType.PACKAGE,
 										name: 'string',
 										description: 'string',
 										couponCode: 'string',
@@ -111,7 +104,44 @@ export class BillsController {
 						paymentMethod: PaymentMethod.CREDIT_CARD,
 						taxes: 0,
 						description: 'string',
-						promotions: [],
+						promotions: [
+							{
+								targetID: {},
+								type: PromotionType.FACILITY,
+								name: 'string',
+								description: 'string',
+								couponCode: 'string',
+								value: 1,
+								method: PromotionMethod.NUMBER,
+								minPriceApply: 1,
+								maxValue: 1,
+								maxQuantity: 1,
+								startDate: new Date(),
+								endDate: new Date(),
+								customerType: CustomerType.CUSTOMER,
+								status: PromotionStatus.ACTIVE,
+								createdAt: new Date(),
+								updatedAt: new Date(),
+							},
+							{
+								targetID: {},
+								type: PromotionType.BILL,
+								name: 'string',
+								description: 'string',
+								couponCode: 'string',
+								value: 1,
+								method: PromotionMethod.NUMBER,
+								minPriceApply: 1,
+								maxValue: 1,
+								maxQuantity: 1,
+								startDate: new Date(),
+								endDate: new Date(),
+								customerType: CustomerType.CUSTOMER,
+								status: PromotionStatus.ACTIVE,
+								createdAt: new Date(),
+								updatedAt: new Date(),
+							},
+						],
 						promotionPrice: 0,
 						totalPrice: 0,
 						status: BillStatus.ACTIVE,
@@ -183,31 +213,31 @@ export class BillsController {
 						billItems: [
 							{
 								_id: '_id',
+								brandID: {},
+								facilityID: {},
+								packageTypeID: {},
+								packageID: {},
 								facilityInfo: {
-									facilityID: {},
-									brandID: {},
 									brandName: 'string',
 									ownerFacilityName: 'string',
 									facilityName: 'string',
 									facilityAddress: {},
 									facilityCoordinatesLocation: [1, 1],
 									facilityPhoto: 'string',
-								},
+								} as BillItemFacility,
 								packageTypeInfo: {
-									packageTypeID: {},
 									name: 'string',
-									desctiption: 'string',
+									description: 'string',
 									price: 1,
-								},
+								} as BillItemPackageType,
 								packageInfo: {
-									packageID: {},
 									type: TimeType.ONE_MONTH,
 									price: 1,
-								},
+								} as BillItemPackage,
 								promotions: [
 									{
 										targetID: {},
-										type: PromotionType.FACILITY,
+										type: PromotionType.PACKAGE,
 										name: 'string',
 										description: 'string',
 										couponCode: 'string',
@@ -234,7 +264,44 @@ export class BillsController {
 						paymentMethod: PaymentMethod.CREDIT_CARD,
 						taxes: 0,
 						description: 'string',
-						promotions: [],
+						promotions: [
+							{
+								targetID: {},
+								type: PromotionType.FACILITY,
+								name: 'string',
+								description: 'string',
+								couponCode: 'string',
+								value: 1,
+								method: PromotionMethod.NUMBER,
+								minPriceApply: 1,
+								maxValue: 1,
+								maxQuantity: 1,
+								startDate: new Date(),
+								endDate: new Date(),
+								customerType: CustomerType.CUSTOMER,
+								status: PromotionStatus.ACTIVE,
+								createdAt: new Date(),
+								updatedAt: new Date(),
+							},
+							{
+								targetID: {},
+								type: PromotionType.BILL,
+								name: 'string',
+								description: 'string',
+								couponCode: 'string',
+								value: 1,
+								method: PromotionMethod.NUMBER,
+								minPriceApply: 1,
+								maxValue: 1,
+								maxQuantity: 1,
+								startDate: new Date(),
+								endDate: new Date(),
+								customerType: CustomerType.CUSTOMER,
+								status: PromotionStatus.ACTIVE,
+								createdAt: new Date(),
+								updatedAt: new Date(),
+							},
+						],
 						promotionPrice: 0,
 						totalPrice: 0,
 						status: BillStatus.ACTIVE,
@@ -541,162 +608,5 @@ export class BillsController {
 	})
 	createBillPromotion() {
 		return 'createBillPromotion';
-	}
-
-	@Patch('promotions/:id')
-	@ApiTags('bills/promotions')
-	@ApiOperation({
-		summary: 'updateBillPromotion',
-		description: 'Allow admin to update one bill promotion',
-	})
-	@ApiParam({ name: 'id', type: String, description: 'Promotion ID' })
-	@ApiBody({
-		type: UpdatePromotionDto,
-		examples: {
-			ADMIN: {
-				value: {
-					targetID: 'string',
-					type: PromotionType.BILL,
-					name: 'string',
-					description: 'string',
-					couponCode: 'string',
-					value: 1,
-					method: PromotionMethod.NUMBER,
-					minPriceApply: 0,
-					maxQuantity: 0,
-					startDate: new Date(),
-					endDate: new Date(),
-					customerType: CustomerType.CUSTOMER,
-				},
-			},
-		},
-	})
-	@ApiResponse({
-		status: 201,
-		schema: {
-			example: {
-				targetID: 'string',
-				type: PromotionType.BILL,
-				name: 'string',
-				description: 'string',
-				couponCode: 'string',
-				value: 1,
-				method: PromotionMethod.NUMBER,
-				minPriceApply: 0,
-				maxQuantity: 0,
-				startDate: new Date(),
-				endDate: new Date(),
-				customerType: CustomerType.CUSTOMER,
-				status: PromotionStatus.ACTIVE,
-				createdAt: new Date(),
-				updatedAt: new Date(),
-			} as Promotion,
-		},
-	})
-	@ApiResponse({
-		status: 400,
-		schema: {
-			example: {
-				code: '400',
-				message: 'Bad request',
-				details: null,
-			} as ErrorResponse<null>,
-		},
-	})
-	@ApiResponse({
-		status: 401,
-		schema: {
-			example: {
-				code: '401',
-				message: 'Unauthorized',
-				details: null,
-			} as ErrorResponse<null>,
-		},
-	})
-	@ApiResponse({
-		status: 403,
-		schema: {
-			example: {
-				code: '403',
-				message: `Forbidden resource`,
-				details: null,
-			} as ErrorResponse<null>,
-		},
-	})
-	@ApiResponse({
-		status: 404,
-		schema: {
-			example: {
-				code: '404',
-				message: 'Not found document with that ID',
-				details: null,
-			} as ErrorResponse<null>,
-		},
-	})
-	updateBillPromotion(
-		@Param('id') id: string,
-		@Body() updatePromotionDto: UpdatePromotionDto,
-	) {
-		return 'updateBillPromotion';
-	}
-
-	@Delete('promotions/:id')
-	@ApiTags('bills/promotions')
-	@ApiOperation({
-		summary: 'deleteBillPromotion',
-		description: 'Allow admin to delete one bill promotion',
-	})
-	@ApiParam({ name: 'id', type: String, description: 'Promotion ID' })
-	@ApiResponse({
-		status: 200,
-		schema: {
-			example: {
-				code: 200,
-				message: 'Deleted successfully',
-			},
-		},
-	})
-	@ApiResponse({
-		status: 400,
-		schema: {
-			example: {
-				code: '400',
-				message: 'Bad request',
-				details: null,
-			} as ErrorResponse<null>,
-		},
-	})
-	@ApiResponse({
-		status: 401,
-		schema: {
-			example: {
-				code: '401',
-				message: 'Unauthorized',
-				details: null,
-			} as ErrorResponse<null>,
-		},
-	})
-	@ApiResponse({
-		status: 403,
-		schema: {
-			example: {
-				code: '403',
-				message: `Forbidden resource`,
-				details: null,
-			} as ErrorResponse<null>,
-		},
-	})
-	@ApiResponse({
-		status: 404,
-		schema: {
-			example: {
-				code: '404',
-				message: 'Not found document with that ID',
-				details: null,
-			} as ErrorResponse<null>,
-		},
-	})
-	deleteBillPromotion(@Param('id') id: string) {
-		return 'deleteBillPromotion';
 	}
 }
