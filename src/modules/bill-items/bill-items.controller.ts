@@ -63,7 +63,7 @@ export class BillItemsController {
 						promotions: [
 							{
 								targetID: {},
-								type: PromotionType.FACILITY,
+								type: PromotionType.PACKAGE,
 								name: 'string',
 								description: 'string',
 								couponCode: 'string',
@@ -172,7 +172,7 @@ export class BillItemsController {
 						promotions: [
 							{
 								targetID: {},
-								type: PromotionType.FACILITY,
+								type: PromotionType.PACKAGE,
 								name: 'string',
 								description: 'string',
 								couponCode: 'string',
