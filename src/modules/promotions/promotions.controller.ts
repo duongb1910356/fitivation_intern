@@ -1,10 +1,11 @@
 import { Body, Controller, Delete, Param, Patch, Post } from '@nestjs/common';
-import { ApiBody, ApiResponse } from '@nestjs/swagger';
+import { ApiBody, ApiResponse, ApiTags } from '@nestjs/swagger';
 import { ErrorResponse } from 'src/shared/response/common-response';
 import { CreatePromotionDto } from './dto/create-promotion.dto';
 import { UpdatePromotionDto } from './dto/update-promotion.dto';
 
 @Controller('promotions')
+@ApiTags('promotions')
 export class PromotionsController {
 	@Patch(':id')
 	@ApiBody({
