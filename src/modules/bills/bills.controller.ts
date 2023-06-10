@@ -32,11 +32,11 @@ import { BillItemPackageType } from '../bill-items/schemas/bill-item-package-typ
 import { BillItemFacility } from '../bill-items/schemas/bill-item-facility.schema';
 
 @Controller('bills')
+@ApiTags('bills')
 export class BillsController {
 	constructor(private readonly billsService: BillsService) {}
 
 	@Get()
-	@ApiTags('bills')
 	@ApiOperation({
 		summary: 'getManyBills',
 		description: 'Get many bills',
@@ -196,7 +196,6 @@ export class BillsController {
 	}
 
 	@Get(':id')
-	@ApiTags('bills')
 	@ApiOperation({
 		summary: 'getOneBill',
 		description: 'Get one bill',
@@ -366,7 +365,6 @@ export class BillsController {
 	}
 
 	@Get('promotions')
-	@ApiTags('bills/promotions')
 	@ApiDocsPagination('promotion')
 	@ApiOperation({
 		summary: 'getManyBillPromotions',
@@ -442,7 +440,6 @@ export class BillsController {
 	}
 
 	@Get('promotions/:id')
-	@ApiTags('bills/promotions')
 	@ApiOperation({
 		summary: 'getOneBillPromotion',
 		description: 'Allow user to get one bill promotion',
@@ -528,7 +525,6 @@ export class BillsController {
 	}
 
 	@Post('promotions')
-	@ApiTags('bills/promotions')
 	@ApiOperation({
 		summary: 'createBillPromotion',
 		description: 'Allow admin to create one bill promotion',
