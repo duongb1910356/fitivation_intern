@@ -1,4 +1,4 @@
-import { Controller, Get, Param, Query } from '@nestjs/common';
+import { Controller, Get, Param, Post, Query } from '@nestjs/common';
 import { BillItemsService } from './bill-items.service';
 import { ApiOperation, ApiParam, ApiResponse, ApiTags } from '@nestjs/swagger';
 import { BillItem, BillItemStatus } from './schemas/bill-item.schema';
@@ -16,6 +16,9 @@ import {
 	PromotionType,
 } from '../promotions/schemas/promotion.schema';
 import { TimeType } from '../package/entities/package.entity';
+import { BillItemFacility } from './schemas/bill-item-facility.schema';
+import { BillItemPackageType } from './schemas/bill-item-package-type.schema';
+import { BillItemPackage } from './schemas/bill-item-package.schema';
 
 @Controller('bill-items')
 export class BillItemsController {
@@ -36,27 +39,27 @@ export class BillItemsController {
 				items: [
 					{
 						_id: '_id',
+						brandID: {},
+						facilityID: {},
+						packageTypeID: {},
+						packageID: {},
 						facilityInfo: {
-							facilityID: {},
-							brandID: {},
 							brandName: 'string',
 							ownerFacilityName: 'string',
 							facilityName: 'string',
 							facilityAddress: {},
 							facilityCoordinatesLocation: [1, 1],
 							facilityPhoto: 'string',
-						},
+						} as BillItemFacility,
 						packageTypeInfo: {
-							packageTypeID: {},
 							name: 'string',
-							desctiption: 'string',
+							description: 'string',
 							price: 1,
-						},
+						} as BillItemPackageType,
 						packageInfo: {
-							packageID: {},
 							type: TimeType.ONE_MONTH,
 							price: 1,
-						},
+						} as BillItemPackage,
 						promotions: [
 							{
 								targetID: {},
@@ -145,27 +148,27 @@ export class BillItemsController {
 				items: [
 					{
 						_id: '_id',
+						brandID: {},
+						facilityID: {},
+						packageTypeID: {},
+						packageID: {},
 						facilityInfo: {
-							facilityID: {},
-							brandID: {},
 							brandName: 'string',
 							ownerFacilityName: 'string',
 							facilityName: 'string',
 							facilityAddress: {},
 							facilityCoordinatesLocation: [1, 1],
 							facilityPhoto: 'string',
-						},
+						} as BillItemFacility,
 						packageTypeInfo: {
-							packageTypeID: {},
 							name: 'string',
-							desctiption: 'string',
+							description: 'string',
 							price: 1,
-						},
+						} as BillItemPackageType,
 						packageInfo: {
-							packageID: {},
 							type: TimeType.ONE_MONTH,
 							price: 1,
-						},
+						} as BillItemPackage,
 						promotions: [
 							{
 								targetID: {},
