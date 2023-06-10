@@ -1,25 +1,94 @@
 import { Body, Controller, Delete, Param, Patch, Post } from '@nestjs/common';
-import { ApiBody, ApiResponse, ApiTags } from '@nestjs/swagger';
+import {
+	ApiBody,
+	ApiOperation,
+	ApiParam,
+	ApiResponse,
+	ApiTags,
+} from '@nestjs/swagger';
 import { ErrorResponse } from 'src/shared/response/common-response';
-import { CreatePromotionDto } from './dto/create-promotion.dto';
 import { UpdatePromotionDto } from './dto/update-promotion.dto';
+import {
+	CustomerType,
+	Promotion,
+	PromotionMethod,
+	PromotionStatus,
+	PromotionType,
+} from './schemas/promotion.schema';
 
 @Controller('promotions')
 @ApiTags('promotions')
 export class PromotionsController {
 	@Patch(':id')
+	@ApiOperation({
+		summary: 'updatePromotion',
+		description:
+			'Allow admin to update bill promotion\n\nAllow facility owner to update facility promotion or package promotion',
+	})
+	@ApiParam({ name: 'id', type: String, description: 'Promotion ID' })
 	@ApiBody({
 		type: UpdatePromotionDto,
 		schema: {
 			examples: {
 				Bill_Promotion: {
-					value: {},
+					value: {
+						targetID: {},
+						type: PromotionType.BILL,
+						name: 'string',
+						description: 'string',
+						couponCode: 'string',
+						value: 1,
+						method: PromotionMethod.NUMBER,
+						minPriceApply: 1,
+						maxValue: 1,
+						maxQuantity: 1,
+						startDate: new Date(),
+						endDate: new Date(),
+						customerType: CustomerType.CUSTOMER,
+						status: PromotionStatus.ACTIVE,
+						createdAt: new Date(),
+						updatedAt: new Date(),
+					} as Promotion,
 				},
 				Facility_Promotion: {
-					value: {},
+					value: {
+						targetID: {},
+						type: PromotionType.FACILITY,
+						name: 'string',
+						description: 'string',
+						couponCode: 'string',
+						value: 1,
+						method: PromotionMethod.NUMBER,
+						minPriceApply: 1,
+						maxValue: 1,
+						maxQuantity: 1,
+						startDate: new Date(),
+						endDate: new Date(),
+						customerType: CustomerType.CUSTOMER,
+						status: PromotionStatus.ACTIVE,
+						createdAt: new Date(),
+						updatedAt: new Date(),
+					} as Promotion,
 				},
 				Package_Promotion: {
-					value: {},
+					value: {
+						targetID: {},
+						type: PromotionType.PACKAGE,
+						name: 'string',
+						description: 'string',
+						couponCode: 'string',
+						value: 1,
+						method: PromotionMethod.NUMBER,
+						minPriceApply: 1,
+						maxValue: 1,
+						maxQuantity: 1,
+						startDate: new Date(),
+						endDate: new Date(),
+						customerType: CustomerType.CUSTOMER,
+						status: PromotionStatus.ACTIVE,
+						createdAt: new Date(),
+						updatedAt: new Date(),
+					} as Promotion,
 				},
 			},
 		},
@@ -28,25 +97,92 @@ export class PromotionsController {
 		schema: {
 			example: {
 				Bill_Promotion: {
-					value: {},
+					value: {
+						targetID: {},
+						type: PromotionType.BILL,
+						name: 'string',
+						description: 'string',
+						couponCode: 'string',
+						value: 1,
+						method: PromotionMethod.NUMBER,
+						minPriceApply: 1,
+						maxValue: 1,
+						maxQuantity: 1,
+						startDate: new Date(),
+						endDate: new Date(),
+						customerType: CustomerType.CUSTOMER,
+						status: PromotionStatus.ACTIVE,
+						createdAt: new Date(),
+						updatedAt: new Date(),
+					} as Promotion,
 				},
 				Facility_Promotion: {
-					value: {},
+					value: {
+						targetID: {},
+						type: PromotionType.BILL,
+						name: 'string',
+						description: 'string',
+						couponCode: 'string',
+						value: 1,
+						method: PromotionMethod.NUMBER,
+						minPriceApply: 1,
+						maxValue: 1,
+						maxQuantity: 1,
+						startDate: new Date(),
+						endDate: new Date(),
+						customerType: CustomerType.CUSTOMER,
+						status: PromotionStatus.ACTIVE,
+						createdAt: new Date(),
+						updatedAt: new Date(),
+					} as Promotion,
 				},
 				Package_Promotion: {
-					value: {},
+					value: {
+						targetID: {},
+						type: PromotionType.BILL,
+						name: 'string',
+						description: 'string',
+						couponCode: 'string',
+						value: 1,
+						method: PromotionMethod.NUMBER,
+						minPriceApply: 1,
+						maxValue: 1,
+						maxQuantity: 1,
+						startDate: new Date(),
+						endDate: new Date(),
+						customerType: CustomerType.CUSTOMER,
+						status: PromotionStatus.ACTIVE,
+						createdAt: new Date(),
+						updatedAt: new Date(),
+					} as Promotion,
 				},
 			},
 		},
 	})
-	updatePrmotion(
+	updatePromotion(
 		@Param('id') id: string,
 		@Body() updatePromotionDto: UpdatePromotionDto,
 	) {
-		return 'updatePrmotion';
+		return 'updatePromotion';
 	}
 
 	@Delete(':id')
+	@ApiOperation({
+		summary: '',
+		description:
+			'Allow admin to delete bill promotion\n\nAllow facility owner to delete facility promotion or package promotion',
+	})
+	@ApiParam({ name: 'id', type: String, description: 'Promotion ID' })
+	@ApiResponse({
+		status: 200,
+		schema: {
+			example: {
+				code: '200',
+				message: 'Deleted successfully',
+				details: null,
+			},
+		},
+	})
 	@ApiResponse({
 		status: 400,
 		schema: {
@@ -88,6 +224,6 @@ export class PromotionsController {
 		},
 	})
 	deletePromotion(@Param('id') id: string) {
-		return 'deletePrmotion';
+		return 'deletePromotion';
 	}
 }
