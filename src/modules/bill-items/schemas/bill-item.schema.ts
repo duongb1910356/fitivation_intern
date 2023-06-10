@@ -50,7 +50,7 @@ export class BillItem extends BaseObject {
 		type: mongoose.Schema.Types.ObjectId,
 		ref: 'BillItemFacility',
 	})
-	facilityInfor: BillItemFacility;
+	facilityInfo: BillItemFacility;
 
 	@Prop({
 		required: true,
