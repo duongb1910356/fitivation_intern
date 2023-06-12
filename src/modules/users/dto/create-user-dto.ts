@@ -71,10 +71,6 @@ export class CreateUserDto {
 	address: UserAddressDto;
 
 	@IsOptional()
-	@IsString()
-	avatar?: string;
-
-	@IsOptional()
 	@IsBoolean()
 	isMember?: boolean;
 }
