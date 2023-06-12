@@ -59,6 +59,7 @@ export class CreateUserDto {
 
 	@IsNotEmpty()
 	@IsDate()
+	@Type(() => Date)
 	birthDate: Date;
 
 	@IsNotEmpty()
