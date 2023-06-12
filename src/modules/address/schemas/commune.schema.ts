@@ -1,7 +1,9 @@
 import { Prop, Schema, SchemaFactory } from '@nestjs/mongoose';
-import mongoose, { Document } from 'mongoose';
+import mongoose, { Document, HydratedDocument } from 'mongoose';
 import { BaseObject } from 'src/shared/schemas/base-object.schema';
 import { District } from './district.schema';
+
+export type CommuneDocument = HydratedDocument<Commune>;
 
 @Schema({timestamps: true})
 export class Commune extends BaseObject {

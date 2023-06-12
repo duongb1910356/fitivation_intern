@@ -3,10 +3,12 @@ import { ApiOperation, ApiNotFoundResponse, ApiOkResponse, ApiParam, ApiTags, Ap
 import { Province } from './schemas/province.schema';
 import { Public } from '../auth/utils';
 import { ESortField } from 'src/shared/enum/sort.enum';
+import { AddressService } from './address.service';
 
-@Controller('address')
 @ApiTags('address')
+@Controller('address')
 export class AddressController {
+    constructor(private readonly addressService: AddressService) { }
 
     @Public()
     @Get('province')
@@ -43,14 +45,15 @@ export class AddressController {
         description: 'Can not get list of provinces!',
     })
     getAllProvince() {
+        return this.addressService.findProvinceAll()
     }
 
     @Public()
-    @Get('province/:id/dictricts')
+    @Get('province/:id/districts')
     @ApiOperation({
         summary: 'Get districts of province',
     })
-    @ApiParam({ name: 'code', type: Number, description: 'Province code' })
+    @ApiParam({ name: 'id', type: String, description: 'Province id' })
     @ApiOkResponse({
         schema: {
             example: {
@@ -92,7 +95,8 @@ export class AddressController {
             }
         }
     })
-    getDistrictsByProvinceCode(@Param('code') code: number) {
+    getDistrictsByProvinceCode(@Param('id') id: string) {
+        return this.addressService.findDistrictsByProvinceID(id)
     }
 
     @Public()
@@ -100,7 +104,7 @@ export class AddressController {
     @ApiOperation({
         summary: 'Get commune of district',
     })
-    @ApiParam({ name: 'code', type: Number, description: 'District code' })
+    @ApiParam({ name: 'id', type: String, description: 'District id' })
     @ApiOkResponse({
         schema: {
             example: {
@@ -136,12 +140,12 @@ export class AddressController {
                 code: 404,
                 message: '[Input] not valid',
                 details: {
-                    code: 'Code invalid',
+                    code: 'Id invalid',
                 }
             }
         }
     })
-    getCommunesByDistrictCode(@Param('code') code: number) {
-
+    getCommunesByDistrictCode(@Param('id') id: string) {
+        return this.addressService.findCommunesByDistrictID(id)
     }
 }

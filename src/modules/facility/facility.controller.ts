@@ -1093,7 +1093,7 @@ export class FacilityController {
         description: 'Facility ID',
     })
     @ApiBody({
-        type: CreateFacilityDto,
+        type: CreateFacilityScheduleDto,
         examples: {
             Daily: {
                 value: {
@@ -1522,7 +1522,7 @@ export class FacilityController {
         },
     })
     deleteFacilityPromotion(
-        @Param('facilityID') packageID: string,
+        @Param('facilityID') facilityID: string,
         @Param('promotionID') promotionID: string,
     ) {
         return 'deleteFacilityPromotion';
