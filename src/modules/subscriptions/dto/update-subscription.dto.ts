@@ -1,5 +1,6 @@
 import { Type } from 'class-transformer';
-import { IsBoolean, IsDate } from 'class-validator';
+import { IsBoolean, IsDate, IsEnum } from 'class-validator';
+import { SubscriptionStatus } from '../schemas/subscription.schema';
 
 export class UpdateSubscriptionDto {
 	@IsBoolean()
@@ -8,4 +9,7 @@ export class UpdateSubscriptionDto {
 	@IsDate()
 	@Type(() => Date)
 	expires: Date;
+
+	@IsEnum(SubscriptionStatus)
+	status: SubscriptionStatus;
 }
