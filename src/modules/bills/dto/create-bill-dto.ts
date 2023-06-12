@@ -11,8 +11,8 @@ import {
 	ValidateNested,
 } from 'class-validator';
 import { Type } from 'class-transformer';
-import { CreatePromotionDto } from 'src/modules/promotions/dto/create-promotion.dto';
-import { CreateBillItemDto } from 'src/modules/bill-items/dto/create-bill-item.dto';
+import { CreatePromotionDto } from 'src/modules/promotions/dto/create-promotion-dto';
+import { CreateBillItemDto } from 'src/modules/bill-items/dto/create-bill-item-dto';
 
 export class CreateBillDto {
 	@IsString()

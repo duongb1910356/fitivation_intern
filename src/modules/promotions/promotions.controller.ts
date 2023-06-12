@@ -7,7 +7,7 @@ import {
 	ApiTags,
 } from '@nestjs/swagger';
 import { ErrorResponse } from 'src/shared/response/common-response';
-import { UpdatePromotionDto } from './dto/update-promotion.dto';
+import { UpdatePromotionDto } from './dto/update-promotion-dto';
 import {
 	CustomerType,
 	Promotion,

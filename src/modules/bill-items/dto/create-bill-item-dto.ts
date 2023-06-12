@@ -10,10 +10,10 @@ import {
 	Min,
 	ValidateNested,
 } from 'class-validator';
-import { CreatePromotionDto } from 'src/modules/promotions/dto/create-promotion.dto';
-import { CreateBillItemFacilityDto } from './create-bill-item-facility.dto';
-import { CreateBillItemPackageTypeDto } from './create-bill-item-package-type.dto';
-import { CreateBillItemPackageDto } from './create-bill-item-package.dto';
+import { CreatePromotionDto } from 'src/modules/promotions/dto/create-promotion-dto';
+import { CreateBillItemFacilityDto } from './create-bill-item-facility-dto';
+import { CreateBillItemPackageTypeDto } from './create-bill-item-package-type-dto';
+import { CreateBillItemPackageDto } from './create-bill-item-package-dto';
 
 export class CreateBillItemDto {
 	@IsString()

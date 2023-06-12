@@ -22,8 +22,8 @@ import {
 	ListResponse,
 } from 'src/shared/response/common-response';
 import { CartItem } from './schemas/cart-item.schema';
-import { CreateCartItemDto } from './dto/create-cart-item.dto';
-import { UpdateCartItemDto } from './dto/update-cart-item.dto';
+import { CreateCartItemDto } from './dto/create-cart-item-dto';
+import { UpdateCartItemDto } from './dto/update-cart-item-dto';
 
 @Controller('cart-items')
 export class CartItemsController {
