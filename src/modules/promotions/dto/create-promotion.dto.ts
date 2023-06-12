@@ -72,5 +72,6 @@ export class CreatePromotionDto {
 	customerType: CustomerType;
 
 	@IsEnum(PromotionStatus)
-	status: PromotionStatus;
+	@IsOptional()
+	status?: PromotionStatus;
 }

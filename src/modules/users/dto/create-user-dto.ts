@@ -77,8 +77,4 @@ export class CreateUserDto {
 	@IsOptional()
 	@IsBoolean()
 	isMember?: boolean;
-
-	@IsNotEmpty()
-	@IsEnum(UserStatus)
-	status: UserStatus;
 }

@@ -1,11 +1,4 @@
-import {
-	IsNotEmpty,
-	IsString,
-	IsEnum,
-	IsDate,
-	IsBoolean,
-} from 'class-validator';
-import { SubscriptionStatus } from '../schemas/subscription.schema';
+import { IsNotEmpty, IsString, IsDate } from 'class-validator';
 
 export class CreateSubscriptionDto {
 	@IsString()
@@ -18,10 +11,4 @@ export class CreateSubscriptionDto {
 
 	@IsDate()
 	expires: Date;
-
-	@IsBoolean()
-	renew?: boolean;
-
-	@IsEnum(SubscriptionStatus)
-	status?: SubscriptionStatus;
 }
