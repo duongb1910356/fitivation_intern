@@ -1,4 +1,4 @@
-docker-build-api:
+.docker-build-api:
   image: docker:latest
   stage: build
   variables:
@@ -11,6 +11,14 @@ docker-build-api:
     - docker login -u $CI_REGISTRY_USER -p $CI_REGISTRY_PASSWORD $CI_REGISTRY
     - docker build -t $IMAGE_TAG .
     - docker push $IMAGE_TAG
+
+build-api:
+  extends:
+    - .docker-build-api
+  variables:
+    IMAGE_TAG: $CI_REGISTRY_IMAGE:api-staging
+  only:
+    - deploy/staging
 
 deploy-staging:
   image: docker:latest
