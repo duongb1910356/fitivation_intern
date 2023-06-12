@@ -999,7 +999,7 @@ export class PackageController {
 			} as ErrorResponse<null>,
 		},
 	})
-	deletePackegPromotion(
+	deletePackagePromotion(
 		@Param('packageID') packageID: string,
 		@Param('promotionID') promotionID: string,
 	) {
