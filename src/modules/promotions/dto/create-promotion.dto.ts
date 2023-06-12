@@ -14,6 +14,7 @@ import {
 	PromotionMethod,
 	PromotionStatus,
 } from '../schemas/promotion.schema';
+import { Type } from 'class-transformer';
 
 export class CreatePromotionDto {
 	@IsString()
@@ -63,9 +64,11 @@ export class CreatePromotionDto {
 	maxQuantity?: number;
 
 	@IsDate()
+	@Type(() => Date)
 	startDate: Date;
 
 	@IsDate()
+	@Type(() => Date)
 	endDate: Date;
 
 	@IsEnum(CustomerType)

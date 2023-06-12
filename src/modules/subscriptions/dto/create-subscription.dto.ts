@@ -1,3 +1,4 @@
+import { Type } from 'class-transformer';
 import { IsNotEmpty, IsString, IsDate } from 'class-validator';
 
 export class CreateSubscriptionDto {
@@ -10,5 +11,6 @@ export class CreateSubscriptionDto {
 	billItemID: string;
 
 	@IsDate()
+	@Type(() => Date)
 	expires: Date;
 }
