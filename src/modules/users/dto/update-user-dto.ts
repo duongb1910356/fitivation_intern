@@ -1,22 +1,18 @@
-import { PartialType, PickType } from '@nestjs/swagger';
+import { PickType } from '@nestjs/swagger';
 import { CreateUserDto } from './create-user-dto';
-import { IsString } from 'class-validator';
+import { IsEnum } from 'class-validator';
+import { UserStatus } from '../schemas/user.schema';
 
-export class UpdateUserDto extends PartialType(
-	PickType(CreateUserDto, [
-		'email',
-		'password',
-		'displayName',
-		'lastName',
-		'firstName',
-		'birthDate',
-		'avatar',
-		'gender',
-		'role',
-		'isMember',
-		'status',
-	]),
-) {
-	@IsString()
-	id: string;
+export class UpdateUserDto extends PickType(CreateUserDto, [
+	'email',
+	'displayName',
+	'lastName',
+	'firstName',
+	'birthDate',
+	'avatar',
+	'gender',
+	'isMember',
+]) {
+	@IsEnum(UserStatus)
+	status: UserStatus;
 }
