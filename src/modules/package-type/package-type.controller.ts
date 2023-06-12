@@ -32,9 +32,9 @@ import {
 } from 'src/shared/response/common-response';
 import { Facility } from '../facility/schemas/facility.schema';
 import { ApiDocsPagination } from 'src/decorators/swagger-form-data.decorator';
-import { Roles } from 'src/decorators/role-decorator/role.decorator';
+import { Roles } from 'src/decorators/role.decorator';
 import { UserRole } from '../users/schemas/user.schema';
-import { RolesGuard } from 'src/decorators/role-decorator/role.guard';
+import { RolesGuard } from 'src/guards/role.guard';
 import { Package, TimeType } from '../package/entities/package.entity';
 import { CreatePackageDto } from '../package/dto/create-package-dto';
 

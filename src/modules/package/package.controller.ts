@@ -22,12 +22,12 @@ import {
 } from '@nestjs/swagger';
 import { Package, TimeType } from './entities/package.entity';
 import { UpdatePackageDto } from './dto/update-package-dto';
-import { Roles } from 'src/decorators/role-decorator/role.decorator';
+import { Roles } from 'src/decorators/role.decorator';
 import { PackageType } from '../package-type/entities/package-type.entity';
 import { Facility } from '../facility/schemas/facility.schema';
 import { ErrorResponse } from 'src/shared/response/common-response';
 import { UserRole } from '../users/schemas/user.schema';
-import { RolesGuard } from 'src/decorators/role-decorator/role.guard';
+import { RolesGuard } from 'src/guards/role.guard';
 
 @ApiTags('packages')
 @Controller('packages')
