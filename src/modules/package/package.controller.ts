@@ -176,7 +176,7 @@ export class PackageController {
 			} as ErrorResponse<null>,
 		},
 	})
-	updatePackageType(
+	updatePackage(
 		@Param('packageID') packageID: string,
 		@Body() data: UpdatePackageDto,
 	) {
