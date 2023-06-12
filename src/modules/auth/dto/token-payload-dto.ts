@@ -1,4 +1,4 @@
-import { ApiProperty } from '@nestjs/swagger';
+import { IsString } from 'class-validator';
 
 export class TokenPayloadDto {
 	sub: string;
@@ -8,9 +8,9 @@ export class TokenPayloadDto {
 }
 
 export class TokenResponse {
-	@ApiProperty({ type: String })
+	@IsString()
 	access_token: string;
 
-	@ApiProperty({ type: String })
+	@IsString()
 	refresh_token: string;
 }

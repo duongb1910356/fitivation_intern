@@ -2,10 +2,10 @@ import { Prop, Schema, SchemaFactory } from '@nestjs/mongoose';
 import mongoose from 'mongoose';
 import { BaseObject } from 'src/shared/schemas/base-object.schema';
 
-enum TargetObject {
+export enum TargetObject {
 	FACILITY = 'FACILITY',
 }
-enum CountObject {
+export enum CountObject {
 	PACKAGE_TYPE = 'PACKAGE_TYPE',
 }
 

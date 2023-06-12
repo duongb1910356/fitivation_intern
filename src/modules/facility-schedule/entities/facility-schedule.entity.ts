@@ -4,9 +4,10 @@ import {
 	OpenTime,
 	OpenTimeSchema,
 } from 'src/modules/facility-schedule/entities/open-time.entity';
+import { Facility } from 'src/modules/facility/schemas/facility.schema';
 import { BaseObject } from 'src/shared/schemas/base-object.schema';
 
-enum ScheduleType {
+export enum ScheduleType {
 	DAILY = 'DAILY',
 	WEEKLY = 'WEEKLY',
 	MONTHLY = 'MONTHLY',
@@ -19,7 +20,7 @@ export class FacilitySchedule extends BaseObject {
 		ref: 'Facility',
 		required: true,
 	})
-	facilityID: string; //Faccility
+	facilityID: Facility;
 
 	@Prop({ type: String, enum: ScheduleType, required: true })
 	type: ScheduleType;

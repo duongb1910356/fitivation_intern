@@ -9,7 +9,7 @@ import { ESortField } from 'src/shared/enum/sort.enum';
 export class AddressController {
 
     @Public()
-    @Get('p')
+    @Get('province')
     @ApiOperation({
         summary: 'Get list of provinces',
     })
@@ -46,7 +46,7 @@ export class AddressController {
     }
 
     @Public()
-    @Get('p/:code')
+    @Get('province/:id/dictricts')
     @ApiOperation({
         summary: 'Get districts of province',
     })
@@ -96,7 +96,7 @@ export class AddressController {
     }
 
     @Public()
-    @Get('d/:code')
+    @Get('district/:id/communes')
     @ApiOperation({
         summary: 'Get commune of district',
     })

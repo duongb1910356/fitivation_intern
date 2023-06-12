@@ -1,157 +1,383 @@
 import {
-	BadRequestException,
 	Body,
 	Controller,
 	Delete,
 	Get,
-	NotFoundException,
 	Param,
 	Patch,
 	Post,
+	Query,
+	UseGuards,
 } from '@nestjs/common';
 import {
 	ApiBadRequestResponse,
+	ApiBearerAuth,
 	ApiBody,
 	ApiCreatedResponse,
-	ApiInternalServerErrorResponse,
+	ApiForbiddenResponse,
 	ApiNotFoundResponse,
 	ApiOkResponse,
 	ApiOperation,
 	ApiParam,
-	ApiResponse,
 	ApiTags,
+	ApiUnauthorizedResponse,
 } from '@nestjs/swagger';
-import { CreatePackageTypeDto } from './dto/create-package-type-dto';
 import { Public } from '../auth/utils';
 import { PackageType } from './entities/package-type.entity';
-import { UpdatePackageType } from './dto/update-package-type-dto';
+import { UpdatePackageTypeDto } from './dto/update-package-type-dto';
+import {
+	ErrorResponse,
+	ListOptions,
+	ListResponse,
+} from 'src/shared/response/common-response';
+import { Facility } from '../facility/schemas/facility.schema';
+import { ApiDocsPagination } from 'src/decorators/swagger-form-data.decorator';
+import { Roles } from 'src/decorators/role-decorator/role.decorator';
+import { UserRole } from '../users/schemas/user.schema';
+import { RolesGuard } from 'src/decorators/role-decorator/role.guard';
+import { Package, TimeType } from '../package/entities/package.entity';
+import { CreatePackageDto } from '../package/dto/create-package-dto';
 
-@ApiTags('package-type')
-@Controller('package-type')
+@ApiTags('package-types')
+@Controller('package-types')
 export class PackageTypeController {
 	@Public()
-	@Get(':id')
+	@Get(':packageTypeID')
 	@ApiOperation({
-		summary: 'Get all package-type by Facility_Id',
+		summary: 'Get Package Type by packageTypeID',
 		description: `All role can use this API`,
 	})
-	@ApiParam({ name: 'id', type: String, description: 'Facility ID' })
-	@ApiResponse({ status: 200, description: 'Get all package type by ID' })
+	@ApiParam({
+		name: 'packageTypeID',
+		type: String,
+		description: 'PackageType ID',
+	})
 	@ApiOkResponse({
-		type: PackageType,
-		status: 200,
+		schema: {
+			example: {
+				_id: '6476ef7d1f0419cd330fe128',
+				facilityID: {} as unknown as Facility,
+				name: 'GYM GYM 1',
+				description: 'cơ sở tập gym chất lượng',
+				price: 100000,
+				order: 0,
+				createdAt: new Date(),
+				updatedAt: new Date(),
+			} as PackageType,
+		},
 	})
 	@ApiNotFoundResponse({
-		type: NotFoundException,
-		status: 400,
-		description: 'Package Type not found!',
+		schema: {
+			example: {
+				code: '404',
+				message: 'PackageType not found!',
+				details: null,
+			} as ErrorResponse<null>,
+		},
 	})
-	getAllPackageTypeById(@Param('id') id: string) {
-		// Logic để lấy thông tin package type theo ID
+	@ApiBadRequestResponse({
+		schema: {
+			example: {
+				code: '400',
+				message: '[Input] invalid!',
+				details: null,
+			} as ErrorResponse<null>,
+		},
+	})
+	getPackageType(@Param('packageTypeID') packageTypeID: string) {
+		//
+		console.log(packageTypeID);
 	}
 
-	@Post()
+	@Public()
+	@Get('package-type/:packageTypeID/packages')
 	@ApiOperation({
-		summary: 'Create new Package Type',
+		summary: 'Get all Package by packageTypeID',
+		description: `All role can use this API`,
+	})
+	@ApiDocsPagination('Package')
+	@ApiParam({
+		name: 'packageTypeID',
+		type: String,
+		description: 'Package Type ID',
+	})
+	@ApiOkResponse({
+		schema: {
+			example: {
+				items: [
+					{
+						_id: '6476ef7d1f0419cd330fe128',
+						packageTypeID: {} as unknown as PackageType,
+						facilityID: {} as unknown as Facility,
+						type: TimeType.ONE_MONTH,
+						price: 100000,
+						createdAt: new Date(),
+						updatedAt: new Date(),
+					} as Package,
+				],
+				total: 1,
+				options: {
+					limit: 10,
+					offset: 0,
+					searchField: 'facilityID',
+					searchValue: 'string',
+					sortField: '_id',
+					sortOrder: 'asc',
+				} as ListOptions<Package>,
+			} as ListResponse<Package>,
+		},
+	})
+	@ApiNotFoundResponse({
+		schema: {
+			example: {
+				code: '404',
+				message: 'PackageType not found!',
+				details: null,
+			} as ErrorResponse<null>,
+		},
+	})
+	@ApiBadRequestResponse({
+		schema: {
+			example: {
+				code: '400',
+				message: '[Input] invalid!',
+				details: null,
+			} as ErrorResponse<null>,
+		},
+	})
+	getAllPackages(
+		@Param('packageTypeID') packageTypeID: string,
+		@Query() filter: ListOptions<Package>,
+	) {
+		//
+		console.log(packageTypeID, filter);
+	}
+
+	@ApiBearerAuth()
+	@UseGuards(RolesGuard)
+	@Roles(UserRole.FACILITY_OWNER)
+	@Post('package-type/:packageTypeID/packages')
+	@ApiOperation({
+		summary: 'Create new Package by packageTypeID',
 		description: `Facility Owner can use this API`,
 	})
+	@ApiParam({
+		name: 'packageTypeID',
+		type: String,
+		description: 'Package Type ID',
+	})
 	@ApiBody({
-		type: CreatePackageTypeDto,
+		type: CreatePackageDto,
 		examples: {
 			test1: {
 				value: {
-					facilityID: '59001f60c122611f9ae47f67',
-					name: 'Standard Package 1',
-					description: 'This is a standard package 1',
-					price: 99.99,
-				} as CreatePackageTypeDto,
+					type: TimeType.ONE_MONTH,
+					price: 90000,
+				} as CreatePackageDto,
 			},
 			test2: {
 				value: {
-					facilityID: '611f9ae47f6759001f60c122',
-					name: 'Standard Package 2',
-					description: 'This is a standard package 2',
-					price: 88.88,
-				} as CreatePackageTypeDto,
+					type: TimeType.SIX_MONTH,
+					price: 540000,
+				} as CreatePackageDto,
 			},
 		},
 	})
 	@ApiCreatedResponse({
 		schema: {
 			example: {
-				code: 200,
-				message: 'Success',
-				data: {
-					name: 'User',
-					description: 'This is a standard package !',
-					price: 99.99,
-				},
-			},
+				_id: '6476ef7d1f0419cd330fe128',
+				packageTypeID: {} as unknown as PackageType,
+				facilityID: {} as unknown as Facility,
+				type: TimeType.ONE_MONTH,
+				price: 100000,
+				createdAt: new Date(),
+				updatedAt: new Date(),
+			} as Package,
+		},
+	})
+	@ApiUnauthorizedResponse({
+		schema: {
+			example: {
+				code: '401',
+				message: 'Unauthorized',
+				details: null,
+			} as ErrorResponse<null>,
+		},
+	})
+	@ApiForbiddenResponse({
+		schema: {
+			example: {
+				code: '403',
+				message: 'Forbidden resource',
+				details: null,
+			} as ErrorResponse<null>,
 		},
 	})
 	@ApiBadRequestResponse({
-		type: BadRequestException,
-		status: 400,
-		description: '[Input] invalid!',
+		schema: {
+			example: {
+				code: '400',
+				message: '[Input] invalid!',
+				details: null,
+			} as ErrorResponse<null>,
+		},
 	})
-	createPackageType(@Body() data: any) {
-		return 'Da tao moi mot goi dang ky';
+	createPackage(
+		@Param('packageTypeID') packageTypeID: string,
+		@Body() data: CreatePackageDto,
+	) {
+		console.log(packageTypeID, data);
 	}
 
-	@Patch(':id')
+	@ApiBearerAuth()
+	@UseGuards(RolesGuard)
+	@Roles(UserRole.FACILITY_OWNER)
+	@Patch(':packageTypeID')
 	@ApiOperation({
-		summary: 'Update Package Type by Package_Type_Id',
+		summary: 'Update Package Type by packageTypeID',
 		description: `Facility Owner can use this API`,
 	})
-	@ApiParam({ name: 'id', type: String, description: 'Package Type ID' })
+	@ApiParam({
+		name: 'packageTypeID',
+		type: String,
+		description: 'Package Type ID',
+	})
 	@ApiBody({
-		type: UpdatePackageType,
+		type: UpdatePackageTypeDto,
 		examples: {
 			Test1: {
 				value: {
 					name: 'Tang co giam mo',
 					description: 'Goi tap giup tang co giam mo',
 					price: 100000,
-				} as UpdatePackageType,
+				} as UpdatePackageTypeDto,
+			},
+			Test2: {
+				value: {
+					name: 'Goi Yoga',
+					description: 'Goi tap Yoga',
+					price: 90000,
+				} as UpdatePackageTypeDto,
 			},
 		},
 	})
 	@ApiOkResponse({
-		status: 200,
-		description: 'Update Package Type successfull',
+		schema: {
+			example: {
+				_id: '6476ef7d1f0419cd330fe128',
+				facilityID: {} as unknown as Facility,
+				name: 'GYM GYM 1',
+				description: 'cơ sở tập gym chất lượng',
+				price: 99000,
+				order: 0,
+				createdAt: new Date(),
+				updatedAt: new Date(),
+			} as PackageType,
+		},
+	})
+	@ApiUnauthorizedResponse({
+		schema: {
+			example: {
+				code: '401',
+				message: 'Unauthorized',
+				details: null,
+			} as ErrorResponse<null>,
+		},
+	})
+	@ApiForbiddenResponse({
+		schema: {
+			example: {
+				code: '403',
+				message: 'Forbidden resource',
+				details: null,
+			} as ErrorResponse<null>,
+		},
 	})
 	@ApiNotFoundResponse({
-		type: NotFoundException,
-		status: 404,
-		description: 'Not found Package Type to update!',
+		schema: {
+			example: {
+				code: '404',
+				message: 'Not found PackageType to update!',
+				details: null,
+			} as ErrorResponse<null>,
+		},
 	})
-	@ApiBadRequestResponse({ status: 400, description: 'Invalid request' })
-	@ApiInternalServerErrorResponse({
-		status: 500,
-		description: 'Internal server error',
+	@ApiBadRequestResponse({
+		schema: {
+			example: {
+				code: '400',
+				message: '[Input] invalid!',
+				details: null,
+			} as ErrorResponse<null>,
+		},
 	})
-	updatePackageType(@Param('id') id: string, @Body() data: any) {
+	updatePackageType(
+		@Param('packageTypeID') packageTypeID: string,
+		@Body() data: UpdatePackageTypeDto,
+	) {
+		console.log(packageTypeID, data);
 		// Logic để cập nhật package type theo ID
 	}
 
-	@Delete(':id')
+	@ApiBearerAuth()
+	@UseGuards(RolesGuard)
+	@Roles(UserRole.FACILITY_OWNER)
+	@Delete(':packageTypeID')
 	@ApiOperation({
-		summary: 'Delete Package Type by Package_Type_Id',
+		summary: 'Delete Package Type by packageTypeID',
 		description: `Facility Owner can use this API`,
 	})
-	@ApiParam({ name: 'id', type: String, description: 'Package Type ID' })
-	@ApiResponse({ status: 204, description: 'Delete package type successfull' })
-	@ApiBadRequestResponse({
-		type: BadRequestException,
-		status: 400,
-		description: '[Input] invalid!',
+	@ApiParam({
+		name: 'packageTypeID',
+		type: String,
+		description: 'Package Type ID',
+	})
+	@ApiOkResponse({
+		schema: {
+			example: {
+				message: 'Delete PackageType successful!',
+			},
+		},
+	})
+	@ApiUnauthorizedResponse({
+		schema: {
+			example: {
+				code: '401',
+				message: 'Unauthorized',
+				details: null,
+			} as ErrorResponse<null>,
+		},
+	})
+	@ApiForbiddenResponse({
+		schema: {
+			example: {
+				code: '403',
+				message: 'Forbidden resource',
+				details: null,
+			} as ErrorResponse<null>,
+		},
 	})
 	@ApiNotFoundResponse({
-		type: NotFoundException,
-		status: 404,
-		description: 'PackageType not found!',
+		schema: {
+			example: {
+				code: '404',
+				message: 'PackageType not found!',
+				details: null,
+			} as ErrorResponse<null>,
+		},
 	})
-	deletePackageType(@Param('id') id: string) {
+	@ApiBadRequestResponse({
+		schema: {
+			example: {
+				code: '400',
+				message: '[Input] invalid!',
+				details: null,
+			} as ErrorResponse<null>,
+		},
+	})
+	deletePackageType(@Param('packageTypeID') packageTypeID: string) {
+		console.log(packageTypeID);
 		// Logic để xóa package type theo ID
 	}
 }

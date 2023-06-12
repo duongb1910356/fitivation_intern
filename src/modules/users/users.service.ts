@@ -11,9 +11,9 @@ import { SuccessResponse } from '../../shared/response/success-response';
 import { Password } from '../../utils/password';
 import { RegisterDto } from '../auth/dto/register-dto';
 import { CreateUserDto } from './dto/create-user-dto';
-import { GetUserDto } from './dto/get-user-dto';
 import { UpdateUserDto } from './dto/update-user-dto';
 import { User, UserDocument } from './schemas/user.schema';
+import { ListOptions } from 'src/shared/response/common-response';
 
 @Injectable()
 export class UsersService {
@@ -24,7 +24,7 @@ export class UsersService {
 	}
 
 	async findAll(
-		filter: GetUserDto,
+		filter: ListOptions<User>,
 	): Promise<SuccessResponse<User[], DefaultListDto>> {
 		const { limit, offset, sortField, sortOrder, ...condition } = filter;
 		try {

@@ -1,7 +1,7 @@
 import { Prop, Schema, SchemaFactory } from '@nestjs/mongoose';
 import mongoose, { Document, HydratedDocument } from 'mongoose';
 import { BaseObject } from 'src/shared/schemas/base-object.schema';
-import { Facility, FacilitySchema } from '../../facility/schemas/facility.schema';
+import { User } from 'src/modules/users/schemas/user.schema';
 
 export type BrandDocument = HydratedDocument<Brand>;
 
@@ -10,8 +10,8 @@ export class Brand extends BaseObject {
     @Prop({type: String, required: true, unique: true })
     name: string;
 
-    @Prop({ type: mongoose.Schema.Types.ObjectId, ref: 'Account', required: true })
-    accountId: string;
+    @Prop({ type: mongoose.Schema.Types.ObjectId, ref: 'User', required: true })
+    accountID: User;
 }
 
 export const BrandSchema = SchemaFactory.createForClass(Brand);
