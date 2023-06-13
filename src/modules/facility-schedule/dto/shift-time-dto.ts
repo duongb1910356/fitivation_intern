@@ -1,11 +1,11 @@
-import { IsDate, IsNotEmpty } from 'class-validator';
+import { IsDateString, IsNotEmpty } from 'class-validator';
 
 export class ShiftTimeDto {
 	@IsNotEmpty()
-	@IsDate()
+	@IsDateString()
 	startTime: Date;
 
 	@IsNotEmpty()
-	@IsDate()
+	@IsDateString()
 	endTime: Date;
 }

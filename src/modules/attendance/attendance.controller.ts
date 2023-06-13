@@ -10,8 +10,8 @@ import {
 	ApiTags,
 	ApiUnauthorizedResponse,
 } from '@nestjs/swagger';
-import { Roles } from 'src/decorators/role-decorator/role.decorator';
-import { RolesGuard } from 'src/decorators/role-decorator/role.guard';
+import { Roles } from 'src/decorators/role.decorator';
+import { RolesGuard } from 'src/guards/role.guard';
 import { ApiDocsPagination } from 'src/decorators/swagger-form-data.decorator';
 import {
 	ListOptions,
@@ -21,7 +21,6 @@ import {
 import { User, UserRole } from '../users/schemas/user.schema';
 import { Attendance } from './entities/attendance.entity';
 import { Facility } from '../facility/schemas/facility.schema';
-import RequestWithUser from 'src/interfaces/requestWithUser.interface';
 import { Public } from '../auth/utils';
 
 @ApiTags('attendances')
@@ -132,8 +131,8 @@ export class AttendanceController {
 			} as ErrorResponse<null>,
 		},
 	})
-	getAllAttendancesByMember(@Request() req: RequestWithUser) {
-		const userId = req.user._id;
+	getAllAttendancesByMember(@Request() req: any) {
+		const userId = req.user?.uid;
 		console.log(userId);
 		//
 	}
