@@ -167,7 +167,7 @@ export class SubscriptionsController {
 				billItemID: {},
 				expires: new Date(),
 				status: SubscriptionStatus.ACTIVE,
-				renew: false,
+				renew: true,
 			} as Subscription,
 		},
 	})
