@@ -1,4 +1,12 @@
-import { Controller, Get, Post, Param, Query, UseGuards } from '@nestjs/common';
+import {
+	Controller,
+	Get,
+	Post,
+	Param,
+	Query,
+	UseGuards,
+	Body,
+} from '@nestjs/common';
 import { CartsService } from './carts.service';
 import {
 	ApiBearerAuth,
@@ -15,9 +23,7 @@ import {
 import { Cart } from './schemas/cart.schema';
 import { ListResponse } from 'src/shared/response/common-response';
 import { ApiDocsPagination } from 'src/decorators/swagger-form-data.decorator';
-import { Roles } from 'src/decorators/role-decorator/role.decorator';
-import { UserRole } from '../users/schemas/user.schema';
-import { RolesGuard } from 'src/decorators/role-decorator/role.guard';
+import { PurchaseDto } from './dto/purchase-dto';
 
 @Controller()
 @ApiBearerAuth()
@@ -25,8 +31,6 @@ export class CartsController {
 	constructor(private readonly cartsService: CartsService) {}
 	@Get('carts')
 	@ApiTags('carts')
-	@UseGuards(RolesGuard)
-	@Roles(UserRole.ADMIN)
 	@ApiOperation({
 		summary: 'getManyCarts',
 		description: 'Get many carts',
@@ -96,8 +100,6 @@ export class CartsController {
 
 	@Get('carts/:id')
 	@ApiTags('carts')
-	@UseGuards(RolesGuard)
-	@Roles(UserRole.ADMIN)
 	@ApiOperation({
 		summary: 'getOneCart',
 		description: 'Get one cart',
@@ -177,14 +179,12 @@ export class CartsController {
 
 	@Post('carts/purchase')
 	@ApiTags('carts')
-	@UseGuards(RolesGuard)
-	@Roles(UserRole.ADMIN, UserRole.MEMBER)
 	@ApiOperation({
 		summary: 'purchaseInCart',
 		description: 'Allow customers to purchase packages in their cart',
 	})
 	@ApiBody({
-		type: Cart,
+		type: PurchaseDto,
 		examples: {
 			example1: {
 				value: {
@@ -244,7 +244,7 @@ export class CartsController {
 			} as ErrorResponse<null>,
 		},
 	})
-	purchaseInCart() {
+	purchaseInCart(@Body() purchaseDto: PurchaseDto) {
 		return 'purchaseInCart';
 	}
 }
