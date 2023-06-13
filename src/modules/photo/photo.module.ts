@@ -5,11 +5,11 @@ import { PhotoController } from './photo.controller';
 import { PhotoService } from './photo.service';
 
 @Module({
-    imports: [
-        MongooseModule.forFeature([{ name: Photo.name, schema: PhotoSchema }]),
-    ],
-    providers: [PhotoService],
-    exports: [PhotoService],
-    controllers: [PhotoController],
+	imports: [
+		MongooseModule.forFeature([{ name: Photo.name, schema: PhotoSchema }]),
+	],
+	providers: [PhotoService],
+	exports: [PhotoService],
+	controllers: [PhotoController],
 })
 export class PhotoModule {}
