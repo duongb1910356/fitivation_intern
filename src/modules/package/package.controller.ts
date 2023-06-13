@@ -237,7 +237,6 @@ export class PackageController {
 	}
 
 	@Get('package/:packageID/bill-items')
-	@ApiTags('packages/bill-items')
 	@ApiOperation({
 		summary: 'getManyBillItemsOneOwnPackage',
 		description:
@@ -361,7 +360,6 @@ export class PackageController {
 	}
 
 	@Get('package/:packageID/bill-items/:billItemID')
-	@ApiTags('packages/bill-items')
 	@ApiOperation({
 		summary: 'getOneBillItemOneOwnPackage',
 		description:
@@ -486,7 +484,6 @@ export class PackageController {
 
 	@Get('packages/promotions')
 	@ApiDocsPagination('promotion')
-	@ApiTags('packages/promotions')
 	@ApiOperation({
 		summary: 'getManyPackagePromotionsOfAllOwnPackages',
 		description:
@@ -566,7 +563,6 @@ export class PackageController {
 
 	@Get('packages/:packagesID/promotions')
 	@ApiDocsPagination('promotion')
-	@ApiTags('packages/promotions')
 	@ApiOperation({
 		summary: 'getManyPackagesPromotionsOfOnePackage',
 		description:
@@ -657,7 +653,6 @@ export class PackageController {
 	}
 
 	@Get('packages/:packagesID/promotions/:promotionID')
-	@ApiTags('packages/promotions')
 	@ApiOperation({
 		summary: 'getOnePackagePromotionOfOnePackage',
 		description:
@@ -747,8 +742,8 @@ export class PackageController {
 		console.log(packagesID, promotionID);
 		return 'getOnePackagePromotionOfOnePackage';
 	}
+
 	@Post('packages/:packagesID/promotions')
-	@ApiTags('packages/promotions')
 	@ApiOperation({
 		summary: 'createPackagePromotion',
 		description:
@@ -840,170 +835,5 @@ export class PackageController {
 	})
 	createPackagePromotion() {
 		return 'createPackagePromotion';
-	}
-	@Patch('packages/:packagesID/promotions/:promotionID')
-	@ApiTags('packages/promotions')
-	@ApiOperation({
-		summary: 'updatePackagePromotion',
-		description:
-			'Allow facility owner to update one package promotion of one own package',
-	})
-	@ApiParam({ name: 'packagesID', type: String, description: 'Facility ID' })
-	@ApiParam({ name: 'promotionID', type: String, description: 'Promotion ID' })
-	@ApiBody({
-		type: CreatePromotionDto,
-		examples: {
-			ADMIN: {
-				value: {
-					targetID: 'string',
-					type: PromotionType.PACKAGE,
-					name: 'string',
-					description: 'string',
-					couponCode: 'string',
-					value: 1,
-					method: PromotionMethod.NUMBER,
-					minPriceApply: 0,
-					maxQuantity: 0,
-					startDate: new Date(),
-					endDate: new Date(),
-					customerType: CustomerType.CUSTOMER,
-				},
-			},
-		},
-	})
-	@ApiResponse({
-		status: 201,
-		schema: {
-			example: {
-				targetID: 'string',
-				type: PromotionType.PACKAGE,
-				name: 'string',
-				description: 'string',
-				couponCode: 'string',
-				value: 1,
-				method: PromotionMethod.NUMBER,
-				minPriceApply: 0,
-				maxQuantity: 0,
-				startDate: new Date(),
-				endDate: new Date(),
-				customerType: CustomerType.CUSTOMER,
-				status: PromotionStatus.ACTIVE,
-				createdAt: new Date(),
-				updatedAt: new Date(),
-			} as Promotion,
-		},
-	})
-	@ApiResponse({
-		status: 400,
-		schema: {
-			example: {
-				code: '400',
-				message: 'Bad request',
-				details: null,
-			} as ErrorResponse<null>,
-		},
-	})
-	@ApiResponse({
-		status: 401,
-		schema: {
-			example: {
-				code: '401',
-				message: 'Unauthorized',
-				details: null,
-			} as ErrorResponse<null>,
-		},
-	})
-	@ApiResponse({
-		status: 403,
-		schema: {
-			example: {
-				code: '403',
-				message: `Forbidden resource`,
-				details: null,
-			} as ErrorResponse<null>,
-		},
-	})
-	@ApiResponse({
-		status: 404,
-		schema: {
-			example: {
-				code: '404',
-				message: 'Not found document with that ID',
-				details: null,
-			} as ErrorResponse<null>,
-		},
-	})
-	updatePackagePromotion(
-		@Param('packagesID') packagesID: string,
-		@Param('promotionID') promotionID: string,
-		@Body() updatePromotionDto: UpdatePromotionDto,
-	) {
-		console.log(packagesID, promotionID, updatePromotionDto);
-		return 'updatePackagePromotion';
-	}
-	@Delete('packages/:packagesID/promotions/:promotionID')
-	@ApiTags('packages/promotions')
-	@ApiParam({ name: 'packagesID', type: String, description: 'Facility ID' })
-	@ApiParam({ name: 'promotionID', type: String, description: 'Promotion ID' })
-	@ApiOperation({
-		summary: 'deletePackagePromotion',
-		description:
-			'Allow facility owner to delete one package promotion of one own package',
-	})
-	@ApiResponse({
-		status: 200,
-		schema: {
-			example: {
-				code: 200,
-				message: 'Deleted successfully',
-			},
-		},
-	})
-	@ApiResponse({
-		status: 400,
-		schema: {
-			example: {
-				code: '400',
-				message: 'Bad request',
-				details: null,
-			} as ErrorResponse<null>,
-		},
-	})
-	@ApiResponse({
-		status: 401,
-		schema: {
-			example: {
-				code: '401',
-				message: 'Unauthorized',
-				details: null,
-			} as ErrorResponse<null>,
-		},
-	})
-	@ApiResponse({
-		status: 403,
-		schema: {
-			example: {
-				code: '403',
-				message: `Forbidden resource`,
-				details: null,
-			} as ErrorResponse<null>,
-		},
-	})
-	@ApiResponse({
-		status: 404,
-		schema: {
-			example: {
-				code: '404',
-				message: 'Not found document with that ID',
-				details: null,
-			} as ErrorResponse<null>,
-		},
-	})
-	deletePackagePromotion(
-		@Param('packageID') packageID: string,
-		@Param('promotionID') promotionID: string,
-	) {
-		console.log(packageID, promotionID);
-		return 'deletePackagePromotion';
 	}
 }
