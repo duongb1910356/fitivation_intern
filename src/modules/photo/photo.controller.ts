@@ -17,6 +17,7 @@ import {
 	ApiBadRequestResponse,
 	ApiBearerAuth,
 	ApiBody,
+	ApiConsumes,
 	ApiNotFoundResponse,
 	ApiOkResponse,
 	ApiOperation,
@@ -37,21 +38,27 @@ import { CreatePhotoDto } from './dto/create-photo-dto';
 export class PhotoController {
 	constructor(private readonly photoService: PhotoService) {}
 
-	@Public()
 	@Post()
 	@UseInterceptors(FileInterceptor('file'))
 	@ApiOperation({
 		summary: 'Add image into folder of facility ',
 		description: 'Add a image to folder of a facility',
 	})
+	@ApiConsumes('multipart/form-data')
 	@ApiBody({
-		type: CreatePhotoDto,
-		examples: {
-			example1: {
-				value: {
-					ownerID: '6475692ce552996bd0014c94',
-					describe: 'image 1',
-				} as CreatePhotoDto,
+		schema: {
+			type: 'object',
+			properties: {
+				file: {
+					type: 'string',
+					format: 'binary',
+				},
+				describe: {
+					type: 'string',
+				},
+				ownerID: {
+					type: 'string',
+				},
 			},
 		},
 	})
@@ -98,18 +105,11 @@ export class PhotoController {
 	}
 
 	@Public()
-	@Post('test')
-	@UseInterceptors(FileInterceptor('file'))
-	createPhoto(
-		@Body() createPhotoDto: CreatePhotoDto,
-		@UploadedFile() file: Express.Multer.File,
-	): CreatePhotoDto {
-		console.log('File >> ', createPhotoDto, file);
-		return createPhotoDto;
-	}
-
-	@Public()
-	@Get('test/:id')
+	@Get(':id')
+	@ApiOperation({
+		summary: 'Get image by id',
+	})
+	@ApiParam({ name: 'id', type: String, description: 'Image ID' })
 	getPhoto(@Param('id') id: string) {
 		return this.photoService.findOne({ _id: id });
 	}

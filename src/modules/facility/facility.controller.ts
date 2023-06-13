@@ -1297,16 +1297,30 @@ export class FacilityController {
 		summary: 'Update photo of facility',
 	})
 	@ApiParam({ name: 'facilityID', type: String, description: 'Facility ID' })
+	@ApiConsumes('multipart/form-data')
 	@ApiBody({
 		type: UpdatePhotoOfFacilityDto,
 		examples: {
 			example1: {
 				value: {
-					photos: [{ file: null, describe: 'tuỳ chọn có cũng được' }],
+					photos: [],
 					deletedImages: ['name_image1', 'name_image2'],
 				} as UpdatePhotoOfFacilityDto,
 			},
 		},
+		// description: 'File and sample data',
+		// schema: {
+		// 	type: 'object',
+		// 	properties: {
+		// 		file: {
+		// 			type: 'string',
+		// 			format: 'binary',
+		// 		},
+		// 		data: {
+		// 			type: 'string',
+		// 		},
+		// 	},
+		// },
 	})
 	@ApiOkResponse({
 		status: 200,

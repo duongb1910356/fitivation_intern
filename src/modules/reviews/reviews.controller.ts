@@ -43,10 +43,7 @@ export class ReviewsController {
 					facilityID: '123456',
 					rating: 5,
 					comment: 'Great',
-					photos: [
-						{ file: {}, describe: 'optional' },
-						{ file: {}, describe: 'optional' },
-					],
+					photos: [{ file: {} }, { file: {} }],
 				} as CreateReviewDto,
 			},
 		},
@@ -100,7 +97,7 @@ export class ReviewsController {
 				value: {
 					rating: 5,
 					comment: 'string',
-					photos: [{ file: {}, describe: 'describe field is optional' }],
+					photos: [{ file: {} }],
 					deletedImages: ['name-image1', 'name-image2'],
 				} as UpdateReviewDto,
 			},
