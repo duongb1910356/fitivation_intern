@@ -1,29 +1,38 @@
 import { Injectable } from '@nestjs/common';
 import { InjectModel } from '@nestjs/mongoose';
-import { createReadStream, createWriteStream, mkdirSync, unlinkSync, writeFileSync } from 'fs';
+import { createReadStream, createWriteStream, existsSync, mkdirSync, unlinkSync, writeFileSync } from 'fs';
 import { appConfig } from 'src/app.config';
 import { GenFileName } from 'src/utils/gen-filename';
+import { Photo, PhotoDocument } from './schemas/photo.schema';
+import { Model } from 'mongoose';
+import { CreatePhotoDto } from './dto/create-photo-dto';
+import { Request } from 'express';
 
 @Injectable()
 export class PhotoService {
-    // constructor()
+	constructor(@InjectModel(Photo.name) private photoModel: Model<PhotoDocument>) {}
 
-    uploadFile(file: Express.Multer.File, ownerID: String): String {
+    uploadFile(file: Express.Multer.File, photoDto: CreatePhotoDto): Promise<Photo> {
         try {
-            if (!file) {
-                console.log("File empty");
+            const dir = `${appConfig.fileRoot}/${photoDto.ownerID}`;
+            if (!existsSync(dir)) {
+                mkdirSync(dir, { recursive: true });
             }
-            // const dir = `${appConfig.fileRoot}/${ownerID}`;
-            // const fileName = GenFileName.gen(file.mimetype);
-            // mkdirSync(dir, { recursive: true });
-            // writeFileSync(`${dir}/${fileName}`, file.buffer);
-            return file.filename
+            const fileName = GenFileName.gen(file.mimetype);
+            writeFileSync(`${dir}/${fileName}`, file.buffer);
+            const input: CreatePhotoDto = {
+                ownerID: photoDto.ownerID,
+                name: fileName,
+                describe: photoDto.describe
+            }
+            return this.photoModel.create(input);
         } catch (error) {
-            unlinkSync(file.path);
-            console.log("Error: Uploadfile >> ", error);
-            throw new Error('Lỗi khi tải lên ảnh');
+            throw new Error('Uploading failed');
         }
-
     }
+
+    async findOne(filter: Partial<Photo>): Promise<Photo> {
+		return this.photoModel.findOne(filter);
+	}
 
 }

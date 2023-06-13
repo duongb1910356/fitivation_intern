@@ -7,7 +7,7 @@ export class FileUploadDto {
   @IsString()
   describe?: string;
 
-  @ApiProperty({ type: 'string', format: 'binary' })
+  // @ApiProperty({ type: 'string', format: 'binary' })
   @IsNotEmpty()
-  file: Express.Multer.File;
+  file?: Express.Multer.File;
 }

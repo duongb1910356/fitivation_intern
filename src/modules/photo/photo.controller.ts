@@ -10,66 +10,90 @@ import { GenFileName } from 'src/utils/gen-filename';
 import { appConfig } from 'src/app.config';
 import { mkdirSync, writeFileSync } from 'fs';
 import { PhotoService } from './photo.service';
+import { CreatePhotoDto } from './dto/create-photo-dto';
+import { Types } from 'mongoose';
 
 @ApiTags('photo')
 @Controller('photo')
 export class PhotoController {
 	constructor(private readonly photoService: PhotoService) { }
 
-	// @ApiBearerAuth()
-	// @ApiParam({ name: 'ownerID', type: String })
-	// @ApiOperation({
-	// 	summary: 'Add image into folder of facility ',
-	// 	description: 'Add a image to folder of a facility'
-	// })
-	// @ApiBody({
-	// 	type: FileUploadDto,
-	// 	examples: {
-	// 		example1: {
-	// 			value: {
-	// 				file: {},
-	// 				describe: 'describe'
-	// 			} as FileUploadDto,
-	// 		}
-	// 	}
-	// })
-	// @ApiOkResponse({
-	// 	status: 200,
-	// 	schema: {
-	// 		example: {
-	// 			code: 200,
-	// 			message: 'Success',
-	// 			data: {
-	// 				_id: '123456789',
-	// 				ownerID: 'id-bucket',
-	// 				name: 'name-image',
-	// 				imageURL: 'http://localhost:8080/id-bucket/name-image',
-	// 				createdAt: new Date(),
-	// 				updatedAt: new Date()
-	// 			} as Photo,
-	// 		},
-	// 	},
-	// })
-	// @ApiBadRequestResponse({
-	// 	type: BadRequestException,
-	// 	status: 400,
-	// 	description: 'File size invalid!',
-	// })
-	// @ApiUnsupportedMediaTypeResponse({
-	// 	type: UnsupportedMediaTypeException,
-	// 	status: 415,
-	// 	description: 'File invalid!',
-	// })
+	@Public()
+	@Post()
+	@UseInterceptors(FileInterceptor('file'))
+	@ApiOperation({
+		summary: 'Add image into folder of facility ',
+		description: 'Add a image to folder of a facility'
+	})
+	@ApiBody({
+		type: CreatePhotoDto,
+		examples: {
+			example1: {
+				value: {
+					ownerID: '6475692ce552996bd0014c94',
+					describe: 'image 1'
+				} as CreatePhotoDto,
+			}
+		}
+	})
+	@ApiOkResponse({
+		status: 200,
+		schema: {
+			example: {
+				code: 200,
+				message: 'Success',
+				data: {
+					_id: '123456789',
+					ownerID: 'ownerID',
+					name: 'name-image',
+					imageURL: 'http://localhost:8080/ownerID/name-image',
+					createdAt: new Date(),
+					updatedAt: new Date()
+				} as Photo,
+			},
+		},
+	})
+	@ApiBadRequestResponse({
+		type: BadRequestException,
+		status: 400,
+		description: 'File size invalid!',
+	})
+	@ApiUnsupportedMediaTypeResponse({
+		type: UnsupportedMediaTypeException,
+		status: 415,
+		description: 'File invalid!',
+	})
+	uploadFile(
+		@Body() photoDto: CreatePhotoDto,
+		@UploadedFile(
+			new ParseFilePipe({
+				validators: [
+					new MaxFileSizeValidator({ maxSize: 1000 * 1000 }), // 1MB
+					new FileTypeValidator({ fileType: /(?:jpeg|png)/i }),
+				],
+			}),
+		) file: Express.Multer.File
+	) {
+		return this.photoService.uploadFile(file, photoDto);
+	}
 
 	@Public()
-	@Post(':ownerID/file')
+	@Post('test')
 	@UseInterceptors(FileInterceptor('file'))
-	uploadFile(@UploadedFile() file: Express.Multer.File): { filename: string } {
-		// Xử lý file tại đây (lưu, xử lý dữ liệu, ...)
-		// Sau khi xử lý thành công, trả về tên file
-		console.log("file.filename >> ", file.originalname)
-		return { filename: file.originalname };
+	createPhoto(
+		@Body() createPhotoDto: CreatePhotoDto,
+		@UploadedFile() file: Express.Multer.File
+	): CreatePhotoDto {
+		console.log("File >> ", createPhotoDto)
+		return createPhotoDto;
 	}
+
+	@Public()
+	@Get('test/:id')
+	getPhoto(@Param('id') id: string) {
+		return this.photoService.findOne({ _id: id })
+	}
+
 
 	@Delete(':id')
 	@ApiBearerAuth()

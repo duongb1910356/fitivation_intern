@@ -1,32 +1,84 @@
-import { ApiProperty } from '@nestjs/swagger';
 import {
+	IsBoolean,
+	IsDate,
 	IsEmail,
 	IsEnum,
+	IsNotEmpty,
 	IsOptional,
+	IsPhoneNumber,
+	IsString,
 	MaxLength,
 	MinLength,
+	ValidateNested,
 } from 'class-validator';
-import { UserRole } from '../schemas/user.schema';
+import { Gender, UserRole, UserStatus } from '../schemas/user.schema';
+import { UserAddressDto } from './user-address.dto';
+import { Type } from 'class-transformer';
 
 export class CreateUserDto {
-	@MinLength(3)
-	@MaxLength(12)
-	@ApiProperty()
-	displayName: string;
-
-	@IsEmail()
-	@ApiProperty()
-	email: string;
-
-	@MinLength(6)
-	@ApiProperty()
-	password: string;
-
+	@IsNotEmpty()
 	@IsEnum(UserRole)
-	@ApiProperty()
 	role: UserRole;
 
+	@IsNotEmpty()
+	@IsString()
+	@MinLength(2)
+	@MaxLength(40)
+	username: string;
+
+	@IsNotEmpty()
+	@IsEmail()
+	email: string;
+
+	@IsNotEmpty()
+	@IsString()
+	@MinLength(6)
+	password: string;
+
+	@IsNotEmpty()
+	@IsString()
+	@MinLength(2)
+	@MaxLength(20)
+	displayName: string;
+
+	@IsNotEmpty()
+	@IsString()
+	@MinLength(2)
+	@MaxLength(20)
+	firstName: string;
+
+	@IsNotEmpty()
+	@IsString()
+	@MinLength(2)
+	@MaxLength(40)
+	lastName: string;
+
+	@IsNotEmpty()
+	@IsEnum(Gender)
+	gender: Gender;
+
+	@IsNotEmpty()
+	@IsDate()
+	birthDate: Date;
+
+	@IsNotEmpty()
+	@IsPhoneNumber()
+	tel: string;
+
+	@IsNotEmpty()
+	@ValidateNested({ each: true })
+	@Type(() => UserAddressDto)
+	address: UserAddressDto;
+
 	@IsOptional()
-	@ApiProperty()
+	@IsString()
 	avatar?: string;
+
+	@IsOptional()
+	@IsBoolean()
+	isMember?: boolean;
+
+	@IsNotEmpty()
+	@IsEnum(UserStatus)
+	status: UserStatus;
 }
