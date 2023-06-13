@@ -16,7 +16,7 @@ export class AddressController {
 	constructor(private readonly addressService: AddressService) {}
 
 	@Public()
-	@Get('province')
+	@Get('provinces')
 	@ApiOperation({
 		summary: 'Get list of provinces',
 	})

@@ -9,7 +9,6 @@ import {
 	Patch,
 	Post,
 	Query,
-	UseGuards,
 	UseInterceptors,
 } from '@nestjs/common';
 import {
@@ -36,14 +35,11 @@ import {
 	ListOptions,
 	ListResponse,
 } from 'src/shared/response/common-response';
-import { UserRole } from '../users/schemas/user.schema';
 import { Review } from '../reviews/schemas/reviews.schema';
 import { UpdateFacilityDto } from './dto/update-facility-dto';
 import { ApiDocsPagination } from 'src/decorators/swagger-form-data.decorator';
 import { Photo } from '../photo/schemas/photo.schema';
 import { State, Status, ScheduleType } from '../../shared/enum/facility.enum';
-import { Roles } from 'src/decorators/role-decorator/role.decorator';
-import { RolesGuard } from 'src/decorators/role-decorator/role.guard';
 import { ShiftTime } from '../facility-schedule/entities/shift-time.entity';
 import { OpenTime } from '../facility-schedule/entities/open-time.entity';
 import { FacilitySchedule } from '../facility-schedule/entities/facility-schedule.entity';
@@ -410,8 +406,6 @@ export class FacilityController {
 	}
 
 	// @ApiBearerAuth()
-	// @UseGuards(RolesGuard)
-	// @Roles(UserRole.ADMIN, UserRole.FACILITY_OWNER)
 	// @Get(':facilityId/attendances')
 	// @ApiOperation({
 	//     summary: 'Get All Attendance by facilityId',
@@ -493,8 +487,6 @@ export class FacilityController {
 	// }
 
 	@ApiBearerAuth()
-	@UseGuards(RolesGuard)
-	@Roles(UserRole.ADMIN, UserRole.FACILITY_OWNER)
 	@Get(':facilityID/schedules')
 	@ApiOperation({
 		summary: 'Get All Schedule by facilityId',
@@ -755,8 +747,6 @@ export class FacilityController {
 	}
 
 	@ApiBearerAuth()
-	@UseGuards(RolesGuard)
-	@Roles(UserRole.ADMIN, UserRole.FACILITY_OWNER)
 	@Post(':facilityId/schedules')
 	@ApiOperation({
 		summary: 'Create new Schedule by facilityId',
@@ -882,8 +872,6 @@ export class FacilityController {
 	}
 
 	@ApiBearerAuth()
-	@UseGuards(RolesGuard)
-	@Roles(UserRole.ADMIN, UserRole.FACILITY_OWNER)
 	@Post(':facilityId/holidays')
 	@ApiOperation({
 		summary: 'Create new Holiday by facilityId',
@@ -955,8 +943,6 @@ export class FacilityController {
 	}
 
 	@ApiBearerAuth()
-	@UseGuards(RolesGuard)
-	@Roles(UserRole.ADMIN, UserRole.FACILITY_OWNER)
 	@Post(':facilityId/package-types')
 	@ApiOperation({
 		summary: 'Create new Package Type by facilityId',
@@ -1138,8 +1124,6 @@ export class FacilityController {
 	}
 
 	@ApiBearerAuth()
-	@UseGuards(RolesGuard)
-	@Roles(UserRole.ADMIN, UserRole.FACILITY_OWNER)
 	@Patch(':facilityId/package-types/swap-order')
 	@ApiOperation({
 		summary: 'Swap Package Type order by facilityId',

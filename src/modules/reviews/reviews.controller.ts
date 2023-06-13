@@ -3,7 +3,6 @@ import {
 	Controller,
 	Delete,
 	NotFoundException,
-	Patch,
 	Post,
 	UseInterceptors,
 } from '@nestjs/common';
@@ -22,7 +21,6 @@ import {
 import { CreateReviewDto } from './dto/create-review-dto';
 import { Review } from './schemas/reviews.schema';
 import { FilesInterceptor } from '@nestjs/platform-express';
-import { UpdateReviewDto } from './dto/update-review-dto';
 import { Photo } from '../photo/schemas/photo.schema';
 
 @ApiTags('reviews')
@@ -84,61 +82,61 @@ export class ReviewsController {
 		//
 	}
 
-	@Patch(':id')
-	@ApiBearerAuth()
-	@ApiOperation({
-		summary: 'Modified review',
-	})
-	@ApiParam({ name: 'id', type: String, description: 'Review ID' })
-	@ApiBody({
-		type: UpdateReviewDto,
-		examples: {
-			example1: {
-				value: {
-					rating: 5,
-					comment: 'string',
-					photos: [{ file: {} }],
-					deletedImages: ['name-image1', 'name-image2'],
-				} as UpdateReviewDto,
-			},
-		},
-	})
-	@ApiOkResponse({
-		status: 200,
-		schema: {
-			example: {
-				code: 200,
-				message: 'Success',
-				data: {
-					_id: '123456789',
-					accountID: {},
-					facilityID: {},
-					comment: 'Đáng để trải nghiệm',
-					rating: 5,
-					photos: [
-						{
-							_id: '12345678dsgdgsdxdg4',
-							ownerID: 'bucket1',
-							name: 'image-name',
-							imageURL: 'http://localhost:8080/bucket1/image-name',
-							createdAt: new Date(),
-							updatedAt: new Date(),
-						},
-					] as Photo[],
-					createdAt: new Date(),
-					updatedAt: new Date(),
-				} as Review,
-			},
-		},
-	})
-	@ApiBadRequestResponse({
-		type: BadRequestException,
-		status: 400,
-		description: '[Input] invalid!',
-	})
-	updateFacility() {
-		//
-	}
+	// @Patch(':id')
+	// @ApiBearerAuth()
+	// @ApiOperation({
+	// 	summary: 'Modified review',
+	// })
+	// @ApiParam({ name: 'id', type: String, description: 'Review ID' })
+	// @ApiBody({
+	// 	type: UpdateReviewDto,
+	// 	examples: {
+	// 		example1: {
+	// 			value: {
+	// 				rating: 5,
+	// 				comment: 'string',
+	// 				photos: [],
+	// 				deletedImages: ['name-image1', 'name-image2'],
+	// 			} as UpdateReviewDto,
+	// 		},
+	// 	},
+	// })
+	// @ApiOkResponse({
+	// 	status: 200,
+	// 	schema: {
+	// 		example: {
+	// 			code: 200,
+	// 			message: 'Success',
+	// 			data: {
+	// 				_id: '123456789',
+	// 				accountID: {},
+	// 				facilityID: {},
+	// 				comment: 'Đáng để trải nghiệm',
+	// 				rating: 5,
+	// 				photos: [
+	// 					{
+	// 						_id: '12345678dsgdgsdxdg4',
+	// 						ownerID: 'bucket1',
+	// 						name: 'image-name',
+	// 						imageURL: 'http://localhost:8080/bucket1/image-name',
+	// 						createdAt: new Date(),
+	// 						updatedAt: new Date(),
+	// 					},
+	// 				] as Photo[],
+	// 				createdAt: new Date(),
+	// 				updatedAt: new Date(),
+	// 			} as Review,
+	// 		},
+	// 	},
+	// })
+	// @ApiBadRequestResponse({
+	// 	type: BadRequestException,
+	// 	status: 400,
+	// 	description: '[Input] invalid!',
+	// })
+	// updateFacility() {
+	// 	//
+	// }
 
 	@Delete(':id')
 	@ApiBearerAuth()
