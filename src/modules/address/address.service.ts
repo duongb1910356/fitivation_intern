@@ -23,9 +23,8 @@ export class AddressService {
         @InjectModel(Commune.name) private communeModel: Model<CommuneDocument>
     ) { }
 
-    async findProvinceAll(): Promise<ListResponse<Province>> {
+    async findAllProvince(): Promise<ListResponse<Province>> {
         try {
-
             const provinces = await this.provinceModel.find();
 
             return {
@@ -38,11 +37,9 @@ export class AddressService {
         }
     }
 
-    async findDistrictsByProvinceID(id: String): Promise<ListResponse<District>> {
+    async findDistrictsByProvinceID(id: string): Promise<ListResponse<District>> {
         try {
-
             const districts = await this.districtModel.find({province: id});
-            // console.log("districts >>> ", districts);
             if(districts.length === 0){
                 throw new NotFoundException('Districts of province not found!');
             }
@@ -56,7 +53,7 @@ export class AddressService {
         }
     }
 
-    async findCommunesByDistrictID(id: String): Promise<ListResponse<Commune>> {
+    async findCommunesByDistrictID(id: string): Promise<ListResponse<Commune>> {
         try {
 
             const communes = await this.communeModel.find({district: id});

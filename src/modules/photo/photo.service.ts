@@ -1,16 +1,17 @@
-import { Injectable } from '@nestjs/common';
+import { BadRequestException, Injectable, NotFoundException } from '@nestjs/common';
 import { InjectModel } from '@nestjs/mongoose';
 import { createReadStream, createWriteStream, existsSync, mkdirSync, unlinkSync, writeFileSync } from 'fs';
 import { appConfig } from 'src/app.config';
 import { GenFileName } from 'src/utils/gen-filename';
 import { Photo, PhotoDocument } from './schemas/photo.schema';
-import { Model } from 'mongoose';
+import { Model, isValidObjectId } from 'mongoose';
 import { CreatePhotoDto } from './dto/create-photo-dto';
 import { Request } from 'express';
+import { SuccessResponse } from 'src/shared/response/success-response';
 
 @Injectable()
 export class PhotoService {
-	constructor(@InjectModel(Photo.name) private photoModel: Model<PhotoDocument>) {}
+    constructor(@InjectModel(Photo.name) private photoModel: Model<PhotoDocument>) { }
 
     uploadFile(file: Express.Multer.File, photoDto: CreatePhotoDto): Promise<Photo> {
         try {
@@ -32,7 +33,21 @@ export class PhotoService {
     }
 
     async findOne(filter: Partial<Photo>): Promise<Photo> {
-		return this.photoModel.findOne(filter);
-	}
+        return await this.photoModel.findOne(filter);
+    }
+
+    async deleteOne(id: string): Promise<SuccessResponse<Photo>> {
+        try {
+            const deletedPhoto = await this.photoModel.findByIdAndDelete(id);
+            if (!deletedPhoto) {
+                throw new NotFoundException('Photo not found!');
+            }
+            const imagePath = `${appConfig.fileRoot}/${deletedPhoto.ownerID}/${deletedPhoto.name}`;
+            unlinkSync(imagePath);
+            return null
+        } catch (err) {
+            throw new BadRequestException(err);
+        }
+    }
 
 }

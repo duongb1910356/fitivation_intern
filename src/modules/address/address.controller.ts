@@ -45,7 +45,7 @@ export class AddressController {
         description: 'Can not get list of provinces!',
     })
     getAllProvince() {
-        return this.addressService.findProvinceAll()
+        return this.addressService.findAllProvince()
     }
 
     @Public()

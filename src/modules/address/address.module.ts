@@ -4,7 +4,6 @@ import { Province, ProvinceSchema} from './schemas/province.schema';
 import { District, DistrictSchema } from './schemas/district.schema';
 import { Commune, CommuneSchema } from './schemas/commune.schema';
 import { AddressController } from './address.controller';
-import { ProvinceService } from './province.service';
 import { AddressService } from './address.service';
 @Module({
     imports: [
