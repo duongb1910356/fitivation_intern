@@ -1,40 +1,33 @@
 import {
-	BadRequestException,
 	Body,
 	Controller,
 	Delete,
 	FileTypeValidator,
 	Get,
 	MaxFileSizeValidator,
-	NotFoundException,
 	Param,
 	ParseFilePipe,
 	Patch,
 	Post,
 	Query,
-	UnsupportedMediaTypeException,
 	UploadedFile,
 	UseGuards,
 	UseInterceptors,
 } from '@nestjs/common';
 import { FileInterceptor } from '@nestjs/platform-express';
 import {
-	ApiBadRequestResponse,
 	ApiBearerAuth,
 	ApiBody,
 	ApiConsumes,
 	ApiCreatedResponse,
-	ApiNotFoundResponse,
 	ApiOkResponse,
 	ApiOperation,
 	ApiParam,
 	ApiResponse,
 	ApiTags,
-	ApiUnsupportedMediaTypeResponse,
 } from '@nestjs/swagger';
 import { mkdirSync, writeFileSync } from 'fs';
 import { appConfig } from '../../app.config';
-import { SuccessResponse } from '../../shared/response/success-response';
 import { GenFileName } from '../../utils/gen-filename';
 import { AvatarUploadDto } from './dto/avatar-upload-dto';
 import { CreateUserDto } from './dto/create-user-dto';
