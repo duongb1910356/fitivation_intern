@@ -50,8 +50,7 @@ import {
 	PromotionStatus,
 	Promotion,
 } from '../promotions/schemas/promotion.schema';
-import { CreatePromotionDto } from '../promotions/dto/create-promotion.dto';
-import { UpdatePromotionDto } from '../promotions/dto/update-promotion.dto';
+import { CreatePromotionDto } from '../promotions/dto/create-promotion-dto';
 
 @ApiTags('packages')
 @Controller('packages')
