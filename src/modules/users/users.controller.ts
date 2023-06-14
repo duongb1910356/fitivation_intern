@@ -1,40 +1,33 @@
 import {
-	BadRequestException,
 	Body,
 	Controller,
 	Delete,
 	FileTypeValidator,
 	Get,
 	MaxFileSizeValidator,
-	NotFoundException,
 	Param,
 	ParseFilePipe,
 	Patch,
 	Post,
 	Query,
-	Req,
-	UnsupportedMediaTypeException,
 	UploadedFile,
+	UseGuards,
 	UseInterceptors,
 } from '@nestjs/common';
 import { FileInterceptor } from '@nestjs/platform-express';
 import {
-	ApiBadRequestResponse,
 	ApiBearerAuth,
 	ApiBody,
 	ApiConsumes,
 	ApiCreatedResponse,
-	ApiNotFoundResponse,
 	ApiOkResponse,
 	ApiOperation,
 	ApiParam,
 	ApiResponse,
 	ApiTags,
-	ApiUnsupportedMediaTypeResponse,
 } from '@nestjs/swagger';
 import { mkdirSync, writeFileSync } from 'fs';
 import { appConfig } from '../../app.config';
-import { SuccessResponse } from '../../shared/response/success-response';
 import { GenFileName } from '../../utils/gen-filename';
 import { AvatarUploadDto } from './dto/avatar-upload-dto';
 import { CreateUserDto } from './dto/create-user-dto';
@@ -49,6 +42,8 @@ import {
 	ListResponse,
 } from 'src/shared/response/common-response';
 import { ApiDocsPagination } from 'src/decorators/swagger-form-data.decorator';
+import { TokenResponse } from '../auth/dto/token-payload-dto';
+import { JwtAuthGuard } from '../auth/jwt-auth.guard';
 
 @ApiTags('users')
 @ApiBearerAuth()
@@ -78,6 +73,7 @@ export class UsersController {
 					district: 'Ninh Kieu',
 					commune: 'Xuan Khanh',
 				} as unknown as UserAddress,
+				isMember: false,
 				status: UserStatus.ACTIVE,
 				createdAt: new Date(),
 				updatedAt: new Date(),
@@ -152,6 +148,7 @@ export class UsersController {
 							district: 'Ninh Kieu',
 							commune: 'Xuan Khanh',
 						} as unknown as UserAddress,
+						isMember: false,
 						status: UserStatus.ACTIVE,
 						createdAt: new Date(),
 						updatedAt: new Date(),
@@ -226,7 +223,7 @@ export class UsersController {
 						district: 'Ninh Kieu',
 						commune: 'Xuan Khanh',
 					} as UserAddressDto,
-					status: UserStatus.ACTIVE,
+					isMember: false,
 				} as CreateUserDto,
 			},
 			USER: {
@@ -340,6 +337,7 @@ export class UsersController {
 						district: 'Ninh Kieu',
 						commune: 'Xuan Khanh',
 					} as unknown as UserAddress,
+					isMember: false,
 					status: UserStatus.ACTIVE,
 				},
 			},
@@ -498,6 +496,7 @@ export class UsersController {
 					district: 'Ninh Kieu',
 					commune: 'Xuan Khanh',
 				} as unknown as UserAddress,
+				isMember: false,
 				status: UserStatus.ACTIVE,
 				createdAt: new Date(),
 				updatedAt: new Date(),
@@ -574,5 +573,86 @@ export class UsersController {
 		const url: string = appConfig.fileHost + `/${id}/${fileName}`;
 
 		return this.userService.updateAvatar(id, url);
+	}
+
+	@UseGuards(JwtAuthGuard)
+	@Patch('update-me')
+	@ApiOperation({
+		summary: 'updateMe',
+		description: 'Allow user update personal account data',
+	})
+	@ApiCreatedResponse({ type: TokenResponse, status: 200 })
+	@ApiResponse({
+		status: 400,
+		schema: {
+			example: {
+				code: '400',
+				message: 'Input invalid',
+				details: null,
+			} as ErrorResponse<null>,
+		},
+	})
+	@ApiResponse({
+		status: 401,
+		schema: {
+			example: {
+				code: '401',
+				message: 'Unauthorized',
+				details: null,
+			} as ErrorResponse<null>,
+		},
+	})
+	@ApiResponse({
+		status: 403,
+		schema: {
+			example: {
+				code: '403',
+				message: `Forbidden resource`,
+				details: null,
+			} as ErrorResponse<null>,
+		},
+	})
+	updateMe() {
+		return 'updateMe';
+	}
+
+	@UseGuards(JwtAuthGuard)
+	@Delete('delete-me')
+	@ApiOperation({
+		summary: 'deleteMe',
+		description: 'Allow user inactive personal account data',
+	})
+	@ApiResponse({
+		status: 200,
+		schema: {
+			example: {
+				code: '200',
+				message: 'This account will delete after 15 days no login',
+				details: null,
+			},
+		},
+	})
+	@ApiResponse({
+		status: 401,
+		schema: {
+			example: {
+				code: '401',
+				message: 'Unauthorized',
+				details: null,
+			} as ErrorResponse<null>,
+		},
+	})
+	@ApiResponse({
+		status: 403,
+		schema: {
+			example: {
+				code: '403',
+				message: `Forbidden resource`,
+				details: null,
+			} as ErrorResponse<null>,
+		},
+	})
+	deleteMe() {
+		return 'deleteMe';
 	}
 }

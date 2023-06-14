@@ -37,7 +37,7 @@ export class CreateBillItemFacilityDto {
 	@ArrayMaxSize(2)
 	facilityCoordinatesLocation?: number[];
 
-	@IsObject()
+	@IsString()
 	@IsOptional()
 	facilityPhoto?: string;
 }
