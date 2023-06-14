@@ -1,34 +1,66 @@
-import { BadRequestException, Controller, Delete, FileTypeValidator, Get, HttpException, HttpStatus, MaxFileSizeValidator, NotFoundException, Param, ParseFilePipe, Post, UnsupportedMediaTypeException, UploadedFiles, UseInterceptors } from '@nestjs/common';
-import { ApiBadRequestResponse, ApiBearerAuth, ApiBody, ApiConsumes, ApiNotFoundResponse, ApiOkResponse, ApiOperation, ApiParam, ApiResponse, ApiTags, ApiUnsupportedMediaTypeResponse } from '@nestjs/swagger';
+import {
+	BadRequestException,
+	Body,
+	Controller,
+	Delete,
+	FileTypeValidator,
+	Get,
+	MaxFileSizeValidator,
+	Param,
+	ParseFilePipe,
+	Post,
+	UnsupportedMediaTypeException,
+	UploadedFile,
+	UseInterceptors,
+} from '@nestjs/common';
+import {
+	ApiBadRequestResponse,
+	ApiBearerAuth,
+	ApiBody,
+	ApiConsumes,
+	ApiNotFoundResponse,
+	ApiOkResponse,
+	ApiOperation,
+	ApiParam,
+	ApiResponse,
+	ApiTags,
+	ApiUnsupportedMediaTypeResponse,
+} from '@nestjs/swagger';
 import { Public } from '../auth/utils';
-import { FileInterceptor, FilesInterceptor } from '@nestjs/platform-express';
-import { FileUploadDto } from './dto/file-upload-dto';
-import { SuccessResponse } from 'src/shared/response/success-response';
+import { FileInterceptor } from '@nestjs/platform-express';
 import { ErrorResponse } from 'src/shared/response/common-response';
 import { Photo } from './schemas/photo.schema';
+import { PhotoService } from './photo.service';
+import { CreatePhotoDto } from './dto/create-photo-dto';
 
-@Controller('photo')
 @ApiTags('photo')
+@Controller('photo')
 export class PhotoController {
+	constructor(private readonly photoService: PhotoService) {}
 
-	// @ApiConsumes('multipart/form-data')
-	@Post(':buckets/file')
-	@ApiBearerAuth()
-	@ApiParam({ name: 'buckets', type: String })
+	@Post()
+	@UseInterceptors(FileInterceptor('file'))
 	@ApiOperation({
-		summary: 'Add image into bucket',
-		description: 'Add a image to bucket of a facility'
+		summary: 'Add image into folder of facility ',
+		description: 'Add a image to folder of a facility',
 	})
+	@ApiConsumes('multipart/form-data')
 	@ApiBody({
-		type: FileUploadDto,
-		examples: {
-			example1: {
-				value: {
-					file: {},
-					describe: 'describe'
-                } as FileUploadDto,
-            }
-        }
+		schema: {
+			type: 'object',
+			properties: {
+				file: {
+					type: 'string',
+					format: 'binary',
+				},
+				describe: {
+					type: 'string',
+				},
+				ownerID: {
+					type: 'string',
+				},
+			},
+		},
 	})
 	@ApiOkResponse({
 		status: 200,
@@ -38,11 +70,11 @@ export class PhotoController {
 				message: 'Success',
 				data: {
 					_id: '123456789',
-					ownerID: 'id-bucket',
+					ownerID: 'ownerID',
 					name: 'name-image',
-					imageURL: 'http://localhost:8080/id-bucket/name-image',
+					imageURL: 'http://localhost:8080/ownerID/name-image',
 					createdAt: new Date(),
-					updatedAt: new Date()
+					updatedAt: new Date(),
 				} as Photo,
 			},
 		},
@@ -57,28 +89,48 @@ export class PhotoController {
 		status: 415,
 		description: 'File invalid!',
 	})
-	@UseInterceptors(FilesInterceptor('file'))
-	upLoadFile() {
+	uploadFile(
+		@Body() photoDto: CreatePhotoDto,
+		@UploadedFile(
+			new ParseFilePipe({
+				validators: [
+					new MaxFileSizeValidator({ maxSize: 1000 * 1000 }), // 1MB
+					new FileTypeValidator({ fileType: /(?:jpeg|png)/i }),
+				],
+			}),
+		)
+		file: Express.Multer.File,
+	) {
+		return this.photoService.uploadFile(file, photoDto);
+	}
 
+	@Public()
+	@Get(':id')
+	@ApiOperation({
+		summary: 'Get image by id',
+	})
+	@ApiParam({ name: 'id', type: String, description: 'Image ID' })
+	getPhoto(@Param('id') id: string) {
+		return this.photoService.findOne({ _id: id });
 	}
 
 	@Delete(':id')
 	@ApiBearerAuth()
-    @ApiOperation({
-        summary: 'Delete image by id'
-    })
-    @ApiParam({ name: 'id', type: String, description: 'ID image' })
-    @ApiResponse({
-        status: 200,
-        schema: {
-            example: {
-                code: 200,
-                message: 'Success',
-                data: null
-            }
-        },
-    })
-    @ApiBadRequestResponse({
+	@ApiOperation({
+		summary: 'Delete image by id',
+	})
+	@ApiParam({ name: 'id', type: String, description: 'ID image' })
+	@ApiResponse({
+		status: 200,
+		schema: {
+			example: {
+				code: 200,
+				message: 'Success',
+				data: null,
+			},
+		},
+	})
+	@ApiBadRequestResponse({
 		schema: {
 			example: {
 				code: '400',
@@ -86,8 +138,8 @@ export class PhotoController {
 				details: null,
 			} as ErrorResponse<null>,
 		},
-    })
-    @ApiNotFoundResponse({
+	})
+	@ApiNotFoundResponse({
 		schema: {
 			example: {
 				code: '404',
@@ -95,9 +147,8 @@ export class PhotoController {
 				details: null,
 			} as ErrorResponse<null>,
 		},
-    })
-    deleteImageByID() {
-
-    }
-
+	})
+	deleteImageByID(@Param('id') id) {
+		return this.photoService.deleteOne(id);
+	}
 }
