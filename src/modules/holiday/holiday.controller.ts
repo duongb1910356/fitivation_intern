@@ -19,8 +19,8 @@ import {
 	ApiTags,
 	ApiUnauthorizedResponse,
 } from '@nestjs/swagger';
-import { Roles } from 'src/decorators/role-decorator/role.decorator';
-import { RolesGuard } from 'src/decorators/role-decorator/role.guard';
+import { Roles } from 'src/decorators/role.decorator';
+import { RolesGuard } from 'src/guards/role.guard';
 import { ErrorResponse } from 'src/shared/response/common-response';
 import { Facility } from '../facility/schemas/facility.schema';
 import { UserRole } from '../users/schemas/user.schema';

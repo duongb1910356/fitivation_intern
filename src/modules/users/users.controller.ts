@@ -49,7 +49,7 @@ import { JwtAuthGuard } from '../auth/jwt-auth.guard';
 @ApiBearerAuth()
 @Controller('users')
 export class UsersController {
-	constructor(private readonly userService: UsersService) {}
+	constructor(private readonly userService: UsersService) { }
 
 	@Get(':id')
 	@ApiOperation({ summary: 'getUserByID', description: 'Get one user by ID' })
@@ -567,6 +567,7 @@ export class UsersController {
 	) {
 		const dir = `${appConfig.fileRoot}/${id}`;
 		const fileName = GenFileName.gen(file.mimetype);
+		console.log("file users avatar >> ", file)
 		mkdirSync(dir, { recursive: true });
 		writeFileSync(`${dir}/${fileName}`, file.buffer);
 		const url: string = appConfig.fileHost + `/${id}/${fileName}`;
