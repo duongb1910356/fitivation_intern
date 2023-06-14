@@ -6,6 +6,7 @@ import {
 	FileTypeValidator,
 	Get,
 	MaxFileSizeValidator,
+	NotFoundException,
 	Param,
 	ParseFilePipe,
 	Post,
@@ -39,7 +40,7 @@ export class PhotoController {
 	constructor(private readonly photoService: PhotoService) {}
 
 	@Post()
-	@UseInterceptors(FileInterceptor('file'))
+	@ApiBearerAuth()
 	@ApiOperation({
 		summary: 'Add image into folder of facility ',
 		description: 'Add a image to folder of a facility',
@@ -89,6 +90,7 @@ export class PhotoController {
 		status: 415,
 		description: 'File invalid!',
 	})
+	@UseInterceptors(FileInterceptor('file'))
 	uploadFile(
 		@Body() photoDto: CreatePhotoDto,
 		@UploadedFile(
@@ -110,8 +112,12 @@ export class PhotoController {
 		summary: 'Get image by id',
 	})
 	@ApiParam({ name: 'id', type: String, description: 'Image ID' })
-	getPhoto(@Param('id') id: string) {
-		return this.photoService.findOne({ _id: id });
+	async getPhoto(@Param('id') id: string) {
+		const photo = await this.photoService.findOne({ _id: id });
+		if (!photo) {
+			throw new NotFoundException('Photo not found');
+		}
+		return photo;
 	}
 
 	@Delete(':id')
