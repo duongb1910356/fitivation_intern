@@ -22,8 +22,8 @@ import {
 	ApiTags,
 	ApiUnauthorizedResponse,
 } from '@nestjs/swagger';
-import { Roles } from 'src/decorators/role-decorator/role.decorator';
-import { RolesGuard } from 'src/decorators/role-decorator/role.guard';
+import { Roles } from 'src/decorators/role.decorator';
+import { RolesGuard } from 'src/guards/role.guard';
 import { User, UserRole } from '../users/schemas/user.schema';
 import { ApiDocsPagination } from 'src/decorators/swagger-form-data.decorator';
 import {

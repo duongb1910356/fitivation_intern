@@ -26,7 +26,7 @@ import {
 	PromotionType,
 } from '../promotions/schemas/promotion.schema';
 import { TimeType } from '../package/entities/package.entity';
-import { CreatePromotionDto } from '../promotions/dto/create-promotion.dto';
+import { CreatePromotionDto } from '../promotions/dto/create-promotion-dto';
 import { BillItemPackage } from '../bill-items/schemas/bill-item-package.schema';
 import { BillItemPackageType } from '../bill-items/schemas/bill-item-package-type.schema';
 import { BillItemFacility } from '../bill-items/schemas/bill-item-facility.schema';

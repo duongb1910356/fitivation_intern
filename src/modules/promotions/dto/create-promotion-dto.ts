@@ -13,7 +13,9 @@ import {
 	CustomerType,
 	PromotionMethod,
 	PromotionStatus,
+	PromotionType,
 } from '../schemas/promotion.schema';
+import { Type } from 'class-transformer';
 
 export class CreatePromotionDto {
 	@IsString()
@@ -21,9 +23,8 @@ export class CreatePromotionDto {
 	@MaxLength(12)
 	targetID: string;
 
-	@IsNumber()
-	@Min(0)
-	type: number;
+	@IsEnum(PromotionType)
+	type: PromotionType;
 
 	@IsString()
 	@IsNotEmpty()
@@ -63,14 +64,17 @@ export class CreatePromotionDto {
 	maxQuantity?: number;
 
 	@IsDate()
+	@Type(() => Date)
 	startDate: Date;
 
 	@IsDate()
+	@Type(() => Date)
 	endDate: Date;
 
 	@IsEnum(CustomerType)
 	customerType: CustomerType;
 
 	@IsEnum(PromotionStatus)
-	status: PromotionStatus;
+	@IsOptional()
+	status?: PromotionStatus;
 }
