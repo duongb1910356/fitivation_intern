@@ -19,10 +19,10 @@ import {
 	ApiTags,
 	ApiUnauthorizedResponse,
 } from '@nestjs/swagger';
-import { Roles } from 'src/decorators/role-decorator/role.decorator';
+import { Roles } from 'src/decorators/role.decorator';
 import { ErrorResponse } from 'src/shared/response/common-response';
 import { UserRole } from '../users/schemas/user.schema';
-import { RolesGuard } from 'src/decorators/role-decorator/role.guard';
+import { RolesGuard } from 'src/guards/role.guard';
 import {
 	FacilitySchedule,
 	ScheduleType,

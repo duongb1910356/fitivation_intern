@@ -11,7 +11,7 @@ import {
 	MinLength,
 	ValidateNested,
 } from 'class-validator';
-import { Gender, UserRole, UserStatus } from '../schemas/user.schema';
+import { Gender, UserRole } from '../schemas/user.schema';
 import { UserAddressDto } from './user-address.dto';
 import { Type } from 'class-transformer';
 
@@ -59,6 +59,7 @@ export class CreateUserDto {
 
 	@IsNotEmpty()
 	@IsDate()
+	@Type(() => Date)
 	birthDate: Date;
 
 	@IsNotEmpty()
@@ -71,14 +72,6 @@ export class CreateUserDto {
 	address: UserAddressDto;
 
 	@IsOptional()
-	@IsString()
-	avatar?: string;
-
-	@IsOptional()
 	@IsBoolean()
 	isMember?: boolean;
-
-	@IsNotEmpty()
-	@IsEnum(UserStatus)
-	status: UserStatus;
 }
