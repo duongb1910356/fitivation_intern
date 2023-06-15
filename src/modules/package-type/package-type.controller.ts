@@ -37,10 +37,13 @@ import { UserRole } from '../users/schemas/user.schema';
 import { RolesGuard } from 'src/guards/role.guard';
 import { Package, TimeType } from '../package/entities/package.entity';
 import { CreatePackageDto } from '../package/dto/create-package-dto';
+import { PackageTypeService } from './package-type.service';
 
 @ApiTags('package-types')
 @Controller('package-types')
 export class PackageTypeController {
+	constructor(private readonly packageTypeService: PackageTypeService) {}
+
 	@Public()
 	@Get(':packageTypeID')
 	@ApiOperation({
@@ -85,8 +88,7 @@ export class PackageTypeController {
 		},
 	})
 	getPackageType(@Param('packageTypeID') packageTypeID: string) {
-		//
-		console.log(packageTypeID);
+		return this.packageTypeService.findById(packageTypeID);
 	}
 
 	@Public()
@@ -230,9 +232,10 @@ export class PackageTypeController {
 		console.log(packageTypeID, data);
 	}
 
-	@ApiBearerAuth()
-	@UseGuards(RolesGuard)
-	@Roles(UserRole.FACILITY_OWNER)
+	// @ApiBearerAuth()
+	// @UseGuards(RolesGuard)
+	// @Roles(UserRole.FACILITY_OWNER)
+	@Public()
 	@Patch(':packageTypeID')
 	@ApiOperation({
 		summary: 'Update Package Type by packageTypeID',
@@ -312,17 +315,17 @@ export class PackageTypeController {
 			} as ErrorResponse<null>,
 		},
 	})
-	updatePackageType(
+	async updatePackageType(
 		@Param('packageTypeID') packageTypeID: string,
 		@Body() data: UpdatePackageTypeDto,
 	) {
-		console.log(packageTypeID, data);
-		// Logic để cập nhật package type theo ID
+		return await this.packageTypeService.update(packageTypeID, data);
 	}
 
-	@ApiBearerAuth()
-	@UseGuards(RolesGuard)
-	@Roles(UserRole.FACILITY_OWNER)
+	// @ApiBearerAuth()
+	// @UseGuards(RolesGuard)
+	// @Roles(UserRole.FACILITY_OWNER)
+	@Public()
 	@Delete(':packageTypeID')
 	@ApiOperation({
 		summary: 'Delete Package Type by packageTypeID',
@@ -377,7 +380,6 @@ export class PackageTypeController {
 		},
 	})
 	deletePackageType(@Param('packageTypeID') packageTypeID: string) {
-		console.log(packageTypeID);
-		// Logic để xóa package type theo ID
+		return this.packageTypeService.delete(packageTypeID);
 	}
 }

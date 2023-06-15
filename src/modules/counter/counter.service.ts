@@ -1,4 +1,4 @@
-import { Injectable } from '@nestjs/common';
+import { Injectable, NotFoundException } from '@nestjs/common';
 import { InjectModel } from '@nestjs/mongoose';
 import { Counter, CounterDocument } from './entities/counter.entity';
 import { Model } from 'mongoose';
@@ -10,29 +10,42 @@ export class CounterService {
 		private counterModel: Model<CounterDocument>,
 	) {}
 
-	async findOne(filter: Partial<Counter>): Promise<Counter> {
-		return this.counterModel.findOne(filter);
+	async findOneByCondition(filter: Partial<Counter>): Promise<Counter> {
+		const counter = await this.counterModel.findOne(filter);
+		if (!counter) throw new NotFoundException('Counter not found');
+		return counter;
 	}
 
 	async create(data: object) {
-		console.log('create');
 		const input = { ...data, count: 0 };
 		return this.counterModel.create(input);
 	}
 
-	async increase(id: string, oldCount: number) {
-		console.log('increase');
-		const count = { count: oldCount + 1 };
-		return await this.counterModel.findByIdAndUpdate(id, count, {
-			new: true,
-		});
+	async increase(id: string) {
+		const counter = await this.counterModel.findById(id);
+		if (!counter) {
+			throw new NotFoundException('Counter not found');
+		}
+		counter.count += 1;
+		await counter.save();
+		return counter;
 	}
 
-	async decrease(id: string, oldCount: number) {
-		console.log('decrease');
-		const count = { count: oldCount - 1 };
-		return await this.counterModel.findByIdAndUpdate(id, count, {
-			new: true,
-		});
+	async decrease(id: string) {
+		const counter = await this.counterModel.findById(id);
+		if (!counter) {
+			throw new NotFoundException('Counter not found');
+		}
+		counter.count -= 1;
+		await counter.save();
+		return counter;
+	}
+
+	async delete(id: string) {
+		const deletedDocument = await this.counterModel.findByIdAndDelete(id);
+
+		if (!deletedDocument) {
+			throw new NotFoundException('Document not found');
+		}
 	}
 }
