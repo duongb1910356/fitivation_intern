@@ -406,13 +406,13 @@ export class FacilityController {
 	}
 
 	// @ApiBearerAuth()
-	// @Get(':facilityId/attendances')
+	// @Get(':facilityID/attendances')
 	// @ApiOperation({
-	//     summary: 'Get All Attendance by facilityId',
+	//     summary: 'Get All Attendance by facilityID',
 	//     description: `Owner can use this API`,
 	// })
 	// @ApiParam({
-	//     name: 'facilityId',
+	//     name: 'facilityID',
 	//     type: String,
 	//     description: 'Facility ID',
 	// })
@@ -479,21 +479,21 @@ export class FacilityController {
 	//     },
 	// })
 	// getAllAttendancesByFacility(
-	//     @Param('facilityId') facilityId: string,
+	//     @Param('facilityID') facilityID: string,
 	//     @Query() filter: ListOptions<Attendance>,
 	// ) {
-	//     console.log(facilityId, filter);
+	//     console.log(facilityID, filter);
 	//     //
 	// }
 
 	@ApiBearerAuth()
 	@Get(':facilityID/schedules')
 	@ApiOperation({
-		summary: 'Get All Schedule by facilityId',
+		summary: 'Get All Schedule by facilityID',
 		description: `Only Owner can use this API`,
 	})
 	@ApiParam({
-		name: 'facilityId',
+		name: 'facilityID',
 		type: String,
 		description: 'Facility ID',
 	})
@@ -566,20 +566,20 @@ export class FacilityController {
 		},
 	})
 	getAllSchedulesByFacility(
-		@Param('facilityId') facilityId: string,
+		@Param('facilityID') facilityID: string,
 		@Query() filter: ListOptions<FacilitySchedule>,
 	) {
-		console.log(facilityId, filter);
+		console.log(facilityID, filter);
 		//
 	}
 
 	@Public()
-	@Get(':facilityId/schedules/current')
+	@Get(':facilityID/schedules/current')
 	@ApiOperation({
-		summary: 'Get Current Schedule by facilityId',
+		summary: 'Get Current Schedule by facilityID',
 		description: `All role can use this API`,
 	})
-	@ApiParam({ name: 'facilityId', type: String, description: 'Facility ID' })
+	@ApiParam({ name: 'facilityID', type: String, description: 'Facility ID' })
 	@ApiOkResponse({
 		schema: {
 			example: {
@@ -617,19 +617,19 @@ export class FacilityController {
 			} as ErrorResponse<null>,
 		},
 	})
-	getCurrentScheduleByFacility(@Param('facilityId') facilityId: string) {
-		console.log(facilityId);
+	getCurrentScheduleByFacility(@Param('facilityID') facilityID: string) {
+		console.log(facilityID);
 		//
 	}
 
 	@Public()
-	@Get(':facilityId/holidays')
+	@Get(':facilityID/holidays')
 	@ApiOperation({
-		summary: 'Get All Holidays by facilityId',
+		summary: 'Get All Holidays by facilityID',
 		description: `All role can use this API`,
 	})
 	@ApiParam({
-		name: 'facilityId',
+		name: 'facilityID',
 		type: String,
 		description: 'Facility ID',
 	})
@@ -678,21 +678,21 @@ export class FacilityController {
 		},
 	})
 	getAllHolidaysByFacility(
-		@Param('facilityId') facilityId: string,
+		@Param('facilityID') facilityID: string,
 		@Query() filter: ListOptions<Holiday>,
 	) {
-		console.log(facilityId, filter);
+		console.log(facilityID, filter);
 		//
 	}
 
 	@Public()
-	@Get(':facilityId/package-types')
+	@Get(':facilityID/package-types')
 	@ApiOperation({
-		summary: 'Get all Package Type by facilityId',
+		summary: 'Get all Package Type by facilityID',
 		description: `All role can use this API`,
 	})
 	@ApiDocsPagination('PackageType')
-	@ApiParam({ name: 'facilityId', type: String, description: 'Facility ID' })
+	@ApiParam({ name: 'facilityID', type: String, description: 'Facility ID' })
 	@ApiOkResponse({
 		schema: {
 			example: {
@@ -739,21 +739,21 @@ export class FacilityController {
 		},
 	})
 	getAllPackageTypeByFacility(
-		@Param('facilityId') facilityId: string,
+		@Param('facilityID') facilityID: string,
 		@Query() filter: ListOptions<PackageType>,
 	) {
 		//
-		console.log(facilityId, filter);
+		console.log(facilityID, filter);
 	}
 
 	@ApiBearerAuth()
-	@Post(':facilityId/schedules')
+	@Post(':facilityID/schedules')
 	@ApiOperation({
-		summary: 'Create new Schedule by facilityId',
+		summary: 'Create new Schedule by facilityID',
 		description: `Facility Owner can use this API`,
 	})
 	@ApiParam({
-		name: 'facilityId',
+		name: 'facilityID',
 		type: String,
 		description: 'Facility ID',
 	})
@@ -864,21 +864,21 @@ export class FacilityController {
 		},
 	})
 	createScheduleByFacility(
-		@Param('facilityId') facilityId: string,
+		@Param('facilityID') facilityID: string,
 		@Body() data: CreateFacilityScheduleDto,
 	) {
-		console.log(facilityId, data);
+		console.log(facilityID, data);
 		//
 	}
 
 	@ApiBearerAuth()
-	@Post(':facilityId/holidays')
+	@Post(':facilityID/holidays')
 	@ApiOperation({
-		summary: 'Create new Holiday by facilityId',
+		summary: 'Create new Holiday by facilityID',
 		description: `Facility Owner can use this API`,
 	})
 	@ApiParam({
-		name: 'facilityId',
+		name: 'facilityID',
 		type: String,
 		description: 'Facility ID',
 	})
@@ -935,20 +935,20 @@ export class FacilityController {
 		},
 	})
 	createHolidayByFacility(
-		@Param('facilityId') facilityId: string,
+		@Param('facilityID') facilityID: string,
 		@Body() data: HolidayDto,
 	) {
-		console.log(facilityId, data);
+		console.log(facilityID, data);
 		//
 	}
 
 	@ApiBearerAuth()
-	@Post(':facilityId/package-types')
+	@Post(':facilityID/package-types')
 	@ApiOperation({
-		summary: 'Create new Package Type by facilityId',
+		summary: 'Create new Package Type by facilityID',
 		description: `Facility Owner can use this API`,
 	})
-	@ApiParam({ name: 'facilityId', type: String, description: 'Facility ID' })
+	@ApiParam({ name: 'facilityID', type: String, description: 'Facility ID' })
 	@ApiBody({
 		type: CreatePackageTypeDto,
 		examples: {
@@ -1010,7 +1010,7 @@ export class FacilityController {
 		},
 	})
 	createPackageType(
-		@Param('facilityId') id: string,
+		@Param('facilityID') id: string,
 		@Body() data: CreatePackageTypeDto,
 	) {
 		console.log(id, data);
@@ -1124,12 +1124,12 @@ export class FacilityController {
 	}
 
 	@ApiBearerAuth()
-	@Patch(':facilityId/package-types/swap-order')
+	@Patch(':facilityID/package-types/swap-order')
 	@ApiOperation({
-		summary: 'Swap Package Type order by facilityId',
+		summary: 'Swap Package Type order by facilityID',
 		description: `Facility Owner can use this API`,
 	})
-	@ApiParam({ name: 'facilityId', type: String, description: 'Facility ID' })
+	@ApiParam({ name: 'facilityID', type: String, description: 'Facility ID' })
 	@ApiBody({
 		type: UpdateOrderDto,
 		examples: {
@@ -1191,10 +1191,10 @@ export class FacilityController {
 		},
 	})
 	swapPackageTypeInList(
-		@Param('facilityId') facilityId: string,
+		@Param('facilityID') facilityID: string,
 		@Body() data: UpdateOrderDto,
 	) {
-		console.log(facilityId, data);
+		console.log(facilityID, data);
 		//Logic để hoán đổi order của 2 TackageType
 	}
 

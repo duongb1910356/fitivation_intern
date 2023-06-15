@@ -113,6 +113,7 @@ export class PhotoController {
 	})
 	@ApiParam({ name: 'id', type: String, description: 'Image ID' })
 	async getPhoto(@Param('id') id: string) {
+		console.log('chay controller photo');
 		const photo = await this.photoService.findOne({ _id: id });
 		if (!photo) {
 			throw new NotFoundException('Photo not found');
