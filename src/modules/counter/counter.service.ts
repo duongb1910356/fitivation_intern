@@ -11,9 +11,7 @@ export class CounterService {
 	) {}
 
 	async findOneByCondition(filter: Partial<Counter>): Promise<Counter> {
-		const counter = await this.counterModel.findOne(filter);
-		if (!counter) throw new NotFoundException('Counter not found');
-		return counter;
+		return await this.counterModel.findOne(filter);
 	}
 
 	async create(data: object) {
@@ -42,10 +40,10 @@ export class CounterService {
 	}
 
 	async delete(id: string) {
-		const deletedDocument = await this.counterModel.findByIdAndDelete(id);
+		const counter = await this.counterModel.findByIdAndDelete(id);
 
-		if (!deletedDocument) {
-			throw new NotFoundException('Document not found');
+		if (!counter) {
+			throw new NotFoundException('Counter not found');
 		}
 	}
 }

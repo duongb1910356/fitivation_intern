@@ -32,11 +32,47 @@ export class PackageTypeService {
 	async findMany(
 		filter: ListOptions<PackageType>,
 	): Promise<ListResponse<PackageType>> {
-		const { limit, offset, sortField, sortOrder, ...condition } = filter;
+		const { limit, offset, sortField, sortOrder, search, ...orthers } = filter;
+
+		let conditions: object;
+		console.log(search);
+		if (search) {
+			conditions = {
+				$or: [
+					{ name: { $regex: search } },
+					{ description: { $regex: search } },
+				],
+				orthers,
+			};
+		} else {
+			conditions = { orthers };
+		}
 
 		const packageTypes = await this.packageTypeModel
-			.find(condition)
+			.find(conditions)
 			.sort({ [sortField]: sortOrder === 'asc' ? -1 : 1 })
+			.limit(limit)
+			.skip(offset);
+
+		if (packageTypes)
+			return {
+				items: packageTypes,
+				total: packageTypes.length,
+				options: filter,
+			};
+	}
+
+	async findManyByFacility(
+		facilityID: string,
+		filter: ListOptions<PackageType>,
+	): Promise<ListResponse<PackageType>> {
+		const { limit, offset, ...optionals } = filter;
+		const condition = { ...optionals, facilityID };
+		const projection = '_id name description price order';
+
+		const packageTypes = await this.packageTypeModel
+			.find(condition, projection)
+			.sort({ order: 1 })
 			.limit(limit)
 			.skip(offset);
 
@@ -70,28 +106,6 @@ export class PackageTypeService {
 		return await this.packageTypeModel.create(packageTypeData);
 	}
 
-	async findManyByFacility(
-		facilityID: string,
-		filter: ListOptions<PackageType>,
-	): Promise<ListResponse<PackageType>> {
-		const { limit, offset, sortField, sortOrder, ...more } = filter;
-		const condition = { ...more, facilityID };
-		const projection = '_id name description price order';
-
-		const packageTypes = await this.packageTypeModel
-			.find(condition, projection)
-			.sort({ [sortField]: sortOrder === 'asc' ? -1 : 1 })
-			.limit(limit)
-			.skip(offset);
-
-		if (packageTypes)
-			return {
-				items: packageTypes,
-				total: packageTypes.length,
-				options: filter,
-			};
-	}
-
 	async update(
 		packageTypeID: string,
 		data: UpdatePackageTypeDto,
@@ -102,15 +116,23 @@ export class PackageTypeService {
 	}
 
 	async delete(packageTypeID: string): Promise<string> {
-		const packageType = await this.packageTypeModel.findById(packageTypeID);
+		const packageType = await this.packageTypeModel.findByIdAndDelete(
+			packageTypeID,
+		);
 		if (!packageType) {
-			throw new NotFoundException('Package type not found');
+			throw new NotFoundException('PackageType not found');
 		}
-		const facilityID = packageType.facilityID.toString();
-		const order = packageType.order;
 
-		await this.packageTypeModel.findByIdAndDelete(packageTypeID);
+		await this.decreaseAfterDeletion(
+			packageType.facilityID.toString(),
+			packageType.order,
+		);
 
+		return 'Delete PackageType successfull!!!';
+	}
+
+	async decreaseAfterDeletion(facilityID: string, deletedOrder: number) {
+		//decrease Counter by one
 		const counterData = {
 			targetObject: TargetObject.FACILITY,
 			targetID: facilityID,
@@ -119,14 +141,11 @@ export class PackageTypeService {
 		const counter = await this.counterService.findOneByCondition(counterData);
 		await this.counterService.decrease(counter._id);
 
-		await this.decreaseOrderAfterDeletion(facilityID, order);
-		return 'Delete PackageType successfull!!!';
-	}
-
-	async decreaseOrderAfterDeletion(facilityID: string, deletedOrder: number) {
-		const packageTypes = await this.packageTypeModel
-			.find({ facilityID, order: { $gt: deletedOrder } })
-			.exec();
+		//decrease order in packageType after packageType deleted
+		const packageTypes = await this.packageTypeModel.find({
+			facilityID,
+			order: { $gt: deletedOrder },
+		});
 
 		for (const packageType of packageTypes) {
 			packageType.order -= 1;
