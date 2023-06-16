@@ -9,22 +9,6 @@ export function ApiDocsPagination(entity: string) {
 			required: false,
 			description: 'Number of items limited',
 			examples: {
-				'0': {
-					value: 0,
-					description: 'Start from 0',
-				},
-				'10': {
-					value: 10,
-					description: `Skip 10 ${entity}s`,
-				},
-			},
-		}),
-		ApiQuery({
-			name: 'offset',
-			type: Number,
-			required: false,
-			description: 'Number of items skipped',
-			examples: {
 				'10': {
 					value: 10,
 					description: `Get 10 ${entity}s`,
@@ -36,13 +20,23 @@ export function ApiDocsPagination(entity: string) {
 			},
 		}),
 		ApiQuery({
-			name: 'searchField',
-			type: String,
+			name: 'offset',
+			type: Number,
 			required: false,
-			description: 'The name of field searched',
+			description: 'Number of items skipped',
+			examples: {
+				'0': {
+					value: 0,
+					description: 'Start from 0',
+				},
+				'10': {
+					value: 10,
+					description: `Skip 10 ${entity}s`,
+				},
+			},
 		}),
 		ApiQuery({
-			name: 'searchValue',
+			name: 'search',
 			type: String,
 			required: false,
 			description: 'Search value for the expected result',
