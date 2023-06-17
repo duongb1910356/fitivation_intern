@@ -25,7 +25,6 @@ import {
 } from '@nestjs/swagger';
 import { Package, TimeType } from './entities/package.entity';
 import { UpdatePackageDto } from './dto/update-package-dto';
-import { Roles } from 'src/decorators/role.decorator';
 import { PackageType } from '../package-type/entities/package-type.entity';
 import { Facility } from '../facility/schemas/facility.schema';
 import {
@@ -33,8 +32,6 @@ import {
 	ListOptions,
 	ListResponse,
 } from 'src/shared/response/common-response';
-import { UserRole } from '../users/schemas/user.schema';
-import { RolesGuard } from 'src/guards/role.guard';
 import {
 	BillItem,
 	BillItemStatus,
@@ -51,10 +48,15 @@ import {
 	Promotion,
 } from '../promotions/schemas/promotion.schema';
 import { CreatePromotionDto } from '../promotions/dto/create-promotion-dto';
+import { OwnershipPackageGuard } from 'src/guards/ownership/ownership-package.guard';
+import { PackageService } from './package.service';
+import { PopulateOptions } from 'mongoose';
 
 @ApiTags('packages')
 @Controller('packages')
 export class PackageController {
+	constructor(private readonly packageService: PackageService) {}
+
 	@Public()
 	@Get(':packageID')
 	@ApiOperation({
@@ -93,14 +95,15 @@ export class PackageController {
 			} as ErrorResponse<null>,
 		},
 	})
-	getPackage(@Param('packageID') packageID: string) {
-		console.log(packageID);
-		//
+	async getPackage(@Param('packageID') packageID: string) {
+		const poppulateOptions: PopulateOptions = {
+			path: 'facilityID packageTypeID',
+		};
+		return await this.packageService.findById(packageID, poppulateOptions);
 	}
 
 	@ApiBearerAuth()
-	@UseGuards(RolesGuard)
-	@Roles(UserRole.FACILITY_OWNER)
+	@UseGuards(OwnershipPackageGuard)
 	@Patch(':packageID')
 	@ApiOperation({
 		summary: 'Update Package by packageID',
@@ -175,17 +178,15 @@ export class PackageController {
 			} as ErrorResponse<null>,
 		},
 	})
-	updatePackage(
+	async updatePackage(
 		@Param('packageID') packageID: string,
 		@Body() data: UpdatePackageDto,
 	) {
-		console.log(packageID, data);
-		//
+		return await this.packageService.update(packageID, data);
 	}
 
 	@ApiBearerAuth()
-	@UseGuards(RolesGuard)
-	@Roles(UserRole.FACILITY_OWNER)
+	@UseGuards(OwnershipPackageGuard)
 	@Delete(':packageID')
 	@ApiOperation({
 		summary: 'Delete Package by packageID',
@@ -230,12 +231,11 @@ export class PackageController {
 			} as ErrorResponse<null>,
 		},
 	})
-	deletePackage(@Param('packageID') packageID: string) {
-		console.log(packageID);
-		//
+	async deletePackage(@Param('packageID') packageID: string) {
+		return await this.packageService.delete(packageID);
 	}
 
-	@Get('package/:packageID/bill-items')
+	@Get(':packageID/bill-items')
 	@ApiOperation({
 		summary: 'getManyBillItemsOneOwnPackage',
 		description:
@@ -358,7 +358,7 @@ export class PackageController {
 		return 'getManyBillItemsOneOwnPackage';
 	}
 
-	@Get('package/:packageID/bill-items/:billItemID')
+	@Get(':packageID/bill-items/:billItemID')
 	@ApiOperation({
 		summary: 'getOneBillItemOneOwnPackage',
 		description:
@@ -481,7 +481,7 @@ export class PackageController {
 		return 'getOneBillItemOneOwnPackage';
 	}
 
-	@Get('packages/promotions')
+	@Get('promotions')
 	@ApiDocsPagination('promotion')
 	@ApiOperation({
 		summary: 'getManyPackagePromotionsOfAllOwnPackages',
@@ -560,7 +560,7 @@ export class PackageController {
 		return 'getManyPackagePromotionsOfAllOwnPackages';
 	}
 
-	@Get('packages/:packagesID/promotions')
+	@Get(':packagesID/promotions')
 	@ApiDocsPagination('promotion')
 	@ApiOperation({
 		summary: 'getManyPackagesPromotionsOfOnePackage',
@@ -651,7 +651,7 @@ export class PackageController {
 		return 'getManyPackagesPromotionsOfOnePackage';
 	}
 
-	@Get('packages/:packagesID/promotions/:promotionID')
+	@Get(':packagesID/promotions/:promotionID')
 	@ApiOperation({
 		summary: 'getOnePackagePromotionOfOnePackage',
 		description:
@@ -742,7 +742,7 @@ export class PackageController {
 		return 'getOnePackagePromotionOfOnePackage';
 	}
 
-	@Post('packages/:packagesID/promotions')
+	@Post(':packagesID/promotions')
 	@ApiOperation({
 		summary: 'createPackagePromotion',
 		description:
