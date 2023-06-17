@@ -9,7 +9,7 @@ import {
 	PackageType,
 	PackageTypeDocument,
 } from './entities/package-type.entity';
-import { Model } from 'mongoose';
+import { Model, PopulateOptions } from 'mongoose';
 import { CreatePackageTypeDto } from './dto/create-package-type-dto';
 import { ListOptions, ListResponse } from 'src/shared/response/common-response';
 import { UpdateOrderDto } from './dto/update-order-dto';
@@ -23,16 +23,24 @@ export class PackageTypeService {
 		private readonly counterService: CounterService,
 	) {}
 
-	async findById(packageTypeID: string): Promise<PackageType> {
-		const packageType = await this.packageTypeModel.findById(packageTypeID);
-		if (!packageType) throw new NotFoundException('Not found Package Type');
+	async findById(
+		packageTypeID: string,
+		populateOptions?: PopulateOptions,
+	): Promise<PackageType> {
+		const packageType = await this.packageTypeModel
+			.findById(packageTypeID)
+			.populate(populateOptions);
+		if (!packageType) {
+			throw new NotFoundException('Not found Package Type');
+		}
 		return packageType;
 	}
 
 	async findMany(
 		filter: ListOptions<PackageType>,
 	): Promise<ListResponse<PackageType>> {
-		const { limit, offset, sortField, sortOrder, search, ...orthers } = filter;
+		const { limit, offset, sortField, sortOrder, search, ...optionals } =
+			filter;
 
 		let conditions: object;
 		console.log(search);
@@ -42,10 +50,10 @@ export class PackageTypeService {
 					{ name: { $regex: search } },
 					{ description: { $regex: search } },
 				],
-				orthers,
+				optionals,
 			};
 		} else {
-			conditions = { orthers };
+			conditions = { optionals };
 		}
 
 		const packageTypes = await this.packageTypeModel
@@ -54,12 +62,14 @@ export class PackageTypeService {
 			.limit(limit)
 			.skip(offset);
 
-		if (packageTypes)
-			return {
-				items: packageTypes,
-				total: packageTypes.length,
-				options: filter,
-			};
+		if (!packageTypes.length)
+			throw new NotFoundException('PackageTypes not found');
+
+		return {
+			items: packageTypes,
+			total: packageTypes.length,
+			options: filter,
+		};
 	}
 
 	async findManyByFacility(
@@ -76,12 +86,14 @@ export class PackageTypeService {
 			.limit(limit)
 			.skip(offset);
 
-		if (packageTypes)
-			return {
-				items: packageTypes,
-				total: packageTypes.length,
-				options: filter,
-			};
+		if (!packageTypes.length)
+			throw new NotFoundException('PackageTypes not found');
+
+		return {
+			items: packageTypes,
+			total: packageTypes.length,
+			options: filter,
+		};
 	}
 
 	async create(
@@ -110,9 +122,15 @@ export class PackageTypeService {
 		packageTypeID: string,
 		data: UpdatePackageTypeDto,
 	): Promise<PackageType> {
-		return await this.packageTypeModel.findByIdAndUpdate(packageTypeID, data, {
-			new: true,
-		});
+		const packageTypeData = await this.packageTypeModel.findByIdAndUpdate(
+			packageTypeID,
+			data,
+			{
+				new: true,
+			},
+		);
+		if (!packageTypeData) throw new NotFoundException('PackageType not found');
+		return packageTypeData;
 	}
 
 	async delete(packageTypeID: string): Promise<string> {
@@ -166,6 +184,6 @@ export class PackageTypeService {
 		packageType2.order = data.order1;
 		await Promise.all([packageType1.save(), packageType2.save()]);
 
-		return 'Swap Order successfull!!!';
+		return 'Swap Order successful';
 	}
 }
