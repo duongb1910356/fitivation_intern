@@ -524,7 +524,7 @@ export class BillsController {
 		return 'getOneBillPromotion';
 	}
 
-	@Post('promotions')
+	@Post('/promotions')
 	@ApiOperation({
 		summary: 'createBillPromotion',
 		description: 'Allow admin to create one bill promotion',
