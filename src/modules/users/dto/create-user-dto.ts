@@ -16,9 +16,9 @@ import { UserAddressDto } from './user-address.dto';
 import { Type } from 'class-transformer';
 
 export class CreateUserDto {
-	@IsNotEmpty()
+	@IsOptional()
 	@IsEnum(UserRole)
-	role: UserRole;
+	role?: UserRole;
 
 	@IsNotEmpty()
 	@IsString()
@@ -41,35 +41,35 @@ export class CreateUserDto {
 	@MaxLength(20)
 	displayName: string;
 
-	@IsNotEmpty()
+	@IsOptional()
 	@IsString()
 	@MinLength(2)
 	@MaxLength(20)
-	firstName: string;
+	firstName?: string;
 
-	@IsNotEmpty()
+	@IsOptional()
 	@IsString()
 	@MinLength(2)
 	@MaxLength(40)
-	lastName: string;
+	lastName?: string;
 
-	@IsNotEmpty()
+	@IsOptional()
 	@IsEnum(Gender)
-	gender: Gender;
+	gender?: Gender;
 
-	@IsNotEmpty()
+	@IsOptional()
 	@IsDate()
 	@Type(() => Date)
-	birthDate: Date;
+	birthDate?: Date;
 
-	@IsNotEmpty()
+	@IsOptional()
 	@IsMobilePhone('vi-VN')
-	tel: string;
+	tel?: string;
 
-	@IsNotEmpty()
+	@IsOptional()
 	@ValidateNested()
 	@Type(() => UserAddressDto)
-	address: UserAddressDto;
+	address?: UserAddressDto;
 
 	@IsOptional()
 	@IsBoolean()
