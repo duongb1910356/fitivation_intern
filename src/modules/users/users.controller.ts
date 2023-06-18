@@ -10,8 +10,8 @@ import {
 	Patch,
 	Post,
 	Query,
+	Request,
 	UploadedFile,
-	UseGuards,
 	UseInterceptors,
 } from '@nestjs/common';
 import { FileInterceptor } from '@nestjs/platform-express';
@@ -43,7 +43,6 @@ import {
 } from 'src/shared/response/common-response';
 import { ApiDocsPagination } from 'src/decorators/swagger-form-data.decorator';
 import { TokenResponse } from '../auth/dto/token-payload-dto';
-import { JwtAuthGuard } from '../auth/jwt-auth.guard';
 
 @ApiTags('users')
 @ApiBearerAuth()
@@ -576,7 +575,26 @@ export class UsersController {
 		return this.userService.updateAvatar(id, url);
 	}
 
-	@UseGuards(JwtAuthGuard)
+	@Get('me')
+	@ApiOperation({
+		summary: 'getProfile',
+		description: 'Get loggedIn user info',
+	})
+	@ApiResponse({ type: User, status: 200 })
+	@ApiResponse({
+		status: 400,
+		schema: {
+			example: {
+				code: '400',
+				message: 'Token invalid',
+				details: null,
+			} as ErrorResponse<null>,
+		},
+	})
+	getProfile(@Request() req: any) {
+		return this.userService.findOne(req.uid);
+	}
+
 	@Patch('update-me')
 	@ApiOperation({
 		summary: 'updateMe',
@@ -617,7 +635,6 @@ export class UsersController {
 		return 'updateMe';
 	}
 
-	@UseGuards(JwtAuthGuard)
 	@Delete('delete-me')
 	@ApiOperation({
 		summary: 'deleteMe',
