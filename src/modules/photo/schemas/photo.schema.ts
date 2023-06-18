@@ -18,8 +18,8 @@ export class Photo extends BaseObject {
 	@Prop({ type: String, required: true })
 	name: string;
 
-	@Prop({ type: String, required: false, default: '' })
-	describe: string;
+	// @Prop({ type: String, required: false, default: '' })
+	// describe: string;
 
 	// @Expose({ name: 'imageURL' })
 	// get imageURL(): string {
@@ -29,11 +29,22 @@ export class Photo extends BaseObject {
 	imageURL: string;
 }
 
-const PhotoSchema = SchemaFactory.createForClass(Photo);
+export const PhotoSchema = SchemaFactory.createForClass(Photo);
 
-PhotoSchema.virtual('imageURL').get(function (this: PhotoDocument) {
-	const fileHost = appConfig.fileHost;
-	return `${fileHost}/${this.ownerID}/${this.name}`;
-});
+export const PhotoSchemaFactory = () => {
+	const photoSchema = PhotoSchema;
 
-export { PhotoSchema };
+	photoSchema.virtual('imageURL').get(function (this: PhotoDocument) {
+		const fileHost = appConfig.fileHost;
+		return `${fileHost}/${this.ownerID}/${this.name}`;
+	});
+
+	return photoSchema;
+};
+
+// PhotoSchema.virtual('imageURL').get(function (this: PhotoDocument) {
+// 	const fileHost = appConfig.fileHost;
+// 	return `${fileHost}/${this.ownerID}/${this.name}`;
+// });
+
+// export { PhotoSchema };

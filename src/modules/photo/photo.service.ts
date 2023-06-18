@@ -11,6 +11,7 @@ import { Photo, PhotoDocument } from './schemas/photo.schema';
 import { Model } from 'mongoose';
 import { CreatePhotoDto } from './dto/create-photo-dto';
 import { SuccessResponse } from 'src/shared/response/success-response';
+import { ListOptions, ListResponse } from 'src/shared/response/common-response';
 
 @Injectable()
 export class PhotoService {
@@ -18,7 +19,7 @@ export class PhotoService {
 		@InjectModel(Photo.name) private photoModel: Model<PhotoDocument>,
 	) {}
 
-	uploadFile(
+	uploadOneFile(
 		file: Express.Multer.File,
 		photoDto: CreatePhotoDto,
 	): Promise<Photo> {
@@ -32,16 +33,56 @@ export class PhotoService {
 			const input: CreatePhotoDto = {
 				ownerID: photoDto.ownerID,
 				name: fileName,
-				describe: photoDto.describe,
 			};
 			return this.photoModel.create(input);
 		} catch (error) {
-			throw new Error('Uploading failed');
+			console.log('Error uploadOneFile >> ', error);
+			throw new BadRequestException('Uploading failed');
+		}
+	}
+
+	async uploadManyFile(
+		files: { images?: Express.Multer.File[] },
+		photoDto: CreatePhotoDto,
+	): Promise<ListResponse<Photo>> {
+		try {
+			const uploadPromises: Promise<Photo>[] = [];
+
+			for (const avatarFile of files.images) {
+				const uploadPromise = this.uploadOneFile(avatarFile, photoDto);
+				uploadPromises.push(uploadPromise);
+			}
+			const data = await Promise.all(uploadPromises);
+
+			return {
+				items: data,
+				total: data.length,
+				options: {},
+			};
+		} catch (error) {
+			throw new BadRequestException('Uploading failed');
 		}
 	}
 
 	async findOne(filter: Partial<Photo>): Promise<Photo> {
 		return await this.photoModel.findOne(filter);
+	}
+
+	async findMany(filter: ListOptions<Photo>): Promise<ListResponse<Photo>> {
+		try {
+			const { limit, offset } = filter;
+			const photos = await this.photoModel
+				.find(filter)
+				.skip(offset)
+				.limit(limit);
+			return {
+				items: photos,
+				total: photos.length,
+				options: filter,
+			};
+		} catch (error) {
+			throw new BadRequestException(error);
+		}
 	}
 
 	async deleteOne(id: string): Promise<SuccessResponse<Photo>> {

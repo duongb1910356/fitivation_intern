@@ -1,7 +1,12 @@
 import { Prop, Schema, SchemaFactory } from '@nestjs/mongoose';
-import mongoose, { HydratedDocument } from 'mongoose';
+import { NextFunction } from 'express';
+import mongoose, { HydratedDocument, Model } from 'mongoose';
 import { Facility } from 'src/modules/facility/schemas/facility.schema';
-import { Photo, PhotoSchema } from 'src/modules/photo/schemas/photo.schema';
+import {
+	Photo,
+	PhotoDocument,
+	PhotoSchema,
+} from 'src/modules/photo/schemas/photo.schema';
 import { User } from 'src/modules/users/schemas/user.schema';
 import { BaseObject } from 'src/shared/schemas/base-object.schema';
 
@@ -29,13 +34,29 @@ export class Review extends BaseObject {
 	@Prop({ required: true, default: '' })
 	comment: string;
 
-	// @Prop({ type: [String], required: false, default: [] })
-	// @IsUrl()
-	// linkURLs: string[];
-
-	//Review chỉ chứa tối đa 5 ảnh, embedd ảnh vào reviews
 	@Prop({ type: [PhotoSchema], required: false, default: [] })
 	photos: Photo[];
 }
 
 export const ReviewSchema = SchemaFactory.createForClass(Review);
+
+export const ReviewSchemaFactory = (photoModel: Model<PhotoDocument>) => {
+	const photoSchema = ReviewSchema;
+
+	// photoSchema.pre('findOneAndDelete', async function (next: NextFunction) {
+	// 	const review = await this.model.findOne(this.getFilter());
+	// 	console.log('loi o day, ', review.accountID);
+	// 	await Promise.all([
+	// 		photoModel
+	// 			.deleteMany({
+	// 				ownerID: review.accountID,
+	// 			})
+	// 			.exec(),
+	// 	]);
+	// 	console.log('loi o day 2');
+
+	// 	return next();
+	// });
+
+	return photoSchema;
+};

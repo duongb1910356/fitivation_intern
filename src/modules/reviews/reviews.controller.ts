@@ -1,9 +1,15 @@
 import {
 	BadRequestException,
+	Body,
 	Controller,
 	Delete,
+	Get,
 	NotFoundException,
+	Param,
 	Post,
+	Query,
+	Req,
+	UploadedFiles,
 	UseInterceptors,
 } from '@nestjs/common';
 import {
@@ -20,29 +26,43 @@ import {
 } from '@nestjs/swagger';
 import { CreateReviewDto } from './dto/create-review-dto';
 import { Review } from './schemas/reviews.schema';
-import { FilesInterceptor } from '@nestjs/platform-express';
+import { FileFieldsInterceptor } from '@nestjs/platform-express';
 import { Photo } from '../photo/schemas/photo.schema';
+import { ReviewService } from './reviews.service';
+import { Public } from '../auth/utils';
+import { ListOptions } from 'src/shared/response/common-response';
 
 @ApiTags('reviews')
 @Controller('reviews')
 export class ReviewsController {
+	constructor(private readonly reviewService: ReviewService) {}
+
 	@Post()
 	@ApiBearerAuth()
-	@UseInterceptors(FilesInterceptor('files', 5))
 	@ApiConsumes('multipart/form-data')
 	@ApiOperation({
 		summary: 'Create a new review',
 	})
 	@ApiBody({
-		type: CreateReviewDto,
-		examples: {
-			example1: {
-				value: {
-					facilityID: '123456',
-					rating: 5,
-					comment: 'Great',
-					photos: [{ file: {} }, { file: {} }],
-				} as CreateReviewDto,
+		schema: {
+			type: 'object',
+			properties: {
+				images: {
+					type: 'array',
+					items: {
+						type: 'string',
+						format: 'binary',
+					},
+				},
+				facilityID: {
+					type: 'string',
+				},
+				rating: {
+					type: 'string',
+				},
+				comment: {
+					type: 'string',
+				},
 			},
 		},
 	})
@@ -53,23 +73,24 @@ export class ReviewsController {
 				code: 200,
 				message: 'Success',
 				data: {
-					_id: '123456789',
-					facilityID: {},
+					_id: '648d850b1b2725a801b7e468',
+					facilityID: '648d7e86669f8855b28f33d1',
 					comment: 'Đáng để trải nghiệm',
-					rating: 5,
+					rating: 4,
 					photos: [
 						{
-							_id: '12345678dsgdgsdxdg4',
-							ownerID: 'bucket1',
-							name: 'image-name',
-							imageURL: 'http://localhost:8080/bucket1/image-name',
+							_id: '648d850b1b2725a801b7e464',
+							ownerID: '168699623474509rcare0nu0u',
+							name: '1686996235092-645118712.png',
+							imageURL:
+								'http://localhost:8080/168699623474509rcare0nu0u/1686996235092-645118712.png',
 							createdAt: new Date(),
 							updatedAt: new Date(),
 						},
 					] as Photo[],
 					createdAt: new Date(),
 					updatedAt: new Date(),
-				} as Review,
+				},
 			},
 		},
 	})
@@ -78,8 +99,25 @@ export class ReviewsController {
 		status: 400,
 		description: '[Input] invalid!',
 	})
-	createReview() {
-		//
+	@UseInterceptors(FileFieldsInterceptor([{ name: 'images', maxCount: 5 }]))
+	createReview(
+		@Body() reviewDto: CreateReviewDto,
+		@UploadedFiles()
+		files: {
+			images?: Express.Multer.File[];
+		},
+		@Req() req: any,
+	) {
+		return this.reviewService.createOne(files, req, reviewDto);
+	}
+
+	@Public()
+	@Get()
+	@ApiOperation({
+		summary: 'Get many review',
+	})
+	findMany(@Query() filter: ListOptions<Review>) {
+		return this.reviewService.findMany(filter);
 	}
 
 	// @Patch(':id')
@@ -138,12 +176,12 @@ export class ReviewsController {
 	// 	//
 	// }
 
-	@Delete(':id')
+	@Delete(':reviewID')
 	@ApiBearerAuth()
 	@ApiOperation({
 		summary: 'Delete Review by id',
 	})
-	@ApiParam({ name: 'id', type: String, description: 'Review ID' })
+	@ApiParam({ name: 'reviewID', type: String, description: 'Review ID' })
 	@ApiResponse({
 		status: 200,
 		schema: {
@@ -164,7 +202,7 @@ export class ReviewsController {
 		status: 404,
 		description: 'Review not found!',
 	})
-	deleteReviewById() {
-		//
+	deleteReviewById(@Param('reviewID') reviewID: any) {
+		return this.reviewService.deleteByID(reviewID);
 	}
 }

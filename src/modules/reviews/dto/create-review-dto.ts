@@ -1,28 +1,33 @@
 import {
 	IsNotEmpty,
-	IsNumber,
 	IsArray,
 	IsString,
 	IsOptional,
 	ArrayMaxSize,
 } from 'class-validator';
-import { FileUploadDto } from 'src/modules/photo/dto/file-upload-dto';
 
 export class CreateReviewDto {
+	@IsOptional()
+	accountID?: string;
+
 	@IsNotEmpty()
 	@IsString()
 	facilityID: string;
 
 	@IsNotEmpty()
-	@IsNumber()
-	rating: number;
+	rating: string;
 
 	@IsString()
 	@IsOptional()
 	comment: string;
 
-	@IsArray()
-	@IsOptional()
-	@ArrayMaxSize(5)
-	photos: FileUploadDto[];
+	// @IsArray()
+	// @IsOptional()
+	// @ArrayMaxSize(5)
+	// photos: FileUploadDto[];
+
+	// @IsArray()
+	// @IsOptional()
+	// @ArrayMaxSize(5)
+	// photos?: object;
 }

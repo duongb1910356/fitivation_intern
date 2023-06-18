@@ -12,6 +12,7 @@ import {
 	Post,
 	UnsupportedMediaTypeException,
 	UploadedFile,
+	UploadedFiles,
 	UseInterceptors,
 } from '@nestjs/common';
 import {
@@ -28,14 +29,17 @@ import {
 	ApiUnsupportedMediaTypeResponse,
 } from '@nestjs/swagger';
 import { Public } from '../auth/utils';
-import { FileInterceptor } from '@nestjs/platform-express';
+import {
+	FileFieldsInterceptor,
+	FileInterceptor,
+} from '@nestjs/platform-express';
 import { ErrorResponse } from 'src/shared/response/common-response';
 import { Photo } from './schemas/photo.schema';
 import { PhotoService } from './photo.service';
 import { CreatePhotoDto } from './dto/create-photo-dto';
 
 @ApiTags('photo')
-@Controller('photo')
+@Controller('photos')
 export class PhotoController {
 	constructor(private readonly photoService: PhotoService) {}
 
@@ -91,7 +95,7 @@ export class PhotoController {
 		description: 'File invalid!',
 	})
 	@UseInterceptors(FileInterceptor('file'))
-	uploadFile(
+	uploadOneFile(
 		@Body() photoDto: CreatePhotoDto,
 		@UploadedFile(
 			new ParseFilePipe({
@@ -103,7 +107,40 @@ export class PhotoController {
 		)
 		file: Express.Multer.File,
 	) {
-		return this.photoService.uploadFile(file, photoDto);
+		return this.photoService.uploadOneFile(file, photoDto);
+	}
+
+	@Post('bulk')
+	@ApiBearerAuth()
+	@ApiOperation({
+		summary: 'Add images into owner folder ',
+		description: 'Note: ownerID is facilityID || accountID',
+	})
+	@ApiConsumes('multipart/form-data')
+	@ApiBody({
+		schema: {
+			type: 'object',
+			properties: {
+				images: {
+					type: 'array',
+					items: {
+						type: 'string',
+						format: 'binary',
+					},
+				},
+			},
+		},
+	})
+	@UseInterceptors(FileFieldsInterceptor([{ name: 'images', maxCount: 5 }]))
+	uploadManyFile(
+		@UploadedFiles()
+		files: {
+			images?: Express.Multer.File[];
+		},
+		@Body() photoDto: CreatePhotoDto,
+	) {
+		if (files.images) return this.photoService.uploadManyFile(files, photoDto);
+		throw new BadRequestException('No files uploaded');
 	}
 
 	@Public()
@@ -119,6 +156,15 @@ export class PhotoController {
 			throw new NotFoundException('Photo not found');
 		}
 		return photo;
+	}
+
+	@Public()
+	@Get()
+	@ApiOperation({
+		summary: 'Get many images',
+	})
+	findMany() {
+		//
 	}
 
 	@Delete(':id')
