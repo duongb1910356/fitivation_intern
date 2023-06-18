@@ -3,9 +3,9 @@ import {
 	IsDate,
 	IsEmail,
 	IsEnum,
+	IsMobilePhone,
 	IsNotEmpty,
 	IsOptional,
-	IsPhoneNumber,
 	IsString,
 	MaxLength,
 	MinLength,
@@ -63,11 +63,11 @@ export class CreateUserDto {
 	birthDate: Date;
 
 	@IsNotEmpty()
-	@IsPhoneNumber()
+	@IsMobilePhone('vi-VN')
 	tel: string;
 
 	@IsNotEmpty()
-	@ValidateNested({ each: true })
+	@ValidateNested()
 	@Type(() => UserAddressDto)
 	address: UserAddressDto;
 
