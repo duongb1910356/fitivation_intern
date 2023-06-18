@@ -51,8 +51,8 @@ export class User extends BaseObject {
 	@Prop({ default: null, type: String })
 	refreshTokenHashed: string;
 
-	@Prop({ type: String, minlength: 2, maxlength: 20 })
-	displayName?: string;
+	@Prop({ required: true, type: String, minlength: 2, maxlength: 20 })
+	displayName: string;
 
 	@Prop({ type: String, minlength: 2, maxlength: 20 })
 	firstName?: string;
