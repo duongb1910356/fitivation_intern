@@ -49,7 +49,7 @@ export class User extends BaseObject {
 	password: string;
 
 	@Prop({ default: null, type: String })
-	refreshTokenHashed: string;
+	refreshToken: string;
 
 	@Prop({ required: true, type: String, minlength: 2, maxlength: 20 })
 	displayName: string;
