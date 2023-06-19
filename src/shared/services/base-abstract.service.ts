@@ -22,15 +22,19 @@ export abstract class BaseServiceAbstract<T extends BaseObject>
 		return await this.repository.findMany(filter);
 	}
 
-	async findOneByID(id: string) {
+	async findByID(id: string) {
 		if (!Types.ObjectId.isValid(id)) {
 			throw new BadRequestException('ID invalid');
 		}
-		const data = await this.repository.findOneByID(id);
+		const data = await this.repository.findByID(id);
 		if (!data) {
 			throw new NotFoundException('Not found');
 		}
 		return data;
+	}
+
+	async findOne(filter: Partial<T>) {
+		return await this.repository.findOne(filter);
 	}
 
 	async update(id: string, update_dto: Partial<T>) {

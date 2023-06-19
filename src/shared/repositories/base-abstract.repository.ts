@@ -15,7 +15,7 @@ export abstract class BaseRepositoryAbstract<T extends BaseObject>
 		return created_data.save();
 	}
 
-	async findOneByID(id: string): Promise<T> {
+	async findByID(id: string): Promise<T> {
 		try {
 			const item = await this.model.findById(id);
 			return item;
@@ -33,6 +33,10 @@ export abstract class BaseRepositoryAbstract<T extends BaseObject>
 			total: items?.length,
 			options: filter,
 		};
+	}
+
+	async findOne(condition: Partial<T>): Promise<T> {
+		return await this.model.findOne({ condition }).exec();
 	}
 
 	async delete(id: string): Promise<boolean> {

@@ -8,7 +8,8 @@ export interface Write<T> {
 
 export interface Read<T> {
 	findMany(filter?: ListOptions<T>): Promise<ListResponse<T>>;
-	findOneByID(id: string): Promise<T>;
+	findByID(id: string): Promise<T>;
+	findOne(filter?: Partial<T>): Promise<T>;
 }
 
 export interface BaseServiceInterface<T> extends Write<T>, Read<T> {}

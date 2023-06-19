@@ -59,7 +59,7 @@ export class PhotoService extends BaseServiceAbstract<Photo> {
 	}
 
 	async delete(id: string): Promise<boolean> {
-		const deletedPhoto = await this.photoRepository.findOneByID(id);
+		const deletedPhoto = await this.photoRepository.findByID(id);
 		const imagePath = `${appConfig.fileRoot}/${deletedPhoto.ownerID}/${deletedPhoto.name}`;
 		unlinkSync(imagePath);
 		return super.delete(id);
