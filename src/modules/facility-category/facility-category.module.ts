@@ -15,5 +15,6 @@ import {
 	],
 	controllers: [FacilityCategoryController],
 	providers: [FacilityCategoryService],
+	exports: [FacilityCategoryService],
 })
 export class FacilityCategoryModule {}

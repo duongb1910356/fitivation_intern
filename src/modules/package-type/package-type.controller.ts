@@ -7,6 +7,7 @@ import {
 	Patch,
 	Post,
 	Query,
+	Req,
 	UseGuards,
 } from '@nestjs/common';
 import {
@@ -32,15 +33,21 @@ import {
 } from 'src/shared/response/common-response';
 import { Facility } from '../facility/schemas/facility.schema';
 import { ApiDocsPagination } from 'src/decorators/swagger-form-data.decorator';
-import { Roles } from 'src/decorators/role.decorator';
-import { UserRole } from '../users/schemas/user.schema';
-import { RolesGuard } from 'src/guards/role.guard';
 import { Package, TimeType } from '../package/entities/package.entity';
 import { CreatePackageDto } from '../package/dto/create-package-dto';
+import { PackageTypeService } from './package-type.service';
+import { OwnershipPackageTypeGuard } from 'src/guards/ownership/ownership-package-type.guard';
+import { PackageService } from '../package/package.service';
+import { PopulateOptions } from 'mongoose';
 
 @ApiTags('package-types')
 @Controller('package-types')
 export class PackageTypeController {
+	constructor(
+		private readonly packageTypeService: PackageTypeService,
+		private readonly packageService: PackageService,
+	) {}
+
 	@Public()
 	@Get(':packageTypeID')
 	@ApiOperation({
@@ -84,13 +91,18 @@ export class PackageTypeController {
 			} as ErrorResponse<null>,
 		},
 	})
-	getPackageType(@Param('packageTypeID') packageTypeID: string) {
-		//
-		console.log(packageTypeID);
+	async getPackageType(@Param('packageTypeID') packageTypeID: string) {
+		const populateOptions: PopulateOptions = {
+			path: 'facilityID',
+		};
+		return await this.packageTypeService.findById(
+			packageTypeID,
+			populateOptions,
+		);
 	}
 
 	@Public()
-	@Get('package-type/:packageTypeID/packages')
+	@Get(':packageTypeID/packages')
 	@ApiOperation({
 		summary: 'Get all Package by packageTypeID',
 		description: `All role can use this API`,
@@ -145,18 +157,19 @@ export class PackageTypeController {
 			} as ErrorResponse<null>,
 		},
 	})
-	getAllPackages(
+	async getAllPackages(
 		@Param('packageTypeID') packageTypeID: string,
 		@Query() filter: ListOptions<Package>,
 	) {
-		//
-		console.log(packageTypeID, filter);
+		return await this.packageService.findManyByPackageType(
+			packageTypeID,
+			filter,
+		);
 	}
 
 	@ApiBearerAuth()
-	@UseGuards(RolesGuard)
-	@Roles(UserRole.FACILITY_OWNER)
-	@Post('package-type/:packageTypeID/packages')
+	@UseGuards(OwnershipPackageTypeGuard)
+	@Post(':packageTypeID/packages')
 	@ApiOperation({
 		summary: 'Create new Package by packageTypeID',
 		description: `Facility Owner can use this API`,
@@ -223,16 +236,17 @@ export class PackageTypeController {
 			} as ErrorResponse<null>,
 		},
 	})
-	createPackage(
+	async createPackage(
 		@Param('packageTypeID') packageTypeID: string,
 		@Body() data: CreatePackageDto,
+		@Req() request: any,
 	) {
-		console.log(packageTypeID, data);
+		const facilityID = request.facilityID;
+		return await this.packageService.create(packageTypeID, facilityID, data);
 	}
 
 	@ApiBearerAuth()
-	@UseGuards(RolesGuard)
-	@Roles(UserRole.FACILITY_OWNER)
+	@UseGuards(OwnershipPackageTypeGuard)
 	@Patch(':packageTypeID')
 	@ApiOperation({
 		summary: 'Update Package Type by packageTypeID',
@@ -312,17 +326,15 @@ export class PackageTypeController {
 			} as ErrorResponse<null>,
 		},
 	})
-	updatePackageType(
+	async updatePackageType(
 		@Param('packageTypeID') packageTypeID: string,
 		@Body() data: UpdatePackageTypeDto,
 	) {
-		console.log(packageTypeID, data);
-		// Logic để cập nhật package type theo ID
+		return await this.packageTypeService.update(packageTypeID, data);
 	}
 
 	@ApiBearerAuth()
-	@UseGuards(RolesGuard)
-	@Roles(UserRole.FACILITY_OWNER)
+	@UseGuards(OwnershipPackageTypeGuard)
 	@Delete(':packageTypeID')
 	@ApiOperation({
 		summary: 'Delete Package Type by packageTypeID',
@@ -376,8 +388,7 @@ export class PackageTypeController {
 			} as ErrorResponse<null>,
 		},
 	})
-	deletePackageType(@Param('packageTypeID') packageTypeID: string) {
-		console.log(packageTypeID);
-		// Logic để xóa package type theo ID
+	async deletePackageType(@Param('packageTypeID') packageTypeID: string) {
+		return await this.packageTypeService.delete(packageTypeID);
 	}
 }

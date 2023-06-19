@@ -10,8 +10,8 @@ import {
 	Patch,
 	Post,
 	Query,
+	Request,
 	UploadedFile,
-	UseGuards,
 	UseInterceptors,
 } from '@nestjs/common';
 import { FileInterceptor } from '@nestjs/platform-express';
@@ -43,13 +43,12 @@ import {
 } from 'src/shared/response/common-response';
 import { ApiDocsPagination } from 'src/decorators/swagger-form-data.decorator';
 import { TokenResponse } from '../auth/dto/token-payload-dto';
-import { JwtAuthGuard } from '../auth/jwt-auth.guard';
 
 @ApiTags('users')
 @ApiBearerAuth()
 @Controller('users')
 export class UsersController {
-	constructor(private readonly userService: UsersService) { }
+	constructor(private userService: UsersService) {}
 
 	@Get(':id')
 	@ApiOperation({ summary: 'getUserByID', description: 'Get one user by ID' })
@@ -252,7 +251,7 @@ export class UsersController {
 	@ApiCreatedResponse({
 		schema: {
 			example: {
-				code: 200,
+				code: 201,
 				message: 'Success',
 				data: {
 					_id: '',
@@ -309,6 +308,7 @@ export class UsersController {
 		},
 	})
 	createUser(@Body() input: CreateUserDto) {
+		console.log('controller');
 		return this.userService.createOne(input);
 	}
 
@@ -567,7 +567,7 @@ export class UsersController {
 	) {
 		const dir = `${appConfig.fileRoot}/${id}`;
 		const fileName = GenFileName.gen(file.mimetype);
-		console.log("file users avatar >> ", file)
+		console.log('file users avatar >> ', file);
 		mkdirSync(dir, { recursive: true });
 		writeFileSync(`${dir}/${fileName}`, file.buffer);
 		const url: string = appConfig.fileHost + `/${id}/${fileName}`;
@@ -575,7 +575,26 @@ export class UsersController {
 		return this.userService.updateAvatar(id, url);
 	}
 
-	@UseGuards(JwtAuthGuard)
+	@Get('me')
+	@ApiOperation({
+		summary: 'getProfile',
+		description: 'Get loggedIn user info',
+	})
+	@ApiResponse({ type: User, status: 200 })
+	@ApiResponse({
+		status: 400,
+		schema: {
+			example: {
+				code: '400',
+				message: 'Token invalid',
+				details: null,
+			} as ErrorResponse<null>,
+		},
+	})
+	getProfile(@Request() req: any) {
+		return this.userService.findOne(req.uid);
+	}
+
 	@Patch('update-me')
 	@ApiOperation({
 		summary: 'updateMe',
@@ -616,7 +635,6 @@ export class UsersController {
 		return 'updateMe';
 	}
 
-	@UseGuards(JwtAuthGuard)
 	@Delete('delete-me')
 	@ApiOperation({
 		summary: 'deleteMe',

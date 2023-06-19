@@ -10,5 +10,6 @@ import { Package, PackageSchema } from './entities/package.entity';
 	],
 	controllers: [PackageController],
 	providers: [PackageService],
+	exports: [PackageService],
 })
 export class PackageModule {}
