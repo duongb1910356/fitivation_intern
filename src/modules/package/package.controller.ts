@@ -25,7 +25,6 @@ import {
 } from '@nestjs/swagger';
 import { Package, TimeType } from './entities/package.entity';
 import { UpdatePackageDto } from './dto/update-package-dto';
-import { Roles } from 'src/decorators/role.decorator';
 import { PackageType } from '../package-type/entities/package-type.entity';
 import { Facility } from '../facility/schemas/facility.schema';
 import {
@@ -33,8 +32,6 @@ import {
 	ListOptions,
 	ListResponse,
 } from 'src/shared/response/common-response';
-import { UserRole } from '../users/schemas/user.schema';
-import { RolesGuard } from 'src/guards/role.guard';
 import {
 	BillItem,
 	BillItemStatus,
@@ -50,12 +47,16 @@ import {
 	PromotionStatus,
 	Promotion,
 } from '../promotions/schemas/promotion.schema';
-import { CreatePromotionDto } from '../promotions/dto/create-promotion.dto';
-import { UpdatePromotionDto } from '../promotions/dto/update-promotion.dto';
+import { CreatePromotionDto } from '../promotions/dto/create-promotion-dto';
+import { OwnershipPackageGuard } from 'src/guards/ownership/ownership-package.guard';
+import { PackageService } from './package.service';
+import { PopulateOptions } from 'mongoose';
 
 @ApiTags('packages')
 @Controller('packages')
 export class PackageController {
+	constructor(private readonly packageService: PackageService) {}
+
 	@Public()
 	@Get(':packageID')
 	@ApiOperation({
@@ -94,14 +95,15 @@ export class PackageController {
 			} as ErrorResponse<null>,
 		},
 	})
-	getPackage(@Param('packageID') packageID: string) {
-		console.log(packageID);
-		//
+	async getPackage(@Param('packageID') packageID: string) {
+		const poppulateOptions: PopulateOptions = {
+			path: 'facilityID packageTypeID',
+		};
+		return await this.packageService.findById(packageID, poppulateOptions);
 	}
 
 	@ApiBearerAuth()
-	@UseGuards(RolesGuard)
-	@Roles(UserRole.FACILITY_OWNER)
+	@UseGuards(OwnershipPackageGuard)
 	@Patch(':packageID')
 	@ApiOperation({
 		summary: 'Update Package by packageID',
@@ -176,17 +178,15 @@ export class PackageController {
 			} as ErrorResponse<null>,
 		},
 	})
-	updatePackage(
+	async updatePackage(
 		@Param('packageID') packageID: string,
 		@Body() data: UpdatePackageDto,
 	) {
-		console.log(packageID, data);
-		//
+		return await this.packageService.update(packageID, data);
 	}
 
 	@ApiBearerAuth()
-	@UseGuards(RolesGuard)
-	@Roles(UserRole.FACILITY_OWNER)
+	@UseGuards(OwnershipPackageGuard)
 	@Delete(':packageID')
 	@ApiOperation({
 		summary: 'Delete Package by packageID',
@@ -231,13 +231,11 @@ export class PackageController {
 			} as ErrorResponse<null>,
 		},
 	})
-	deletePackage(@Param('packageID') packageID: string) {
-		console.log(packageID);
-		//
+	async deletePackage(@Param('packageID') packageID: string) {
+		return await this.packageService.delete(packageID);
 	}
 
-	@Get('package/:packageID/bill-items')
-	@ApiTags('packages/bill-items')
+	@Get(':packageID/bill-items')
 	@ApiOperation({
 		summary: 'getManyBillItemsOneOwnPackage',
 		description:
@@ -360,8 +358,7 @@ export class PackageController {
 		return 'getManyBillItemsOneOwnPackage';
 	}
 
-	@Get('package/:packageID/bill-items/:billItemID')
-	@ApiTags('packages/bill-items')
+	@Get(':packageID/bill-items/:billItemID')
 	@ApiOperation({
 		summary: 'getOneBillItemOneOwnPackage',
 		description:
@@ -484,9 +481,8 @@ export class PackageController {
 		return 'getOneBillItemOneOwnPackage';
 	}
 
-	@Get('packages/promotions')
+	@Get('promotions')
 	@ApiDocsPagination('promotion')
-	@ApiTags('packages/promotions')
 	@ApiOperation({
 		summary: 'getManyPackagePromotionsOfAllOwnPackages',
 		description:
@@ -564,9 +560,8 @@ export class PackageController {
 		return 'getManyPackagePromotionsOfAllOwnPackages';
 	}
 
-	@Get('packages/:packagesID/promotions')
+	@Get(':packagesID/promotions')
 	@ApiDocsPagination('promotion')
-	@ApiTags('packages/promotions')
 	@ApiOperation({
 		summary: 'getManyPackagesPromotionsOfOnePackage',
 		description:
@@ -656,8 +651,7 @@ export class PackageController {
 		return 'getManyPackagesPromotionsOfOnePackage';
 	}
 
-	@Get('packages/:packagesID/promotions/:promotionID')
-	@ApiTags('packages/promotions')
+	@Get(':packagesID/promotions/:promotionID')
 	@ApiOperation({
 		summary: 'getOnePackagePromotionOfOnePackage',
 		description:
@@ -747,8 +741,8 @@ export class PackageController {
 		console.log(packagesID, promotionID);
 		return 'getOnePackagePromotionOfOnePackage';
 	}
-	@Post('packages/:packagesID/promotions')
-	@ApiTags('packages/promotions')
+
+	@Post(':packagesID/promotions')
 	@ApiOperation({
 		summary: 'createPackagePromotion',
 		description:
@@ -840,170 +834,5 @@ export class PackageController {
 	})
 	createPackagePromotion() {
 		return 'createPackagePromotion';
-	}
-	@Patch('packages/:packagesID/promotions/:promotionID')
-	@ApiTags('packages/promotions')
-	@ApiOperation({
-		summary: 'updatePackagePromotion',
-		description:
-			'Allow facility owner to update one package promotion of one own package',
-	})
-	@ApiParam({ name: 'packagesID', type: String, description: 'Facility ID' })
-	@ApiParam({ name: 'promotionID', type: String, description: 'Promotion ID' })
-	@ApiBody({
-		type: CreatePromotionDto,
-		examples: {
-			ADMIN: {
-				value: {
-					targetID: 'string',
-					type: PromotionType.PACKAGE,
-					name: 'string',
-					description: 'string',
-					couponCode: 'string',
-					value: 1,
-					method: PromotionMethod.NUMBER,
-					minPriceApply: 0,
-					maxQuantity: 0,
-					startDate: new Date(),
-					endDate: new Date(),
-					customerType: CustomerType.CUSTOMER,
-				},
-			},
-		},
-	})
-	@ApiResponse({
-		status: 201,
-		schema: {
-			example: {
-				targetID: 'string',
-				type: PromotionType.PACKAGE,
-				name: 'string',
-				description: 'string',
-				couponCode: 'string',
-				value: 1,
-				method: PromotionMethod.NUMBER,
-				minPriceApply: 0,
-				maxQuantity: 0,
-				startDate: new Date(),
-				endDate: new Date(),
-				customerType: CustomerType.CUSTOMER,
-				status: PromotionStatus.ACTIVE,
-				createdAt: new Date(),
-				updatedAt: new Date(),
-			} as Promotion,
-		},
-	})
-	@ApiResponse({
-		status: 400,
-		schema: {
-			example: {
-				code: '400',
-				message: 'Bad request',
-				details: null,
-			} as ErrorResponse<null>,
-		},
-	})
-	@ApiResponse({
-		status: 401,
-		schema: {
-			example: {
-				code: '401',
-				message: 'Unauthorized',
-				details: null,
-			} as ErrorResponse<null>,
-		},
-	})
-	@ApiResponse({
-		status: 403,
-		schema: {
-			example: {
-				code: '403',
-				message: `Forbidden resource`,
-				details: null,
-			} as ErrorResponse<null>,
-		},
-	})
-	@ApiResponse({
-		status: 404,
-		schema: {
-			example: {
-				code: '404',
-				message: 'Not found document with that ID',
-				details: null,
-			} as ErrorResponse<null>,
-		},
-	})
-	updatePackagePromotion(
-		@Param('packagesID') packagesID: string,
-		@Param('promotionID') promotionID: string,
-		@Body() updatePromotionDto: UpdatePromotionDto,
-	) {
-		console.log(packagesID, promotionID, updatePromotionDto);
-		return 'updatePackagePromotion';
-	}
-	@Delete('packages/:packagesID/promotions/:promotionID')
-	@ApiTags('packages/promotions')
-	@ApiParam({ name: 'packagesID', type: String, description: 'Facility ID' })
-	@ApiParam({ name: 'promotionID', type: String, description: 'Promotion ID' })
-	@ApiOperation({
-		summary: 'deletePackagePromotion',
-		description:
-			'Allow facility owner to delete one package promotion of one own package',
-	})
-	@ApiResponse({
-		status: 200,
-		schema: {
-			example: {
-				code: 200,
-				message: 'Deleted successfully',
-			},
-		},
-	})
-	@ApiResponse({
-		status: 400,
-		schema: {
-			example: {
-				code: '400',
-				message: 'Bad request',
-				details: null,
-			} as ErrorResponse<null>,
-		},
-	})
-	@ApiResponse({
-		status: 401,
-		schema: {
-			example: {
-				code: '401',
-				message: 'Unauthorized',
-				details: null,
-			} as ErrorResponse<null>,
-		},
-	})
-	@ApiResponse({
-		status: 403,
-		schema: {
-			example: {
-				code: '403',
-				message: `Forbidden resource`,
-				details: null,
-			} as ErrorResponse<null>,
-		},
-	})
-	@ApiResponse({
-		status: 404,
-		schema: {
-			example: {
-				code: '404',
-				message: 'Not found document with that ID',
-				details: null,
-			} as ErrorResponse<null>,
-		},
-	})
-	deletePackagePromotion(
-		@Param('packageID') packageID: string,
-		@Param('promotionID') promotionID: string,
-	) {
-		console.log(packageID, promotionID);
-		return 'deletePackagePromotion';
 	}
 }
