@@ -6,10 +6,10 @@ import {
 	FileTypeValidator,
 	Get,
 	MaxFileSizeValidator,
-	NotFoundException,
 	Param,
 	ParseFilePipe,
 	Post,
+	Query,
 	UnsupportedMediaTypeException,
 	UploadedFile,
 	UploadedFiles,
@@ -33,10 +33,15 @@ import {
 	FileFieldsInterceptor,
 	FileInterceptor,
 } from '@nestjs/platform-express';
-import { ErrorResponse } from 'src/shared/response/common-response';
+import {
+	ErrorResponse,
+	ListOptions,
+	ListResponse,
+} from 'src/shared/response/common-response';
 import { Photo } from './schemas/photo.schema';
 import { PhotoService } from './photo.service';
 import { CreatePhotoDto } from './dto/create-photo-dto';
+import { ApiDocsPagination } from 'src/decorators/swagger-form-data.decorator';
 
 @ApiTags('photo')
 @Controller('photos')
@@ -46,8 +51,9 @@ export class PhotoController {
 	@Post()
 	@ApiBearerAuth()
 	@ApiOperation({
-		summary: 'Add image into folder of facility ',
-		description: 'Add a image to folder of a facility',
+		summary: 'Upload a image',
+		description:
+			'Note: ownerID is the ID of the object for which you want to upload the image',
 	})
 	@ApiConsumes('multipart/form-data')
 	@ApiBody({
@@ -57,9 +63,6 @@ export class PhotoController {
 				file: {
 					type: 'string',
 					format: 'binary',
-				},
-				describe: {
-					type: 'string',
 				},
 				ownerID: {
 					type: 'string',
@@ -107,16 +110,38 @@ export class PhotoController {
 		)
 		file: Express.Multer.File,
 	) {
-		return this.photoService.uploadOneFile(file, photoDto);
+		return this.photoService.uploadOneFile(photoDto, file);
 	}
 
 	@Post('bulk')
 	@ApiBearerAuth()
 	@ApiOperation({
-		summary: 'Add images into owner folder ',
-		description: 'Note: ownerID is facilityID || accountID',
+		summary: 'Upload many images',
+		description:
+			'Note: ownerID is the ID of the object for which you want to upload the image',
 	})
 	@ApiConsumes('multipart/form-data')
+	@ApiOkResponse({
+		status: 200,
+		schema: {
+			example: {
+				// code: 200,
+				// message: 'Success',
+				items: [
+					{
+						_id: '123456789',
+						ownerID: 'ownerID',
+						name: 'name-image',
+						imageURL: 'http://localhost:8080/ownerID/name-image',
+						createdAt: new Date(),
+						updatedAt: new Date(),
+					},
+				],
+				total: 1,
+				options: {},
+			} as ListResponse<Photo>,
+		},
+	})
 	@ApiBody({
 		schema: {
 			type: 'object',
@@ -127,6 +152,9 @@ export class PhotoController {
 						type: 'string',
 						format: 'binary',
 					},
+				},
+				ownerID: {
+					type: 'string',
 				},
 			},
 		},
@@ -139,40 +167,28 @@ export class PhotoController {
 		},
 		@Body() photoDto: CreatePhotoDto,
 	) {
-		if (files.images) return this.photoService.uploadManyFile(files, photoDto);
+		if (files.images) {
+			return this.photoService.uploadManyFile(files, photoDto);
+		}
 		throw new BadRequestException('No files uploaded');
 	}
 
 	@Public()
-	@Get(':id')
-	@ApiOperation({
-		summary: 'Get image by id',
-	})
-	@ApiParam({ name: 'id', type: String, description: 'Image ID' })
-	async getPhoto(@Param('id') id: string) {
-		console.log('chay controller photo');
-		const photo = await this.photoService.findOne({ _id: id });
-		if (!photo) {
-			throw new NotFoundException('Photo not found');
-		}
-		return photo;
-	}
-
-	@Public()
 	@Get()
+	@ApiDocsPagination('PhotoSchema')
 	@ApiOperation({
-		summary: 'Get many images',
+		summary: 'Get many images with fields of ImageSchema',
 	})
-	findMany() {
-		//
+	findMany(@Query() filter: ListOptions<Photo>) {
+		return this.photoService.findMany(filter);
 	}
 
-	@Delete(':id')
+	@Delete(':photoID')
 	@ApiBearerAuth()
 	@ApiOperation({
 		summary: 'Delete image by id',
 	})
-	@ApiParam({ name: 'id', type: String, description: 'ID image' })
+	@ApiParam({ name: 'photoID', type: String, description: 'ID image' })
 	@ApiResponse({
 		status: 200,
 		schema: {
@@ -201,7 +217,17 @@ export class PhotoController {
 			} as ErrorResponse<null>,
 		},
 	})
-	deleteImageByID(@Param('id') id) {
-		return this.photoService.deleteOne(id);
+	delete(@Param('photoID') id) {
+		return this.photoService.delete(id);
+	}
+
+	@Public()
+	@Get(':photoID')
+	@ApiOperation({
+		summary: 'Get image by id',
+	})
+	@ApiParam({ name: 'photoID', type: String, description: 'Image ID' })
+	async findOneByID(@Param('photoID') id: string) {
+		return this.photoService.findOneByID(id);
 	}
 }

@@ -5,6 +5,7 @@ import {
 	IsOptional,
 	ArrayMaxSize,
 } from 'class-validator';
+import { Photo } from 'src/modules/photo/schemas/photo.schema';
 
 export class CreateReviewDto {
 	@IsOptional()
@@ -15,19 +16,14 @@ export class CreateReviewDto {
 	facilityID: string;
 
 	@IsNotEmpty()
-	rating: string;
+	rating: number;
 
 	@IsString()
 	@IsOptional()
 	comment: string;
 
-	// @IsArray()
-	// @IsOptional()
-	// @ArrayMaxSize(5)
-	// photos: FileUploadDto[];
-
-	// @IsArray()
-	// @IsOptional()
-	// @ArrayMaxSize(5)
-	// photos?: object;
+	@IsArray()
+	@IsOptional()
+	@ArrayMaxSize(5)
+	photos?: Photo[];
 }

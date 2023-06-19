@@ -25,12 +25,12 @@ import {
 	ApiTags,
 } from '@nestjs/swagger';
 import { CreateReviewDto } from './dto/create-review-dto';
-import { Review } from './schemas/reviews.schema';
 import { FileFieldsInterceptor } from '@nestjs/platform-express';
-import { Photo } from '../photo/schemas/photo.schema';
 import { ReviewService } from './reviews.service';
-import { Public } from '../auth/utils';
+import { Review } from './schemas/reviews.schema';
 import { ListOptions } from 'src/shared/response/common-response';
+import { ApiDocsPagination } from 'src/decorators/swagger-form-data.decorator';
+import { Public } from '../auth/utils';
 
 @ApiTags('reviews')
 @Controller('reviews')
@@ -58,7 +58,7 @@ export class ReviewsController {
 					type: 'string',
 				},
 				rating: {
-					type: 'string',
+					type: 'number',
 				},
 				comment: {
 					type: 'string',
@@ -73,23 +73,22 @@ export class ReviewsController {
 				code: 200,
 				message: 'Success',
 				data: {
-					_id: '648d850b1b2725a801b7e468',
-					facilityID: '648d7e86669f8855b28f33d1',
-					comment: 'Đáng để trải nghiệm',
+					accountID: '6475692ce552996bd0014c94',
+					facilityID: '649011312a7e17d72b9d724b',
 					rating: 4,
+					comment:
+						'Lorem Ipsum is simply dummy text of the printing and typesetting industry',
 					photos: [
 						{
-							_id: '648d850b1b2725a801b7e464',
-							ownerID: '168699623474509rcare0nu0u',
-							name: '1686996235092-645118712.png',
+							createdAt: '2023-06-19T08:36:43.955Z',
+							updatedAt: '2023-06-19T08:36:43.955Z',
+							ownerID: '16871638035675p6zo2e5x3j',
+							name: '1687163803571-508394429.jpeg',
+							__id: '6490139b2a7e17d72b9d725e',
 							imageURL:
-								'http://localhost:8080/168699623474509rcare0nu0u/1686996235092-645118712.png',
-							createdAt: new Date(),
-							updatedAt: new Date(),
+								'http://localhost:8080/16871638035675p6zo2e5x3j/1687163803571-508394429.jpeg',
 						},
-					] as Photo[],
-					createdAt: new Date(),
-					updatedAt: new Date(),
+					],
 				},
 			},
 		},
@@ -108,7 +107,7 @@ export class ReviewsController {
 		},
 		@Req() req: any,
 	) {
-		return this.reviewService.createOne(files, req, reviewDto);
+		return this.reviewService.createReviewWithFiles(files, req, reviewDto);
 	}
 
 	@Public()
@@ -116,65 +115,78 @@ export class ReviewsController {
 	@ApiOperation({
 		summary: 'Get many review',
 	})
+	@ApiOkResponse({
+		status: 200,
+		schema: {
+			example: {
+				code: 200,
+				message: 'Success',
+				items: [
+					{
+						accountID: '6475692ce552996bd0014c94',
+						facilityID: '649011312a7e17d72b9d724b',
+						rating: 4,
+						comment:
+							'Lorem Ipsum is simply dummy text of the printing and typesetting industry',
+						photos: [
+							{
+								createdAt: '2023-06-19T08:36:43.955Z',
+								updatedAt: '2023-06-19T08:36:43.955Z',
+								ownerID: '16871638035675p6zo2e5x3j',
+								name: '1687163803571-508394429.jpeg',
+								__id: '6490139b2a7e17d72b9d725e',
+								imageURL:
+									'http://localhost:8080/16871638035675p6zo2e5x3j/1687163803571-508394429.jpeg',
+							},
+						],
+					},
+				],
+				total: 1,
+				options: {},
+			},
+		},
+	})
+	@ApiDocsPagination('ReviewSchema')
 	findMany(@Query() filter: ListOptions<Review>) {
 		return this.reviewService.findMany(filter);
 	}
 
-	// @Patch(':id')
-	// @ApiBearerAuth()
-	// @ApiOperation({
-	// 	summary: 'Modified review',
-	// })
-	// @ApiParam({ name: 'id', type: String, description: 'Review ID' })
-	// @ApiBody({
-	// 	type: UpdateReviewDto,
-	// 	examples: {
-	// 		example1: {
-	// 			value: {
-	// 				rating: 5,
-	// 				comment: 'string',
-	// 				photos: [],
-	// 				deletedImages: ['name-image1', 'name-image2'],
-	// 			} as UpdateReviewDto,
-	// 		},
-	// 	},
-	// })
-	// @ApiOkResponse({
-	// 	status: 200,
-	// 	schema: {
-	// 		example: {
-	// 			code: 200,
-	// 			message: 'Success',
-	// 			data: {
-	// 				_id: '123456789',
-	// 				accountID: {},
-	// 				facilityID: {},
-	// 				comment: 'Đáng để trải nghiệm',
-	// 				rating: 5,
-	// 				photos: [
-	// 					{
-	// 						_id: '12345678dsgdgsdxdg4',
-	// 						ownerID: 'bucket1',
-	// 						name: 'image-name',
-	// 						imageURL: 'http://localhost:8080/bucket1/image-name',
-	// 						createdAt: new Date(),
-	// 						updatedAt: new Date(),
-	// 					},
-	// 				] as Photo[],
-	// 				createdAt: new Date(),
-	// 				updatedAt: new Date(),
-	// 			} as Review,
-	// 		},
-	// 	},
-	// })
-	// @ApiBadRequestResponse({
-	// 	type: BadRequestException,
-	// 	status: 400,
-	// 	description: '[Input] invalid!',
-	// })
-	// updateFacility() {
-	// 	//
-	// }
+	@Public()
+	@Get(':reviewID')
+	@ApiOperation({
+		summary: 'Get many review',
+	})
+	@ApiOkResponse({
+		status: 200,
+		schema: {
+			example: {
+				code: 200,
+				message: 'Success',
+				data: {
+					accountID: '6475692ce552996bd0014c94',
+					facilityID: '649011312a7e17d72b9d724b',
+					rating: 4,
+					comment:
+						'Lorem Ipsum is simply dummy text of the printing and typesetting industry',
+					photos: [
+						{
+							createdAt: '2023-06-19T08:36:43.955Z',
+							updatedAt: '2023-06-19T08:36:43.955Z',
+							ownerID: '16871638035675p6zo2e5x3j',
+							name: '1687163803571-508394429.jpeg',
+							__id: '6490139b2a7e17d72b9d725e',
+							imageURL:
+								'http://localhost:8080/16871638035675p6zo2e5x3j/1687163803571-508394429.jpeg',
+						},
+					],
+				},
+			},
+		},
+	})
+	@ApiParam({ name: 'reviewID', type: String, description: 'Review ID' })
+	findOneByID(@Param('reviewID') reviewID) {
+		return this.reviewService.findOneByID(reviewID);
+	}
 
 	@Delete(':reviewID')
 	@ApiBearerAuth()
@@ -203,6 +215,6 @@ export class ReviewsController {
 		description: 'Review not found!',
 	})
 	deleteReviewById(@Param('reviewID') reviewID: any) {
-		return this.reviewService.deleteByID(reviewID);
+		return this.reviewService.delete(reviewID);
 	}
 }

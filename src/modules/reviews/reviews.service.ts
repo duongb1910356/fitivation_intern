@@ -1,83 +1,66 @@
-import {
-	BadRequestException,
-	Injectable,
-	NotFoundException,
-	Req,
-} from '@nestjs/common';
-import { InjectModel } from '@nestjs/mongoose';
-import { Model } from 'mongoose';
-import { Review, ReviewDocument } from './schemas/reviews.schema';
+import { Inject, Injectable, Req } from '@nestjs/common';
+import { Review } from './schemas/reviews.schema';
+import { BaseServiceAbstract } from 'src/shared/services/base-abstract.service';
+import { ReviewRepository } from './repositories/reviews.repository';
 import { CreateReviewDto } from './dto/create-review-dto';
-import { PhotoService } from '../photo/photo.service';
-import { CreatePhotoDto } from '../photo/dto/create-photo-dto';
-import { ListOptions, ListResponse } from 'src/shared/response/common-response';
 import { generateUniqueId } from 'src/utils/gen-uid';
-import { SuccessResponse } from 'src/shared/response/success-response';
+import { CreatePhotoDto } from '../photo/dto/create-photo-dto';
+import { PhotoService } from '../photo/photo.service';
 
 @Injectable()
-export class ReviewService {
+export class ReviewService extends BaseServiceAbstract<Review> {
 	constructor(
-		@InjectModel(Review.name) private reviewModel: Model<ReviewDocument>,
+		@Inject('ReviewRepository')
+		private readonly reviewRepository: ReviewRepository,
 		private readonly photoService: PhotoService,
-	) {}
+	) {
+		super(reviewRepository);
+	}
 
-	async createOne(
+	// constructor(
+	// 	@InjectModel(Review.name) private reviewModel: Model<ReviewDocument>,
+	// 	private readonly photoService: PhotoService,
+	// ) {}
+
+	async createReviewWithFiles(
 		files: { images?: Express.Multer.File[] },
 		@Req() req: any,
 		reviewDto: CreateReviewDto,
 	): Promise<Review> {
-		try {
-			const photoDto: CreatePhotoDto = {
-				ownerID: generateUniqueId(),
-				// ownerID: req.user.uid,
-			};
-			const photos = await this.photoService.uploadManyFile(files, photoDto);
+		const photoDto: CreatePhotoDto = {
+			ownerID: generateUniqueId(),
+			// ownerID: req.user.uid,
+		};
+		const photos = await this.photoService.uploadManyFile(files, photoDto);
 
-			reviewDto.accountID = req.user.uid;
-			return this.reviewModel.create({
-				...reviewDto,
-				photos: photos.items,
-			});
-		} catch (error) {
-			throw new BadRequestException(error);
-		}
+		reviewDto.accountID = req.user.uid;
+		reviewDto.photos = photos.items;
+		return super.create(reviewDto);
 	}
 
-	async deleteByID(id: string): Promise<SuccessResponse<Review>> {
-		try {
-			const review = await this.reviewModel.findOneAndDelete({ _id: id });
-			if (!review) {
-				throw new NotFoundException('Review not found!');
-			}
-
-			review.photos.forEach((re) => {
-				this.photoService.deleteOne(re._id);
-			});
-		} catch (error) {
-			console.log('Error: delete Review >> ', error);
-			throw new BadRequestException(error);
-		}
-
-		return null;
+	async delete(id: string): Promise<boolean> {
+		const review = await this.reviewRepository.findOneByID(id);
+		review.photos.forEach((re) => {
+			this.photoService.delete(re._id);
+		});
+		return await super.delete(id);
 	}
 
-	async findMany(filter: ListOptions<Review>): Promise<ListResponse<Review>> {
-		try {
-			const limit = filter.limit || 0;
-			const offset = filter.offset || 0;
-			console.log('da chay toi day');
-			const photos = await this.reviewModel
-				.find(filter)
-				.skip(offset)
-				.limit(limit);
+	// async deleteByID(id: string): Promise<SuccessResponse<Review>> {
+	// 	try {
+	// 		const review = await this.reviewModel.findOneAndDelete({ _id: id });
+	// 		if (!review) {
+	// 			throw new NotFoundException('Review not found!');
+	// 		}
 
-			return {
-				items: photos,
-				total: photos.length,
-				options: filter,
-			};
-		} catch (error) {
-			throw new BadRequestException(error);
-		}
-	}
+	// 		review.photos.forEach((re) => {
+	// 			// this.photoService.deleteOne(re._id);
+	// 		});
+	// 	} catch (error) {
+	// 		console.log('Error: delete Review >> ', error);
+	// 		throw new BadRequestException(error);
+	// 	}
+
+	// 	return null;
+	// }
 }

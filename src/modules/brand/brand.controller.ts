@@ -72,8 +72,8 @@ export class BrandController {
 		status: 400,
 		description: '[Input] invalid!',
 	})
-	createBrand(@Body() createBrandDto: CreateBrandDto, @Req() re: any) {
-		return this.brandService.create(createBrandDto, re.user.uid);
+	createBrand(@Body() createBrandDto: CreateBrandDto, @Req() req: any) {
+		return this.brandService.createBrand(createBrandDto, req);
 	}
 
 	@Public()
@@ -181,6 +181,6 @@ export class BrandController {
 		},
 	})
 	deleteBrand(@Param('brandID') id: string) {
-		return this.brandService.deleteOne(id);
+		return this.brandService.delete(id);
 	}
 }

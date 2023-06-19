@@ -5,6 +5,7 @@ import { Review, ReviewSchemaFactory } from './schemas/reviews.schema';
 import { ReviewService } from './reviews.service';
 import { Photo, PhotoSchema } from '../photo/schemas/photo.schema';
 import { PhotoModule } from '../photo/photo.module';
+import { ReviewRepository } from './repositories/reviews.repository';
 
 @Module({
 	imports: [
@@ -25,6 +26,9 @@ import { PhotoModule } from '../photo/photo.module';
 		PhotoModule,
 	],
 	controllers: [ReviewsController],
-	providers: [ReviewService],
+	providers: [
+		ReviewService,
+		{ provide: 'ReviewRepository', useClass: ReviewRepository },
+	],
 })
 export class ReviewsModule {}

@@ -1,5 +1,4 @@
 import { Prop, Schema, SchemaFactory } from '@nestjs/mongoose';
-import { NextFunction } from 'express';
 import mongoose, { HydratedDocument, Model } from 'mongoose';
 import { Facility } from 'src/modules/facility/schemas/facility.schema';
 import {

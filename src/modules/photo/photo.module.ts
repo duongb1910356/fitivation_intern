@@ -3,6 +3,7 @@ import { MongooseModule } from '@nestjs/mongoose';
 import { Photo, PhotoSchemaFactory } from './schemas/photo.schema';
 import { PhotoController } from './photo.controller';
 import { PhotoService } from './photo.service';
+import { PhotoRepository } from './repositories/photo.repository';
 
 @Module({
 	imports: [
@@ -16,7 +17,10 @@ import { PhotoService } from './photo.service';
 			},
 		]),
 	],
-	providers: [PhotoService],
+	providers: [
+		PhotoService,
+		{ provide: 'PhotoRepository', useClass: PhotoRepository },
+	],
 	exports: [PhotoService],
 	controllers: [PhotoController],
 })
