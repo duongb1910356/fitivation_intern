@@ -8,5 +8,6 @@ import { MongooseModule } from '@nestjs/mongoose';
 		MongooseModule.forFeature([{ name: Counter.name, schema: CounterSchema }]),
 	],
 	providers: [CounterService],
+	exports: [CounterService],
 })
 export class CounterModule {}

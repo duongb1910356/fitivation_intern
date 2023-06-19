@@ -15,11 +15,16 @@ import {
 	ListResponse,
 } from 'src/shared/response/common-response';
 import { Public } from '../auth/utils';
+import { FacilityCategoryService } from './facility-category.service';
 
 @ApiTags('categories')
-@Public()
 @Controller('categories')
+@Public()
 export class FacilityCategoryController {
+	constructor(
+		private readonly facilityCategoryService: FacilityCategoryService,
+	) {}
+
 	@Get()
 	@ApiOperation({
 		summary: 'Get All categories',
@@ -46,10 +51,8 @@ export class FacilityCategoryController {
 			} as ListResponse<FacilityCategory>,
 		},
 	})
-	getAllCategory(@Query() filter: ListOptions<FacilityCategory>) {
-		console.log(filter);
-
-		//
+	async getAllCategory(@Query() filter: ListOptions<FacilityCategory>) {
+		return await this.facilityCategoryService.findMany(filter);
 	}
 
 	@Get(':categoryID')
@@ -87,8 +90,7 @@ export class FacilityCategoryController {
 			} as ErrorResponse<null>,
 		},
 	})
-	getCategory(@Param('categoryID') categoryID: string) {
-		console.log(categoryID);
-		//
+	async getCategory(@Param('categoryID') categoryID: string) {
+		return await this.facilityCategoryService.findById(categoryID);
 	}
 }

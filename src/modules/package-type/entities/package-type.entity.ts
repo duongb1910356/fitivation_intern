@@ -5,7 +5,7 @@ import { BaseObject } from 'src/shared/schemas/base-object.schema';
 
 export type PackageTypeDocument = HydratedDocument<PackageType>;
 
-@Schema()
+@Schema({ timestamps: true })
 export class PackageType extends BaseObject {
 	@Prop({
 		type: mongoose.Schema.Types.ObjectId,

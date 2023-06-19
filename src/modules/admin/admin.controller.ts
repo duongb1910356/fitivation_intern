@@ -46,13 +46,24 @@ import { Holiday } from '../holiday/entities/holiday.entity';
 import { PackageType } from '../package-type/entities/package-type.entity';
 import { TimeType, Package } from '../package/entities/package.entity';
 import { UpdateFacilityStateDto } from './dto/update-facility-state-dto';
+import { PackageTypeService } from '../package-type/package-type.service';
+import { Public } from '../auth/utils';
+import { PackageService } from '../package/package.service';
+import { FacilityCategoryService } from '../facility-category/facility-category.service';
 
 @ApiTags('admin')
-@ApiBearerAuth()
-@UseGuards(RolesGuard)
-@Roles(UserRole.ADMIN)
+// @ApiBearerAuth()
+// @UseGuards(RolesGuard)
+// @Roles(UserRole.ADMIN)
+@Public()
 @Controller('admin')
 export class AdminController {
+	constructor(
+		private readonly packageTypeService: PackageTypeService,
+		private readonly packageService: PackageService,
+		private readonly facilityCategoryService: FacilityCategoryService,
+	) {}
+
 	//FACILITIES
 	@Patch('facilities/:facilityID/changeState')
 	@ApiOperation({
@@ -369,9 +380,8 @@ export class AdminController {
 			} as ErrorResponse<null>,
 		},
 	})
-	createCategory(@Body() data: CreateCategoryDto) {
-		console.log(data);
-		//
+	async createCategory(@Body() data: CreateCategoryDto) {
+		return await this.facilityCategoryService.create(data);
 	}
 
 	@Patch('categories/:categoryID')
@@ -441,12 +451,11 @@ export class AdminController {
 			} as ErrorResponse<null>,
 		},
 	})
-	updateCategory(
+	async updateCategory(
 		@Param('categoryID') categoryID: string,
 		@Body() data: UpdateCategoryDto,
 	) {
-		console.log(categoryID, data);
-		//
+		return await this.facilityCategoryService.update(categoryID, data);
 	}
 
 	@Delete('categories/:categoryID')
@@ -503,8 +512,7 @@ export class AdminController {
 		},
 	})
 	deleteCategory(@Param('categoryID') categoryID: string) {
-		console.log(categoryID);
-		//
+		return this.facilityCategoryService.delete(categoryID);
 	}
 
 	//SCHEDULES
@@ -676,9 +684,8 @@ export class AdminController {
 			} as ErrorResponse<null>,
 		},
 	})
-	getAllPackages(@Query() filter: ListOptions<Package>) {
-		console.log(filter);
-		//
+	async getAllPackages(@Query() filter: ListOptions<Package>) {
+		return await this.packageService.findMany(filter);
 	}
 
 	//PACKAGE TYPE
@@ -733,8 +740,9 @@ export class AdminController {
 			} as ErrorResponse<null>,
 		},
 	})
-	getAllPackageTypes(@Query() filter: ListOptions<PackageType>) {
-		//
-		console.log(filter);
+	async getAllPackageTypes(
+		@Query() filter: ListOptions<PackageType>,
+	): Promise<ListResponse<PackageType>> {
+		return await this.packageTypeService.findMany(filter);
 	}
 }

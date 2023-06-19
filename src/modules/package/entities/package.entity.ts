@@ -1,5 +1,5 @@
 import { Prop, Schema, SchemaFactory } from '@nestjs/mongoose';
-import mongoose from 'mongoose';
+import mongoose, { HydratedDocument } from 'mongoose';
 import { Facility } from 'src/modules/facility/schemas/facility.schema';
 import { PackageType } from 'src/modules/package-type/entities/package-type.entity';
 import { BaseObject } from 'src/shared/schemas/base-object.schema';
@@ -12,7 +12,9 @@ export enum TimeType {
 	TWELVE_MONTH = '12',
 }
 
-@Schema()
+export type PackageDocument = HydratedDocument<Package>;
+
+@Schema({ timestamps: true })
 export class Package extends BaseObject {
 	@Prop({
 		type: mongoose.Schema.Types.ObjectId,
