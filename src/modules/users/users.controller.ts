@@ -1,40 +1,33 @@
 import {
-	BadRequestException,
 	Body,
 	Controller,
 	Delete,
 	FileTypeValidator,
 	Get,
 	MaxFileSizeValidator,
-	NotFoundException,
 	Param,
 	ParseFilePipe,
 	Patch,
 	Post,
 	Query,
-	Req,
-	UnsupportedMediaTypeException,
+	Request,
 	UploadedFile,
 	UseInterceptors,
 } from '@nestjs/common';
 import { FileInterceptor } from '@nestjs/platform-express';
 import {
-	ApiBadRequestResponse,
 	ApiBearerAuth,
 	ApiBody,
 	ApiConsumes,
 	ApiCreatedResponse,
-	ApiNotFoundResponse,
 	ApiOkResponse,
 	ApiOperation,
 	ApiParam,
 	ApiResponse,
 	ApiTags,
-	ApiUnsupportedMediaTypeResponse,
 } from '@nestjs/swagger';
 import { mkdirSync, writeFileSync } from 'fs';
 import { appConfig } from '../../app.config';
-import { SuccessResponse } from '../../shared/response/success-response';
 import { GenFileName } from '../../utils/gen-filename';
 import { AvatarUploadDto } from './dto/avatar-upload-dto';
 import { CreateUserDto } from './dto/create-user-dto';
@@ -49,12 +42,13 @@ import {
 	ListResponse,
 } from 'src/shared/response/common-response';
 import { ApiDocsPagination } from 'src/decorators/swagger-form-data.decorator';
+import { TokenResponse } from '../auth/dto/token-payload-dto';
 
 @ApiTags('users')
 @ApiBearerAuth()
 @Controller('users')
 export class UsersController {
-	constructor(private readonly userService: UsersService) { }
+	constructor(private userService: UsersService) {}
 
 	@Get(':id')
 	@ApiOperation({ summary: 'getUserByID', description: 'Get one user by ID' })
@@ -78,6 +72,7 @@ export class UsersController {
 					district: 'Ninh Kieu',
 					commune: 'Xuan Khanh',
 				} as unknown as UserAddress,
+				isMember: false,
 				status: UserStatus.ACTIVE,
 				createdAt: new Date(),
 				updatedAt: new Date(),
@@ -152,6 +147,7 @@ export class UsersController {
 							district: 'Ninh Kieu',
 							commune: 'Xuan Khanh',
 						} as unknown as UserAddress,
+						isMember: false,
 						status: UserStatus.ACTIVE,
 						createdAt: new Date(),
 						updatedAt: new Date(),
@@ -226,7 +222,7 @@ export class UsersController {
 						district: 'Ninh Kieu',
 						commune: 'Xuan Khanh',
 					} as UserAddressDto,
-					status: UserStatus.ACTIVE,
+					isMember: false,
 				} as CreateUserDto,
 			},
 			USER: {
@@ -255,7 +251,7 @@ export class UsersController {
 	@ApiCreatedResponse({
 		schema: {
 			example: {
-				code: 200,
+				code: 201,
 				message: 'Success',
 				data: {
 					_id: '',
@@ -312,6 +308,7 @@ export class UsersController {
 		},
 	})
 	createUser(@Body() input: CreateUserDto) {
+		console.log('controller');
 		return this.userService.createOne(input);
 	}
 
@@ -340,6 +337,7 @@ export class UsersController {
 						district: 'Ninh Kieu',
 						commune: 'Xuan Khanh',
 					} as unknown as UserAddress,
+					isMember: false,
 					status: UserStatus.ACTIVE,
 				},
 			},
@@ -498,6 +496,7 @@ export class UsersController {
 					district: 'Ninh Kieu',
 					commune: 'Xuan Khanh',
 				} as unknown as UserAddress,
+				isMember: false,
 				status: UserStatus.ACTIVE,
 				createdAt: new Date(),
 				updatedAt: new Date(),
@@ -568,11 +567,110 @@ export class UsersController {
 	) {
 		const dir = `${appConfig.fileRoot}/${id}`;
 		const fileName = GenFileName.gen(file.mimetype);
-		console.log("file users avatar >> ", file)
+		console.log('file users avatar >> ', file);
 		mkdirSync(dir, { recursive: true });
 		writeFileSync(`${dir}/${fileName}`, file.buffer);
 		const url: string = appConfig.fileHost + `/${id}/${fileName}`;
 
 		return this.userService.updateAvatar(id, url);
+	}
+
+	@Get('me')
+	@ApiOperation({
+		summary: 'getProfile',
+		description: 'Get loggedIn user info',
+	})
+	@ApiResponse({ type: User, status: 200 })
+	@ApiResponse({
+		status: 400,
+		schema: {
+			example: {
+				code: '400',
+				message: 'Token invalid',
+				details: null,
+			} as ErrorResponse<null>,
+		},
+	})
+	getProfile(@Request() req: any) {
+		return this.userService.findOne(req.uid);
+	}
+
+	@Patch('update-me')
+	@ApiOperation({
+		summary: 'updateMe',
+		description: 'Allow user update personal account data',
+	})
+	@ApiCreatedResponse({ type: TokenResponse, status: 200 })
+	@ApiResponse({
+		status: 400,
+		schema: {
+			example: {
+				code: '400',
+				message: 'Input invalid',
+				details: null,
+			} as ErrorResponse<null>,
+		},
+	})
+	@ApiResponse({
+		status: 401,
+		schema: {
+			example: {
+				code: '401',
+				message: 'Unauthorized',
+				details: null,
+			} as ErrorResponse<null>,
+		},
+	})
+	@ApiResponse({
+		status: 403,
+		schema: {
+			example: {
+				code: '403',
+				message: `Forbidden resource`,
+				details: null,
+			} as ErrorResponse<null>,
+		},
+	})
+	updateMe() {
+		return 'updateMe';
+	}
+
+	@Delete('delete-me')
+	@ApiOperation({
+		summary: 'deleteMe',
+		description: 'Allow user inactive personal account data',
+	})
+	@ApiResponse({
+		status: 200,
+		schema: {
+			example: {
+				code: '200',
+				message: 'This account will delete after 15 days no login',
+				details: null,
+			},
+		},
+	})
+	@ApiResponse({
+		status: 401,
+		schema: {
+			example: {
+				code: '401',
+				message: 'Unauthorized',
+				details: null,
+			} as ErrorResponse<null>,
+		},
+	})
+	@ApiResponse({
+		status: 403,
+		schema: {
+			example: {
+				code: '403',
+				message: `Forbidden resource`,
+				details: null,
+			} as ErrorResponse<null>,
+		},
+	})
+	deleteMe() {
+		return 'deleteMe';
 	}
 }

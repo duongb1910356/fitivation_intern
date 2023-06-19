@@ -13,6 +13,7 @@ import {
 	CustomerType,
 	PromotionMethod,
 	PromotionStatus,
+	PromotionType,
 } from '../schemas/promotion.schema';
 import { Type } from 'class-transformer';
 
@@ -22,9 +23,8 @@ export class CreatePromotionDto {
 	@MaxLength(12)
 	targetID: string;
 
-	@IsNumber()
-	@Min(0)
-	type: number;
+	@IsEnum(PromotionType)
+	type: PromotionType;
 
 	@IsString()
 	@IsNotEmpty()

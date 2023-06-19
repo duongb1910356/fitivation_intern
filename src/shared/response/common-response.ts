@@ -1,8 +1,7 @@
 export type ListOptions<T = any> = Partial<T> & {
 	limit?: number;
 	offset?: number;
-	searchField?: keyof T;
-	searchValue?: string;
+	search?: string;
 	sortField?: keyof T;
 	sortOrder?: 'asc' | 'desc';
 };

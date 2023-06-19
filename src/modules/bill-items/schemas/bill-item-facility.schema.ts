@@ -15,7 +15,15 @@ export class BillItemFacility {
 	facilityName: string;
 
 	@Prop({ required: true, type: Object })
-	facilityAddress: object;
+	facilityAddress: {
+		street: string;
+		province: string;
+		provinceCode: string;
+		district: string;
+		districtCode: string;
+		commune: string;
+		communeCode: string;
+	};
 
 	@Prop({ type: Array })
 	facilityCoordinatesLocation?: [number, number];

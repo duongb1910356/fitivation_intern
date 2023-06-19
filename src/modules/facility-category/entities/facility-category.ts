@@ -1,7 +1,10 @@
 import { Prop, Schema, SchemaFactory } from '@nestjs/mongoose';
+import { HydratedDocument } from 'mongoose';
 import { BaseObject } from 'src/shared/schemas/base-object.schema';
 
-@Schema()
+export type FacilityCategoryDocument = HydratedDocument<FacilityCategory>;
+
+@Schema({ timestamps: true })
 export class FacilityCategory extends BaseObject {
 	@Prop({ type: String, required: true })
 	type: string;
@@ -10,4 +13,5 @@ export class FacilityCategory extends BaseObject {
 	name: string;
 }
 
-export const FacilityCategorySchema = SchemaFactory.createForClass(FacilityCategory);
+export const FacilityCategorySchema =
+	SchemaFactory.createForClass(FacilityCategory);

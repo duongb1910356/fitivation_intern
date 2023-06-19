@@ -16,7 +16,6 @@ export class CartItem extends BaseObject {
 	packageID: Package;
 
 	@Prop({
-		required: true,
 		type: mongoose.Schema.Types.ObjectId,
 		ref: 'Promotion',
 	})
