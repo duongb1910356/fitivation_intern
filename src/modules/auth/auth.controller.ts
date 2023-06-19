@@ -145,28 +145,6 @@ export class AuthController {
 		return this.authService.refreshToken(refreshTokenDto);
 	}
 
-	@UseGuards(JwtAuthGuard)
-	@Get('me')
-	@ApiBearerAuth()
-	@ApiOperation({
-		summary: 'getProfile',
-		description: 'Get loggedIn user info',
-	})
-	@ApiResponse({ type: User, status: 200 })
-	@ApiResponse({
-		status: 400,
-		schema: {
-			example: {
-				code: '400',
-				message: 'Token invalid',
-				details: null,
-			} as ErrorResponse<null>,
-		},
-	})
-	getProfile(@Request() req: any) {
-		return this.userService.findOne(req.uid);
-	}
-
 	@Public()
 	@Post('forgot-password')
 	@ApiOperation({
