@@ -53,12 +53,18 @@ export class FacilityScheduleController {
 				type: ScheduleType.DAILY,
 				openTime: [
 					{
-						shift: {
-							startTime: new Date(),
-							endTime: new Date(),
-						} as ShiftTime,
-					} as OpenTime,
-				],
+						shift: [
+							{
+								startTime: new Date('7/10/2023 06:00:00'),
+								endTime: new Date('7/10/2023 12:00:00'),
+							},
+							{
+								startTime: new Date('7/10/2023 13:00:00'),
+								endTime: new Date('7/10/2023 19:00:00'),
+							},
+						] as ShiftTime[],
+					},
+				] as OpenTime[],
 				createdAt: new Date(),
 				updatedAt: new Date(),
 			} as FacilitySchedule,
@@ -88,8 +94,6 @@ export class FacilityScheduleController {
 	}
 
 	@ApiBearerAuth()
-	@UseGuards(RolesGuard)
-	@Roles(UserRole.FACILITY_OWNER)
 	@Patch(':scheduleID')
 	@ApiOperation({
 		summary: 'Update Schedule by scheduleID',
@@ -105,38 +109,62 @@ export class FacilityScheduleController {
 		examples: {
 			Daily: {
 				value: {
-					OpenTime: [
+					openTime: [
 						{
-							shift: {
-								startTime: new Date(),
-								endTime: new Date(),
-							} as ShiftTimeDto,
+							shift: [
+								{
+									startTime: new Date('7/10/2023 06:00:00'),
+									endTime: new Date('7/10/2023 11:00:00'),
+								},
+								{
+									startTime: new Date('7/10/2023 13:00:00'),
+									endTime: new Date('7/10/2023 19:00:00'),
+								},
+							] as ShiftTimeDto[],
 						},
-					],
+					] as OpenTimeDto[],
 				} as UpdateFacilityScheduleDto,
 			},
 			Weekly: {
 				value: {
 					OpenTime: [
 						{
-							shift: {
-								startTime: new Date(),
-								endTime: new Date(),
-							} as ShiftTimeDto,
+							shift: [
+								{
+									startTime: new Date('7/10/2023 06:00:00'),
+									endTime: new Date('7/10/2023 11:00:00'),
+								},
+								{
+									startTime: new Date('7/10/2023 13:00:00'),
+									endTime: new Date('7/10/2023 19:00:00'),
+								},
+							] as ShiftTimeDto[],
 							dayOfWeek: dayOfWeek.MONDAY,
 						},
 						{
-							shift: {
-								startTime: new Date(),
-								endTime: new Date(),
-							} as ShiftTimeDto,
+							shift: [
+								{
+									startTime: new Date('7/10/2023 06:00:00'),
+									endTime: new Date('7/10/2023 11:00:00'),
+								},
+								{
+									startTime: new Date('7/10/2023 13:00:00'),
+									endTime: new Date('7/10/2023 19:00:00'),
+								},
+							] as ShiftTimeDto[],
 							dayOfWeek: dayOfWeek.TUESDAY,
 						},
 						{
-							shift: {
-								startTime: new Date(),
-								endTime: new Date(),
-							} as ShiftTimeDto,
+							shift: [
+								{
+									startTime: new Date('7/10/2023 06:00:00'),
+									endTime: new Date('7/10/2023 11:00:00'),
+								},
+								{
+									startTime: new Date('7/10/2023 13:00:00'),
+									endTime: new Date('7/10/2023 19:00:00'),
+								},
+							] as ShiftTimeDto[],
 							dayOfWeek: dayOfWeek.WEDNESDAY,
 						},
 						{},
@@ -147,24 +175,42 @@ export class FacilityScheduleController {
 				value: {
 					OpenTime: [
 						{
-							shift: {
-								startTime: new Date(),
-								endTime: new Date(),
-							} as ShiftTimeDto,
+							shift: [
+								{
+									startTime: new Date('7/10/2023 06:00:00'),
+									endTime: new Date('7/10/2023 11:00:00'),
+								},
+								{
+									startTime: new Date('7/10/2023 13:00:00'),
+									endTime: new Date('7/10/2023 19:00:00'),
+								},
+							] as ShiftTimeDto[],
 							dayOfMonth: 1,
 						},
 						{
-							shift: {
-								startTime: new Date(),
-								endTime: new Date(),
-							} as ShiftTimeDto,
+							shift: [
+								{
+									startTime: new Date('7/10/2023 06:00:00'),
+									endTime: new Date('7/10/2023 11:00:00'),
+								},
+								{
+									startTime: new Date('7/10/2023 13:00:00'),
+									endTime: new Date('7/10/2023 19:00:00'),
+								},
+							] as ShiftTimeDto[],
 							dayOfMonth: 2,
 						},
 						{
-							shift: {
-								startTime: new Date(),
-								endTime: new Date(),
-							} as ShiftTimeDto,
+							shift: [
+								{
+									startTime: new Date('7/10/2023 06:00:00'),
+									endTime: new Date('7/10/2023 11:00:00'),
+								},
+								{
+									startTime: new Date('7/10/2023 13:00:00'),
+									endTime: new Date('7/10/2023 19:00:00'),
+								},
+							] as ShiftTimeDto[],
 							dayOfMonth: 3,
 						},
 						{},
@@ -181,10 +227,16 @@ export class FacilityScheduleController {
 				type: ScheduleType.DAILY,
 				openTime: [
 					{
-						shift: {
-							startTime: new Date(),
-							endTime: new Date(),
-						} as ShiftTime,
+						shift: [
+							{
+								startTime: new Date('7/10/2023 06:00:00'),
+								endTime: new Date('7/10/2023 12:00:00'),
+							},
+							{
+								startTime: new Date('7/10/2023 13:00:00'),
+								endTime: new Date('7/10/2023 19:00:00'),
+							},
+						] as ShiftTime[],
 					} as OpenTime,
 				],
 				createdAt: new Date(),

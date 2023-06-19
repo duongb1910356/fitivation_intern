@@ -13,9 +13,9 @@ import { Type } from 'class-transformer';
 
 export class OpenTimeDto {
 	@IsNotEmpty()
-	@ValidateNested()
+	@ValidateNested({ each: true })
 	@Type(() => ShiftTimeDto)
-	shift: ShiftTimeDto;
+	shift: ShiftTimeDto[];
 
 	@IsOptional()
 	@IsEnum(dayOfWeek)

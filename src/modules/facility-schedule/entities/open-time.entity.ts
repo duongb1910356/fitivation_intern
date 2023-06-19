@@ -14,7 +14,7 @@ export enum dayOfWeek {
 @Schema()
 export class OpenTime {
 	@Prop({ type: ShiftTimeSchema })
-	shift: ShiftTime;
+	shift: ShiftTime[];
 
 	@Prop({
 		enum: dayOfWeek,

@@ -1,5 +1,5 @@
 import { Prop, Schema, SchemaFactory } from '@nestjs/mongoose';
-import mongoose from 'mongoose';
+import mongoose, { HydratedDocument } from 'mongoose';
 import {
 	OpenTime,
 	OpenTimeSchema,
@@ -12,8 +12,9 @@ export enum ScheduleType {
 	WEEKLY = 'WEEKLY',
 	MONTHLY = 'MONTHLY',
 }
+export type FacilityScheduleDocument = HydratedDocument<FacilitySchedule>;
 
-@Schema()
+@Schema({ timestamps: true })
 export class FacilitySchedule extends BaseObject {
 	@Prop({
 		type: mongoose.Schema.Types.ObjectId,
