@@ -1,4 +1,4 @@
-import { BadRequestException, Inject, Injectable, Req } from '@nestjs/common';
+import { Inject, Injectable, Req } from '@nestjs/common';
 import { Brand } from './schemas/brand.schema';
 import { BrandRepository } from 'src/modules/brand/repositories/brand.repository';
 import { BaseServiceAbstract } from 'src/shared/services/base-abstract.service';
@@ -6,7 +6,6 @@ import { CreateBrandDto } from './dto/create-brand.dto';
 
 @Injectable()
 export class BrandService extends BaseServiceAbstract<Brand> {
-	// private brandModel: Model<BrandDocument>,
 	constructor(
 		@Inject('BrandRepository')
 		private readonly brandRepository: BrandRepository,

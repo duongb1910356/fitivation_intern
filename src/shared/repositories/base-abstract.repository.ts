@@ -1,7 +1,8 @@
-import { Model } from 'mongoose';
+import { Model, isValidObjectId } from 'mongoose';
 import { BaseObject } from 'src/shared/schemas/base-object.schema';
 import { BaseRepositoryInterface } from './base-interface.repository';
 import { ListOptions, ListResponse } from 'src/shared/response/common-response';
+import { BadRequestException, NotFoundException } from '@nestjs/common';
 
 export abstract class BaseRepositoryAbstract<T extends BaseObject>
 	implements BaseRepositoryInterface<T>
@@ -15,19 +16,24 @@ export abstract class BaseRepositoryAbstract<T extends BaseObject>
 		return created_data.save();
 	}
 
-	async findByID(id: string): Promise<T> {
-		try {
-			const item = await this.model.findById(id);
-			return item;
-		} catch (error) {
-			throw new Error(error);
+	async findOneByID(id: string): Promise<T> {
+		if (!isValidObjectId(id)) {
+			throw new BadRequestException('ID invalid');
 		}
+		const item = await this.model.findById(id);
+		if (!item) {
+			throw new NotFoundException('Data not found');
+		}
+		return item;
 	}
 
 	async findMany(filter: ListOptions<T>): Promise<ListResponse<T>> {
 		const limit = filter.limit || 0;
 		const offset = filter.offset || 0;
 		const items = await this.model.find(filter).skip(offset).limit(limit);
+		if (items?.length == 0) {
+			throw new NotFoundException('Items not found');
+		}
 		return {
 			items: items,
 			total: items?.length,
@@ -40,17 +46,24 @@ export abstract class BaseRepositoryAbstract<T extends BaseObject>
 	}
 
 	async delete(id: string): Promise<boolean> {
-		const delete_item = await this.model.findById(id);
-		if (!delete_item) {
-			return false;
+		if (!isValidObjectId(id)) {
+			throw new BadRequestException('ID invalid');
 		}
-		return await this.model.findOneAndDelete({ _id: id });
+		const delete_item = await this.model.findOneAndDelete({ _id: id });
+		if (!delete_item) {
+			throw new NotFoundException('Not found item to delete');
+		}
+		return true;
 	}
 
 	async update(id: string, dto: Partial<T>): Promise<T> {
-		const brand = await this.model
-			.findByIdAndUpdate(id, dto, { new: true })
-			.exec();
+		if (!isValidObjectId(id)) {
+			throw new BadRequestException('ID invalid');
+		}
+		const brand = await this.model.findByIdAndUpdate(id, dto, { new: true });
+		if (!brand) {
+			throw new NotFoundException('Not found item to update');
+		}
 		return brand;
 	}
 }

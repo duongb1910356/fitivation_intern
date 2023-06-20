@@ -39,7 +39,7 @@ export class ReviewService extends BaseServiceAbstract<Review> {
 	}
 
 	async delete(id: string): Promise<boolean> {
-		const review = await this.reviewRepository.findByID(id);
+		const review = await this.reviewRepository.findOneByID(id);
 		review.photos.forEach((re) => {
 			this.photoService.delete(re._id);
 		});

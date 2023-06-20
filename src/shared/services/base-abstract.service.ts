@@ -22,11 +22,11 @@ export abstract class BaseServiceAbstract<T extends BaseObject>
 		return await this.repository.findMany(filter);
 	}
 
-	async findByID(id: string) {
+	async findOneByID(id: string) {
 		if (!Types.ObjectId.isValid(id)) {
 			throw new BadRequestException('ID invalid');
 		}
-		const data = await this.repository.findByID(id);
+		const data = await this.repository.findOneByID(id);
 		if (!data) {
 			throw new NotFoundException('Not found');
 		}
