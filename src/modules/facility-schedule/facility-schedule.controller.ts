@@ -34,10 +34,13 @@ import { OpenTimeDto } from './dto/open-time-dto';
 import { ShiftTimeDto } from './dto/shift-time-dto';
 import { UpdateFacilityScheduleDto } from './dto/update-facility-schedule-dto';
 import { Facility } from '../facility/schemas/facility.schema';
+import { FacilityScheduleService } from './facility-schedule.service';
 
 @ApiTags('schedules')
 @Controller('schedules')
 export class FacilityScheduleController {
+	constructor(private readonly scheduleService: FacilityScheduleService) {}
+
 	@Public()
 	@Get(':scheduleID')
 	@ApiOperation({
@@ -88,12 +91,12 @@ export class FacilityScheduleController {
 			} as ErrorResponse<null>,
 		},
 	})
-	getSchedule(@Param('scheduleID') scheduleID: string) {
-		console.log(scheduleID);
-		//
+	async getSchedule(@Param('scheduleID') scheduleID: string) {
+		return await this.scheduleService.findById(scheduleID);
 	}
 
-	@ApiBearerAuth()
+	// @ApiBearerAuth()
+	@Public()
 	@Patch(':scheduleID')
 	@ApiOperation({
 		summary: 'Update Schedule by scheduleID',
@@ -127,7 +130,7 @@ export class FacilityScheduleController {
 			},
 			Weekly: {
 				value: {
-					OpenTime: [
+					openTime: [
 						{
 							shift: [
 								{
@@ -167,13 +170,12 @@ export class FacilityScheduleController {
 							] as ShiftTimeDto[],
 							dayOfWeek: dayOfWeek.WEDNESDAY,
 						},
-						{},
 					] as OpenTimeDto[],
 				} as UpdateFacilityScheduleDto,
 			},
 			Monthly: {
 				value: {
-					OpenTime: [
+					openTime: [
 						{
 							shift: [
 								{
@@ -213,7 +215,6 @@ export class FacilityScheduleController {
 							] as ShiftTimeDto[],
 							dayOfMonth: 3,
 						},
-						{},
 					] as OpenTimeDto[],
 				} as UpdateFacilityScheduleDto,
 			},
@@ -280,17 +281,15 @@ export class FacilityScheduleController {
 			} as ErrorResponse<null>,
 		},
 	})
-	updateSchedule(
+	async updateSchedule(
 		@Param('scheduleID') scheduleID: string,
 		@Body() data: UpdateFacilityScheduleDto,
 	) {
-		console.log(scheduleID, data);
-		//
+		return await this.scheduleService.update(scheduleID, data);
 	}
 
-	@ApiBearerAuth()
-	@UseGuards(RolesGuard)
-	@Roles(UserRole.FACILITY_OWNER)
+	// @ApiBearerAuth()
+	@Public()
 	@Delete(':scheduleID')
 	@ApiOperation({
 		summary: 'Delete Schedule Type by scheduleID',
@@ -344,8 +343,7 @@ export class FacilityScheduleController {
 			} as ErrorResponse<null>,
 		},
 	})
-	deleteSchedule(@Param('scheduleID') scheduleID: string) {
-		console.log(scheduleID);
-		//
+	async deleteSchedule(@Param('scheduleID') scheduleID: string) {
+		return await this.scheduleService.delete(scheduleID);
 	}
 }
