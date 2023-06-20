@@ -1,6 +1,6 @@
 import {
+	ArrayNotEmpty,
 	IsEnum,
-	IsNotEmpty,
 	IsNumber,
 	IsOptional,
 	Max,
@@ -10,11 +10,13 @@ import {
 import { dayOfWeek } from '../entities/open-time.entity';
 import { ShiftTimeDto } from './shift-time-dto';
 import { Type } from 'class-transformer';
+import { ValidateShiftsOverlap } from '../validators/open-time-validator';
 
 export class OpenTimeDto {
-	@IsNotEmpty()
+	@ArrayNotEmpty()
 	@ValidateNested({ each: true })
 	@Type(() => ShiftTimeDto)
+	@ValidateShiftsOverlap()
 	shift: ShiftTimeDto[];
 
 	@IsOptional()
