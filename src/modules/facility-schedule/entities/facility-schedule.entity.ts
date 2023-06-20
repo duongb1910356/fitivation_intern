@@ -26,7 +26,7 @@ export class FacilitySchedule extends BaseObject {
 	@Prop({ type: String, enum: ScheduleType, required: true })
 	type: ScheduleType;
 
-	@Prop({ type: [OpenTimeSchema], default: [] })
+	@Prop({ type: [OpenTimeSchema] })
 	openTime: OpenTime[];
 }
 
