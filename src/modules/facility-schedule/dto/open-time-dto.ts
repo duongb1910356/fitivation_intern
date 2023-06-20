@@ -10,7 +10,7 @@ import {
 import { dayOfWeek } from '../entities/open-time.entity';
 import { ShiftTimeDto } from './shift-time-dto';
 import { Type } from 'class-transformer';
-import { ValidateShiftsOverlap } from '../validators/open-time-validator';
+import { ValidateShiftsOverlap } from './open-time-validator';
 
 export class OpenTimeDto {
 	@ArrayNotEmpty()
