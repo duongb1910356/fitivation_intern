@@ -11,7 +11,7 @@ import {
 	MinLength,
 	ValidateNested,
 } from 'class-validator';
-import { Gender, UserRole } from '../schemas/user.schema';
+import { Gender, UserRole, UserStatus } from '../schemas/user.schema';
 import { UserAddressDto } from './user-address.dto';
 import { Type } from 'class-transformer';
 
@@ -74,4 +74,8 @@ export class CreateUserDto {
 	@IsOptional()
 	@IsBoolean()
 	isMember?: boolean;
+
+	@IsOptional()
+	@IsEnum(UserStatus)
+	status: UserStatus;
 }
