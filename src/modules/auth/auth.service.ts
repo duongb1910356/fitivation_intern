@@ -49,7 +49,20 @@ export class AuthService {
 	}
 
 	async signup(signupDto: SignupDto) {
-		//
+		const passwordHashed = await Encrypt.hashData(signupDto.password);
+
+		const newUser = await this.userService.createOne({
+			username: signupDto.username,
+			email: signupDto.email,
+			password: passwordHashed,
+			displayName: signupDto.displayName,
+		});
+
+		const tokens = this.signTokens(newUser._id, newUser.email, newUser.role);
+
+		this.updateRefreshTokenHashed(newUser._id, (await tokens).refreshToken);
+
+		return tokens;
 	}
 
 	async login() {
