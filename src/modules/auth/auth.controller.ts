@@ -44,10 +44,8 @@ export class AuthController {
 		status: 201,
 		schema: {
 			example: {
-				accessToken:
-					'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJzdWIiOiI2NDkyYmUyMTgyNTEwMjMyOWNkY2UwZGMiLCJlbWFpbCI6InRlc3QxQHRlc3QuY29tIiwicm9sZSI6Ik1FTUJFUiIsImlhdCI6MTY4NzMzODUyOSwiZXhwIjoxNjg3MzM5NDI5fQ.OlqGH7aHpgvXo1-BobjgQLCNZ5x6BSa8a9hDOdHMQe8',
-				refreshToken:
-					'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJzdWIiOiI2NDkyYmUyMTgyNTEwMjMyOWNkY2UwZGMiLCJlbWFpbCI6InRlc3QxQHRlc3QuY29tIiwicm9sZSI6Ik1FTUJFUiIsImlhdCI6MTY4NzMzODUyOSwiZXhwIjoxNjg3OTQzMzI5fQ.B-HD2PerwHe7qo0-UVAeV_rmchhPH3Dd72ziyoYrJv4',
+				accessToken: 'string',
+				refreshToken: 'string',
 			} as TokenResponse,
 		},
 	})
@@ -91,10 +89,8 @@ export class AuthController {
 		status: 201,
 		schema: {
 			example: {
-				accessToken:
-					'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJzdWIiOiI2NDkyYmUyMTgyNTEwMjMyOWNkY2UwZGMiLCJlbWFpbCI6InRlc3QxQHRlc3QuY29tIiwicm9sZSI6Ik1FTUJFUiIsImlhdCI6MTY4NzMzODUyOSwiZXhwIjoxNjg3MzM5NDI5fQ.OlqGH7aHpgvXo1-BobjgQLCNZ5x6BSa8a9hDOdHMQe8',
-				refreshToken:
-					'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJzdWIiOiI2NDkyYmUyMTgyNTEwMjMyOWNkY2UwZGMiLCJlbWFpbCI6InRlc3QxQHRlc3QuY29tIiwicm9sZSI6Ik1FTUJFUiIsImlhdCI6MTY4NzMzODUyOSwiZXhwIjoxNjg3OTQzMzI5fQ.B-HD2PerwHe7qo0-UVAeV_rmchhPH3Dd72ziyoYrJv4',
+				accessToken: 'string',
+				refreshToken: 'string',
 			} as TokenResponse,
 		},
 	})
@@ -135,10 +131,8 @@ export class AuthController {
 		status: 201,
 		schema: {
 			example: {
-				accessToken:
-					'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJzdWIiOiI2NDkyYmUyMTgyNTEwMjMyOWNkY2UwZGMiLCJlbWFpbCI6InRlc3QxQHRlc3QuY29tIiwicm9sZSI6Ik1FTUJFUiIsImlhdCI6MTY4NzMzODUyOSwiZXhwIjoxNjg3MzM5NDI5fQ.OlqGH7aHpgvXo1-BobjgQLCNZ5x6BSa8a9hDOdHMQe8',
-				refreshToken:
-					'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJzdWIiOiI2NDkyYmUyMTgyNTEwMjMyOWNkY2UwZGMiLCJlbWFpbCI6InRlc3QxQHRlc3QuY29tIiwicm9sZSI6Ik1FTUJFUiIsImlhdCI6MTY4NzMzODUyOSwiZXhwIjoxNjg3OTQzMzI5fQ.B-HD2PerwHe7qo0-UVAeV_rmchhPH3Dd72ziyoYrJv4',
+				accessToken: 'string',
+				refreshToken: 'string',
 			} as TokenResponse,
 		},
 	})
