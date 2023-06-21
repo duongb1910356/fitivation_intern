@@ -19,6 +19,10 @@ export class UpdateUserDto extends PickType(CreateUserDto, [
 	@IsString()
 	id: string;
 
+	@IsOptional()
+	@IsString()
+	refreshToken?: string;
+
 	@IsEnum(UserStatus)
 	status: UserStatus;
 }
