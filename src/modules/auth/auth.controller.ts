@@ -41,7 +41,6 @@ export class AuthController {
 		},
 	})
 	@ApiResponse({
-		type: TokenResponse,
 		status: 201,
 		schema: {
 			example: {
@@ -89,7 +88,6 @@ export class AuthController {
 		},
 	})
 	@ApiResponse({
-		type: TokenResponse,
 		status: 201,
 		schema: {
 			example: {
@@ -134,7 +132,6 @@ export class AuthController {
 
 	@ApiOperation({ summary: 'refreshToken', description: 'Refresh new token' })
 	@ApiResponse({
-		type: TokenResponse,
 		status: 201,
 		schema: {
 			example: {
