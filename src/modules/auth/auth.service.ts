@@ -59,9 +59,13 @@ export class AuthService {
 			displayName: signupDto.displayName,
 		});
 
-		const tokens = this.signTokens(newUser._id, newUser.email, newUser.role);
+		const tokens = await this.signTokens(
+			newUser._id,
+			newUser.email,
+			newUser.role,
+		);
 
-		this.updateRefreshTokenHashed(newUser._id, (await tokens).refreshToken);
+		this.updateRefreshTokenHashed(newUser._id, tokens.refreshToken);
 
 		return tokens;
 	}
