@@ -15,11 +15,12 @@ import { UpdateUserDto } from './dto/update-user-dto';
 export class UsersService {
 	constructor(@InjectModel(User.name) private userModel: Model<UserDocument>) {}
 
-	findOne() {
-		return 'getOne';
-	}
 	findMany() {
 		return 'getMany';
+	}
+
+	findOne() {
+		return 'getOne';
 	}
 
 	async findByIDAndUpdate(
