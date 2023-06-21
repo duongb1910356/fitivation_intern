@@ -2,12 +2,14 @@ import {
 	BadRequestException,
 	Injectable,
 	InternalServerErrorException,
+	NotFoundException,
 } from '@nestjs/common';
 import { InjectModel } from '@nestjs/mongoose';
 import { User, UserDocument } from './schemas/user.schema';
 import { Model } from 'mongoose';
 import { CreateUserDto } from './dto/create-user-dto';
 import { SignupDto } from '../auth/dto/signup-dto';
+import { UpdateUserDto } from './dto/update-user-dto';
 
 @Injectable()
 export class UsersService {
@@ -19,6 +21,21 @@ export class UsersService {
 	findMany() {
 		return 'getMany';
 	}
+
+	async findByIDAndUpdate(
+		userID: string,
+		updateUserDto: UpdateUserDto,
+	): Promise<User> {
+		const user = await this.userModel.findByIdAndUpdate(userID, updateUserDto, {
+			new: true,
+			runValidators: true,
+		});
+
+		if (!user) throw new NotFoundException('Not found user with that ID');
+
+		return user;
+	}
+
 	updateOne() {
 		return 'updateOne';
 	}
