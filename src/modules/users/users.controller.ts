@@ -27,7 +27,7 @@ import {
 } from '@nestjs/swagger';
 import { mkdirSync, writeFileSync } from 'fs';
 import { appConfig } from '../../app.config';
-import { GenFileName } from '../../utils/gen-filename';
+import { GenFileName } from '../../shared/utils/gen-filename';
 import { AvatarUploadDto } from './dto/avatar-upload-dto';
 import { CreateUserDto } from './dto/create-user-dto';
 import { UpdateUserDto } from './dto/update-user-dto';
@@ -118,8 +118,8 @@ export class UsersController {
 		},
 	})
 	@Get(':id')
-	getOneUser(@Param('id') id) {
-		return this.userService.getOne();
+	findOneUser(@Param('id') id) {
+		return this.userService.findOne();
 	}
 
 	@ApiDocsPagination('user')
@@ -194,8 +194,8 @@ export class UsersController {
 		},
 	})
 	@Get()
-	getManyUsers(@Query() filter: ListOptions<User>) {
-		return this.userService.getMany();
+	findManyUsers(@Query() filter: ListOptions<User>) {
+		return this.userService.findMany();
 	}
 
 	@ApiOperation({ summary: 'createUser', description: 'Create new user' })
@@ -308,7 +308,7 @@ export class UsersController {
 	@Post()
 	createUser(@Body() createUserDto: CreateUserDto) {
 		console.log('controller');
-		return this.userService.createOne();
+		return this.userService.createOne(createUserDto);
 	}
 
 	@ApiOperation({

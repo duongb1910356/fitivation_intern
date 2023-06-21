@@ -13,10 +13,10 @@ import { SignupDto } from '../auth/dto/signup-dto';
 export class UsersService {
 	constructor(@InjectModel(User.name) private userModel: Model<UserDocument>) {}
 
-	getOne() {
+	findOne() {
 		return 'getOne';
 	}
-	getMany() {
+	findMany() {
 		return 'getMany';
 	}
 	updateOne() {
