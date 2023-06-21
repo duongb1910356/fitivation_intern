@@ -65,7 +65,7 @@ export class AuthService {
 			newUser.role,
 		);
 
-		this.updateRefreshTokenHashed(newUser._id, tokens.refreshToken);
+		await this.updateRefreshTokenHashed(newUser._id, tokens.refreshToken);
 
 		return tokens;
 	}
