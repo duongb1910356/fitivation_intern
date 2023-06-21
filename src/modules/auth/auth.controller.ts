@@ -14,7 +14,6 @@ import {
 	ApiResponse,
 	ApiTags,
 } from '@nestjs/swagger';
-import { UsersService } from '../../modules/users/users.service';
 import { AuthService } from './auth.service';
 import { LoginDto } from './dto/login-dto';
 import { SignupDto } from './dto/signup-dto';
@@ -24,10 +23,7 @@ import { ErrorResponse } from 'src/shared/response/common-response';
 @ApiTags('auth')
 @Controller('auth')
 export class AuthController {
-	constructor(
-		private readonly authService: AuthService,
-		private readonly userService: UsersService,
-	) {}
+	constructor(private readonly authService: AuthService) {}
 
 	@ApiOperation({ summary: 'signup', description: 'Allow user sign up' })
 	@ApiBody({
