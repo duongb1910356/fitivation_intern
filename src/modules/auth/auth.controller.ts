@@ -19,6 +19,7 @@ import { LoginDto } from './dto/login-dto';
 import { SignupDto } from './dto/signup-dto';
 import { TokenResponse } from './types/token-response.types';
 import { ErrorResponse } from 'src/shared/response/common-response';
+import { Public } from './decorators/public.decorator';
 
 @ApiTags('auth')
 @Controller('auth')
@@ -60,6 +61,7 @@ export class AuthController {
 		},
 	})
 	@Post('signup')
+	@Public()
 	@HttpCode(HttpStatus.CREATED)
 	async signup(@Body() signupDto: SignupDto): Promise<TokenResponse> {
 		return this.authService.signup(signupDto);
