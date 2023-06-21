@@ -5,6 +5,7 @@ import { TokenResponse } from './types/token-response.types';
 import { TokenPayload } from './types/token-payload.type';
 import { JwtService } from '@nestjs/jwt';
 import { appConfig } from '../../app.config';
+import { Encrypt } from 'src/shared/utils/encrypt';
 
 @Injectable()
 export class AuthService {
