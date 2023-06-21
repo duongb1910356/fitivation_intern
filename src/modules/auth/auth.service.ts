@@ -41,6 +41,13 @@ export class AuthService {
 		};
 	}
 
+	async updateRefreshTokenHashed(userID: string, rt: string): Promise<void> {
+		const refreshToken = await Encrypt.hashData(rt);
+		await this.userService.findByIDAndUpdate(userID, {
+			refreshToken,
+		});
+	}
+
 	async signup(signupDto: SignupDto) {
 		//
 	}
