@@ -1,4 +1,11 @@
-import { Body, Controller, Patch, Post } from '@nestjs/common';
+import {
+	Body,
+	Controller,
+	HttpCode,
+	HttpStatus,
+	Patch,
+	Post,
+} from '@nestjs/common';
 import {
 	ApiBody,
 	ApiCreatedResponse,
@@ -11,7 +18,7 @@ import { UsersService } from '../../modules/users/users.service';
 import { AuthService } from './auth.service';
 import { LoginDto } from './dto/login-dto';
 import { SignupDto } from './dto/signup-dto';
-import { TokenResponse } from './dto/token-payload-dto';
+import { TokenResponse } from './types/token-response.types';
 import { ErrorResponse } from 'src/shared/response/common-response';
 
 @ApiTags('auth')
@@ -49,7 +56,7 @@ export class AuthController {
 	})
 	@Post('signup')
 	@HttpCode(HttpStatus.CREATED)
-	async signup(@Body() signupDto: SignupDto) {
+	async signup(@Body() signupDto: SignupDto): Promise<TokenResponse> {
 		return this.authService.signup(signupDto);
 	}
 
