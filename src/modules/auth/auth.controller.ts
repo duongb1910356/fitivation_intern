@@ -88,7 +88,7 @@ export class AuthController {
 		},
 	})
 	@ApiResponse({
-		status: 201,
+		status: 200,
 		schema: {
 			example: {
 				accessToken: 'string',
