@@ -107,6 +107,8 @@ export class AuthController {
 		},
 	})
 	@Post('login')
+	@Public()
+	@HttpCode(HttpStatus.OK)
 	async login() {
 		return this.authService.login();
 	}
