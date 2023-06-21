@@ -109,8 +109,8 @@ export class AuthController {
 	@Post('login')
 	@Public()
 	@HttpCode(HttpStatus.OK)
-	async login() {
-		return this.authService.login();
+	async login(@Body() loginDto: LoginDto): Promise<TokenResponse> {
+		return this.authService.login(loginDto);
 	}
 
 	@ApiOperation({ summary: 'logout', description: 'Allow user log out' })

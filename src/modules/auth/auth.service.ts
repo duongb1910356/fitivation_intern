@@ -70,8 +70,21 @@ export class AuthService {
 		return tokens;
 	}
 
-	async login() {
-		//
+	async login(loginDto: LoginDto): Promise<TokenResponse> {
+		const user = await this.userService.findOneByEmail(loginDto.email);
+
+		const isMatched = await Encrypt.compareData(
+			user.password,
+			loginDto.password,
+		);
+
+		if (!isMatched) throw new BadRequestException('Password not correct');
+
+		const tokens = await this.signTokens(user._id, user.email, user.role);
+
+		await this.updateRefreshTokenHashed(user._id, tokens.refreshToken);
+
+		return tokens;
 	}
 
 	async logout() {
