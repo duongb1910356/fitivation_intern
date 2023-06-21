@@ -41,7 +41,7 @@ import {
 	ListResponse,
 } from 'src/shared/response/common-response';
 import { ApiDocsPagination } from 'src/decorators/swagger-form-data.decorator';
-import { TokenResponse } from '../auth/dto/token-payload-dto';
+import { TokenResponse } from '../auth/types/token-response.types';
 
 @ApiTags('users')
 @ApiBearerAuth()
