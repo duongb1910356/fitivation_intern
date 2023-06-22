@@ -11,10 +11,10 @@ export enum dayOfWeek {
 	SUNDAY = 'SUNDAY',
 }
 
-@Schema()
+@Schema({ _id: false })
 export class OpenTime {
-	@Prop({ type: ShiftTimeSchema })
-	shift: ShiftTime;
+	@Prop([{ type: ShiftTimeSchema }])
+	shift: ShiftTime[];
 
 	@Prop({
 		enum: dayOfWeek,
