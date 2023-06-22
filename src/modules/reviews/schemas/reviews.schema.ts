@@ -44,7 +44,6 @@ export const ReviewSchemaFactory = (facilityModel: Model<FacilityDocument>) => {
 
 	reviewSchema.post('save', async function (doc) {
 		const facilityID = doc.facilityID;
-		console.log('review saved: ', appConfig.maxElementEmbedd);
 		await facilityModel.findOneAndUpdate(
 			{ _id: facilityID },
 			{
@@ -56,6 +55,16 @@ export const ReviewSchemaFactory = (facilityModel: Model<FacilityDocument>) => {
 				},
 			},
 		);
+	});
+
+	reviewSchema.pre('findOneAndDelete', async function (next) {
+		const review = await this.model.findOne(this.getFilter());
+		console.log('review deleted >> ', review);
+		await facilityModel.findOneAndUpdate(
+			{ _id: review.facilityID },
+			{ $pull: { reviews: { _id: review._id } } },
+		);
+		return next();
 	});
 
 	return reviewSchema;
