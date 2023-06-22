@@ -47,11 +47,10 @@ export class HolidayService {
 			offset = 0,
 			sortField = 'startDate',
 			sortOrder = 'asc',
-			projection,
 		} = options;
 
 		const holidays = await this.holidayModel
-			.find(condition, projection)
+			.find(condition)
 			.sort({ [sortField]: sortOrder === 'asc' ? 1 : -1 })
 			.limit(limit)
 			.skip(offset);
