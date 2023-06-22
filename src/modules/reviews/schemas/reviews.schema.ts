@@ -1,11 +1,11 @@
 import { Prop, Schema, SchemaFactory } from '@nestjs/mongoose';
 import mongoose, { HydratedDocument, Model } from 'mongoose';
-import { Facility } from 'src/modules/facility/schemas/facility.schema';
+import { appConfig } from 'src/app.config';
 import {
-	Photo,
-	PhotoDocument,
-	PhotoSchema,
-} from 'src/modules/photo/schemas/photo.schema';
+	Facility,
+	FacilityDocument,
+} from 'src/modules/facility/schemas/facility.schema';
+import { Photo, PhotoSchema } from 'src/modules/photo/schemas/photo.schema';
 import { User } from 'src/modules/users/schemas/user.schema';
 import { BaseObject } from 'src/shared/schemas/base-object.schema';
 
@@ -39,23 +39,24 @@ export class Review extends BaseObject {
 
 export const ReviewSchema = SchemaFactory.createForClass(Review);
 
-export const ReviewSchemaFactory = (photoModel: Model<PhotoDocument>) => {
-	const photoSchema = ReviewSchema;
+export const ReviewSchemaFactory = (facilityModel: Model<FacilityDocument>) => {
+	const reviewSchema = ReviewSchema;
 
-	// photoSchema.pre('findOneAndDelete', async function (next: NextFunction) {
-	// 	const review = await this.model.findOne(this.getFilter());
-	// 	console.log('loi o day, ', review.accountID);
-	// 	await Promise.all([
-	// 		photoModel
-	// 			.deleteMany({
-	// 				ownerID: review.accountID,
-	// 			})
-	// 			.exec(),
-	// 	]);
-	// 	console.log('loi o day 2');
+	reviewSchema.post('save', async function (doc) {
+		const facilityID = doc.facilityID;
+		console.log('review saved: ', appConfig.maxElementEmbedd);
+		await facilityModel.findOneAndUpdate(
+			{ _id: facilityID },
+			{
+				$push: {
+					reviews: {
+						$each: [doc],
+						$slice: -appConfig.maxElementEmbedd,
+					},
+				},
+			},
+		);
+	});
 
-	// 	return next();
-	// });
-
-	return photoSchema;
+	return reviewSchema;
 };

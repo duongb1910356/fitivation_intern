@@ -9,6 +9,8 @@ import {
 	Patch,
 	Post,
 	Query,
+	Req,
+	UploadedFiles,
 	UseInterceptors,
 } from '@nestjs/common';
 import {
@@ -27,7 +29,7 @@ import {
 	ApiUnauthorizedResponse,
 } from '@nestjs/swagger';
 import { Public } from '../auth/utils';
-import { FilesInterceptor } from '@nestjs/platform-express';
+import { FileFieldsInterceptor } from '@nestjs/platform-express';
 import { CreateFacilityDto } from './dto/create-facility-dto';
 import { Facility } from './schemas/facility.schema';
 import {
@@ -53,16 +55,19 @@ import { HolidayDto } from '../holiday/dto/holiday-dto';
 import { CreatePackageTypeDto } from '../package-type/dto/create-package-type-dto';
 import { UpdateOrderDto } from '../package-type/dto/update-order-dto';
 import { UpdatePhotoOfFacilityDto } from './dto/update-photo-facility';
+// import { FacilityService } from './facility.service';
+import { CreateReviewDto } from '../reviews/dto/create-review-dto';
+import { FacilityService } from './facility.service';
 
 @ApiTags('facilities')
 @Controller('facilities')
 export class FacilityController {
-	// constructor(private readonly ReviewsController: ReviewsController) { }
+	constructor(private readonly facilityService: FacilityService) {}
 
 	@Public()
 	@Get()
 	@ApiOperation({
-		summary: 'Search facility',
+		summary: 'Get many facility with many fields',
 	})
 	@ApiDocsPagination('Facility')
 	@ApiOkResponse({
@@ -148,8 +153,8 @@ export class FacilityController {
 		status: 400,
 		description: '[Input] invalid',
 	})
-	getAllFacility() {
-		//
+	async getManyFacility(@Query() filter: ListOptions<Facility>) {
+		return await this.facilityService.findMany(filter);
 	}
 
 	@Public()
@@ -226,8 +231,8 @@ export class FacilityController {
 		status: 400,
 		description: '[Input] invalid',
 	})
-	getFacilityById() {
-		//
+	async getFacilityById(@Param('facilityID') facilityID) {
+		return await this.facilityService.findOneByID(facilityID);
 	}
 
 	@Public()
@@ -485,7 +490,6 @@ export class FacilityController {
 	//     console.log(facilityID, filter);
 	//     //
 	// }
-
 	@ApiBearerAuth()
 	@Get(':facilityID/schedules')
 	@ApiOperation({
@@ -1041,10 +1045,10 @@ export class FacilityController {
 					},
 					summary: 'CHẤT LƯỢNG LÀ DANH DỰ',
 					description: 'HIỆN ĐẠI BẬT NHẤT',
-					coordinatesLocation: [45, 54],
+					coordinates: [45, 54],
 					scheduleType: ScheduleType.WEEKLY,
-					photos: [{ file: null }],
-				} as CreateFacilityDto,
+					photos: [],
+				} as unknown as CreateFacilityDto,
 			},
 		},
 	})
@@ -1088,11 +1092,29 @@ export class FacilityController {
 		status: 400,
 		description: '[Input] invalid!',
 	})
-	@UseInterceptors(FilesInterceptor('files'))
-	createFacility() {
-		//
+	@UseInterceptors(FileFieldsInterceptor([{ name: 'images', maxCount: 5 }]))
+	createFacility(
+		@Body() createFacilityDto: CreateFacilityDto,
+		@Req() req: any,
+		@UploadedFiles()
+		files?: {
+			images?: Express.Multer.File[];
+		},
+	) {
+		console.log('USER: ', req.user);
+		if (files != undefined) {
+			return this.facilityService.createFacilityWithFile(
+				createFacilityDto,
+				req,
+			);
+		} else {
+			return this.facilityService.createFacilityWithFile(
+				createFacilityDto,
+				req,
+				files,
+			);
+		}
 	}
-
 	@Delete(':facilityID')
 	@ApiBearerAuth()
 	@ApiOperation({
@@ -1223,10 +1245,10 @@ export class FacilityController {
 					},
 					summary: 'CHẤT LƯỢNG LÀ DANH DỰ',
 					description: 'HIỆN ĐẠI BẬT NHẤT',
-					coordinatesLocation: [45, 54],
+					coordinates: [45, 54],
 					state: State.ACTIVE,
 					scheduleType: ScheduleType.WEEKLY,
-				} as UpdateFacilityDto,
+				} as unknown as UpdateFacilityDto,
 			},
 		},
 	})
@@ -1273,6 +1295,110 @@ export class FacilityController {
 	})
 	updateFacility() {
 		//
+	}
+
+	@Patch(':facilityID/reviews')
+	@ApiOperation({
+		summary: 'Embedd newest review to facility',
+	})
+	@ApiBearerAuth()
+	@ApiConsumes('multipart/form-data')
+	@ApiParam({ name: 'facilityID', type: String, description: 'Facility ID' })
+	@ApiBody({
+		schema: {
+			type: 'object',
+			properties: {
+				images: {
+					type: 'array',
+					items: {
+						type: 'string',
+						format: 'binary',
+					},
+				},
+				rating: {
+					type: 'number',
+				},
+				comment: {
+					type: 'string',
+				},
+			},
+		},
+	})
+	@ApiOkResponse({
+		status: 200,
+		schema: {
+			example: {
+				code: 200,
+				message: 'Success',
+				data: {
+					_id: '1233456',
+					brandID: {},
+					facilityCategoryID: {},
+					ownerID: {},
+					name: 'City gym',
+					address: {
+						street: '30/4',
+						commune: 'Phường Xuân Khánh',
+						communeCode: '011',
+						district: 'Quận Ninh Kiều',
+						districtCode: '056',
+						province: 'Thành phố Cần Thơ',
+						provinceCode: '065',
+					},
+					summary: 'Phòng gym thân thiện',
+					description: 'Nhiều dụng cụ tập luyện',
+					coordinationLocation: [65, 56],
+					state: State.ACTIVE,
+					status: Status.APPROVED,
+					averageStar: 5,
+					photos: [],
+					reviews: [
+						{
+							accountID: '6475692ce552996bd0014c94',
+							facilityID: '649011312a7e17d72b9d724b',
+							rating: 4,
+							comment:
+								'Lorem Ipsum is simply dummy text of the printing and typesetting industry',
+							photos: [
+								{
+									createdAt: '2023-06-19T08:36:43.955Z',
+									updatedAt: '2023-06-19T08:36:43.955Z',
+									ownerID: '16871638035675p6zo2e5x3j',
+									name: '1687163803571-508394429.jpeg',
+									__id: '6490139b2a7e17d72b9d725e',
+									imageURL:
+										'http://localhost:8080/16871638035675p6zo2e5x3j/1687163803571-508394429.jpeg',
+								},
+							],
+						},
+					],
+					createdAt: new Date(),
+					updatedAt: new Date(),
+				} as unknown as Facility,
+			},
+		},
+	})
+	@ApiBadRequestResponse({
+		type: BadRequestException,
+		status: 400,
+		description: '[Input] invalid!',
+	})
+	@UseInterceptors(FileFieldsInterceptor([{ name: 'images', maxCount: 5 }]))
+	async updateReviewFacility(
+		@Param('facilityID') facilityID,
+		@Body() reviewDto: CreateReviewDto,
+		@Req() req: any,
+		@UploadedFiles()
+		files?: {
+			images?: Express.Multer.File[];
+		},
+	) {
+		return await this.facilityService.updateReviewFacility(
+			facilityID,
+			files,
+			req,
+			reviewDto,
+		);
 	}
 
 	@Patch(':facilityID/photos')

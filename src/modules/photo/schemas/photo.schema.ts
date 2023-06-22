@@ -34,17 +34,11 @@ export const PhotoSchema = SchemaFactory.createForClass(Photo);
 export const PhotoSchemaFactory = () => {
 	const photoSchema = PhotoSchema;
 
-	photoSchema.virtual('imageURL').get(function (this: PhotoDocument) {
+	photoSchema.virtual('imageURL').get(function () {
+		console.log('Virtual imageURL');
 		const fileHost = appConfig.fileHost;
 		return `${fileHost}/${this.ownerID}/${this.name}`;
 	});
 
 	return photoSchema;
 };
-
-// PhotoSchema.virtual('imageURL').get(function (this: PhotoDocument) {
-// 	const fileHost = appConfig.fileHost;
-// 	return `${fileHost}/${this.ownerID}/${this.name}`;
-// });
-
-// export { PhotoSchema };

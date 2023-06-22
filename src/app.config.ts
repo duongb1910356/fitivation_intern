@@ -8,4 +8,5 @@ export const appConfig = {
 	jwtRefreshExp: '7d',
 	fileHost: process.env.FILE_HOST,
 	fileRoot: process.env.FILE_ROOT,
+	maxElementEmbedd: process.env.MAX_ELEMENT_EMBEDD,
 };

@@ -11,9 +11,9 @@ export class CreateReviewDto {
 	@IsOptional()
 	accountID?: string;
 
-	@IsNotEmpty()
 	@IsString()
-	facilityID: string;
+	@IsOptional()
+	facilityID?: string;
 
 	@IsNotEmpty()
 	rating: number;

@@ -1,5 +1,6 @@
 import { PartialType, PickType } from '@nestjs/swagger';
 import { CreateFacilityDto } from './create-facility-dto';
+import { Review } from 'src/modules/reviews/schemas/reviews.schema';
 
 export class UpdateFacilityDto extends PartialType(
 	PickType(CreateFacilityDto, [
@@ -9,9 +10,11 @@ export class UpdateFacilityDto extends PartialType(
 		'address',
 		'summary',
 		'description',
-		'coordinatesLocation',
+		'coordinates',
 		'photos',
 		'scheduleType',
 		'state',
 	]),
-) {}
+) {
+	'reviews': Review;
+}

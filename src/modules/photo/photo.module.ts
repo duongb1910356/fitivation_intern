@@ -13,7 +13,7 @@ import { PhotoRepository } from './repositories/photo.repository';
 				name: Photo.name,
 				useFactory: PhotoSchemaFactory,
 				inject: [],
-				imports: [MongooseModule.forFeature()],
+				imports: [],
 			},
 		]),
 	],

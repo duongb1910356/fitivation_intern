@@ -17,7 +17,8 @@ services:
       - APP_VERSION
       - FILE_HOST
       - FILE_ROOT
-  
+      - MAX_ELEMENT_EMBEDD
+
   db:
     image: mongo
     restart: always

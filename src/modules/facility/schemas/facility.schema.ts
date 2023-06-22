@@ -1,11 +1,15 @@
 import { Prop, Schema, SchemaFactory } from '@nestjs/mongoose';
 import mongoose, { HydratedDocument } from 'mongoose';
 import { BaseObject } from '../../../shared/schemas/base-object.schema';
-import { Review } from 'src/modules/reviews/schemas/reviews.schema';
+import {
+	Review,
+	ReviewSchema,
+} from 'src/modules/reviews/schemas/reviews.schema';
 import { Brand } from '../../brand/schemas/brand.schema';
-import { Photo } from 'src/modules/photo/schemas/photo.schema';
+import { Photo, PhotoSchema } from 'src/modules/photo/schemas/photo.schema';
 import { FacilityCategory } from 'src/modules/facility-category/entities/facility-category';
 import { User } from 'src/modules/users/schemas/user.schema';
+import { appConfig } from 'src/app.config';
 
 export enum State {
 	ACTIVE = 'ACTIVE',
@@ -89,24 +93,22 @@ export class Facility extends BaseObject {
 	averageStar: number;
 
 	@Prop({
-		type: [
-			{ type: mongoose.Schema.Types.ObjectId, ref: 'Photo', required: true },
-		],
+		type: [{ type: PhotoSchema, required: true }],
 		validate: {
-			validator: (photos: any[]) => photos.length <= 5,
-			message: 'Facility have 5 photo latest',
+			validator: (photos: any[]) =>
+				photos.length <= parseInt(appConfig.maxElementEmbedd),
+			message: `Facility have ${appConfig.maxElementEmbedd} photo latest`,
 		},
 		default: [],
 	})
 	photos: Photo[];
 
 	@Prop({
-		type: [
-			{ type: mongoose.Schema.Types.ObjectId, ref: 'Review', required: false },
-		],
+		type: [{ type: ReviewSchema, required: false }],
 		validate: {
-			validator: (reviews: any[]) => reviews.length <= 5,
-			message: 'Facility have 5 reviews latest',
+			validator: (reviews: any[]) =>
+				reviews.length <= parseInt(appConfig.maxElementEmbedd),
+			message: `Facility have ${appConfig.maxElementEmbedd} reviews latest`,
 		},
 		default: [],
 	})
@@ -117,3 +119,9 @@ export class Facility extends BaseObject {
 }
 
 export const FacilitySchema = SchemaFactory.createForClass(Facility);
+
+export const FacilitySchemaFactory = () => {
+	const facilitySchema = FacilitySchema;
+
+	return facilitySchema;
+};

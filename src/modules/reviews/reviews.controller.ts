@@ -99,7 +99,7 @@ export class ReviewsController {
 		description: '[Input] invalid!',
 	})
 	@UseInterceptors(FileFieldsInterceptor([{ name: 'images', maxCount: 5 }]))
-	createReview(
+	async createReview(
 		@Body() reviewDto: CreateReviewDto,
 		@UploadedFiles()
 		files: {
@@ -107,7 +107,11 @@ export class ReviewsController {
 		},
 		@Req() req: any,
 	) {
-		return this.reviewService.createReviewWithFiles(files, req, reviewDto);
+		return await this.reviewService.createReviewWithFiles(
+			files,
+			req,
+			reviewDto,
+		);
 	}
 
 	@Public()
@@ -149,6 +153,11 @@ export class ReviewsController {
 	@ApiDocsPagination('ReviewSchema')
 	findMany(@Query() filter: ListOptions<Review>) {
 		return this.reviewService.findMany(filter);
+	}
+
+	@Public()
+	findOne(@Param(':id') id) {
+		return this.reviewService.findOne(id);
 	}
 
 	@Public()

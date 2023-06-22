@@ -1,14 +1,13 @@
 import {
 	IsNotEmpty,
-	IsNumber,
 	IsArray,
 	IsString,
 	IsOptional,
 	IsEnum,
 } from 'class-validator';
 import { State, ScheduleType } from '../../../shared/enum/facility.enum';
-import { FileUploadDto } from 'src/modules/photo/dto/file-upload-dto';
 import { CreateAddressDto } from 'src/modules/address/dto/create-address-dto';
+import { Photo } from 'src/modules/photo/schemas/photo.schema';
 
 export class CreateFacilityDto {
 	@IsNotEmpty()
@@ -19,9 +18,9 @@ export class CreateFacilityDto {
 	@IsString()
 	facilityCategoryID: string;
 
-	// @IsNotEmpty()
-	// @IsString()
-	// ownerID?: string;
+	@IsString()
+	@IsOptional()
+	ownerID?: string;
 
 	@IsEnum(State)
 	@IsOptional()
@@ -31,7 +30,7 @@ export class CreateFacilityDto {
 	@IsString()
 	name: string;
 
-	@IsNotEmpty()
+	@IsOptional()
 	address: CreateAddressDto;
 
 	@IsString()
@@ -43,13 +42,13 @@ export class CreateFacilityDto {
 	description: string;
 
 	@IsArray()
-	@IsNumber({}, { each: true })
-	coordinatesLocation?: number[];
+	coordinates?: string[];
 
 	@IsEnum(ScheduleType)
 	scheduleType: ScheduleType;
 
-	@IsNotEmpty()
+	// @IsNotEmpty()
 	@IsArray()
-	photos: FileUploadDto[];
+	@IsOptional()
+	photos: Photo[];
 }

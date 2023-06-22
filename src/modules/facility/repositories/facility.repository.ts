@@ -2,14 +2,14 @@ import { Injectable } from '@nestjs/common';
 import { InjectModel } from '@nestjs/mongoose';
 import { Model } from 'mongoose';
 import { BaseRepositoryAbstract } from '../../../shared/repositories/base-abstract.repository';
-import { Review, ReviewDocument } from '../schemas/reviews.schema';
+import { Facility, FacilityDocument } from '../schemas/facility.schema';
 
 @Injectable()
-export class ReviewRepository extends BaseRepositoryAbstract<Review> {
+export class FacilityRepository extends BaseRepositoryAbstract<Facility> {
 	constructor(
-		@InjectModel(Review.name)
-		private reviewModel: Model<ReviewDocument>,
+		@InjectModel(Facility.name)
+		private facilityModel: Model<FacilityDocument>,
 	) {
-		super(reviewModel);
+		super(facilityModel);
 	}
 }
