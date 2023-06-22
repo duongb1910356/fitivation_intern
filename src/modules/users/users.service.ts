@@ -60,8 +60,14 @@ export class UsersService {
 		user.refreshToken = undefined;
 		return user;
 	}
-	deleteOne() {
-		return 'deleteOne';
+	async deleteOne(userID: string): Promise<boolean> {
+		const user = await this.userModel.findById(userID);
+
+		if (!user) throw new BadRequestException('Not found user with that ID');
+
+		await this.userModel.deleteOne({ _id: userID });
+
+		return true;
 	}
 
 	async updateAvatar(userId: string, filePath: string): Promise<User> {
