@@ -40,7 +40,6 @@ export class AuthService {
 				expiresIn: `${appConfig.jwtRefreshExpiresIn}`,
 			}),
 		]).catch(async () => {
-			await this.userService.deleteOne(sub);
 			throw new InternalServerErrorException('Sign token failed');
 		});
 
