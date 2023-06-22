@@ -8,6 +8,4 @@ export const appConfig = {
 	jwtAccessExpiresIn: process.env.JWT_AT_EXPIRES_IN,
 	jwtRefreshSecret: process.env.JWT_RT_SECRET,
 	jwtRefreshExpiresIn: process.env.JWT_RT_EXPIRES_IN,
-	fileHost: process.env.FILE_HOST,
-	fileRoot: process.env.FILE_ROOT,
 };
