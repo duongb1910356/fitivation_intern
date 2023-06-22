@@ -464,7 +464,7 @@ export class UsersController {
 	})
 	@Delete(':id')
 	deleteUser(@Param() id: string) {
-		return this.userService.deleteOne();
+		return this.userService.deleteOne(id);
 	}
 
 	@ApiOperation({
