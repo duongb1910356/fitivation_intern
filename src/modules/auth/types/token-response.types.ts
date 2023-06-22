@@ -1,11 +1,11 @@
 import { IsNotEmpty, IsString } from 'class-validator';
 
 export class TokenResponse {
-	@IsString()
 	@IsNotEmpty()
+	@IsString()
 	accessToken: string;
 
-	@IsString()
 	@IsNotEmpty()
+	@IsString()
 	refreshToken: string;
 }

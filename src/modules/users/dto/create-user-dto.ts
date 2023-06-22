@@ -77,5 +77,5 @@ export class CreateUserDto {
 
 	@IsOptional()
 	@IsEnum(UserStatus)
-	status: UserStatus;
+	status?: UserStatus;
 }

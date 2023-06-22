@@ -1,15 +1,15 @@
 import { IsNotEmpty, IsString } from 'class-validator';
 
 export class TokenPayload {
-	@IsString()
 	@IsNotEmpty()
+	@IsString()
 	sub: string;
 
-	@IsString()
 	@IsNotEmpty()
+	@IsString()
 	email: string;
 
-	@IsString()
 	@IsNotEmpty()
+	@IsString()
 	role: string;
 }
