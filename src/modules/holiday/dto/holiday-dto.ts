@@ -1,17 +1,25 @@
 import {
-	IsDateString,
+	IsDate,
 	IsNotEmpty,
 	IsOptional,
 	IsString,
+	MinDate,
 } from 'class-validator';
+import { IsStartDateBeforeEndDate } from './holiday-validator';
+import { Transform } from 'class-transformer';
 
 export class HolidayDto {
 	@IsNotEmpty()
-	@IsDateString()
+	@IsDate()
+	@Transform(({ value }) => new Date(value))
+	@MinDate(new Date())
+	@IsStartDateBeforeEndDate()
 	startDate: Date;
 
 	@IsNotEmpty()
-	@IsDateString()
+	@IsDate()
+	@MinDate(new Date())
+	@Transform(({ value }) => new Date(value))
 	endDate: Date;
 
 	@IsOptional()

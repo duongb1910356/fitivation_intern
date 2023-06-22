@@ -10,5 +10,6 @@ import { Holiday, HolidaySchema } from './entities/holiday.entity';
 	],
 	controllers: [HolidayController],
 	providers: [HolidayService],
+	exports: [HolidayService],
 })
 export class HolidayModule {}
