@@ -6,12 +6,18 @@ import {
 import {
 	FacilitySchedule,
 	FacilityScheduleDocument,
+	ScheduleType,
 } from './entities/facility-schedule.entity';
 import { InjectModel } from '@nestjs/mongoose';
-import { Model, PopulateOptions } from 'mongoose';
+import { Model } from 'mongoose';
 import { CreateFacilityScheduleDto } from './dto/create-facility-schedule-dto';
 import { ListOptions, ListResponse } from 'src/shared/response/common-response';
 import { UpdateFacilityScheduleDto } from './dto/update-facility-schedule-dto';
+
+export type ConditionSchedule = {
+	facilityID?: string;
+	type?: ScheduleType;
+};
 
 @Injectable()
 export class FacilityScheduleService {
@@ -21,12 +27,15 @@ export class FacilityScheduleService {
 	) {}
 
 	async findOneByCondition(
-		condition: object,
-		populateOptions?: PopulateOptions,
+		condition: ConditionSchedule,
+		populate?: string,
 	): Promise<FacilitySchedule> {
-		const schedule = await this.scheduleModel
-			.findOne(condition)
-			.populate(populateOptions);
+		let schedule: FacilitySchedule;
+		if (populate) {
+			schedule = await this.scheduleModel.findOne(condition).populate(populate);
+		} else {
+			schedule = await this.scheduleModel.findById(condition);
+		}
 
 		if (!schedule) {
 			throw new NotFoundException('Schedule not found');
@@ -36,11 +45,17 @@ export class FacilityScheduleService {
 
 	async findById(
 		scheduleID: string,
-		populateOptions?: PopulateOptions,
+		populate?: string,
 	): Promise<FacilitySchedule> {
-		const schedule = await this.scheduleModel
-			.findById(scheduleID)
-			.populate(populateOptions);
+		let schedule: FacilitySchedule;
+		if (populate) {
+			schedule = await this.scheduleModel
+				.findById(scheduleID)
+				.populate(populate);
+		} else {
+			schedule = await this.scheduleModel.findById(scheduleID);
+		}
+
 		if (!schedule) {
 			throw new NotFoundException('Schedule not found');
 		}
@@ -48,22 +63,28 @@ export class FacilityScheduleService {
 	}
 
 	async findMany(
-		filter: ListOptions<FacilitySchedule>,
+		condition: ConditionSchedule = {},
+		options: ListOptions<FacilitySchedule> = {},
 	): Promise<ListResponse<FacilitySchedule>> {
-		const { limit, offset, sortField, sortOrder, ...conditions } = filter;
+		const {
+			limit = 10,
+			offset = 0,
+			sortField = 'updatedAt',
+			sortOrder = 'asc',
+			projection,
+		} = options;
 
 		const schedules = await this.scheduleModel
-			.find(conditions)
-			.sort({ [sortField]: sortOrder === 'asc' ? -1 : 1, updateAt: 1 })
+			.find(condition, projection)
+			.sort({ [sortField]: sortOrder === 'asc' ? 1 : -1 })
 			.limit(limit)
 			.skip(offset);
-
 		if (!schedules.length) throw new NotFoundException('Schedules not found');
 
 		return {
 			items: schedules,
 			total: schedules.length,
-			options: filter,
+			options: options,
 		};
 	}
 
@@ -112,9 +133,7 @@ export class FacilityScheduleService {
 	}
 
 	async isOwner(scheduleID: string, uid: string): Promise<boolean> {
-		const schedule = await this.findById(scheduleID, {
-			path: 'facilityID',
-		});
+		const schedule = await this.findById(scheduleID, 'facilityID');
 		return uid === schedule.facilityID.ownerID.toString();
 	}
 }

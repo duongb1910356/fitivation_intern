@@ -19,10 +19,7 @@ import {
 	ApiTags,
 	ApiUnauthorizedResponse,
 } from '@nestjs/swagger';
-import { Roles } from 'src/decorators/role.decorator';
 import { ErrorResponse } from 'src/shared/response/common-response';
-import { UserRole } from '../users/schemas/user.schema';
-import { RolesGuard } from 'src/guards/role.guard';
 import {
 	FacilitySchedule,
 	ScheduleType,
@@ -35,6 +32,7 @@ import { ShiftTimeDto } from './dto/shift-time-dto';
 import { UpdateFacilityScheduleDto } from './dto/update-facility-schedule-dto';
 import { Facility } from '../facility/schemas/facility.schema';
 import { FacilityScheduleService } from './facility-schedule.service';
+import { OwnershipScheduleGuard } from 'src/guards/ownership/ownership-schedule.guard';
 
 @ApiTags('schedules')
 @Controller('schedules')
@@ -95,8 +93,8 @@ export class FacilityScheduleController {
 		return await this.scheduleService.findById(scheduleID);
 	}
 
-	// @ApiBearerAuth()
-	@Public()
+	@ApiBearerAuth()
+	@UseGuards(OwnershipScheduleGuard)
 	@Patch(':scheduleID')
 	@ApiOperation({
 		summary: 'Update Schedule by scheduleID',
@@ -288,8 +286,8 @@ export class FacilityScheduleController {
 		return await this.scheduleService.update(scheduleID, data);
 	}
 
-	// @ApiBearerAuth()
-	@Public()
+	@ApiBearerAuth()
+	@UseGuards(OwnershipScheduleGuard)
 	@Delete(':scheduleID')
 	@ApiOperation({
 		summary: 'Delete Schedule Type by scheduleID',
