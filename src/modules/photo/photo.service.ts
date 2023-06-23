@@ -1,22 +1,20 @@
-import { BadRequestException, Inject, Injectable } from '@nestjs/common';
-import { Photo } from './schemas/photo.schema';
-import { BaseServiceAbstract } from 'src/shared/services/base-abstract.service';
-import { PhotoRepository } from './repositories/photo.repository';
+import { BadRequestException, Injectable } from '@nestjs/common';
+import { Photo, PhotoDocument } from './schemas/photo.schema';
 import { CreatePhotoDto } from './dto/create-photo-dto';
 import { appConfig } from 'src/app.config';
 import { existsSync, mkdirSync, unlinkSync, writeFileSync } from 'fs';
 import { GenFileName } from 'src/utils/gen-filename';
-import { ListResponse } from 'src/shared/response/common-response';
+import { ListOptions, ListResponse } from 'src/shared/response/common-response';
+import { InjectModel } from '@nestjs/mongoose';
+import { Model } from 'mongoose';
 
 @Injectable()
-export class PhotoService extends BaseServiceAbstract<Photo> {
+export class PhotoService {
+	// @Inject('PhotoRepository')
+	// private readonly photoRepository: PhotoRepository,
 	constructor(
-		// @InjectModel(Photo.name) private photoModel: Model<PhotoDocument>,
-		@Inject('PhotoRepository')
-		private readonly photoRepository: PhotoRepository,
-	) {
-		super(photoRepository);
-	}
+		@InjectModel(Photo.name) private photoModel: Model<PhotoDocument>,
+	) {}
 
 	async uploadOneFile(
 		photoDto: CreatePhotoDto,
@@ -32,7 +30,7 @@ export class PhotoService extends BaseServiceAbstract<Photo> {
 			ownerID: photoDto.ownerID,
 			name: fileName,
 		};
-		return this.photoRepository.create(input);
+		return this.photoModel.create(input);
 	}
 
 	async uploadManyFile(
@@ -58,11 +56,36 @@ export class PhotoService extends BaseServiceAbstract<Photo> {
 		}
 	}
 
+	async findMany(filter: ListOptions<Photo>): Promise<ListResponse<Photo>> {
+		const sortQuery = {};
+		sortQuery[filter.sortField] = filter.sortOrder === 'asc' ? 1 : -1;
+		const limit = filter.limit || 0;
+		const offset = filter.offset || 0;
+		const result = await this.photoModel
+			.find(filter)
+			.sort(sortQuery)
+			.skip(offset)
+			.limit(limit);
+		return {
+			items: result,
+			total: result?.length,
+			options: filter,
+		};
+	}
+
+	async findOneByID(id: string): Promise<Photo> {
+		return await this.photoModel.findById(id);
+	}
+
 	async delete(id: string): Promise<boolean> {
-		const deletedPhoto = await this.photoRepository.findOneByID(id);
-		const imagePath = `${appConfig.fileRoot}/${deletedPhoto.ownerID}/${deletedPhoto.name}`;
-		unlinkSync(imagePath);
-		return super.delete(id);
+		const deletedPhoto = await this.photoModel.findOneAndDelete({ _id: id });
+		const imagePath = `${appConfig.fileRoot}/${deletedPhoto?.ownerID}/${deletedPhoto?.name}`;
+		if (existsSync(imagePath)) {
+			unlinkSync(imagePath);
+		} else {
+			console.log('imagePath not exist');
+		}
+		return null;
 	}
 
 	// uploadOneFile(

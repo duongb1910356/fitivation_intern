@@ -101,17 +101,14 @@ export class ReviewsController {
 	@UseInterceptors(FileFieldsInterceptor([{ name: 'images', maxCount: 5 }]))
 	async createReview(
 		@Body() reviewDto: CreateReviewDto,
+		@Req() req: any,
 		@UploadedFiles()
-		files: {
+		files?: {
 			images?: Express.Multer.File[];
 		},
-		@Req() req: any,
 	) {
-		return await this.reviewService.createReviewWithFiles(
-			files,
-			req,
-			reviewDto,
-		);
+		console.log('co');
+		return await this.reviewService.create(req, reviewDto, files || undefined);
 	}
 
 	@Public()
@@ -155,10 +152,10 @@ export class ReviewsController {
 		return this.reviewService.findMany(filter);
 	}
 
-	@Public()
-	findOne(@Param(':id') id) {
-		return this.reviewService.findOne(id);
-	}
+	// @Public()
+	// findOne(@Param(':id') id) {
+	// 	return this.reviewService.findOneByID(id);
+	// }
 
 	@Public()
 	@Get(':reviewID')

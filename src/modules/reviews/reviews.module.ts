@@ -4,11 +4,12 @@ import { MongooseModule, getModelToken } from '@nestjs/mongoose';
 import { Review, ReviewSchemaFactory } from './schemas/reviews.schema';
 import { ReviewService } from './reviews.service';
 import { PhotoModule } from '../photo/photo.module';
-import { ReviewRepository } from './repositories/reviews.repository';
 import { Facility, FacilitySchema } from '../facility/schemas/facility.schema';
 
 @Module({
 	imports: [
+		// MongooseModule.forFeature([{ name: Review.name, schema: ReviewSchema }]),
+
 		MongooseModule.forFeatureAsync([
 			{
 				name: Review.name,
@@ -24,10 +25,7 @@ import { Facility, FacilitySchema } from '../facility/schemas/facility.schema';
 		PhotoModule,
 	],
 	controllers: [ReviewsController],
-	providers: [
-		ReviewService,
-		{ provide: 'ReviewRepository', useClass: ReviewRepository },
-	],
+	providers: [ReviewService],
 	exports: [ReviewService],
 })
 export class ReviewsModule {}

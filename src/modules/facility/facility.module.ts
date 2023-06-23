@@ -4,7 +4,6 @@ import { MongooseModule } from '@nestjs/mongoose';
 import { Facility, FacilitySchemaFactory } from './schemas/facility.schema';
 import { FacilityService } from './facility.service';
 import { ReviewsModule } from '../reviews/reviews.module';
-import { FacilityRepository } from './repositories/facility.repository';
 import { PhotoModule } from '../photo/photo.module';
 
 @Module({
@@ -31,10 +30,7 @@ import { PhotoModule } from '../photo/photo.module';
 		PhotoModule,
 	],
 	controllers: [FacilityController],
-	providers: [
-		FacilityService,
-		{ provide: 'FacilityRepository', useClass: FacilityRepository },
-	],
+	providers: [FacilityService],
 	exports: [FacilityService],
 })
 export class FacilityModule {}

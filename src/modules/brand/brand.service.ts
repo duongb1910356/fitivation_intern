@@ -1,87 +1,46 @@
-import { Inject, Injectable, Req } from '@nestjs/common';
-import { Brand } from './schemas/brand.schema';
-import { BrandRepository } from 'src/modules/brand/repositories/brand.repository';
-import { BaseServiceAbstract } from 'src/shared/services/base-abstract.service';
+import { Injectable, Req } from '@nestjs/common';
+import { Brand, BrandDocument } from './schemas/brand.schema';
 import { CreateBrandDto } from './dto/create-brand.dto';
+import { InjectModel } from '@nestjs/mongoose';
+import { Model } from 'mongoose';
+import { ListOptions, ListResponse } from 'src/shared/response/common-response';
 
 @Injectable()
-export class BrandService extends BaseServiceAbstract<Brand> {
+export class BrandService {
 	constructor(
-		@Inject('BrandRepository')
-		private readonly brandRepository: BrandRepository,
-	) {
-		super(brandRepository);
-	}
+		@InjectModel(Brand.name) private brandModel: Model<BrandDocument>,
+	) {}
 
-	async createBrand(
+	async create(
 		createBrandDto: CreateBrandDto,
 		@Req() req: any,
 	): Promise<Brand> {
 		createBrandDto.accountID = req.user.uid;
-		return super.create(createBrandDto);
+		return await this.brandModel.create(createBrandDto);
 	}
 
-	// async findOneByID(id: string): Promise<Brand> {
-	// 	try {
-	// 		// const brand = await this.brandModel.findById(id);
-	// 		// if (brand) return brand;
-	// 		return this.brandRepository.findOneByID(id);
-	// 		// throw new NotFoundException('Brand not found');
-	// 	} catch (error) {
-	// 		throw new BadRequestException(error);
-	// 	}
-	// }
+	async findMany(filter: ListOptions<Brand>): Promise<ListResponse<Brand>> {
+		const sortQuery = {};
+		sortQuery[filter.sortField] = filter.sortOrder === 'asc' ? 1 : -1;
+		const limit = filter.limit || 0;
+		const offset = filter.offset || 0;
+		const result = await this.brandModel
+			.find(filter)
+			.sort(sortQuery)
+			.skip(offset)
+			.limit(limit);
+		return {
+			items: result,
+			total: result?.length,
+			options: filter,
+		};
+	}
 
-	// async findMany(filter: ListOptions<Brand>): Promise<ListResponse<Brand>> {
-	// 	try {
-	// 		const {
-	// 			limit,
-	// 			offset,
-	// 			// searchField,
-	// 			// searchValue,
-	// 			sortField,
-	// 			sortOrder,
-	// 			...condition
-	// 		} = filter;
+	async findOneByID(id: string): Promise<Brand> {
+		return await this.brandModel.findById(id);
+	}
 
-	// 		const validFields = Object.keys(this.brandModel.schema.paths);
-	// 		const validConditions = {};
-	// 		for (const key in condition) {
-	// 			if (validFields.includes(key)) {
-	// 				validConditions[key] = condition[key];
-	// 			}
-	// 		}
-	// 		if (Object.keys(validConditions).length != 0) {
-	// 			const brand = await this.brandModel
-	// 				.find(validConditions)
-	// 				.sort({ [sortField]: sortOrder })
-	// 				.skip(offset)
-	// 				.limit(limit);
-
-	// 			if (brand) {
-	// 				return {
-	// 					items: brand,
-	// 					total: brand.length,
-	// 					options: filter,
-	// 				};
-	// 			}
-	// 		}
-	// 		throw new NotFoundException('Brand not found');
-	// 	} catch (error) {
-	// 		throw new BadRequestException(error);
-	// 	}
-	// }
-
-	// async deleteOne(id: string) {
-	// 	try {
-	// 		if (!isValidObjectId(id)) throw new BadRequestException('ID invalid!');
-	// 		const brand = await this.brandModel.findOneAndRemove({
-	// 			_id: id,
-	// 		});
-	// 		if (brand) return null;
-	// 		throw new NotFoundException('Brand not found');
-	// 	} catch (err) {
-	// 		throw new BadRequestException(err);
-	// 	}
-	// }
+	async delete(id: string): Promise<boolean> {
+		return await this.brandModel.findOneAndDelete({ _id: id });
+	}
 }

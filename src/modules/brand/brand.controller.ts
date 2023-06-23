@@ -73,7 +73,7 @@ export class BrandController {
 		description: '[Input] invalid!',
 	})
 	createBrand(@Body() createBrandDto: CreateBrandDto, @Req() req: any) {
-		return this.brandService.createBrand(createBrandDto, req);
+		return this.brandService.create(createBrandDto, req);
 	}
 
 	@Public()
