@@ -51,8 +51,11 @@ export class AttendanceController {
 		},
 	})
 	async getAttendance(@Param('attendanceID') attendanceID: string) {
-		return await this.attendanceService.findOneByCondition({
-			_id: attendanceID,
-		});
+		return await this.attendanceService.findOneByCondition(
+			{
+				_id: attendanceID,
+			},
+			'facilityID accountID',
+		);
 	}
 }

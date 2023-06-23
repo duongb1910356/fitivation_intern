@@ -26,9 +26,10 @@ export class AttendanceService {
 	) {}
 
 	async findOneByCondition(
-		condition: AttendanceCondition,
+		condition: AttendanceCondition = {},
+		populate?: string,
 	): Promise<Attendance> {
-		const attendance = await this.attendanceModel.findOne({ condition });
+		const attendance = await this.attendanceModel.findOne(condition, populate);
 		if (!attendance) {
 			throw new NotFoundException('Attendance not found');
 		}
