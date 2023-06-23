@@ -23,7 +23,7 @@ export class UsersService {
 		return 'getOne';
 	}
 
-	async findByIDAndUpdate(
+	async findOneByIDAndUpdate(
 		userID: string,
 		updateUserDto: UpdateUserDto,
 	): Promise<User> {
