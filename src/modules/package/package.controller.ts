@@ -9,7 +9,6 @@ import {
 	Query,
 	UseGuards,
 } from '@nestjs/common';
-import { Public } from '../auth/utils';
 import {
 	ApiBadRequestResponse,
 	ApiBearerAuth,
@@ -50,7 +49,7 @@ import {
 import { CreatePromotionDto } from '../promotions/dto/create-promotion-dto';
 import { OwnershipPackageGuard } from 'src/guards/ownership/ownership-package.guard';
 import { PackageService } from './package.service';
-import { PopulateOptions } from 'mongoose';
+import { Public } from '../auth/decorators/public.decorator';
 
 @ApiTags('packages')
 @Controller('packages')
@@ -96,10 +95,7 @@ export class PackageController {
 		},
 	})
 	async getPackage(@Param('packageID') packageID: string) {
-		const poppulateOptions: PopulateOptions = {
-			path: 'facilityID packageTypeID',
-		};
-		return await this.packageService.findById(packageID, poppulateOptions);
+		return await this.packageService.findOneByID(packageID);
 	}
 
 	@ApiBearerAuth()

@@ -57,7 +57,6 @@ import { BrandModule } from './modules/brand/brand.module';
 		PackageModule,
 		FacilityCategoryModule,
 		HolidayModule,
-		AttendanceModule,
 		CounterModule,
 	],
 	providers: [

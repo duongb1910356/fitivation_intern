@@ -10,8 +10,8 @@ import { ErrorResponse } from 'src/shared/response/common-response';
 import { User } from '../users/schemas/user.schema';
 import { Attendance } from './entities/attendance.entity';
 import { Facility } from '../facility/schemas/facility.schema';
-import { Public } from '../auth/utils';
 import { AttendanceService } from './attendance.service';
+import { Public } from '../auth/decorators/public.decorator';
 
 @ApiTags('attendances')
 @Controller('attendances')
@@ -51,8 +51,11 @@ export class AttendanceController {
 		},
 	})
 	async getAttendance(@Param('attendanceID') attendanceID: string) {
-		return await this.attendanceService.findOneByCondition({
-			_id: attendanceID,
-		});
+		return await this.attendanceService.findOneByCondition(
+			{
+				_id: attendanceID,
+			},
+			'facilityID accountID',
+		);
 	}
 }

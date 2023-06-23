@@ -5,6 +5,7 @@ import { PackageModule } from '../package/package.module';
 import { FacilityCategoryModule } from '../facility-category/facility-category.module';
 import { FacilityScheduleModule } from '../facility-schedule/facility-schedule.module';
 import { HolidayModule } from '../holiday/holiday.module';
+import { AttendanceModule } from '../attendance/attendance.module';
 
 @Module({
 	imports: [
@@ -13,6 +14,7 @@ import { HolidayModule } from '../holiday/holiday.module';
 		FacilityCategoryModule,
 		FacilityScheduleModule,
 		HolidayModule,
+		AttendanceModule,
 	],
 	controllers: [AdminController],
 })
