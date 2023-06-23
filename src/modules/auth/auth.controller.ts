@@ -217,44 +217,4 @@ export class AuthController {
 	resetPassword() {
 		return 'resetPassword';
 	}
-
-	@ApiOperation({
-		summary: 'updatePassword',
-		description: 'Allow user update password',
-	})
-	@ApiCreatedResponse({ type: TokenResponse, status: 200 })
-	@ApiResponse({
-		status: 400,
-		schema: {
-			example: {
-				code: '400',
-				message: 'Input invalid',
-				details: null,
-			} as ErrorResponse<null>,
-		},
-	})
-	@ApiResponse({
-		status: 401,
-		schema: {
-			example: {
-				code: '401',
-				message: 'Unauthorized',
-				details: null,
-			} as ErrorResponse<null>,
-		},
-	})
-	@ApiResponse({
-		status: 403,
-		schema: {
-			example: {
-				code: '403',
-				message: `Forbidden resource`,
-				details: null,
-			} as ErrorResponse<null>,
-		},
-	})
-	@Patch('update-password')
-	updatePassword() {
-		return 'updatePassword';
-	}
 }
