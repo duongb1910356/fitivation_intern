@@ -50,7 +50,6 @@ import {
 import { CreatePromotionDto } from '../promotions/dto/create-promotion-dto';
 import { OwnershipPackageGuard } from 'src/guards/ownership/ownership-package.guard';
 import { PackageService } from './package.service';
-import { PopulateOptions } from 'mongoose';
 
 @ApiTags('packages')
 @Controller('packages')
@@ -99,9 +98,8 @@ export class PackageController {
 		return await this.packageService.findOneByID(packageID);
 	}
 
-	// @ApiBearerAuth()
-	// @UseGuards(OwnershipPackageGuard)
-	@Public()
+	@ApiBearerAuth()
+	@UseGuards(OwnershipPackageGuard)
 	@Patch(':packageID')
 	@ApiOperation({
 		summary: 'Update Package by packageID',
@@ -183,9 +181,8 @@ export class PackageController {
 		return await this.packageService.update(packageID, data);
 	}
 
-	// @ApiBearerAuth()
-	// @UseGuards(OwnershipPackageGuard)
-	@Public()
+	@ApiBearerAuth()
+	@UseGuards(OwnershipPackageGuard)
 	@Delete(':packageID')
 	@ApiOperation({
 		summary: 'Delete Package by packageID',

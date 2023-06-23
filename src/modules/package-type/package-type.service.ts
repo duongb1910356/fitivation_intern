@@ -194,6 +194,12 @@ export class PackageTypeService {
 		return 'Swap Order successful';
 	}
 
+	async isOwner(packageTypeID: string, uid: string): Promise<boolean> {
+		const packageType = await this.findOneByID(packageTypeID, 'facilityID');
+		const owner = packageType.facilityID.ownerID.toString();
+		return uid === owner;
+	}
+
 	//For Package
 	async getAllPackages(packageTypeID: string, filter: ListOptions<Package>) {
 		return await this.packageService.findManyByPackageType(

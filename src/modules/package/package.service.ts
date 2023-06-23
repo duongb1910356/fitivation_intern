@@ -95,7 +95,9 @@ export class PackageService {
 		return 'Delete Package successful';
 	}
 
-	// async isOwner(packageID: string, uid: string): Promise<boolean> {
-	// 	const package = await this.findById(packageID, 'faci');
-	// }
+	async isOwner(packageID: string, uid: string): Promise<boolean> {
+		const packageData = await this.findOneByID(packageID, 'facilityID');
+		const owner = packageData.facilityID.ownerID.toString();
+		return uid === owner;
+	}
 }

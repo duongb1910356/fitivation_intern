@@ -155,8 +155,8 @@ export class PackageTypeController {
 		return await this.packageTypeService.getAllPackages(packageTypeID, filter);
 	}
 
-	// @ApiBearerAuth()
-	// @UseGuards(OwnershipPackageTypeGuard)
+	@ApiBearerAuth()
+	@UseGuards(OwnershipPackageTypeGuard)
 	@Public()
 	@Post(':packageTypeID/packages')
 	@ApiOperation({
@@ -232,8 +232,8 @@ export class PackageTypeController {
 		return await this.packageTypeService.createPackage(packageTypeID, data);
 	}
 
-	// @ApiBearerAuth()
-	// @UseGuards(OwnershipPackageTypeGuard)
+	@ApiBearerAuth()
+	@UseGuards(OwnershipPackageTypeGuard)
 	@Public()
 	@Patch(':packageTypeID')
 	@ApiOperation({
@@ -321,8 +321,8 @@ export class PackageTypeController {
 		return await this.packageTypeService.update(packageTypeID, data);
 	}
 
-	// @ApiBearerAuth()
-	// @UseGuards(OwnershipPackageTypeGuard)
+	@ApiBearerAuth()
+	@UseGuards(OwnershipPackageTypeGuard)
 	@Public()
 	@Delete(':packageTypeID')
 	@ApiOperation({

@@ -99,7 +99,7 @@ export class HolidayService {
 		return 'Delete holiday successful';
 	}
 
-	async isOwnership(holidayID: string, uid: string): Promise<boolean> {
+	async isOwner(holidayID: string, uid: string): Promise<boolean> {
 		const holiday = await this.findOneByID(holidayID, 'facilityID');
 		const owner = holiday.facilityID.ownerID.toString();
 		return uid === owner;
