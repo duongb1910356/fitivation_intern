@@ -16,7 +16,7 @@ export class FacilityCategoryService {
 		private categoryModel: Model<FacilityCategoryDocument>,
 	) {}
 
-	async findById(categoryID: string): Promise<FacilityCategory> {
+	async findOneById(categoryID: string): Promise<FacilityCategory> {
 		const category = await this.categoryModel.findById(categoryID);
 		if (!category) throw new NotFoundException('Category not found');
 		return category;

@@ -22,10 +22,10 @@ import {
 import { ErrorResponse } from 'src/shared/response/common-response';
 import { Facility } from '../facility/schemas/facility.schema';
 import { Holiday } from './entities/holiday.entity';
-import { Public } from '../auth/utils';
 import { HolidayDto } from './dto/holiday-dto';
 import { OwnershipHolidayGuard } from 'src/guards/ownership/ownership-holiday.guard';
 import { HolidayService } from './holiday.service';
+import { Public } from '../auth/decorators/public.decorator';
 
 @ApiTags('holidays')
 @Controller('holidays')
@@ -71,7 +71,7 @@ export class HolidayController {
 		},
 	})
 	async getHoliday(@Param('holidayID') holidayID: string) {
-		return await this.holidayService.findById(holidayID);
+		return await this.holidayService.findOneByID(holidayID, 'facilityID');
 	}
 
 	@ApiBearerAuth()

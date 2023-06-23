@@ -26,12 +26,12 @@ import {
 	ApiTags,
 	ApiUnsupportedMediaTypeResponse,
 } from '@nestjs/swagger';
-import { Public } from '../auth/utils';
 import { FileInterceptor } from '@nestjs/platform-express';
 import { ErrorResponse } from 'src/shared/response/common-response';
 import { Photo } from './schemas/photo.schema';
 import { PhotoService } from './photo.service';
 import { CreatePhotoDto } from './dto/create-photo-dto';
+import { Public } from '../auth/decorators/public.decorator';
 
 @ApiTags('photo')
 @Controller('photo')

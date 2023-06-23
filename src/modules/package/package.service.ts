@@ -1,7 +1,7 @@
 import { Injectable, NotFoundException } from '@nestjs/common';
 import { Package, PackageDocument } from './entities/package.entity';
 import { InjectModel } from '@nestjs/mongoose';
-import { Model, PopulateOptions } from 'mongoose';
+import { Model } from 'mongoose';
 import { ListOptions, ListResponse } from 'src/shared/response/common-response';
 import { CreatePackageDto } from './dto/create-package-dto';
 import { UpdatePackageDto } from './dto/update-package-dto';
@@ -13,13 +13,10 @@ export class PackageService {
 		private packageModel: Model<PackageDocument>,
 	) {}
 
-	async findById(
-		packageID: string,
-		populateOptions: PopulateOptions,
-	): Promise<Package> {
+	async findOneByID(packageID: string, populate?: string): Promise<Package> {
 		const packageData = await this.packageModel
 			.findById(packageID)
-			.populate(populateOptions);
+			.populate(populate);
 		if (!packageData) {
 			throw new NotFoundException('Package not found');
 		}
@@ -72,6 +69,7 @@ export class PackageService {
 		data: CreatePackageDto,
 	): Promise<Package> {
 		const packaegeData = { ...data, packageTypeID, facilityID };
+		console.log(packaegeData);
 		return await this.packageModel.create(packaegeData);
 	}
 
@@ -95,5 +93,11 @@ export class PackageService {
 		}
 
 		return 'Delete Package successful';
+	}
+
+	async isOwner(packageID: string, uid: string): Promise<boolean> {
+		const packageData = await this.findOneByID(packageID, 'facilityID');
+		const owner = packageData.facilityID.ownerID.toString();
+		return uid === owner;
 	}
 }

@@ -23,7 +23,6 @@ import {
 	ApiQuery,
 	ApiTags,
 } from '@nestjs/swagger';
-import { Public } from '../auth/utils';
 import { ApiDocsPagination } from 'src/decorators/swagger-form-data.decorator';
 import {
 	ErrorResponse,
@@ -36,6 +35,7 @@ import { Facility } from '../facility/schemas/facility.schema';
 import { Photo } from '../photo/schemas/photo.schema';
 import { ScheduleType } from '../facility-schedule/entities/facility-schedule.entity';
 import { State, Status } from 'src/shared/enum/facility.enum';
+import { Public } from '../auth/decorators/public.decorator';
 
 @ApiTags('brands')
 @Controller('brands')
