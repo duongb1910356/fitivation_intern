@@ -5,6 +5,7 @@ import {
 	HttpStatus,
 	Patch,
 	Post,
+	UseGuards,
 } from '@nestjs/common';
 import {
 	ApiBody,
@@ -21,6 +22,7 @@ import { TokenResponse } from './types/token-response.types';
 import { ErrorResponse } from 'src/shared/response/common-response';
 import { Public } from './decorators/public.decorator';
 import { GetCurrentUser } from 'src/decorators/get-current-user.decorator';
+import { RefreshTokenGuard } from './guards/refresh-token.guard';
 
 @ApiTags('auth')
 @Controller('auth')
@@ -153,8 +155,14 @@ export class AuthController {
 		},
 	})
 	@Post('refresh-token')
-	refreshTokens() {
-		return this.authService.refreshTokens();
+	@Public()
+	@UseGuards(RefreshTokenGuard)
+	@HttpCode(HttpStatus.OK)
+	refreshTokens(
+		@GetCurrentUser('sub') userID: string,
+		@GetCurrentUser('refreshToken') refreshToken: string,
+	): Promise<TokenResponse> {
+		return this.authService.refreshTokens(userID, refreshToken);
 	}
 
 	@ApiOperation({

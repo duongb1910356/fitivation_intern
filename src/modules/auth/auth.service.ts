@@ -2,6 +2,7 @@ import {
 	BadRequestException,
 	Injectable,
 	InternalServerErrorException,
+	UnauthorizedException,
 } from '@nestjs/common';
 import { UsersService } from '../users/users.service';
 import { SignupDto } from './dto/signup-dto';
@@ -102,7 +103,25 @@ export class AuthService {
 		return true;
 	}
 
-	async refreshTokens() {
-		//
+	async refreshTokens(
+		userID: string,
+		refreshToken: string,
+	): Promise<TokenResponse> {
+		const user = await this.userService.findOneByID(userID);
+
+		if (!user.refreshToken) throw new UnauthorizedException('Unauthorized');
+
+		const isMatched = await Encrypt.compareData(
+			user.refreshToken,
+			refreshToken,
+		);
+
+		if (!isMatched) throw new UnauthorizedException('Unauthorized');
+
+		const tokens = await this.signTokens(user._id, user.email, user.role);
+
+		await this.updateRefreshTokenHashed(user._id, tokens.refreshToken);
+
+		return tokens;
 	}
 }
