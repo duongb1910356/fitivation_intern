@@ -18,6 +18,7 @@ build-api:
   variables:
     IMAGE_TAG: $CI_REGISTRY_IMAGE:api-staging
   only:
+    - develop
     - deploy/staging
 
 deploy-staging:
