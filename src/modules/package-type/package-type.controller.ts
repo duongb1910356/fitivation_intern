@@ -22,7 +22,6 @@ import {
 	ApiTags,
 	ApiUnauthorizedResponse,
 } from '@nestjs/swagger';
-import { Public } from '../auth/utils';
 import { PackageType } from './entities/package-type.entity';
 import { UpdatePackageTypeDto } from './dto/update-package-type-dto';
 import {
@@ -36,6 +35,7 @@ import { Package, TimeType } from '../package/entities/package.entity';
 import { CreatePackageDto } from '../package/dto/create-package-dto';
 import { PackageTypeService } from './package-type.service';
 import { OwnershipPackageTypeGuard } from 'src/guards/ownership/ownership-package-type.guard';
+import { Public } from '../auth/decorators/public.decorator';
 
 @ApiTags('package-types')
 @Controller('package-types')

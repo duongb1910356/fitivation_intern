@@ -26,13 +26,13 @@ import {
 } from './entities/facility-schedule.entity';
 import { OpenTime, dayOfWeek } from './entities/open-time.entity';
 import { ShiftTime } from './entities/shift-time.entity';
-import { Public } from '../auth/utils';
 import { OpenTimeDto } from './dto/open-time-dto';
 import { ShiftTimeDto } from './dto/shift-time-dto';
 import { UpdateFacilityScheduleDto } from './dto/update-facility-schedule-dto';
 import { Facility } from '../facility/schemas/facility.schema';
 import { FacilityScheduleService } from './facility-schedule.service';
 import { OwnershipScheduleGuard } from 'src/guards/ownership/ownership-schedule.guard';
+import { Public } from '../auth/decorators/public.decorator';
 
 @ApiTags('schedules')
 @Controller('schedules')

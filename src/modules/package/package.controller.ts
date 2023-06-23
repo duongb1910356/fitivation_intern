@@ -9,7 +9,6 @@ import {
 	Query,
 	UseGuards,
 } from '@nestjs/common';
-import { Public } from '../auth/utils';
 import {
 	ApiBadRequestResponse,
 	ApiBearerAuth,
@@ -50,6 +49,7 @@ import {
 import { CreatePromotionDto } from '../promotions/dto/create-promotion-dto';
 import { OwnershipPackageGuard } from 'src/guards/ownership/ownership-package.guard';
 import { PackageService } from './package.service';
+import { Public } from '../auth/decorators/public.decorator';
 
 @ApiTags('packages')
 @Controller('packages')

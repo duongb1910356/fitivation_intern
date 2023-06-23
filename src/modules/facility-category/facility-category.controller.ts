@@ -14,8 +14,8 @@ import {
 	ListOptions,
 	ListResponse,
 } from 'src/shared/response/common-response';
-import { Public } from '../auth/utils';
 import { FacilityCategoryService } from './facility-category.service';
+import { Public } from '../auth/decorators/public.decorator';
 
 @ApiTags('categories')
 @Controller('categories')

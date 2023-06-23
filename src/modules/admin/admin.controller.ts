@@ -48,7 +48,6 @@ import { PackageType } from '../package-type/entities/package-type.entity';
 import { TimeType, Package } from '../package/entities/package.entity';
 import { UpdateFacilityStateDto } from './dto/update-facility-state-dto';
 import { PackageTypeService } from '../package-type/package-type.service';
-import { Public } from '../auth/utils';
 import { PackageService } from '../package/package.service';
 import { FacilityCategoryService } from '../facility-category/facility-category.service';
 import {
@@ -57,6 +56,7 @@ import {
 } from '../facility-schedule/facility-schedule.service';
 import { ConditionHoliday, HolidayService } from '../holiday/holiday.service';
 import { AttendanceService } from '../attendance/attendance.service';
+import { Public } from '../auth/decorators/public.decorator';
 
 @ApiTags('admin')
 // @ApiBearerAuth()
