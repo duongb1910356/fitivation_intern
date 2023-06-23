@@ -9,6 +9,8 @@ import {
 	Patch,
 	Post,
 	Query,
+	Req,
+	UseGuards,
 	UseInterceptors,
 } from '@nestjs/common';
 import {
@@ -22,11 +24,11 @@ import {
 	ApiOkResponse,
 	ApiOperation,
 	ApiParam,
+	ApiQuery,
 	ApiResponse,
 	ApiTags,
 	ApiUnauthorizedResponse,
 } from '@nestjs/swagger';
-import { Public } from '../auth/utils';
 import { FilesInterceptor } from '@nestjs/platform-express';
 import { CreateFacilityDto } from './dto/create-facility-dto';
 import { Facility } from './schemas/facility.schema';
@@ -53,11 +55,18 @@ import { HolidayDto } from '../holiday/dto/holiday-dto';
 import { CreatePackageTypeDto } from '../package-type/dto/create-package-type-dto';
 import { UpdateOrderDto } from '../package-type/dto/update-order-dto';
 import { UpdatePhotoOfFacilityDto } from './dto/update-photo-facility';
+import { Public } from '../auth/decorators/public.decorator';
+import { OwnershipFacilityGuard } from 'src/guards/ownership/ownership-facility.guard';
+import { FacilityService } from './facility.service';
+import { RolesGuard } from 'src/guards/role.guard';
+import { Roles } from 'src/decorators/role.decorator';
+import { User, UserRole } from '../users/schemas/user.schema';
+import { Attendance } from '../attendance/entities/attendance.entity';
 
 @ApiTags('facilities')
 @Controller('facilities')
 export class FacilityController {
-	// constructor(private readonly ReviewsController: ReviewsController) { }
+	constructor(private readonly facilityService: FacilityService) {}
 
 	@Public()
 	@Get()
@@ -405,95 +414,112 @@ export class FacilityController {
 		//
 	}
 
-	// @ApiBearerAuth()
-	// @Get(':facilityId/attendances')
-	// @ApiOperation({
-	//     summary: 'Get All Attendance by facilityId',
-	//     description: `Owner can use this API`,
-	// })
-	// @ApiParam({
-	//     name: 'facilityId',
-	//     type: String,
-	//     description: 'Facility ID',
-	// })
-	// @ApiDocsPagination('Attendance')
-	// @ApiOkResponse({
-	//     schema: {
-	//         example: {
-	//             items: [
-	//                 {
-	//                     _id: '6476ef7d1f0419cd330fe128',
-	//                     facilityID: {} as unknown as Facility,
-	//                     accountID: {} as unknown as User,
-	//                     date: [],
-	//                     createdAt: new Date(),
-	//                     updatedAt: new Date(),
-	//                 } as Attendance,
-	//             ],
-	//             total: 1,
-	//             options: {
-	//                 limit: 10,
-	//                 offset: 0,
-	//                 searchField: 'facilityID',
-	//                 searchValue: 'string',
-	//                 sortField: 'accountID',
-	//                 sortOrder: 'asc',
-	//             } as ListOptions<Attendance>,
-	//         } as ListResponse<Attendance>,
-	//     },
-	// })
-	// @ApiNotFoundResponse({
-	//     schema: {
-	//         example: {
-	//             code: '404',
-	//             message: 'Facility not found!',
-	//             details: null,
-	//         } as ErrorResponse<null>,
-	//     },
-	// })
-	// @ApiBadRequestResponse({
-	//     schema: {
-	//         example: {
-	//             code: '400',
-	//             message: '[Input] invalid!',
-	//             details: null,
-	//         } as ErrorResponse<null>,
-	//     },
-	// })
-	// @ApiUnauthorizedResponse({
-	//     schema: {
-	//         example: {
-	//             code: '401',
-	//             message: 'Unauthorized',
-	//             details: null,
-	//         } as ErrorResponse<null>,
-	//     },
-	// })
-	// @ApiForbiddenResponse({
-	//     schema: {
-	//         example: {
-	//             code: '403',
-	//             message: 'Forbidden resource',
-	//             details: null,
-	//         } as ErrorResponse<null>,
-	//     },
-	// })
-	// getAllAttendancesByFacility(
-	//     @Param('facilityId') facilityId: string,
-	//     @Query() filter: ListOptions<Attendance>,
-	// ) {
-	//     console.log(facilityId, filter);
-	//     //
-	// }
+	// ATTENDANCE
+	@ApiBearerAuth()
+	@UseGuards(RolesGuard)
+	@Roles(UserRole.MEMBER)
+	@Get(':facilityID/attendance')
+	@ApiOperation({
+		summary: 'Get Attendance by facilityId of User',
+		description: `Member can use this API`,
+	})
+	@ApiParam({
+		name: 'facilityID',
+		type: String,
+		description: 'Facility ID',
+	})
+	@ApiOkResponse({
+		schema: {
+			example: {
+				_id: '6476ef7d1f0419cd330fe128',
+				facilityID: {} as unknown as Facility,
+				accountID: {} as unknown as User,
+				date: [],
+				createdAt: new Date(),
+				updatedAt: new Date(),
+			} as Attendance,
+		},
+	})
+	@ApiBadRequestResponse({
+		schema: {
+			example: {
+				code: '400',
+				message: '[Input] invalid!',
+				details: null,
+			} as ErrorResponse<null>,
+		},
+	})
+	async getAttendancesByFacility(
+		@Param('facilityID') facilityID: string,
+		@Req() req: any,
+	) {
+		return await this.facilityService.getAttendance(facilityID, req.user.uid);
+	}
 
 	@ApiBearerAuth()
+	@UseGuards(RolesGuard)
+	@Roles(UserRole.MEMBER)
+	@Public()
+	@Post(':facilityID/attendance')
+	@ApiOperation({
+		summary: 'Create Attendance by facilityId of User',
+		description: `Member can use this API`,
+	})
+	@ApiParam({
+		name: 'facilityID',
+		type: String,
+		description: 'Facility ID',
+	})
+	@ApiOkResponse({
+		schema: {
+			example: {
+				_id: '6476ef7d1f0419cd330fe128',
+				facilityID: {} as unknown as Facility,
+				accountID: {} as unknown as User,
+				date: [],
+				createdAt: new Date(),
+				updatedAt: new Date(),
+			} as Attendance,
+		},
+	})
+	@ApiUnauthorizedResponse({
+		schema: {
+			example: {
+				code: '401',
+				message: 'Unauthorized',
+				details: null,
+			} as ErrorResponse<null>,
+		},
+	})
+	@ApiForbiddenResponse({
+		schema: {
+			example: {
+				code: '403',
+				message: 'Forbidden resource',
+				details: null,
+			} as ErrorResponse<null>,
+		},
+	})
+	async createAttendanceByFacility(
+		@Param('facilityID') facilityID: string,
+		@Req() req: any,
+	) {
+		return await this.facilityService.createAttendance(
+			facilityID,
+			req.user.uid,
+		);
+	}
+
+	//SCHEDULE
+	@ApiBearerAuth()
+	@UseGuards(OwnershipFacilityGuard)
 	@Get(':facilityID/schedules')
 	@ApiOperation({
-		summary: 'Get All Schedule by facilityId',
+		summary: 'Get All Schedule by facilityID',
 		description: `Only Owner can use this API`,
 	})
 	@ApiParam({
-		name: 'facilityId',
+		name: 'facilityID',
 		type: String,
 		description: 'Facility ID',
 	})
@@ -507,12 +533,18 @@ export class FacilityController {
 						type: ScheduleType.DAILY,
 						openTime: [
 							{
-								shift: {
-									startTime: new Date(),
-									endTime: new Date(),
-								} as ShiftTime,
-							} as OpenTime,
-						],
+								shift: [
+									{
+										startTime: new Date('7/10/2023 06:00:00'),
+										endTime: new Date('7/10/2023 12:00:00'),
+									},
+									{
+										startTime: new Date('7/10/2023 13:00:00'),
+										endTime: new Date('7/10/2023 19:00:00'),
+									},
+								] as ShiftTime[],
+							},
+						] as OpenTime[],
 						createdAt: new Date(),
 						updatedAt: new Date(),
 					} as FacilitySchedule,
@@ -565,21 +597,17 @@ export class FacilityController {
 			} as ErrorResponse<null>,
 		},
 	})
-	getAllSchedulesByFacility(
-		@Param('facilityId') facilityId: string,
-		@Query() filter: ListOptions<FacilitySchedule>,
-	) {
-		console.log(facilityId, filter);
-		//
+	getAllSchedulesByFacility(@Param('facilityID') facilityID: string) {
+		return this.facilityService.findAllSchedules(facilityID);
 	}
 
 	@Public()
-	@Get(':facilityId/schedules/current')
+	@Get(':facilityID/schedules/current')
 	@ApiOperation({
-		summary: 'Get Current Schedule by facilityId',
+		summary: 'Get Current Schedule by facilityID',
 		description: `All role can use this API`,
 	})
-	@ApiParam({ name: 'facilityId', type: String, description: 'Facility ID' })
+	@ApiParam({ name: 'facilityID', type: String, description: 'Facility ID' })
 	@ApiOkResponse({
 		schema: {
 			example: {
@@ -588,12 +616,18 @@ export class FacilityController {
 				type: ScheduleType.DAILY,
 				openTime: [
 					{
-						shift: {
-							startTime: new Date(),
-							endTime: new Date(),
-						} as ShiftTime,
-					} as OpenTime,
-				],
+						shift: [
+							{
+								startTime: new Date('7/10/2023 06:00:00'),
+								endTime: new Date('7/10/2023 12:00:00'),
+							},
+							{
+								startTime: new Date('7/10/2023 13:00:00'),
+								endTime: new Date('7/10/2023 19:00:00'),
+							},
+						] as ShiftTime[],
+					},
+				] as OpenTime[],
 				createdAt: new Date(),
 				updatedAt: new Date(),
 			} as FacilitySchedule,
@@ -617,21 +651,28 @@ export class FacilityController {
 			} as ErrorResponse<null>,
 		},
 	})
-	getCurrentScheduleByFacility(@Param('facilityId') facilityId: string) {
-		console.log(facilityId);
-		//
+	async getCurrentScheduleByFacility(@Param('facilityID') facilityID: string) {
+		return this.facilityService.getCurrentSchedule(facilityID);
 	}
 
 	@Public()
-	@Get(':facilityId/holidays')
+	@Get(':facilityID/holidays')
+	@ApiDocsPagination('holiday')
 	@ApiOperation({
-		summary: 'Get All Holidays by facilityId',
+		summary: 'Get All Holidays by facilityID',
 		description: `All role can use this API`,
 	})
-	@ApiParam({
-		name: 'facilityId',
+	@ApiQuery({
+		name: 'startDate',
 		type: String,
-		description: 'Facility ID',
+		required: false,
+		description: 'startDate',
+	})
+	@ApiQuery({
+		name: 'endDate',
+		type: String,
+		required: false,
+		description: 'endDate',
 	})
 	@ApiOkResponse({
 		schema: {
@@ -677,22 +718,21 @@ export class FacilityController {
 			} as ErrorResponse<null>,
 		},
 	})
-	getAllHolidaysByFacility(
-		@Param('facilityId') facilityId: string,
-		@Query() filter: ListOptions<Holiday>,
+	async getAllHolidaysByFacility(
+		@Param('facilityID') facilityID: string,
+		@Query() options: ListOptions<Holiday>,
 	) {
-		console.log(facilityId, filter);
-		//
+		return await this.facilityService.findAllHoliday(facilityID, options);
 	}
 
 	@Public()
-	@Get(':facilityId/package-types')
+	@Get(':facilityID/package-types')
 	@ApiOperation({
-		summary: 'Get all Package Type by facilityId',
-		description: `All role can use this API`,
+		summary: 'Get all Package Type by facilityID',
+		description: `All role can use this API \n Only sort by Order`,
 	})
 	@ApiDocsPagination('PackageType')
-	@ApiParam({ name: 'facilityId', type: String, description: 'Facility ID' })
+	@ApiParam({ name: 'facilityID', type: String, description: 'Facility ID' })
 	@ApiOkResponse({
 		schema: {
 			example: {
@@ -738,22 +778,22 @@ export class FacilityController {
 			} as ErrorResponse<null>,
 		},
 	})
-	getAllPackageTypeByFacility(
-		@Param('facilityId') facilityId: string,
+	async getAllPackageTypeByFacility(
+		@Param('facilityID') facilityID: string,
 		@Query() filter: ListOptions<PackageType>,
 	) {
-		//
-		console.log(facilityId, filter);
+		return await this.facilityService.getAllPackageType(facilityID, filter);
 	}
 
 	@ApiBearerAuth()
-	@Post(':facilityId/schedules')
+	@UseGuards(OwnershipFacilityGuard)
+	@Post(':facilityID/schedules')
 	@ApiOperation({
-		summary: 'Create new Schedule by facilityId',
+		summary: 'Create new Schedule by facilityID',
 		description: `Facility Owner can use this API`,
 	})
 	@ApiParam({
-		name: 'facilityId',
+		name: 'facilityID',
 		type: String,
 		description: 'Facility ID',
 	})
@@ -763,12 +803,18 @@ export class FacilityController {
 			Daily: {
 				value: {
 					type: ScheduleType.DAILY,
-					OpenTime: [
+					openTime: [
 						{
-							shift: {
-								startTime: new Date(),
-								endTime: new Date(),
-							} as ShiftTimeDto,
+							shift: [
+								{
+									startTime: new Date('7/10/2023 06:00:00'),
+									endTime: new Date('7/10/2023 12:00:00'),
+								},
+								{
+									startTime: new Date('7/10/2023 13:00:00'),
+									endTime: new Date('7/10/2023 19:00:00'),
+								},
+							] as ShiftTimeDto[],
 						},
 					] as OpenTimeDto[],
 				} as CreateFacilityScheduleDto,
@@ -776,19 +822,31 @@ export class FacilityController {
 			Weekly: {
 				value: {
 					type: ScheduleType.WEEKLY,
-					OpenTime: [
+					openTime: [
 						{
-							shift: {
-								startTime: new Date(),
-								endTime: new Date(),
-							} as ShiftTimeDto,
+							shift: [
+								{
+									startTime: new Date('7/10/2023 06:00:00'),
+									endTime: new Date('7/10/2023 12:00:00'),
+								},
+								{
+									startTime: new Date('7/10/2023 13:00:00'),
+									endTime: new Date('7/10/2023 19:00:00'),
+								},
+							] as ShiftTimeDto[],
 							dayOfWeek: dayOfWeek.MONDAY,
 						},
 						{
-							shift: {
-								startTime: new Date(),
-								endTime: new Date(),
-							} as ShiftTimeDto,
+							shift: [
+								{
+									startTime: new Date('7/10/2023 06:00:00'),
+									endTime: new Date('7/10/2023 12:00:00'),
+								},
+								{
+									startTime: new Date('7/10/2023 13:00:00'),
+									endTime: new Date('7/10/2023 19:00:00'),
+								},
+							] as ShiftTimeDto[],
 							dayOfWeek: dayOfWeek.TUESDAY,
 						},
 					] as OpenTimeDto[],
@@ -797,20 +855,32 @@ export class FacilityController {
 			Monthly: {
 				value: {
 					type: ScheduleType.MONTHLY,
-					OpenTime: [
+					openTime: [
 						{
-							shift: {
-								startTime: new Date(),
-								endTime: new Date(),
-							} as ShiftTimeDto,
+							shift: [
+								{
+									startTime: new Date('7/10/2023 06:00:00'),
+									endTime: new Date('7/10/2023 12:00:00'),
+								},
+								{
+									startTime: new Date('7/10/2023 13:00:00'),
+									endTime: new Date('7/10/2023 19:00:00'),
+								},
+							] as ShiftTimeDto[],
 							dayOfMonth: 1,
 						},
 						{
-							shift: {
-								startTime: new Date(),
-								endTime: new Date(),
-								dayOfMonth: 2,
-							} as ShiftTimeDto,
+							shift: [
+								{
+									startTime: new Date('7/10/2023 06:00:00'),
+									endTime: new Date('7/10/2023 12:00:00'),
+								},
+								{
+									startTime: new Date('7/10/2023 13:00:00'),
+									endTime: new Date('7/10/2023 19:00:00'),
+								},
+							] as ShiftTimeDto[],
+							dayOfMonth: 2,
 						},
 					] as OpenTimeDto[],
 				} as CreateFacilityScheduleDto,
@@ -825,10 +895,16 @@ export class FacilityController {
 				type: ScheduleType.DAILY,
 				openTime: [
 					{
-						shift: {
-							startTime: new Date(),
-							endTime: new Date(),
-						} as ShiftTime,
+						shift: [
+							{
+								startTime: new Date('7/10/2023 06:00:00'),
+								endTime: new Date('7/10/2023 12:00:00'),
+							},
+							{
+								startTime: new Date('7/10/2023 13:00:00'),
+								endTime: new Date('7/10/2023 19:00:00'),
+							},
+						] as ShiftTime[],
 					} as OpenTime,
 				],
 				createdAt: new Date(),
@@ -863,22 +939,22 @@ export class FacilityController {
 			} as ErrorResponse<null>,
 		},
 	})
-	createScheduleByFacility(
-		@Param('facilityId') facilityId: string,
+	async createScheduleByFacility(
+		@Param('facilityID') facilityID: string,
 		@Body() data: CreateFacilityScheduleDto,
 	) {
-		console.log(facilityId, data);
-		//
+		return this.facilityService.createSchedule(facilityID, data);
 	}
 
 	@ApiBearerAuth()
-	@Post(':facilityId/holidays')
+	@UseGuards(OwnershipFacilityGuard)
+	@Post(':facilityID/holidays')
 	@ApiOperation({
-		summary: 'Create new Holiday by facilityId',
+		summary: 'Create new Holiday by facilityID',
 		description: `Facility Owner can use this API`,
 	})
 	@ApiParam({
-		name: 'facilityId',
+		name: 'facilityID',
 		type: String,
 		description: 'Facility ID',
 	})
@@ -899,7 +975,7 @@ export class FacilityController {
 			example: {
 				_id: '6476ef7d1f0419cd330fe128',
 				facilityID: {} as unknown as Facility,
-				startDate: new Date(),
+				startDate: new Date(+1),
 				endDate: new Date(),
 				content: 'string',
 				createdAt: new Date(),
@@ -934,21 +1010,22 @@ export class FacilityController {
 			} as ErrorResponse<null>,
 		},
 	})
-	createHolidayByFacility(
-		@Param('facilityId') facilityId: string,
+	async createHolidayByFacility(
+		@Param('facilityID') facilityID: string,
 		@Body() data: HolidayDto,
 	) {
-		console.log(facilityId, data);
-		//
+		return await this.facilityService.createHoliday(facilityID, data);
 	}
 
-	@ApiBearerAuth()
-	@Post(':facilityId/package-types')
+	// @ApiBearerAuth()
+	// @UseGuards(OwnershipFacilityGuard)
+	@Public()
+	@Post(':facilityID/package-types')
 	@ApiOperation({
-		summary: 'Create new Package Type by facilityId',
+		summary: 'Create new Package Type by facilityID',
 		description: `Facility Owner can use this API`,
 	})
-	@ApiParam({ name: 'facilityId', type: String, description: 'Facility ID' })
+	@ApiParam({ name: 'facilityID', type: String, description: 'Facility ID' })
 	@ApiBody({
 		type: CreatePackageTypeDto,
 		examples: {
@@ -1009,11 +1086,11 @@ export class FacilityController {
 			} as ErrorResponse<null>,
 		},
 	})
-	createPackageType(
-		@Param('facilityId') id: string,
+	async createPackageType(
+		@Param('facilityID') facilityID: string,
 		@Body() data: CreatePackageTypeDto,
 	) {
-		console.log(id, data);
+		return await this.facilityService.createPackageType(facilityID, data);
 	}
 
 	@Post()
@@ -1124,12 +1201,13 @@ export class FacilityController {
 	}
 
 	@ApiBearerAuth()
-	@Patch(':facilityId/package-types/swap-order')
+	@UseGuards(OwnershipFacilityGuard)
+	@Patch(':facilityID/package-types/swap-order')
 	@ApiOperation({
-		summary: 'Swap Package Type order by facilityId',
+		summary: 'Swap Package Type order by facilityID',
 		description: `Facility Owner can use this API`,
 	})
-	@ApiParam({ name: 'facilityId', type: String, description: 'Facility ID' })
+	@ApiParam({ name: 'facilityID', type: String, description: 'Facility ID' })
 	@ApiBody({
 		type: UpdateOrderDto,
 		examples: {
@@ -1190,12 +1268,11 @@ export class FacilityController {
 			} as ErrorResponse<null>,
 		},
 	})
-	swapPackageTypeInList(
-		@Param('facilityId') facilityId: string,
+	async swapPackageTypeInList(
+		@Param('facilityID') facilityID: string,
 		@Body() data: UpdateOrderDto,
 	) {
-		console.log(facilityId, data);
-		//Logic để hoán đổi order của 2 TackageType
+		return await this.facilityService.swapPackageTypeInList(facilityID, data);
 	}
 
 	@Patch(':facilityID')

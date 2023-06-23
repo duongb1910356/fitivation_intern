@@ -12,5 +12,6 @@ import { BillItem, BillItemSchema } from './schemas/bill-item.schema';
 	],
 	controllers: [BillItemsController],
 	providers: [BillItemsService],
+	exports: [BillItemsService],
 })
 export class BillItemsModule {}
