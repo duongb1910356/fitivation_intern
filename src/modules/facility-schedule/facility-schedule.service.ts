@@ -71,11 +71,10 @@ export class FacilityScheduleService {
 			offset = 0,
 			sortField = 'updatedAt',
 			sortOrder = 'asc',
-			projection,
 		} = options;
 
 		const schedules = await this.scheduleModel
-			.find(condition, projection)
+			.find(condition)
 			.sort({ [sortField]: sortOrder === 'asc' ? 1 : -1 })
 			.limit(limit)
 			.skip(offset);

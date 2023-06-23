@@ -1,31 +1,23 @@
-import { Controller, Get, Param, Request, UseGuards } from '@nestjs/common';
+import { Controller, Get, Param } from '@nestjs/common';
 import {
-	ApiBadRequestResponse,
-	ApiBearerAuth,
-	ApiForbiddenResponse,
 	ApiNotFoundResponse,
 	ApiOkResponse,
 	ApiOperation,
 	ApiParam,
 	ApiTags,
-	ApiUnauthorizedResponse,
 } from '@nestjs/swagger';
-import { Roles } from 'src/decorators/role.decorator';
-import { RolesGuard } from 'src/guards/role.guard';
-import { ApiDocsPagination } from 'src/decorators/swagger-form-data.decorator';
-import {
-	ListOptions,
-	ListResponse,
-	ErrorResponse,
-} from 'src/shared/response/common-response';
-import { User, UserRole } from '../users/schemas/user.schema';
+import { ErrorResponse } from 'src/shared/response/common-response';
+import { User } from '../users/schemas/user.schema';
 import { Attendance } from './entities/attendance.entity';
 import { Facility } from '../facility/schemas/facility.schema';
 import { Public } from '../auth/utils';
+import { AttendanceService } from './attendance.service';
 
 @ApiTags('attendances')
 @Controller('attendances')
 export class AttendanceController {
+	constructor(private readonly attendanceService: AttendanceService) {}
+
 	@Public()
 	@Get(':attendanceID')
 	@ApiOperation({
@@ -58,82 +50,9 @@ export class AttendanceController {
 			} as ErrorResponse<null>,
 		},
 	})
-	@ApiBadRequestResponse({
-		schema: {
-			example: {
-				code: '400',
-				message: '[Input] invalid!',
-				details: null,
-			} as ErrorResponse<null>,
-		},
-	})
-	getAttendance(@Param('attendanceID') attendanceID: string) {
-		console.log(attendanceID);
-		//
-	}
-
-	@ApiBearerAuth()
-	@UseGuards(RolesGuard)
-	@Roles(UserRole.MEMBER)
-	@Get()
-	@ApiOperation({
-		summary: 'Get All Attendance by Member',
-		description: `Member can use this API`,
-	})
-	@ApiDocsPagination('Attendance')
-	@ApiOkResponse({
-		schema: {
-			example: {
-				items: [
-					{
-						_id: '6476ef7d1f0419cd330fe128',
-						facilityID: {} as unknown as Facility,
-						accountID: {} as unknown as User,
-						date: [],
-						createdAt: new Date(),
-						updatedAt: new Date(),
-					} as Attendance,
-				],
-				total: 1,
-				options: {
-					limit: 10,
-					offset: 0,
-					sortField: 'facilityID',
-					sortOrder: 'asc',
-				} as ListOptions<Attendance>,
-			} as ListResponse<Attendance>,
-		},
-	})
-	@ApiNotFoundResponse({
-		schema: {
-			example: {
-				code: '404',
-				message: 'Facility not found!',
-				details: null,
-			} as ErrorResponse<null>,
-		},
-	})
-	@ApiUnauthorizedResponse({
-		schema: {
-			example: {
-				code: '401',
-				message: 'Unauthorized',
-				details: null,
-			} as ErrorResponse<null>,
-		},
-	})
-	@ApiForbiddenResponse({
-		schema: {
-			example: {
-				code: '403',
-				message: 'Forbidden resource',
-				details: null,
-			} as ErrorResponse<null>,
-		},
-	})
-	getAllAttendancesByMember(@Request() req: any) {
-		const userId = req.user?.uid;
-		console.log(userId);
-		//
+	async getAttendance(@Param('attendanceID') attendanceID: string) {
+		return await this.attendanceService.findOneByCondition({
+			_id: attendanceID,
+		});
 	}
 }

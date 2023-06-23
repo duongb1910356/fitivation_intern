@@ -1,10 +1,12 @@
 import { Prop, Schema, SchemaFactory } from '@nestjs/mongoose';
-import mongoose from 'mongoose';
+import mongoose, { HydratedDocument } from 'mongoose';
 import { Facility } from 'src/modules/facility/schemas/facility.schema';
 import { User } from 'src/modules/users/schemas/user.schema';
 import { BaseObject } from 'src/shared/schemas/base-object.schema';
 
-@Schema()
+export type AttendanceDocument = HydratedDocument<Attendance>;
+
+@Schema({ timestamps: true })
 export class Attendance extends BaseObject {
 	@Prop({
 		type: mongoose.Schema.Types.ObjectId,
@@ -20,7 +22,7 @@ export class Attendance extends BaseObject {
 	})
 	facilityID: Facility;
 
-	@Prop({ type: [Date] })
+	@Prop({ type: [Date], default: [] })
 	date: Date[];
 }
 
