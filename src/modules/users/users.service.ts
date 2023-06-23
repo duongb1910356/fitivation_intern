@@ -23,6 +23,14 @@ export class UsersService {
 		return 'getOne';
 	}
 
+	async findOneByID(userID: string): Promise<User> {
+		const user = await this.userModel.findById(userID);
+
+		if (!user) throw new NotFoundException('Not found user with that ID');
+
+		return user;
+	}
+
 	async findOneByIDAndUpdate(
 		userID: string,
 		updateUserDto: UpdateUserDto,
