@@ -2,98 +2,72 @@ import {
 	BadRequestException,
 	Injectable,
 	InternalServerErrorException,
+	NotFoundException,
 } from '@nestjs/common';
 import { InjectModel } from '@nestjs/mongoose';
-import { isValidObjectId, Model } from 'mongoose';
-import { DefaultListDto } from '../../shared/dto/default-list-dto';
-import { ESortOrder } from '../../shared/enum/sort.enum';
-import { SuccessResponse } from '../../shared/response/success-response';
-import { Password } from '../../utils/password';
-import { RegisterDto } from '../auth/dto/register-dto';
-import { CreateUserDto } from './dto/create-user-dto';
-import { UpdateUserDto } from './dto/update-user-dto';
 import { User, UserDocument } from './schemas/user.schema';
-import { ListOptions } from 'src/shared/response/common-response';
+import { Model } from 'mongoose';
+import { CreateUserDto } from './dto/create-user-dto';
+import { SignupDto } from '../auth/dto/signup-dto';
+import { UpdateUserDto } from './dto/update-user-dto';
 
 @Injectable()
 export class UsersService {
 	constructor(@InjectModel(User.name) private userModel: Model<UserDocument>) {}
 
-	async findOne(filter: Partial<User>): Promise<User> {
-		return this.userModel.findOne(filter);
+	findMany() {
+		return 'getMany';
 	}
 
-	async findAll(
-		filter: ListOptions<User>,
-	): Promise<SuccessResponse<User[], DefaultListDto>> {
-		const { limit, offset, sortField, sortOrder, ...condition } = filter;
-		try {
-			// const result: User[] = await this.userModel
-			//   .find(condition)
-			//   .sort({ [sortField]: sortOrder === ESortOrder.ASC ? -1 : 1 })
-			//   .limit(+limit)
-			//   .skip(+offset);
-
-			const [count, users] = await Promise.all([
-				this.userModel.count(condition),
-				this.userModel
-					.find(condition)
-					.sort({ [sortField]: sortOrder === ESortOrder.ASC ? -1 : 1 })
-					.limit(+limit)
-					.skip(+offset),
-			]);
-
-			return {
-				filter: filter,
-				total: count,
-				data: users,
-			};
-		} catch (err) {
-			throw new BadRequestException(err);
-		}
+	findOne() {
+		return 'getOne';
 	}
 
-	async createOne(input: CreateUserDto | RegisterDto): Promise<User> {
-		try {
-			const user = await this.userModel.findOne({ email: input.email });
-			if (!user) {
-				return this.userModel.create(input);
-			}
-			throw new BadRequestException('Email has existed!');
-		} catch (err) {
-			return err;
-		}
+	async findByIDAndUpdate(
+		userID: string,
+		updateUserDto: UpdateUserDto,
+	): Promise<User> {
+		const user = await this.userModel.findByIdAndUpdate(userID, updateUserDto, {
+			new: true,
+			runValidators: true,
+		});
+
+		if (!user) throw new NotFoundException('Not found user with that ID');
+
+		return user;
 	}
 
-	async updateOne(input: UpdateUserDto): Promise<User> {
-		const { id, password, displayName } = input;
+	async findOneByEmail(email: string): Promise<User> {
+		const user = await this.userModel.findOne({ email });
 
-		try {
-			if (password) {
-				input.password = await Password.hashPassword(password);
-			}
-			if (password || displayName) {
-				delete input.id;
-				return await this.userModel.findByIdAndUpdate(id, input, { new: true });
-			}
-			throw new BadRequestException('Data invalid!');
-		} catch (err) {
-			throw new BadRequestException(err);
-		}
+		if (!user) throw new NotFoundException('Email not exists');
+
+		return user;
 	}
 
-	async deleteOne({ id }: any): Promise<SuccessResponse<User>> {
-		try {
-			if (!isValidObjectId(id)) throw new BadRequestException('ID invalid!');
+	updateOne() {
+		return 'updateOne';
+	}
+	async createOne(dto: CreateUserDto | SignupDto): Promise<User> {
+		const isExist = await this.checkExist({
+			email: dto.email,
+			username: dto.username,
+		});
 
-			await this.userModel.findOneAndRemove({
-				_id: id,
-			});
+		if (isExist.value) throw new BadRequestException(isExist.message);
 
-			return;
-		} catch (err) {
-			throw new BadRequestException(err);
-		}
+		const user = await this.userModel.create(dto);
+		user.refreshToken = undefined;
+		return user;
+	}
+	async deleteOne(userID: string): Promise<boolean> {
+		const user = await this.userModel.findById(userID);
+
+		if (!user) throw new BadRequestException('Not found user with that ID');
+
+		await this.userModel.deleteOne({ _id: userID });
+
+		return true;
 	}
 
 	async updateAvatar(userId: string, filePath: string): Promise<User> {
@@ -110,5 +84,38 @@ export class UsersService {
 		} catch (err) {
 			throw new InternalServerErrorException(err);
 		}
+	}
+
+	async checkExist(uniqueFieldObj: {
+		username: string;
+		email: string;
+	}): Promise<{ value: boolean; message: string }> {
+		const isEmailExisted =
+			(await this.userModel.exists({ email: uniqueFieldObj.email })) === null
+				? false
+				: true;
+
+		if (isEmailExisted)
+			return {
+				value: true,
+				message: 'Email already exists',
+			};
+
+		const isUsernameExisted =
+			(await this.userModel.exists({ username: uniqueFieldObj.username })) ===
+			null
+				? false
+				: true;
+
+		if (isUsernameExisted)
+			return {
+				value: true,
+				message: 'Username already exists',
+			};
+
+		return {
+			value: false,
+			message: null,
+		};
 	}
 }

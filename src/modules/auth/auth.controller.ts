@@ -1,16 +1,12 @@
 import {
-	BadRequestException,
 	Body,
 	Controller,
-	Get,
+	HttpCode,
+	HttpStatus,
 	Patch,
 	Post,
-	Request,
-	UnauthorizedException,
-	UseGuards,
 } from '@nestjs/common';
 import {
-	ApiBearerAuth,
 	ApiBody,
 	ApiCreatedResponse,
 	ApiOperation,
@@ -18,28 +14,59 @@ import {
 	ApiResponse,
 	ApiTags,
 } from '@nestjs/swagger';
-import { UsersService } from '../../modules/users/users.service';
-import { Password } from '../../utils/password';
-import { User } from '../users/schemas/user.schema';
 import { AuthService } from './auth.service';
 import { LoginDto } from './dto/login-dto';
-import { RefreshTokenDto } from './dto/refresh-token-dto';
-import { RegisterDto } from './dto/register-dto';
-import { TokenResponse } from './dto/token-payload-dto';
-import { JwtAuthGuard } from './jwt-auth.guard';
-import { Public } from './utils';
+import { SignupDto } from './dto/signup-dto';
+import { TokenResponse } from './types/token-response.types';
 import { ErrorResponse } from 'src/shared/response/common-response';
+import { Public } from './decorators/public.decorator';
 
 @ApiTags('auth')
 @Controller('auth')
 export class AuthController {
-	constructor(
-		private readonly authService: AuthService,
-		private readonly userService: UsersService,
-	) {}
+	constructor(private readonly authService: AuthService) {}
 
+	@ApiOperation({ summary: 'signup', description: 'Allow user sign up' })
+	@ApiBody({
+		type: SignupDto,
+		examples: {
+			USER: {
+				summary: 'User',
+				value: {
+					username: 'test1',
+					email: 'test1@test.com',
+					password: '123123123',
+					displayName: 'User1',
+				} as SignupDto,
+			},
+		},
+	})
+	@ApiResponse({
+		status: 201,
+		schema: {
+			example: {
+				accessToken: 'string',
+				refreshToken: 'string',
+			} as TokenResponse,
+		},
+	})
+	@ApiResponse({
+		status: 400,
+		schema: {
+			example: {
+				code: '400',
+				message: 'Input invalid',
+				details: null,
+			} as ErrorResponse<null>,
+		},
+	})
+	@Post('signup')
 	@Public()
-	@Post('login')
+	@HttpCode(HttpStatus.CREATED)
+	async signup(@Body() signupDto: SignupDto): Promise<TokenResponse> {
+		return this.authService.signup(signupDto);
+	}
+
 	@ApiOperation({ summary: 'login', description: 'Allow user login' })
 	@ApiBody({
 		type: LoginDto,
@@ -60,53 +87,13 @@ export class AuthController {
 			},
 		},
 	})
-	@ApiCreatedResponse({ type: TokenResponse, status: 201 })
 	@ApiResponse({
-		status: 401,
+		status: 200,
 		schema: {
 			example: {
-				code: '401',
-				message: 'Unauthorized',
-				details: null,
-			} as ErrorResponse<null>,
-		},
-	})
-	async login(@Body() loginDto: LoginDto) {
-		const user = await this.userService.findOne({ email: loginDto.email });
-		if (!user) throw new UnauthorizedException();
-
-		const isMatchPassword = await Password.comparePassword(
-			user.password,
-			loginDto.password,
-		);
-		if (!isMatchPassword) {
-			throw new UnauthorizedException();
-		}
-		return this.authService.login(user);
-	}
-
-	@Public()
-	@Post('register')
-	@ApiOperation({ summary: 'register', description: 'Allow user sign up' })
-	@ApiBody({
-		type: RegisterDto,
-		examples: {
-			USER: {
-				summary: 'User',
-				value: {
-					email: 'test1@test.com',
-					password: '123123123',
-					displayName: 'User1',
-				} as RegisterDto,
-			},
-		},
-	})
-	@ApiCreatedResponse({
-		schema: {
-			example: {
-				status: '201',
-				message: 'Register success!',
-			},
+				accessToken: 'string',
+				refreshToken: 'string',
+			} as TokenResponse,
 		},
 	})
 	@ApiResponse({
@@ -119,18 +106,40 @@ export class AuthController {
 			} as ErrorResponse<null>,
 		},
 	})
-	async register(@Body() registerDto: RegisterDto) {
-		const user = await this.userService.findOne({ email: registerDto.email });
-		if (user) {
-			throw new BadRequestException('User has existed!');
-		}
-		return this.authService.register(registerDto);
+	@Post('login')
+	@Public()
+	@HttpCode(HttpStatus.OK)
+	async login(@Body() loginDto: LoginDto): Promise<TokenResponse> {
+		return this.authService.login(loginDto);
 	}
 
-	@Public()
-	@Post('refresh-token')
+	@ApiOperation({ summary: 'logout', description: 'Allow user log out' })
+	@ApiResponse({ status: 204 })
+	@ApiResponse({
+		status: 401,
+		schema: {
+			example: {
+				code: '401',
+				message: 'Unauthorized',
+				details: null,
+			} as ErrorResponse<null>,
+		},
+	})
+	@Post('logout')
+	async logout() {
+		this.authService.logout();
+	}
+
 	@ApiOperation({ summary: 'refreshToken', description: 'Refresh new token' })
-	@ApiCreatedResponse({ type: TokenResponse, status: 201 })
+	@ApiResponse({
+		status: 201,
+		schema: {
+			example: {
+				accessToken: 'string',
+				refreshToken: 'string',
+			} as TokenResponse,
+		},
+	})
 	@ApiResponse({
 		status: 400,
 		schema: {
@@ -141,34 +150,11 @@ export class AuthController {
 			} as ErrorResponse<null>,
 		},
 	})
-	refreshToken(@Body() refreshTokenDto: RefreshTokenDto) {
-		return this.authService.refreshToken(refreshTokenDto);
+	@Post('refresh-token')
+	refreshTokens() {
+		return this.authService.refreshTokens();
 	}
 
-	@UseGuards(JwtAuthGuard)
-	@Get('me')
-	@ApiBearerAuth()
-	@ApiOperation({
-		summary: 'getProfile',
-		description: 'Get loggedIn user info',
-	})
-	@ApiResponse({ type: User, status: 200 })
-	@ApiResponse({
-		status: 400,
-		schema: {
-			example: {
-				code: '400',
-				message: 'Token invalid',
-				details: null,
-			} as ErrorResponse<null>,
-		},
-	})
-	getProfile(@Request() req: any) {
-		return this.userService.findOne(req.uid);
-	}
-
-	@Public()
-	@Post('forgot-password')
 	@ApiOperation({
 		summary: 'forgotPassword',
 		description: 'Allow user send forgot password request to reset password',
@@ -192,12 +178,11 @@ export class AuthController {
 			} as ErrorResponse<null>,
 		},
 	})
+	@Post('forgot-password')
 	forgotPassword() {
 		return 'forgotPassword';
 	}
 
-	@Public()
-	@Patch('reset-password/:resetPasswordToken')
 	@ApiOperation({
 		summary: 'resetPassword',
 		description: 'Allow user reset password',
@@ -218,12 +203,11 @@ export class AuthController {
 			} as ErrorResponse<null>,
 		},
 	})
+	@Patch('reset-password/:resetPasswordToken')
 	resetPassword() {
 		return 'resetPassword';
 	}
 
-	@UseGuards(JwtAuthGuard)
-	@Patch('update-password')
 	@ApiOperation({
 		summary: 'updatePassword',
 		description: 'Allow user update password',
@@ -259,6 +243,7 @@ export class AuthController {
 			} as ErrorResponse<null>,
 		},
 	})
+	@Patch('update-password')
 	updatePassword() {
 		return 'updatePassword';
 	}

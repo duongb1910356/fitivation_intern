@@ -19,18 +19,19 @@ import {
 	ApiTags,
 	ApiUnauthorizedResponse,
 } from '@nestjs/swagger';
-import { Roles } from 'src/decorators/role.decorator';
-import { RolesGuard } from 'src/guards/role.guard';
 import { ErrorResponse } from 'src/shared/response/common-response';
 import { Facility } from '../facility/schemas/facility.schema';
-import { UserRole } from '../users/schemas/user.schema';
 import { Holiday } from './entities/holiday.entity';
 import { Public } from '../auth/utils';
 import { HolidayDto } from './dto/holiday-dto';
+import { OwnershipHolidayGuard } from 'src/guards/ownership/ownership-holiday.guard';
+import { HolidayService } from './holiday.service';
 
 @ApiTags('holidays')
 @Controller('holidays')
 export class HolidayController {
+	constructor(private readonly holidayService: HolidayService) {}
+
 	@Public()
 	@Get(':holidayID')
 	@ApiOperation({
@@ -69,14 +70,12 @@ export class HolidayController {
 			} as ErrorResponse<null>,
 		},
 	})
-	getHoliday(@Param('holidayID') holidayID: string) {
-		console.log(holidayID);
-		//
+	async getHoliday(@Param('holidayID') holidayID: string) {
+		return await this.holidayService.findById(holidayID);
 	}
 
 	@ApiBearerAuth()
-	@UseGuards(RolesGuard)
-	@Roles(UserRole.FACILITY_OWNER)
+	@UseGuards(OwnershipHolidayGuard)
 	@Patch(':holidayID')
 	@ApiOperation({
 		summary: 'Update Holiday by holidayID',
@@ -148,17 +147,15 @@ export class HolidayController {
 			} as ErrorResponse<null>,
 		},
 	})
-	updateHoliday(
+	async updateHoliday(
 		@Param('holidayID') holidayID: string,
 		@Body() data: HolidayDto,
 	) {
-		console.log(holidayID, data);
-		//
+		return await this.holidayService.update(holidayID, data);
 	}
 
 	@ApiBearerAuth()
-	@UseGuards(RolesGuard)
-	@Roles(UserRole.FACILITY_OWNER)
+	@UseGuards(OwnershipHolidayGuard)
 	@Delete(':holidayID')
 	@ApiOperation({
 		summary: 'Delete Holiday by holidayID',
@@ -212,8 +209,7 @@ export class HolidayController {
 			} as ErrorResponse<null>,
 		},
 	})
-	deleteHoliday(@Param('holidayID') holidayID: string) {
-		console.log(holidayID);
-		//
+	async deleteHoliday(@Param('holidayID') holidayID: string) {
+		return await this.holidayService.delete(holidayID);
 	}
 }
