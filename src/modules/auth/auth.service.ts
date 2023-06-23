@@ -91,8 +91,15 @@ export class AuthService {
 		return tokens;
 	}
 
-	async logout() {
-		//
+	async logout(userID: string): Promise<boolean> {
+		const user = await this.userService.findOneByID(userID);
+
+		if (user.refreshToken === null)
+			throw new BadRequestException('User already logout');
+
+		await this.userService.findOneByIDAndUpdate(userID, { refreshToken: null });
+
+		return true;
 	}
 
 	async refreshTokens() {

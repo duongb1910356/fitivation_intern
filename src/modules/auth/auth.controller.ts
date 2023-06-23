@@ -20,6 +20,7 @@ import { SignupDto } from './dto/signup-dto';
 import { TokenResponse } from './types/token-response.types';
 import { ErrorResponse } from 'src/shared/response/common-response';
 import { Public } from './decorators/public.decorator';
+import { GetCurrentUser } from 'src/decorators/get-current-user.decorator';
 
 @ApiTags('auth')
 @Controller('auth')
@@ -126,8 +127,9 @@ export class AuthController {
 		},
 	})
 	@Post('logout')
-	async logout() {
-		this.authService.logout();
+	@HttpCode(HttpStatus.NO_CONTENT)
+	async logout(@GetCurrentUser('sub') userID: string): Promise<boolean> {
+		return this.authService.logout(userID);
 	}
 
 	@ApiOperation({ summary: 'refreshToken', description: 'Refresh new token' })
