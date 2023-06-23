@@ -49,7 +49,7 @@ import { TokenResponse } from '../auth/types/token-response.types';
 export class UsersController {
 	constructor(private userService: UsersService) {}
 
-	@ApiOperation({ summary: 'getUserByID', description: 'Get one user by ID' })
+	@ApiOperation({ summary: 'findUserByID', description: 'Get one user by ID' })
 	@ApiParam({ name: 'id', type: String, description: 'User ID' })
 	@ApiOkResponse({
 		schema: {
@@ -118,12 +118,12 @@ export class UsersController {
 		},
 	})
 	@Get(':id')
-	findOneUser(@Param('id') id) {
+	findUserByID(@Param('id') id) {
 		return this.userService.findOne();
 	}
 
 	@ApiDocsPagination('user')
-	@ApiOperation({ summary: 'getManyUsers', description: 'Get many users' })
+	@ApiOperation({ summary: 'findManyUsers', description: 'Get many users' })
 	@ApiResponse({
 		schema: {
 			example: {
