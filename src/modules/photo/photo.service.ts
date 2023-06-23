@@ -6,11 +6,11 @@ import {
 import { InjectModel } from '@nestjs/mongoose';
 import { existsSync, mkdirSync, unlinkSync, writeFileSync } from 'fs';
 import { appConfig } from 'src/app.config';
-import { GenFileName } from 'src/utils/gen-filename';
 import { Photo, PhotoDocument } from './schemas/photo.schema';
 import { Model } from 'mongoose';
 import { CreatePhotoDto } from './dto/create-photo-dto';
 import { SuccessResponse } from 'src/shared/response/success-response';
+import { GenFileName } from 'src/shared/utils/gen-filename';
 
 @Injectable()
 export class PhotoService {
