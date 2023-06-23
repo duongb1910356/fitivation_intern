@@ -90,7 +90,7 @@ export class FacilityScheduleController {
 		},
 	})
 	async getSchedule(@Param('scheduleID') scheduleID: string) {
-		return await this.scheduleService.findOneByID(scheduleID);
+		return await this.scheduleService.findOneByID(scheduleID, 'facilityID');
 	}
 
 	@ApiBearerAuth()
