@@ -91,6 +91,6 @@ export class FacilityCategoryController {
 		},
 	})
 	async getCategory(@Param('categoryID') categoryID: string) {
-		return await this.facilityCategoryService.findById(categoryID);
+		return await this.facilityCategoryService.findOneById(categoryID);
 	}
 }

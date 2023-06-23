@@ -28,7 +28,7 @@ export class AttendanceService {
 	async findOneByCondition(
 		condition: AttendanceCondition,
 	): Promise<Attendance> {
-		const attendance = await this.attendanceModel.findOne(condition);
+		const attendance = await this.attendanceModel.findOne({ condition });
 		if (!attendance) {
 			throw new NotFoundException('Attendance not found');
 		}
@@ -94,13 +94,13 @@ export class AttendanceService {
 		accountID: string,
 	): Promise<boolean> {
 		const now = new Date();
-		const subscription = await this.subscriptionService.findOne({
+		const subscription = await this.subscriptionService.findOneByCondition({
 			accountID,
 			expires: { $gt: now },
 		});
 		if (!subscription) return false;
 
-		const billItem = await this.billItemService.findOne({
+		const billItem = await this.billItemService.findOneByCondition({
 			_id: subscription.billItemID,
 			facilityID,
 		});

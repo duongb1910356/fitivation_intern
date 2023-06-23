@@ -96,14 +96,12 @@ export class PackageController {
 		},
 	})
 	async getPackage(@Param('packageID') packageID: string) {
-		const poppulateOptions: PopulateOptions = {
-			path: 'facilityID packageTypeID',
-		};
-		return await this.packageService.findById(packageID, poppulateOptions);
+		return await this.packageService.findOneByID(packageID);
 	}
 
-	@ApiBearerAuth()
-	@UseGuards(OwnershipPackageGuard)
+	// @ApiBearerAuth()
+	// @UseGuards(OwnershipPackageGuard)
+	@Public()
 	@Patch(':packageID')
 	@ApiOperation({
 		summary: 'Update Package by packageID',
@@ -185,8 +183,9 @@ export class PackageController {
 		return await this.packageService.update(packageID, data);
 	}
 
-	@ApiBearerAuth()
-	@UseGuards(OwnershipPackageGuard)
+	// @ApiBearerAuth()
+	// @UseGuards(OwnershipPackageGuard)
+	@Public()
 	@Delete(':packageID')
 	@ApiOperation({
 		summary: 'Delete Package by packageID',

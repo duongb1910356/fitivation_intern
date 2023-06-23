@@ -22,15 +22,10 @@ export class HolidayService {
 		private holidayModel: Model<HolidayDocument>,
 	) {}
 
-	async findById(holidayID: string, populate?: string): Promise<Holiday> {
-		let holiday: Holiday;
-		if (populate) {
-			holiday = await this.holidayModel
-				.findById(holidayID)
-				.populate({ path: populate });
-		} else {
-			holiday = await this.holidayModel.findById(holidayID);
-		}
+	async findOneByID(holidayID: string, populate?: string): Promise<Holiday> {
+		const holiday = await this.holidayModel
+			.findById(holidayID)
+			.populate(populate);
 
 		if (!holiday) {
 			throw new NotFoundException('Holiday not found ');
@@ -73,7 +68,9 @@ export class HolidayService {
 	}
 
 	async update(holidayID: string, data: HolidayDto): Promise<Holiday> {
-		const facilityID = (await this.findById(holidayID)).facilityID.toString();
+		const facilityID = (
+			await this.findOneByID(holidayID)
+		).facilityID.toString();
 		console.log(facilityID, typeof facilityID);
 		const [startDate, endDate] = await this.checkOverlapAndTransform(
 			facilityID,
@@ -103,7 +100,7 @@ export class HolidayService {
 	}
 
 	async isOwnership(holidayID: string, uid: string): Promise<boolean> {
-		const holiday = await this.findById(holidayID, 'facilityID');
+		const holiday = await this.findOneByID(holidayID, 'facilityID');
 		const owner = holiday.facilityID.ownerID.toString();
 		return uid === owner;
 	}

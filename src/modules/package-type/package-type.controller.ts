@@ -7,7 +7,6 @@ import {
 	Patch,
 	Post,
 	Query,
-	Req,
 	UseGuards,
 } from '@nestjs/common';
 import {
@@ -37,16 +36,11 @@ import { Package, TimeType } from '../package/entities/package.entity';
 import { CreatePackageDto } from '../package/dto/create-package-dto';
 import { PackageTypeService } from './package-type.service';
 import { OwnershipPackageTypeGuard } from 'src/guards/ownership/ownership-package-type.guard';
-import { PackageService } from '../package/package.service';
-import { PopulateOptions } from 'mongoose';
 
 @ApiTags('package-types')
 @Controller('package-types')
 export class PackageTypeController {
-	constructor(
-		private readonly packageTypeService: PackageTypeService,
-		private readonly packageService: PackageService,
-	) {}
+	constructor(private readonly packageTypeService: PackageTypeService) {}
 
 	@Public()
 	@Get(':packageTypeID')
@@ -92,12 +86,9 @@ export class PackageTypeController {
 		},
 	})
 	async getPackageType(@Param('packageTypeID') packageTypeID: string) {
-		const populateOptions: PopulateOptions = {
-			path: 'facilityID',
-		};
-		return await this.packageTypeService.findById(
+		return await this.packageTypeService.findOneByID(
 			packageTypeID,
-			populateOptions,
+			'facilityID',
 		);
 	}
 
@@ -161,14 +152,12 @@ export class PackageTypeController {
 		@Param('packageTypeID') packageTypeID: string,
 		@Query() filter: ListOptions<Package>,
 	) {
-		return await this.packageService.findManyByPackageType(
-			packageTypeID,
-			filter,
-		);
+		return await this.packageTypeService.getAllPackages(packageTypeID, filter);
 	}
 
-	@ApiBearerAuth()
-	@UseGuards(OwnershipPackageTypeGuard)
+	// @ApiBearerAuth()
+	// @UseGuards(OwnershipPackageTypeGuard)
+	@Public()
 	@Post(':packageTypeID/packages')
 	@ApiOperation({
 		summary: 'Create new Package by packageTypeID',
@@ -239,14 +228,13 @@ export class PackageTypeController {
 	async createPackage(
 		@Param('packageTypeID') packageTypeID: string,
 		@Body() data: CreatePackageDto,
-		@Req() request: any,
 	) {
-		const facilityID = request.facilityID;
-		return await this.packageService.create(packageTypeID, facilityID, data);
+		return await this.packageTypeService.createPackage(packageTypeID, data);
 	}
 
-	@ApiBearerAuth()
-	@UseGuards(OwnershipPackageTypeGuard)
+	// @ApiBearerAuth()
+	// @UseGuards(OwnershipPackageTypeGuard)
+	@Public()
 	@Patch(':packageTypeID')
 	@ApiOperation({
 		summary: 'Update Package Type by packageTypeID',
@@ -333,8 +321,9 @@ export class PackageTypeController {
 		return await this.packageTypeService.update(packageTypeID, data);
 	}
 
-	@ApiBearerAuth()
-	@UseGuards(OwnershipPackageTypeGuard)
+	// @ApiBearerAuth()
+	// @UseGuards(OwnershipPackageTypeGuard)
+	@Public()
 	@Delete(':packageTypeID')
 	@ApiOperation({
 		summary: 'Delete Package Type by packageTypeID',

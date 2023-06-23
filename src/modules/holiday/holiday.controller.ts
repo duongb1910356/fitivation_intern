@@ -71,7 +71,7 @@ export class HolidayController {
 		},
 	})
 	async getHoliday(@Param('holidayID') holidayID: string) {
-		return await this.holidayService.findById(holidayID);
+		return await this.holidayService.findById(holidayID, 'facilityID');
 	}
 
 	@ApiBearerAuth()

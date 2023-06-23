@@ -30,12 +30,9 @@ export class FacilityScheduleService {
 		condition: ConditionSchedule,
 		populate?: string,
 	): Promise<FacilitySchedule> {
-		let schedule: FacilitySchedule;
-		if (populate) {
-			schedule = await this.scheduleModel.findOne(condition).populate(populate);
-		} else {
-			schedule = await this.scheduleModel.findById(condition);
-		}
+		const schedule = await this.scheduleModel
+			.findOne(condition)
+			.populate(populate);
 
 		if (!schedule) {
 			throw new NotFoundException('Schedule not found');
@@ -43,18 +40,13 @@ export class FacilityScheduleService {
 		return schedule;
 	}
 
-	async findById(
+	async findOneByID(
 		scheduleID: string,
 		populate?: string,
 	): Promise<FacilitySchedule> {
-		let schedule: FacilitySchedule;
-		if (populate) {
-			schedule = await this.scheduleModel
-				.findById(scheduleID)
-				.populate(populate);
-		} else {
-			schedule = await this.scheduleModel.findById(scheduleID);
-		}
+		const schedule = await this.scheduleModel
+			.findById(scheduleID)
+			.populate(populate);
 
 		if (!schedule) {
 			throw new NotFoundException('Schedule not found');
@@ -132,7 +124,7 @@ export class FacilityScheduleService {
 	}
 
 	async isOwner(scheduleID: string, uid: string): Promise<boolean> {
-		const schedule = await this.findById(scheduleID, 'facilityID');
+		const schedule = await this.findOneByID(scheduleID, 'facilityID');
 		return uid === schedule.facilityID.ownerID.toString();
 	}
 }

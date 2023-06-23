@@ -9,11 +9,14 @@ import {
 	PackageType,
 	PackageTypeDocument,
 } from './entities/package-type.entity';
-import { Model, PopulateOptions } from 'mongoose';
+import { Model } from 'mongoose';
 import { CreatePackageTypeDto } from './dto/create-package-type-dto';
 import { ListOptions, ListResponse } from 'src/shared/response/common-response';
 import { UpdateOrderDto } from './dto/update-order-dto';
 import { UpdatePackageTypeDto } from './dto/update-package-type-dto';
+import { Package } from '../package/entities/package.entity';
+import { PackageService } from '../package/package.service';
+import { CreatePackageDto } from '../package/dto/create-package-dto';
 
 @Injectable()
 export class PackageTypeService {
@@ -21,15 +24,16 @@ export class PackageTypeService {
 		@InjectModel(PackageType.name)
 		private packageTypeModel: Model<PackageTypeDocument>,
 		private readonly counterService: CounterService,
+		private readonly packageService: PackageService,
 	) {}
 
-	async findById(
+	async findOneByID(
 		packageTypeID: string,
-		populateOptions?: PopulateOptions,
+		populate?: string,
 	): Promise<PackageType> {
 		const packageType = await this.packageTypeModel
 			.findById(packageTypeID)
-			.populate(populateOptions);
+			.populate(populate);
 		if (!packageType) {
 			throw new NotFoundException('Not found Package Type');
 		}
@@ -149,7 +153,10 @@ export class PackageTypeService {
 		return 'Delete PackageType successfull!!!';
 	}
 
-	async decreaseAfterDeletion(facilityID: string, deletedOrder: number) {
+	private async decreaseAfterDeletion(
+		facilityID: string,
+		deletedOrder: number,
+	) {
 		//decrease Counter by one
 		const counterData = {
 			targetObject: TargetObject.FACILITY,
@@ -185,5 +192,21 @@ export class PackageTypeService {
 		await Promise.all([packageType1.save(), packageType2.save()]);
 
 		return 'Swap Order successful';
+	}
+
+	//For Package
+	async getAllPackages(packageTypeID: string, filter: ListOptions<Package>) {
+		return await this.packageService.findManyByPackageType(
+			packageTypeID,
+			filter,
+		);
+	}
+
+	async createPackage(packageTypeID: string, data: CreatePackageDto) {
+		const facilityID = (
+			await this.findOneByID(packageTypeID)
+		).facilityID.toString();
+		console.log(facilityID);
+		return await this.packageService.create(packageTypeID, facilityID, data);
 	}
 }
