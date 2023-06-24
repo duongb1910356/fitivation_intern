@@ -2,11 +2,11 @@ import { BadRequestException, Injectable } from '@nestjs/common';
 import { Photo, PhotoDocument } from './schemas/photo.schema';
 import { CreatePhotoDto } from './dto/create-photo-dto';
 import { appConfig } from 'src/app.config';
-import { existsSync, mkdirSync, unlinkSync, writeFileSync } from 'fs';
+import { existsSync, mkdirSync, writeFileSync } from 'fs';
 import { GenFileName } from 'src/utils/gen-filename';
 import { ListOptions, ListResponse } from 'src/shared/response/common-response';
 import { InjectModel } from '@nestjs/mongoose';
-import { Model } from 'mongoose';
+import { Model, isValidObjectId } from 'mongoose';
 
 @Injectable()
 export class PhotoService {
@@ -78,70 +78,9 @@ export class PhotoService {
 	}
 
 	async delete(id: string): Promise<boolean> {
-		const deletedPhoto = await this.photoModel.findOneAndDelete({ _id: id });
-		const imagePath = `${appConfig.fileRoot}/${deletedPhoto?.ownerID}/${deletedPhoto?.name}`;
-		if (existsSync(imagePath)) {
-			unlinkSync(imagePath);
-		} else {
-			console.log('imagePath not exist');
+		if (isValidObjectId(id)) {
+			await this.photoModel.findOneAndDelete({ _id: id });
 		}
 		return null;
 	}
-
-	// uploadOneFile(
-	// 	file: Express.Multer.File,
-	// 	photoDto: CreatePhotoDto,
-	// ): Promise<Photo> {
-	// 	try {
-	// 		const dir = `${appConfig.fileRoot}/${photoDto.ownerID}`;
-	// 		if (!existsSync(dir)) {
-	// 			mkdirSync(dir, { recursive: true });
-	// 		}
-	// 		const fileName = GenFileName.gen(file.mimetype);
-	// 		writeFileSync(`${dir}/${fileName}`, file.buffer);
-	// 		const input: CreatePhotoDto = {
-	// 			ownerID: photoDto.ownerID,
-	// 			name: fileName,
-	// 		};
-	// 		return this.photoModel.create(input);
-	// 	} catch (error) {
-	// 		console.log('Error uploadOneFile >> ', error);
-	// 		throw new BadRequestException('Uploading failed');
-	// 	}
-	// }
-
-	// async findOne(filter: Partial<Photo>): Promise<Photo> {
-	// 	return await this.photoModel.findOne(filter);
-	// }
-
-	// async findMany(filter: ListOptions<Photo>): Promise<ListResponse<Photo>> {
-	// 	try {
-	// 		const { limit, offset } = filter;
-	// 		const photos = await this.photoModel
-	// 			.find(filter)
-	// 			.skip(offset)
-	// 			.limit(limit);
-	// 		return {
-	// 			items: photos,
-	// 			total: photos.length,
-	// 			options: filter,
-	// 		};
-	// 	} catch (error) {
-	// 		throw new BadRequestException(error);
-	// 	}
-	// }
-
-	// async delete(id: string): Promise<SuccessResponse<Photo>> {
-	// 	try {
-	// 		const deletedPhoto = await this.photoModel.findByIdAndDelete(id);
-	// 		if (!deletedPhoto) {
-	// 			throw new NotFoundException('Photo not found!');
-	// 		}
-	// 		const imagePath = `${appConfig.fileRoot}/${deletedPhoto.ownerID}/${deletedPhoto.name}`;
-	// 		unlinkSync(imagePath);
-	// 		return null;
-	// 	} catch (err) {
-	// 		throw new BadRequestException(err);
-	// 	}
-	// }
 }

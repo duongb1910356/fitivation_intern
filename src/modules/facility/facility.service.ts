@@ -1,15 +1,14 @@
-import { Injectable } from '@nestjs/common';
-import { Facility, FacilityDocument } from './schemas/facility.schema';
+import { ForbiddenException, Injectable } from '@nestjs/common';
+import { Facility, FacilityDocument, State } from './schemas/facility.schema';
 import { PhotoService } from '../photo/photo.service';
 import { CreateFacilityDto } from './dto/create-facility-dto';
-import { generateUniqueId } from 'src/utils/gen-uid';
 import { ReviewService } from '../reviews/reviews.service';
 import { CreateReviewDto } from '../reviews/dto/create-review-dto';
 import { InjectModel } from '@nestjs/mongoose';
-import { Model } from 'mongoose';
+import { Model, isValidObjectId } from 'mongoose';
 import { ListOptions, ListResponse } from 'src/shared/response/common-response';
 import { appConfig } from 'src/app.config';
-import { DeletePhotoOfFacilityDto } from './dto/update-photo-facility';
+import { UpdateFacilityDto } from './dto/update-facility-dto';
 
 @Injectable()
 export class FacilityService {
@@ -27,46 +26,30 @@ export class FacilityService {
 		req: any,
 		files?: { images?: Express.Multer.File[] },
 	): Promise<Facility> {
-		const facilityID = generateUniqueId();
+		createFacilityDto.ownerID = createFacilityDto.ownerID ?? req.user.uid;
+		createFacilityDto.state = createFacilityDto.state ?? State.ACTIVE;
 
-		if (files != undefined) {
+		const facility = await this.facilityModel.create(createFacilityDto);
+		if (files && files.images) {
 			const photos = await this.photoService.uploadManyFile(files, {
-				ownerID: facilityID,
+				ownerID: facility._id,
 			});
-			createFacilityDto.photos = photos.items;
+			facility.photos = photos.items;
 		}
-		createFacilityDto.ownerID = req.user.uid;
-		return await this.facilityModel.create(createFacilityDto);
+		return await facility.save();
 	}
 
-	async addReview(
-		id: any,
+	async update(
+		id: string,
+		updateFacilityDto: UpdateFacilityDto,
 		req: any,
-		reviewDto: CreateReviewDto,
-		files?: { images?: Express.Multer.File[] },
-	) {
-		reviewDto.facilityID = id;
-		await this.reviewService.create(req, reviewDto, files || null);
-		return this.facilityModel.findById(id);
-	}
-
-	async addPhoto(
-		id: any,
-		req: any,
-		files?: { images?: Express.Multer.File[] },
-	) {
-		await this.photoService.uploadManyFile(files || null, {
-			ownerID: id,
-		});
-		const sortPhoto = await this.photoService.findMany({
-			ownerID: id,
-			sortField: 'createdAt',
-			sortOrder: 'desc',
-			limit: parseInt(appConfig.maxElementEmbedd),
-		});
-		const facilite = await this.facilityModel.findById(id);
-		facilite.photos = sortPhoto.items;
-		return facilite.save();
+	): Promise<Facility> {
+		this.isOwnerFacility(id, req);
+		return await this.facilityModel.findOneAndUpdate(
+			{ _id: id },
+			updateFacilityDto,
+			{ new: true },
+		);
 	}
 
 	async findMany(
@@ -89,29 +72,113 @@ export class FacilityService {
 	}
 
 	async findOneByID(id: string): Promise<Facility> {
-		return await this.facilityModel.findById(id);
+		const result = this.facilityModel
+			.findById(id)
+			.populate('brandID')
+			.populate('facilityCategoryID');
+		return result;
 	}
 
-	async delete(id: string): Promise<boolean> {
-		const review = await this.facilityModel.findOneAndDelete({ _id: id });
-		review.photos.forEach((re) => {
-			this.photoService.delete(re._id);
-		});
-		return null;
-	}
-
-	deletePhoto(
+	async addReview(
 		id: any,
 		req: any,
-		listDelete: DeletePhotoOfFacilityDto,
-	): Promise<boolean> {
-		listDelete.deletedImages.forEach(async (element) => {
-			await this.facilityModel.findOneAndUpdate(
-				{ _id: id },
-				{ $pull: { photos: { _id: element } } },
-			);
-			await this.photoService.delete(element);
+		reviewDto: CreateReviewDto,
+		files?: { images?: Express.Multer.File[] },
+	): Promise<Facility> {
+		this.isOwnerFacility(id, req);
+		reviewDto.facilityID = id;
+		const createdReview = await this.reviewService.create(
+			req,
+			reviewDto,
+			files || null,
+		);
+
+		return this.facilityModel.findOneAndUpdate(
+			{ _id: id },
+			{
+				$push: {
+					reviews: {
+						$each: [createdReview],
+						$slice: -appConfig.maxElementEmbedd,
+					},
+				},
+			},
+			{ new: true },
+		);
+	}
+
+	async addPhoto(
+		id: any,
+		req: any,
+		files?: { images?: Express.Multer.File[] },
+	): Promise<Facility> {
+		this.isOwnerFacility(id, req);
+		await this.photoService.uploadManyFile(files || null, {
+			ownerID: id,
 		});
-		return null;
+		const sortPhoto = await this.photoService.findMany({
+			ownerID: id,
+			sortField: 'createdAt',
+			sortOrder: 'desc',
+			limit: parseInt(appConfig.maxElementEmbedd),
+		});
+		const facility = await this.facilityModel.findById(id);
+		facility.photos = [...sortPhoto.items];
+		return facility.save();
+	}
+
+	async delete(id: string, req: any): Promise<boolean> {
+		this.isOwnerFacility(id, req);
+		const facility = await this.facilityModel.findById(id);
+		facility.reviews.forEach(async (el) => {
+			await this.reviewService.delete(el._id);
+		});
+		facility.photos.forEach(async (el) => {
+			await this.photoService.delete(el._id);
+		});
+		await this.facilityModel.findOneAndDelete({ _id: id });
+		return true;
+	}
+
+	async deletePhoto(id: string, req: any, listID: string[]): Promise<Facility> {
+		this.isOwnerFacility(id, req);
+		listID.forEach(async (element) => {
+			if (isValidObjectId(element)) {
+				await this.facilityModel.findOneAndUpdate(
+					{ _id: id },
+					{ $pull: { photos: { _id: element } } },
+					{ new: true },
+				);
+				await this.photoService.delete(element);
+			}
+		});
+		return this.facilityModel.findById(id);
+	}
+
+	async deleteReview(
+		facilityID: string,
+		req: any,
+		listID: string[],
+	): Promise<Facility> {
+		this.isOwnerFacility(facilityID, req);
+		listID.forEach(async (element) => {
+			if (isValidObjectId(element)) {
+				await this.facilityModel.findOneAndUpdate(
+					{ _id: facilityID },
+					{ $pull: { reviews: { _id: element } } },
+				);
+				await this.reviewService.delete(element);
+			}
+		});
+		return this.facilityModel.findById(facilityID);
+	}
+
+	async isOwnerFacility(facilityID: string, req: any): Promise<void> {
+		const ownerID = await this.facilityModel.findById(facilityID);
+		if (ownerID != req.user.uid) {
+			throw new ForbiddenException(
+				'You do not have permission to access this document',
+			);
+		}
 	}
 }

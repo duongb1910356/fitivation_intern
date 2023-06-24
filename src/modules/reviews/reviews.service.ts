@@ -1,8 +1,6 @@
 import { Injectable, Req } from '@nestjs/common';
 import { Review, ReviewDocument } from './schemas/reviews.schema';
 import { CreateReviewDto } from './dto/create-review-dto';
-import { generateUniqueId } from 'src/utils/gen-uid';
-import { CreatePhotoDto } from '../photo/dto/create-photo-dto';
 import { PhotoService } from '../photo/photo.service';
 import { InjectModel } from '@nestjs/mongoose';
 import { Model } from 'mongoose';
@@ -21,18 +19,25 @@ export class ReviewService {
 		reviewDto: CreateReviewDto,
 		files?: { images?: Express.Multer.File[] },
 	): Promise<Review> {
-		console.log('da chay toi day >> ', files);
-
-		if (Object.getPrototypeOf(files) != null) {
-			console.log('da vao if');
-			const photoDto: CreatePhotoDto = {
-				ownerID: generateUniqueId(),
-			};
-			const photos = await this.photoService.uploadManyFile(files, photoDto);
-			reviewDto.photos = photos.items;
-		}
 		reviewDto.accountID = req.user.uid;
-		return this.reviewModel.create(reviewDto);
+		const createdReview = await this.reviewModel.create(reviewDto);
+
+		if (files && files.images) {
+			const photos = await this.photoService.uploadManyFile(files, {
+				ownerID: createdReview._id,
+			});
+			createdReview.photos = photos.items;
+		}
+		return await createdReview.save();
+		// if (files && files.images) {
+		// 	const photoDto: CreatePhotoDto = {
+		// 		ownerID: generateUniqueId(),
+		// 	};
+		// 	const photos = await this.photoService.uploadManyFile(files, photoDto);
+		// 	reviewDto.photos = photos.items;
+		// }
+		// // if (Object.getPrototypeOf(files) != null) {
+		// // }
 	}
 
 	async findMany(filter: ListOptions<Review>): Promise<ListResponse<Review>> {
@@ -58,10 +63,12 @@ export class ReviewService {
 	}
 
 	async delete(id: string): Promise<boolean> {
-		const review = await this.reviewModel.findOneAndDelete({ _id: id });
-		review.photos.forEach((re) => {
-			this.photoService.delete(re._id);
-		});
+		const deletedReview = await this.reviewModel.findOneAndDelete({ _id: id });
+		if (deletedReview) {
+			deletedReview.photos.forEach(async (el) => {
+				await this.photoService.delete(el._id);
+			});
+		}
 		return null;
 	}
 

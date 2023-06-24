@@ -52,6 +52,7 @@ export class ReviewsController {
 					items: {
 						type: 'string',
 						format: 'binary',
+						description: 'accept: jpeg|png',
 					},
 				},
 				facilityID: {
@@ -107,7 +108,7 @@ export class ReviewsController {
 			images?: Express.Multer.File[];
 		},
 	) {
-		console.log('co');
+		console.log('review photo >> ', files);
 		return await this.reviewService.create(req, reviewDto, files || undefined);
 	}
 

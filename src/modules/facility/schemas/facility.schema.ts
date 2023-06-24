@@ -81,7 +81,7 @@ export class Facility extends BaseObject {
 	description: string;
 
 	@Prop({ type: [Number], required: false, default: [] })
-	coordinationLocation: [number, number];
+	coordinates: [number, number];
 
 	@Prop({ enum: State, default: State.ACTIVE })
 	state: State;
@@ -122,6 +122,5 @@ export const FacilitySchema = SchemaFactory.createForClass(Facility);
 
 export const FacilitySchemaFactory = () => {
 	const facilitySchema = FacilitySchema;
-
 	return facilitySchema;
 };

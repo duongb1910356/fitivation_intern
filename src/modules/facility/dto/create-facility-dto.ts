@@ -18,9 +18,9 @@ export class CreateFacilityDto {
 	@IsString()
 	facilityCategoryID: string;
 
-	@IsString()
 	@IsOptional()
-	ownerID?: string;
+	@IsString()
+	ownerID: string;
 
 	@IsEnum(State)
 	@IsOptional()
@@ -42,12 +42,11 @@ export class CreateFacilityDto {
 	description: string;
 
 	@IsArray()
-	coordinates?: string[];
+	coordinates?: number[];
 
 	@IsEnum(ScheduleType)
 	scheduleType: ScheduleType;
 
-	// @IsNotEmpty()
 	@IsArray()
 	@IsOptional()
 	photos: Photo[];

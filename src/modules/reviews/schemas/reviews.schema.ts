@@ -1,10 +1,6 @@
 import { Prop, Schema, SchemaFactory } from '@nestjs/mongoose';
-import mongoose, { HydratedDocument, Model } from 'mongoose';
-import { appConfig } from 'src/app.config';
-import {
-	Facility,
-	FacilityDocument,
-} from 'src/modules/facility/schemas/facility.schema';
+import mongoose, { HydratedDocument } from 'mongoose';
+import { Facility } from 'src/modules/facility/schemas/facility.schema';
 import { Photo, PhotoSchema } from 'src/modules/photo/schemas/photo.schema';
 import { User } from 'src/modules/users/schemas/user.schema';
 import { BaseObject } from 'src/shared/schemas/base-object.schema';
@@ -39,33 +35,43 @@ export class Review extends BaseObject {
 
 export const ReviewSchema = SchemaFactory.createForClass(Review);
 
-export const ReviewSchemaFactory = (facilityModel: Model<FacilityDocument>) => {
-	const reviewSchema = ReviewSchema;
+// export const ReviewSchemaFactory = (
+// 	photoModel: Model<PhotoDocument>,
+// 	facilityModel: Model<FacilityDocument>,
+// ) => {
+// 	const reviewSchema = ReviewSchema;
 
-	reviewSchema.post('save', async function (doc) {
-		const facilityID = doc.facilityID;
-		await facilityModel.findOneAndUpdate(
-			{ _id: facilityID },
-			{
-				$push: {
-					reviews: {
-						$each: [doc],
-						$slice: -appConfig.maxElementEmbedd,
-					},
-				},
-			},
-		);
-	});
+// 	// reviewSchema.pre('findOneAndDelete', async function (next) {
+// 	// 	const review = await this.model.findOne(this.getFilter());
+// 	// 	console.log('review deleted >> ', review);
 
-	reviewSchema.pre('findOneAndDelete', async function (next) {
-		const review = await this.model.findOne(this.getFilter());
-		console.log('review deleted >> ', review);
-		await facilityModel.findOneAndUpdate(
-			{ _id: review.facilityID },
-			{ $pull: { reviews: { _id: review._id } } },
-		);
-		return next();
-	});
+// 	// 	review.photos.forEach(async (el) => {
+// 	// 		await photoModel.findOneAndDelete({ _id: el._id });
+// 	// 	});
 
-	return reviewSchema;
-};
+// 	// 	// await facilityModel.findOneAndUpdate(
+// 	// 	// 	{ _id: review.facilityID },
+// 	// 	// 	{ $pull: { reviews: { _id: review._id } } },
+// 	// 	// );
+// 	// 	return next();
+// 	// });
+
+// 	// reviewSchema.post('save', async function (doc, next) {
+// 	// 	const facilityID = doc.facilityID;
+// 	// 	console.log('da tao review');
+// 	// 	await facilityModel.findOneAndUpdate(
+// 	// 		{ _id: facilityID },
+// 	// 		{
+// 	// 			$push: {
+// 	// 				reviews: {
+// 	// 					$each: [doc],
+// 	// 					$slice: -appConfig.maxElementEmbedd,
+// 	// 				},
+// 	// 			},
+// 	// 		},
+// 	// 	);
+// 	// 	return next();
+// 	// });
+
+// 	return reviewSchema;
+// };

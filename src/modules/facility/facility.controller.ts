@@ -54,10 +54,11 @@ import { dayOfWeek } from '../facility-schedule/entities/open-time.entity';
 import { HolidayDto } from '../holiday/dto/holiday-dto';
 import { CreatePackageTypeDto } from '../package-type/dto/create-package-type-dto';
 import { UpdateOrderDto } from '../package-type/dto/update-order-dto';
-import { DeletePhotoOfFacilityDto } from './dto/update-photo-facility';
+import { DeletePhotoOfFacilityDto } from './dto/delete-photo-facility';
 // import { FacilityService } from './facility.service';
 import { CreateReviewDto } from '../reviews/dto/create-review-dto';
 import { FacilityService } from './facility.service';
+import { DeleteReviewOfFacilityDto } from './dto/delete-review-facility';
 
 @ApiTags('facilities')
 @Controller('facilities')
@@ -92,7 +93,7 @@ export class FacilityController {
 						},
 						summary: 'Phòng gym thân thiện',
 						description: 'Nhiều dụng cụ tập luyện',
-						coordinationLocation: [65, 56],
+						coordinates: [65, 56],
 						state: State.ACTIVE,
 						status: Status.APPROVED,
 						averageStar: null,
@@ -182,7 +183,7 @@ export class FacilityController {
 			},
 			summary: 'Phòng gym thân thiện',
 			description: 'Nhiều dụng cụ tập luyện',
-			coordinationLocation: [65, 56],
+			coordinates: [65, 56],
 			state: State.ACTIVE,
 			status: Status.APPROVED,
 			averageStar: null,
@@ -329,7 +330,7 @@ export class FacilityController {
 							},
 							summary: 'Phòng gym thân thiện',
 							description: 'Nhiều dụng cụ tập luyện',
-							coordinationLocation: [65, 56],
+							coordinates: [65, 56],
 							state: State.ACTIVE,
 							status: Status.APPROVED,
 							averageStar: 5,
@@ -1031,24 +1032,24 @@ export class FacilityController {
 		// examples: {
 		// 	example1: {
 		// 		value: {
-		// 			brandID: '1123456',
-		// 			facilityCategoryID: '1233',
+		// 			brandID: '64951fa2d6fe6b9d23357331',
+		// 			facilityCategoryID: '64951fa2d6fe6b9d23357331',
 		// 			name: 'City gym',
 		// 			address: {
-		// 				street: 'string',
-		// 				province: 'string',
-		// 				provinceCode: 'string',
-		// 				district: 'string',
-		// 				districtCode: 'string',
-		// 				commune: 'string',
-		// 				communeCode: 'string',
+		// 				street: '30/4',
+		// 				province: 'Thành phố Cần Thơ',
+		// 				provinceCode: '065',
+		// 				district: 'Quận Ninh Kiều',
+		// 				districtCode: '066',
+		// 				commune: 'Phường Xuân Khánh',
+		// 				communeCode: '067',
 		// 			},
 		// 			summary: 'CHẤT LƯỢNG LÀ DANH DỰ',
 		// 			description: 'HIỆN ĐẠI BẬT NHẤT',
 		// 			coordinates: [45, 54],
 		// 			scheduleType: ScheduleType.WEEKLY,
 		// 			photos: [],
-		// 		} as unknown as CreateFacilityDto,
+		// 		} as CreateFacilityDto,
 		// 	},
 		// },
 		schema: {
@@ -1078,7 +1079,13 @@ export class FacilityController {
 				},
 				summary: { type: 'string' },
 				description: { type: 'string' },
-				coordinates: { type: 'array', items: { type: 'string' } },
+				coordinates: {
+					type: 'array',
+					items: {
+						type: 'number',
+						format: 'number',
+					},
+				},
 				scheduleType: { type: 'string', enum: ['DAILY', 'WEEKLY', 'MONTHLY'] },
 			},
 		},
@@ -1106,7 +1113,7 @@ export class FacilityController {
 					},
 					summary: 'Phòng gym thân thiện',
 					description: 'Nhiều dụng cụ tập luyện',
-					coordinationLocation: [65, 56],
+					coordinates: [65, 56],
 					state: State.ACTIVE,
 					status: Status.APPROVED,
 					averageStar: 5,
@@ -1132,18 +1139,20 @@ export class FacilityController {
 			images?: Express.Multer.File[];
 		},
 	) {
+		console.log('body >>', createFacilityDto);
 		return this.facilityService.create(
 			createFacilityDto,
 			req,
 			files || undefined,
 		);
 	}
+
 	@Delete(':facilityID')
 	@ApiBearerAuth()
 	@ApiOperation({
 		summary: 'Delete Facility by facilityID',
 	})
-	@ApiParam({ name: 'id', type: String, description: 'Facility ID' })
+	@ApiParam({ name: 'facilityID', type: String, description: 'Facility ID' })
 	@ApiResponse({
 		status: 200,
 		schema: {
@@ -1164,8 +1173,8 @@ export class FacilityController {
 		status: 404,
 		description: 'Facility not found!',
 	})
-	deleteFacilityById() {
-		//
+	deleteFacilityById(@Param('facilityID') facilityID, @Req() req: any) {
+		return this.facilityService.delete(facilityID, req);
 	}
 
 	@ApiBearerAuth()
@@ -1269,9 +1278,9 @@ export class FacilityController {
 					summary: 'CHẤT LƯỢNG LÀ DANH DỰ',
 					description: 'HIỆN ĐẠI BẬT NHẤT',
 					coordinates: [45, 54],
-					state: State.ACTIVE,
 					scheduleType: ScheduleType.WEEKLY,
-				} as unknown as UpdateFacilityDto,
+					state: State.ACTIVE,
+				} as UpdateFacilityDto,
 			},
 		},
 	})
@@ -1299,7 +1308,7 @@ export class FacilityController {
 					averageStar: null,
 					summary: 'CHẤT LƯỢNG LÀ DANH DỰ',
 					description: 'ABC',
-					coordinationLocation: [45, 54],
+					coordinates: [45, 54],
 					state: State.ACTIVE,
 					status: Status.APPROVED,
 					photos: [],
@@ -1316,13 +1325,17 @@ export class FacilityController {
 		status: 400,
 		description: '[Input] invalid!',
 	})
-	updateFacility() {
-		//
+	updateFacility(
+		@Param('facilityID') facilityID,
+		@Body() body: UpdateFacilityDto,
+		@Req() req: any,
+	) {
+		return this.facilityService.update(facilityID, body, req);
 	}
 
 	@Patch(':facilityID/reviews/add')
 	@ApiOperation({
-		summary: 'Embedd newest review to facility',
+		summary: 'Add the newest reviews to the facility',
 	})
 	@ApiBearerAuth()
 	@ApiConsumes('multipart/form-data')
@@ -1336,6 +1349,7 @@ export class FacilityController {
 					items: {
 						type: 'string',
 						format: 'binary',
+						description: 'accept: jpeg|png',
 					},
 				},
 				rating: {
@@ -1427,17 +1441,22 @@ export class FacilityController {
 	@Patch(':facilityID/photos/add')
 	@ApiBearerAuth()
 	@ApiOperation({
-		summary: 'Update photo of facility',
+		summary: 'Add the newest photos to the facility',
 	})
 	@ApiParam({ name: 'facilityID', type: String, description: 'Facility ID' })
 	@ApiConsumes('multipart/form-data')
 	@ApiBody({
-		type: DeletePhotoOfFacilityDto,
-		examples: {
-			example1: {
-				value: {
-					deletedImages: ['name_image1', 'name_image2'],
-				} as DeletePhotoOfFacilityDto,
+		schema: {
+			type: 'object',
+			properties: {
+				images: {
+					type: 'array',
+					items: {
+						type: 'string',
+						format: 'binary',
+						description: 'accept: jpeg|png',
+					},
+				},
 			},
 		},
 	})
@@ -1465,7 +1484,7 @@ export class FacilityController {
 					averageStar: null,
 					summary: 'CHẤT LƯỢNG LÀ DANH DỰ',
 					description: 'ABC',
-					coordinationLocation: [45, 54],
+					coordinates: [45, 54],
 					state: State.ACTIVE,
 					status: Status.APPROVED,
 					photos: [],
@@ -1497,16 +1516,21 @@ export class FacilityController {
 	@Patch(':facilityID/photos/delete')
 	@ApiBearerAuth()
 	@ApiOperation({
-		summary: 'Delete many photos of facility',
+		summary: 'Delete photos of facility',
 	})
 	@ApiParam({ name: 'facilityID', type: String, description: 'Facility ID' })
 	@ApiBody({
-		type: DeletePhotoOfFacilityDto,
-		examples: {
-			example1: {
-				value: {
-					deletedImages: ['id_image1', 'id_image2'],
-				} as DeletePhotoOfFacilityDto,
+		description: 'listDeleteID is array _id of image which you want to deleted',
+		schema: {
+			type: 'object',
+			properties: {
+				listDeleteID: {
+					type: 'array',
+					items: {
+						type: 'string',
+						format: 'ObjectId',
+					},
+				},
 			},
 		},
 	})
@@ -1534,7 +1558,7 @@ export class FacilityController {
 					averageStar: null,
 					summary: 'CHẤT LƯỢNG LÀ DANH DỰ',
 					description: 'ABC',
-					coordinationLocation: [45, 54],
+					coordinates: [45, 54],
 					state: State.ACTIVE,
 					status: Status.APPROVED,
 					photos: [],
@@ -1554,8 +1578,87 @@ export class FacilityController {
 	async deletePhotoFacility(
 		@Param('facilityID') facilityID,
 		@Req() req: any,
-		@Body() listDelete: DeletePhotoOfFacilityDto,
+		@Body() body: DeletePhotoOfFacilityDto,
 	) {
-		return await this.facilityService.deletePhoto(facilityID, req, listDelete);
+		return await this.facilityService.deletePhoto(
+			facilityID,
+			req,
+			body.listDeleteID,
+		);
+	}
+
+	@Patch(':facilityID/reviews/delete')
+	@ApiBearerAuth()
+	@ApiOperation({
+		summary: 'Delete reviews of facility',
+	})
+	@ApiParam({ name: 'facilityID', type: String, description: 'Facility ID' })
+	@ApiBody({
+		description:
+			'listDeleteID is array _id of reivew which you want to deleted',
+		schema: {
+			type: 'object',
+			properties: {
+				listDeleteID: {
+					type: 'array',
+					items: {
+						type: 'string',
+						format: 'ObjectId',
+					},
+				},
+			},
+		},
+	})
+	@ApiOkResponse({
+		status: 200,
+		schema: {
+			example: {
+				code: 200,
+				message: 'Success',
+				data: {
+					_id: 'string',
+					brandID: {},
+					facilityCategoryID: {},
+					ownerID: {},
+					name: 'City Gym',
+					address: {
+						street: '30/4',
+						commune: 'Phường Xuân Khánh',
+						communeCode: '011',
+						district: 'Quận Ninh Kiều',
+						districtCode: '056',
+						province: 'Thành phố Cần Thơ',
+						provinceCode: '065',
+					},
+					averageStar: null,
+					summary: 'CHẤT LƯỢNG LÀ DANH DỰ',
+					description: 'ABC',
+					coordinates: [45, 54],
+					state: State.ACTIVE,
+					status: Status.APPROVED,
+					photos: [],
+					reviews: [],
+					scheduleType: ScheduleType.WEEKLY,
+					createdAt: new Date(),
+					updatedAt: new Date(),
+				} as Facility,
+			},
+		},
+	})
+	@ApiBadRequestResponse({
+		type: BadRequestException,
+		status: 400,
+		description: '[Input] invalid!',
+	})
+	async deleteReviewFacility(
+		@Param('facilityID') facilityID,
+		@Req() req: any,
+		@Body() body: DeleteReviewOfFacilityDto,
+	) {
+		return await this.facilityService.deleteReview(
+			facilityID,
+			req,
+			body.listDeleteID,
+		);
 	}
 }

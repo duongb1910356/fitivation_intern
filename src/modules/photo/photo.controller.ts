@@ -63,9 +63,11 @@ export class PhotoController {
 				file: {
 					type: 'string',
 					format: 'binary',
+					description: 'accept: jpeg|png',
 				},
 				ownerID: {
 					type: 'string',
+					format: 'ObjectId',
 				},
 			},
 		},
@@ -125,8 +127,6 @@ export class PhotoController {
 		status: 200,
 		schema: {
 			example: {
-				// code: 200,
-				// message: 'Success',
 				items: [
 					{
 						_id: '123456789',
@@ -151,17 +151,26 @@ export class PhotoController {
 					items: {
 						type: 'string',
 						format: 'binary',
+						description: 'accept: jpeg|png',
 					},
 				},
 				ownerID: {
 					type: 'string',
+					format: 'ObjectId',
 				},
 			},
 		},
 	})
 	@UseInterceptors(FileFieldsInterceptor([{ name: 'images', maxCount: 5 }]))
 	uploadManyFile(
-		@UploadedFiles()
+		@UploadedFiles(
+			new ParseFilePipe({
+				validators: [
+					new MaxFileSizeValidator({ maxSize: 1000 * 1000 }), // 1MB
+					new FileTypeValidator({ fileType: /(?:jpeg|png)/i }),
+				],
+			}),
+		)
 		files: {
 			images?: Express.Multer.File[];
 		},
