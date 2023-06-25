@@ -488,8 +488,9 @@ export class UsersController {
 	}
 
 	@ApiOperation({
-		summary: 'updateMe',
-		description: 'Allow user update personal account data',
+		summary: 'updateMyData',
+		description:
+			'Allow user update personal account data but (this endpoint does not use to update password)',
 	})
 	@ApiCreatedResponse({ type: TokenResponse, status: 200 })
 	@ApiResponse({
@@ -523,7 +524,7 @@ export class UsersController {
 		},
 	})
 	@Patch('update-me')
-	updateMe() {
+	updateMyData() {
 		return 'updateMe';
 	}
 

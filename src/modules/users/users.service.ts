@@ -79,6 +79,7 @@ export class UsersService {
 		user.refreshToken = undefined;
 		return user;
 	}
+
 	async deleteOne(userID: string): Promise<boolean> {
 		const user = await this.userModel.findById(userID);
 
