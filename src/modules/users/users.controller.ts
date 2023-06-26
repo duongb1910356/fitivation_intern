@@ -47,6 +47,26 @@ import { GetCurrentUser } from 'src/decorators/get-current-user.decorator';
 export class UsersController {
 	constructor(private userService: UsersService) {}
 
+	@ApiOperation({
+		summary: 'getProfile',
+		description: 'Get loggedIn user info',
+	})
+	@ApiResponse({ type: User, status: 200 })
+	@ApiResponse({
+		status: 400,
+		schema: {
+			example: {
+				code: '400',
+				message: 'Token invalid',
+				details: null,
+			} as ErrorResponse<null>,
+		},
+	})
+	@Get('me')
+	getProfile(@GetCurrentUser('sub') userID: string) {
+		return this.userService.getCurrentUser(userID);
+	}
+
 	@ApiOperation({ summary: 'findUserByID', description: 'Get one user by ID' })
 	@ApiParam({ name: 'id', type: String, description: 'User ID' })
 	@ApiOkResponse({

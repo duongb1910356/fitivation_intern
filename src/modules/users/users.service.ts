@@ -125,6 +125,14 @@ export class UsersService {
 		}
 	}
 
+	async getCurrentUser(userID: string) {
+		const user = await this.userModel.findById(userID);
+
+		if (!user) throw new NotFoundException('Logged User no longer exists');
+
+		return user;
+	}
+
 	async checkExist(uniqueFieldObj: {
 		username: string;
 		email: string;
