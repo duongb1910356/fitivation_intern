@@ -401,8 +401,8 @@ export class UsersController {
 		},
 	})
 	@Patch('/:id')
-	updateUser(@Body() updateUserDto: UpdateUserDto, @Param('id') id: string) {
-		return this.userService.updateOne();
+	updateUser(@Body() dto: UpdateUserDto, @Param('id') id: string) {
+		return this.userService.findOneByIDAndUpdate(id, dto);
 	}
 
 	@ApiOperation({ summary: 'deleteUser', description: 'Delete user ' })

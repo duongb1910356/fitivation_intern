@@ -59,6 +59,10 @@ export class UsersService {
 		userID: string,
 		updateUserDto: UpdateUserDto,
 	): Promise<User> {
+		if (updateUserDto.password) {
+			updateUserDto.password = await Encrypt.hashData(updateUserDto.password);
+		}
+
 		const user = await this.userModel.findByIdAndUpdate(userID, updateUserDto, {
 			new: true,
 			runValidators: true,
@@ -77,9 +81,6 @@ export class UsersService {
 		return user;
 	}
 
-	updateOne() {
-		return 'updateOne';
-	}
 	async createOne(dto: CreateUserDto | SignupDto): Promise<User> {
 		const isExist = await this.checkExist({
 			email: dto.email,
