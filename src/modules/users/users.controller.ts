@@ -486,26 +486,6 @@ export class UsersController {
 	}
 
 	@ApiOperation({
-		summary: 'getProfile',
-		description: 'Get loggedIn user info',
-	})
-	@ApiResponse({ type: User, status: 200 })
-	@ApiResponse({
-		status: 400,
-		schema: {
-			example: {
-				code: '400',
-				message: 'Token invalid',
-				details: null,
-			} as ErrorResponse<null>,
-		},
-	})
-	@Get('me')
-	getProfile(@GetCurrentUser('sub') userID: string) {
-		return 'getMe';
-	}
-
-	@ApiOperation({
 		summary: 'updateMyData',
 		description:
 			'Allow user update personal account data but (this endpoint does not use to update password)',
