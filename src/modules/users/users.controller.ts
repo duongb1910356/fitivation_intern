@@ -39,6 +39,7 @@ import { ErrorResponse } from 'src/shared/response/common-response';
 import { ApiDocsPagination } from 'src/decorators/swagger-form-data.decorator';
 import { TokenResponse } from '../auth/types/token-response.types';
 import { ListResponse, QueryObject } from 'src/shared/utils/query-api';
+import { GetCurrentUser } from 'src/decorators/get-current-user.decorator';
 
 @ApiTags('users')
 @ApiBearerAuth()
@@ -401,7 +402,10 @@ export class UsersController {
 		},
 	})
 	@Patch('/:id')
-	updateUser(@Body() dto: UpdateUserDto, @Param('id') id: string) {
+	updateUser(
+		@Body() dto: UpdateUserDto,
+		@Param('id') id: string,
+	): Promise<User> {
 		return this.userService.findOneByIDAndUpdate(id, dto);
 	}
 
@@ -457,7 +461,7 @@ export class UsersController {
 		},
 	})
 	@Delete(':id')
-	deleteUser(@Param('id') id: string) {
+	deleteUser(@Param('id') id: string): Promise<boolean> {
 		return this.userService.deleteOne(id);
 	}
 
@@ -477,7 +481,7 @@ export class UsersController {
 		},
 	})
 	@Get('me')
-	getProfile() {
+	getProfile(@GetCurrentUser('sub') userID: string) {
 		return 'getMe';
 	}
 
