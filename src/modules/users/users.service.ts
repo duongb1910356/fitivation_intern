@@ -15,6 +15,7 @@ import {
 	QueryAPI,
 	QueryObject,
 } from 'src/shared/utils/query-api';
+import { Encrypt } from 'src/shared/utils/encrypt';
 
 @Injectable()
 export class UsersService {
@@ -89,8 +90,12 @@ export class UsersService {
 
 		if (isExist.value) throw new BadRequestException(isExist.message);
 
+		dto.password = await Encrypt.hashData(dto.password);
+
 		const user = await this.userModel.create(dto);
+
 		user.refreshToken = undefined;
+
 		return user;
 	}
 
