@@ -302,7 +302,6 @@ export class UsersController {
 	})
 	@Post()
 	createUser(@Body() createUserDto: CreateUserDto) {
-		console.log('controller');
 		return this.userService.createOne(createUserDto);
 	}
 
