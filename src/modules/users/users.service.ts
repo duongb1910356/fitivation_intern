@@ -5,7 +5,7 @@ import {
 	NotFoundException,
 } from '@nestjs/common';
 import { InjectModel } from '@nestjs/mongoose';
-import { User, UserDocument } from './schemas/user.schema';
+import { User, UserDocument, UserStatus } from './schemas/user.schema';
 import { Model } from 'mongoose';
 import { CreateUserDto } from './dto/create-user-dto';
 import { SignupDto } from '../auth/dto/signup-dto';
@@ -16,6 +16,8 @@ import {
 	QueryObject,
 } from 'src/shared/utils/query-api';
 import { Encrypt } from 'src/shared/utils/encrypt';
+import { UpdateLoggedUserDataDto } from './dto/update-logged-user-data-dto';
+import { UpdateLoggedUserPasswordDto } from './dto/update-logged-user-password-dto';
 
 @Injectable()
 export class UsersService {
@@ -130,7 +132,61 @@ export class UsersService {
 
 		if (!user) throw new NotFoundException('Logged User no longer exists');
 
+		user.password = undefined;
+		user.refreshToken = undefined;
+
 		return user;
+	}
+
+	async updateMyData(
+		userID: string,
+		dto: UpdateLoggedUserDataDto,
+	): Promise<User> {
+		const user = await this.userModel.findByIdAndUpdate(userID, dto, {
+			new: true,
+			runValidators: true,
+		});
+
+		if (!user) throw new NotFoundException('Not found user with that ID');
+
+		user.password = undefined;
+		user.refreshToken = undefined;
+
+		return user;
+	}
+
+	async updateMyPassword(
+		userID: string,
+		dto: UpdateLoggedUserPasswordDto,
+	): Promise<boolean> {
+		dto.password = await Encrypt.hashData(dto.password);
+
+		const user = await this.userModel.findByIdAndUpdate(userID, dto, {
+			new: true,
+			runValidators: true,
+		});
+
+		if (!user) throw new NotFoundException('Not found user with that ID');
+
+		user.password = undefined;
+		user.refreshToken = undefined;
+
+		return true;
+	}
+
+	async deleteMe(userID: string): Promise<boolean> {
+		const user = await this.userModel.findByIdAndUpdate(
+			userID,
+			{ status: UserStatus.INACTIVE },
+			{
+				new: true,
+				runValidators: true,
+			},
+		);
+
+		if (!user) throw new NotFoundException('Not found user with that ID');
+
+		return true;
 	}
 
 	async checkExist(uniqueFieldObj: {

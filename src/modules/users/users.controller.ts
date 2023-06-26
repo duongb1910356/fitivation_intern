@@ -40,6 +40,8 @@ import { ApiDocsPagination } from 'src/decorators/swagger-form-data.decorator';
 import { TokenResponse } from '../auth/types/token-response.types';
 import { ListResponse, QueryObject } from 'src/shared/utils/query-api';
 import { GetCurrentUser } from 'src/decorators/get-current-user.decorator';
+import { UpdateLoggedUserDataDto } from './dto/update-logged-user-data-dto';
+import { UpdateLoggedUserPasswordDto } from './dto/update-logged-user-password-dto';
 
 @ApiTags('users')
 @ApiBearerAuth()
@@ -327,6 +329,93 @@ export class UsersController {
 	}
 
 	@ApiOperation({
+		summary: 'updateMyData',
+		description:
+			'Allow user update personal account data but (this endpoint does not use to update password)',
+	})
+	@ApiCreatedResponse({ type: TokenResponse, status: 200 })
+	@ApiResponse({
+		status: 400,
+		schema: {
+			example: {
+				code: '400',
+				message: 'Input invalid',
+				details: null,
+			} as ErrorResponse<null>,
+		},
+	})
+	@ApiResponse({
+		status: 401,
+		schema: {
+			example: {
+				code: '401',
+				message: 'Unauthorized',
+				details: null,
+			} as ErrorResponse<null>,
+		},
+	})
+	@ApiResponse({
+		status: 403,
+		schema: {
+			example: {
+				code: '403',
+				message: `Forbidden resource`,
+				details: null,
+			} as ErrorResponse<null>,
+		},
+	})
+	@Patch('update-me')
+	updateMyData(
+		@GetCurrentUser('sub') userID: string,
+		@Body() dto: UpdateLoggedUserDataDto,
+	): Promise<User> {
+		return this.userService.updateMyData(userID, dto);
+	}
+
+	@ApiOperation({
+		summary: 'updatePassword',
+		description: 'Allow current user update password',
+	})
+	@ApiCreatedResponse({ type: TokenResponse, status: 200 })
+	@ApiResponse({
+		status: 400,
+		schema: {
+			example: {
+				code: '400',
+				message: 'Input invalid',
+				details: null,
+			} as ErrorResponse<null>,
+		},
+	})
+	@ApiResponse({
+		status: 401,
+		schema: {
+			example: {
+				code: '401',
+				message: 'Unauthorized',
+				details: null,
+			} as ErrorResponse<null>,
+		},
+	})
+	@ApiResponse({
+		status: 403,
+		schema: {
+			example: {
+				code: '403',
+				message: `Forbidden resource`,
+				details: null,
+			} as ErrorResponse<null>,
+		},
+	})
+	@Patch('update-my-password')
+	updateMyPassword(
+		@GetCurrentUser('sub') userID: string,
+		@Body() dto: UpdateLoggedUserPasswordDto,
+	): Promise<boolean> {
+		return this.userService.updateMyPassword(userID, dto);
+	}
+
+	@ApiOperation({
 		summary: 'updateUser',
 		description: 'Update user information',
 	})
@@ -429,6 +518,45 @@ export class UsersController {
 		return this.userService.findOneByIDAndUpdate(id, dto);
 	}
 
+	@ApiOperation({
+		summary: 'deleteMe',
+		description: 'Allow user inactive personal account data',
+	})
+	@ApiResponse({
+		status: 200,
+		schema: {
+			example: {
+				code: '200',
+				message: 'This account will delete after 15 days no login',
+				details: null,
+			},
+		},
+	})
+	@ApiResponse({
+		status: 401,
+		schema: {
+			example: {
+				code: '401',
+				message: 'Unauthorized',
+				details: null,
+			} as ErrorResponse<null>,
+		},
+	})
+	@ApiResponse({
+		status: 403,
+		schema: {
+			example: {
+				code: '403',
+				message: `Forbidden resource`,
+				details: null,
+			} as ErrorResponse<null>,
+		},
+	})
+	@Delete('delete-me')
+	deleteMe(@GetCurrentUser('sub') userID: string): Promise<boolean> {
+		return this.userService.deleteMe(userID);
+	}
+
 	@ApiOperation({ summary: 'deleteUser', description: 'Delete user ' })
 	@ApiParam({ name: 'id', type: String, description: 'User ID' })
 	@ApiResponse({
@@ -483,126 +611,6 @@ export class UsersController {
 	@Delete(':id')
 	deleteUser(@Param('id') id: string): Promise<boolean> {
 		return this.userService.deleteOne(id);
-	}
-
-	@ApiOperation({
-		summary: 'updateMyData',
-		description:
-			'Allow user update personal account data but (this endpoint does not use to update password)',
-	})
-	@ApiCreatedResponse({ type: TokenResponse, status: 200 })
-	@ApiResponse({
-		status: 400,
-		schema: {
-			example: {
-				code: '400',
-				message: 'Input invalid',
-				details: null,
-			} as ErrorResponse<null>,
-		},
-	})
-	@ApiResponse({
-		status: 401,
-		schema: {
-			example: {
-				code: '401',
-				message: 'Unauthorized',
-				details: null,
-			} as ErrorResponse<null>,
-		},
-	})
-	@ApiResponse({
-		status: 403,
-		schema: {
-			example: {
-				code: '403',
-				message: `Forbidden resource`,
-				details: null,
-			} as ErrorResponse<null>,
-		},
-	})
-	@Patch('update-me')
-	updateMyData() {
-		return 'updateMe';
-	}
-
-	@ApiOperation({
-		summary: 'updatePassword',
-		description: 'Allow current user update password',
-	})
-	@ApiCreatedResponse({ type: TokenResponse, status: 200 })
-	@ApiResponse({
-		status: 400,
-		schema: {
-			example: {
-				code: '400',
-				message: 'Input invalid',
-				details: null,
-			} as ErrorResponse<null>,
-		},
-	})
-	@ApiResponse({
-		status: 401,
-		schema: {
-			example: {
-				code: '401',
-				message: 'Unauthorized',
-				details: null,
-			} as ErrorResponse<null>,
-		},
-	})
-	@ApiResponse({
-		status: 403,
-		schema: {
-			example: {
-				code: '403',
-				message: `Forbidden resource`,
-				details: null,
-			} as ErrorResponse<null>,
-		},
-	})
-	@Patch('update-my-password')
-	updateMyPassword() {
-		return 'updatePassword';
-	}
-
-	@ApiOperation({
-		summary: 'deleteMe',
-		description: 'Allow user inactive personal account data',
-	})
-	@ApiResponse({
-		status: 200,
-		schema: {
-			example: {
-				code: '200',
-				message: 'This account will delete after 15 days no login',
-				details: null,
-			},
-		},
-	})
-	@ApiResponse({
-		status: 401,
-		schema: {
-			example: {
-				code: '401',
-				message: 'Unauthorized',
-				details: null,
-			} as ErrorResponse<null>,
-		},
-	})
-	@ApiResponse({
-		status: 403,
-		schema: {
-			example: {
-				code: '403',
-				message: `Forbidden resource`,
-				details: null,
-			} as ErrorResponse<null>,
-		},
-	})
-	@Delete('delete-me')
-	deleteMe() {
-		return 'deleteMe';
 	}
 
 	@ApiOperation({

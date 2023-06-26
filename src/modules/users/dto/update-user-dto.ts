@@ -7,9 +7,11 @@ import {
 	IsString,
 	MaxLength,
 	MinLength,
+	ValidateNested,
 } from 'class-validator';
 import { Type } from 'class-transformer';
 import { Gender, UserRole } from '../schemas/user.schema';
+import { UserAddressDto } from './user-address.dto';
 
 export class UpdateUserDto {
 	@IsOptional()
@@ -38,6 +40,18 @@ export class UpdateUserDto {
 	displayName?: string;
 
 	@IsOptional()
+	@IsString()
+	@MinLength(2)
+	@MaxLength(20)
+	firstName?: string;
+
+	@IsOptional()
+	@IsString()
+	@MinLength(2)
+	@MaxLength(40)
+	lastName?: string;
+
+	@IsOptional()
 	@IsEnum(Gender)
 	gender?: Gender;
 
@@ -49,6 +63,11 @@ export class UpdateUserDto {
 	@IsOptional()
 	@IsMobilePhone('vi-VN')
 	tel?: string;
+
+	@IsOptional()
+	@ValidateNested()
+	@Type(() => UserAddressDto)
+	address?: UserAddressDto;
 
 	@IsOptional()
 	@IsString()
