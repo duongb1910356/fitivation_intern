@@ -152,14 +152,12 @@ export class UsersController {
 					} as User,
 				],
 				total: 1,
-				options: {
+				queryOptions: {
+					sort: 'string',
+					fields: 'string',
 					limit: 10,
-					offset: 0,
-					searchField: '_id',
-					searchValue: 'string',
-					sortField: '_id',
-					sortOrder: 'asc',
-				} as ListOptions<User>,
+					page: 0,
+				} as QueryObject,
 			} as ListResponse<User>,
 		},
 	})
