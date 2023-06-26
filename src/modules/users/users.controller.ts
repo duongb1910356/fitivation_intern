@@ -49,7 +49,7 @@ import { TokenResponse } from '../auth/types/token-response.types';
 export class UsersController {
 	constructor(private userService: UsersService) {}
 
-	@ApiOperation({ summary: 'getUserByID', description: 'Get one user by ID' })
+	@ApiOperation({ summary: 'findUserByID', description: 'Get one user by ID' })
 	@ApiParam({ name: 'id', type: String, description: 'User ID' })
 	@ApiOkResponse({
 		schema: {
@@ -118,12 +118,12 @@ export class UsersController {
 		},
 	})
 	@Get(':id')
-	findOneUser(@Param('id') id) {
+	findUserByID(@Param('id') id: string) {
 		return this.userService.findOne();
 	}
 
 	@ApiDocsPagination('user')
-	@ApiOperation({ summary: 'getManyUsers', description: 'Get many users' })
+	@ApiOperation({ summary: 'findManyUsers', description: 'Get many users' })
 	@ApiResponse({
 		schema: {
 			example: {
@@ -488,8 +488,9 @@ export class UsersController {
 	}
 
 	@ApiOperation({
-		summary: 'updateMe',
-		description: 'Allow user update personal account data',
+		summary: 'updateMyData',
+		description:
+			'Allow user update personal account data but (this endpoint does not use to update password)',
 	})
 	@ApiCreatedResponse({ type: TokenResponse, status: 200 })
 	@ApiResponse({
@@ -523,8 +524,48 @@ export class UsersController {
 		},
 	})
 	@Patch('update-me')
-	updateMe() {
+	updateMyData() {
 		return 'updateMe';
+	}
+
+	@ApiOperation({
+		summary: 'updatePassword',
+		description: 'Allow current user update password',
+	})
+	@ApiCreatedResponse({ type: TokenResponse, status: 200 })
+	@ApiResponse({
+		status: 400,
+		schema: {
+			example: {
+				code: '400',
+				message: 'Input invalid',
+				details: null,
+			} as ErrorResponse<null>,
+		},
+	})
+	@ApiResponse({
+		status: 401,
+		schema: {
+			example: {
+				code: '401',
+				message: 'Unauthorized',
+				details: null,
+			} as ErrorResponse<null>,
+		},
+	})
+	@ApiResponse({
+		status: 403,
+		schema: {
+			example: {
+				code: '403',
+				message: `Forbidden resource`,
+				details: null,
+			} as ErrorResponse<null>,
+		},
+	})
+	@Patch('update-my-password')
+	updateMyPassword() {
+		return 'updatePassword';
 	}
 
 	@ApiOperation({

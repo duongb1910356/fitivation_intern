@@ -5,6 +5,7 @@ import {
 	HttpStatus,
 	Patch,
 	Post,
+	UseGuards,
 } from '@nestjs/common';
 import {
 	ApiBody,
@@ -20,6 +21,8 @@ import { SignupDto } from './dto/signup-dto';
 import { TokenResponse } from './types/token-response.types';
 import { ErrorResponse } from 'src/shared/response/common-response';
 import { Public } from './decorators/public.decorator';
+import { GetCurrentUser } from 'src/decorators/get-current-user.decorator';
+import { RefreshTokenGuard } from './guards/refresh-token.guard';
 
 @ApiTags('auth')
 @Controller('auth')
@@ -126,8 +129,9 @@ export class AuthController {
 		},
 	})
 	@Post('logout')
-	async logout() {
-		this.authService.logout();
+	@HttpCode(HttpStatus.NO_CONTENT)
+	async logout(@GetCurrentUser('sub') userID: string): Promise<boolean> {
+		return this.authService.logout(userID);
 	}
 
 	@ApiOperation({ summary: 'refreshToken', description: 'Refresh new token' })
@@ -151,8 +155,14 @@ export class AuthController {
 		},
 	})
 	@Post('refresh-token')
-	refreshTokens() {
-		return this.authService.refreshTokens();
+	@Public()
+	@UseGuards(RefreshTokenGuard)
+	@HttpCode(HttpStatus.OK)
+	refreshTokens(
+		@GetCurrentUser('sub') userID: string,
+		@GetCurrentUser('refreshToken') refreshToken: string,
+	): Promise<TokenResponse> {
+		return this.authService.refreshTokens(userID, refreshToken);
 	}
 
 	@ApiOperation({
@@ -206,45 +216,5 @@ export class AuthController {
 	@Patch('reset-password/:resetPasswordToken')
 	resetPassword() {
 		return 'resetPassword';
-	}
-
-	@ApiOperation({
-		summary: 'updatePassword',
-		description: 'Allow user update password',
-	})
-	@ApiCreatedResponse({ type: TokenResponse, status: 200 })
-	@ApiResponse({
-		status: 400,
-		schema: {
-			example: {
-				code: '400',
-				message: 'Input invalid',
-				details: null,
-			} as ErrorResponse<null>,
-		},
-	})
-	@ApiResponse({
-		status: 401,
-		schema: {
-			example: {
-				code: '401',
-				message: 'Unauthorized',
-				details: null,
-			} as ErrorResponse<null>,
-		},
-	})
-	@ApiResponse({
-		status: 403,
-		schema: {
-			example: {
-				code: '403',
-				message: `Forbidden resource`,
-				details: null,
-			} as ErrorResponse<null>,
-		},
-	})
-	@Patch('update-password')
-	updatePassword() {
-		return 'updatePassword';
 	}
 }

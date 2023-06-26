@@ -23,7 +23,26 @@ export class UsersService {
 		return 'getOne';
 	}
 
-	async findByIDAndUpdate(
+	async findOneAndUpdate(obj: Partial<User>, updateUserDto: UpdateUserDto) {
+		const user = await this.userModel.findOneAndUpdate(obj, updateUserDto, {
+			new: true,
+			runValidators: true,
+		});
+
+		if (!user) throw new NotFoundException('User not found');
+
+		return user;
+	}
+
+	async findOneByID(userID: string): Promise<User> {
+		const user = await this.userModel.findById(userID);
+
+		if (!user) throw new NotFoundException('Not found user with that ID');
+
+		return user;
+	}
+
+	async findOneByIDAndUpdate(
 		userID: string,
 		updateUserDto: UpdateUserDto,
 	): Promise<User> {
@@ -60,6 +79,7 @@ export class UsersService {
 		user.refreshToken = undefined;
 		return user;
 	}
+
 	async deleteOne(userID: string): Promise<boolean> {
 		const user = await this.userModel.findById(userID);
 
