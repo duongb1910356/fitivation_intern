@@ -3,7 +3,11 @@ import {
 	TargetObject,
 } from './../counter/entities/counter.entity';
 import { CounterService } from './../counter/counter.service';
-import { Injectable, NotFoundException } from '@nestjs/common';
+import {
+	BadRequestException,
+	Injectable,
+	NotFoundException,
+} from '@nestjs/common';
 import { InjectModel } from '@nestjs/mongoose';
 import {
 	PackageType,
@@ -47,7 +51,6 @@ export class PackageTypeService {
 			filter;
 
 		let conditions: object;
-		console.log(search);
 		if (search) {
 			conditions = {
 				$or: [
@@ -138,17 +141,24 @@ export class PackageTypeService {
 	}
 
 	async delete(packageTypeID: string): Promise<string> {
-		const packageType = await this.packageTypeModel.findByIdAndDelete(
+		const packageType = await this.findOneByID(packageTypeID);
+		if (!packageType) throw new NotFoundException('PackageType not found');
+
+		const packagesData = await this.packageService.findManyByPackageType(
 			packageTypeID,
+			{},
 		);
-		if (!packageType) {
-			throw new NotFoundException('PackageType not found');
+		if (packagesData.total === 0) {
+			throw new BadRequestException('Please delete all packages before');
 		}
 
-		await this.decreaseAfterDeletion(
-			packageType.facilityID.toString(),
-			packageType.order,
-		);
+		await Promise.all([
+			this.packageTypeModel.findByIdAndDelete(packageTypeID),
+			this.decreaseAfterDeletion(
+				packageType.facilityID.toString(),
+				packageType.order,
+			),
+		]);
 
 		return 'Delete PackageType successfull!!!';
 	}
@@ -212,7 +222,6 @@ export class PackageTypeService {
 		const facilityID = (
 			await this.findOneByID(packageTypeID)
 		).facilityID.toString();
-		console.log(facilityID);
 		return await this.packageService.create(packageTypeID, facilityID, data);
 	}
 }
