@@ -12,6 +12,7 @@ import { JwtService } from '@nestjs/jwt';
 import { appConfig } from '../../app.config';
 import { Encrypt } from 'src/shared/utils/encrypt';
 import { LoginDto } from './dto/login-dto';
+import { UserStatus } from '../users/schemas/user.schema';
 
 @Injectable()
 export class AuthService {
@@ -77,6 +78,10 @@ export class AuthService {
 
 	async login(loginDto: LoginDto): Promise<TokenResponse> {
 		const user = await this.userService.findOneByEmail(loginDto.email);
+
+		if (user.status === UserStatus.INACTIVE) {
+			throw new BadRequestException('User status inactive');
+		}
 
 		const isMatched = await Encrypt.compareData(
 			user.password,
