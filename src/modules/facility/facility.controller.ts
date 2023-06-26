@@ -726,8 +726,7 @@ export class FacilityController {
 		@Param('facilityID') facilityID: string,
 		@Query() options: ListOptions<Holiday>,
 	) {
-		console.log(facilityID, options);
-		//
+		return await this.facilityService.findAllHoliday(facilityID, options);
 	}
 
 	@Public()
