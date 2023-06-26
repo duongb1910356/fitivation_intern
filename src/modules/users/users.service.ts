@@ -10,13 +10,30 @@ import { Model } from 'mongoose';
 import { CreateUserDto } from './dto/create-user-dto';
 import { SignupDto } from '../auth/dto/signup-dto';
 import { UpdateUserDto } from './dto/update-user-dto';
+import {
+	ListResponse,
+	QueryAPI,
+	QueryObject,
+} from 'src/shared/utils/query-api';
 
 @Injectable()
 export class UsersService {
 	constructor(@InjectModel(User.name) private userModel: Model<UserDocument>) {}
 
-	findMany() {
-		return 'getMany';
+	async findMany(query: QueryObject): Promise<ListResponse<User>> {
+		const queryFeatures = new QueryAPI(this.userModel, query)
+			.filter()
+			.sort()
+			.limitfields()
+			.paginate();
+
+		const users = await queryFeatures.queryModel;
+
+		return {
+			total: users.length,
+			queryOptions: queryFeatures.queryOptions,
+			items: users,
+		};
 	}
 
 	findOne() {
