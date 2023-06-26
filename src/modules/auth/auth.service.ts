@@ -98,7 +98,9 @@ export class AuthService {
 		if (user.refreshToken === null)
 			throw new BadRequestException('User already logout');
 
-		await this.userService.findOneByIDAndUpdate(userID, { refreshToken: null });
+		await this.userService.findOneByIDAndUpdate(userID, {
+			refreshToken: null,
+		});
 
 		return true;
 	}
