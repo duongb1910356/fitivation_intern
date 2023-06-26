@@ -1,31 +1,10 @@
+import { Controller, Get, Param, Query } from '@nestjs/common';
 import {
-	BadRequestException,
-	Body,
-	Controller,
-	Delete,
-	Get,
-	NotFoundException,
-	Param,
-	Post,
-	Query,
-	Req,
-	UploadedFiles,
-	UseInterceptors,
-} from '@nestjs/common';
-import {
-	ApiBadRequestResponse,
-	ApiBearerAuth,
-	ApiBody,
-	ApiConsumes,
-	ApiNotFoundResponse,
 	ApiOkResponse,
 	ApiOperation,
 	ApiParam,
-	ApiResponse,
 	ApiTags,
 } from '@nestjs/swagger';
-import { CreateReviewDto } from './dto/create-review-dto';
-import { FileFieldsInterceptor } from '@nestjs/platform-express';
 import { ReviewService } from './reviews.service';
 import { Review } from './schemas/reviews.schema';
 import { ListOptions } from 'src/shared/response/common-response';
@@ -37,6 +16,7 @@ import { Public } from '../auth/decorators/public.decorator';
 export class ReviewsController {
 	constructor(private readonly reviewService: ReviewService) {}
 
+	/* 2 API NÀY TẠM THỜI KHÔNG CẦN THIẾT
 	@Post()
 	@ApiBearerAuth()
 	@ApiConsumes('multipart/form-data')
@@ -111,6 +91,37 @@ export class ReviewsController {
 		console.log('review photo >> ', files);
 		return await this.reviewService.create(req, reviewDto, files || undefined);
 	}
+
+	@Delete(':reviewID')
+	@ApiBearerAuth()
+	@ApiOperation({
+		summary: '(NOTE: API NÀY TẠM THỜI KHÔNG DÙNG) Delete Review by id',
+	})
+	@ApiParam({ name: 'reviewID', type: String, description: 'Review ID' })
+	@ApiResponse({
+		status: 200,
+		schema: {
+			example: {
+				code: 200,
+				message: 'Success',
+				data: null,
+			},
+		},
+	})
+	@ApiBadRequestResponse({
+		type: BadRequestException,
+		status: 400,
+		description: '[Input] invalid!',
+	})
+	@ApiNotFoundResponse({
+		type: NotFoundException,
+		status: 404,
+		description: 'Review not found!',
+	})
+	deleteReviewById(@Param('reviewID') reviewID: any) {
+		return this.reviewService.delete(reviewID);
+	}
+	*/
 
 	@Public()
 	@Get()
@@ -193,35 +204,5 @@ export class ReviewsController {
 	@ApiParam({ name: 'reviewID', type: String, description: 'Review ID' })
 	findOneByID(@Param('reviewID') reviewID) {
 		return this.reviewService.findOneByID(reviewID);
-	}
-
-	@Delete(':reviewID')
-	@ApiBearerAuth()
-	@ApiOperation({
-		summary: 'Delete Review by id',
-	})
-	@ApiParam({ name: 'reviewID', type: String, description: 'Review ID' })
-	@ApiResponse({
-		status: 200,
-		schema: {
-			example: {
-				code: 200,
-				message: 'Success',
-				data: null,
-			},
-		},
-	})
-	@ApiBadRequestResponse({
-		type: BadRequestException,
-		status: 400,
-		description: '[Input] invalid!',
-	})
-	@ApiNotFoundResponse({
-		type: NotFoundException,
-		status: 404,
-		description: 'Review not found!',
-	})
-	deleteReviewById(@Param('reviewID') reviewID: any) {
-		return this.reviewService.delete(reviewID);
 	}
 }
