@@ -57,6 +57,7 @@ import {
 import { ConditionHoliday, HolidayService } from '../holiday/holiday.service';
 import { AttendanceService } from '../attendance/attendance.service';
 import { Public } from '../auth/decorators/public.decorator';
+import { MongoIdValidationPipe } from 'src/pipes/parseMongoId.pipe';
 
 @ApiTags('admin')
 // @ApiBearerAuth()
@@ -146,7 +147,7 @@ export class AdminController {
 		},
 	})
 	updateFacilityState(
-		@Param('facilityID') facilityID: string,
+		@Param('facilityID', MongoIdValidationPipe) facilityID: string,
 		@Body() data: UpdateFacilityStateDto,
 	) {
 		console.log(facilityID, data);
@@ -209,7 +210,7 @@ export class AdminController {
 	})
 	async getAllAttendancesByFacility(
 		@Query() options: ListOptions<Attendance>,
-		@Param('facilityID') facilityID: string,
+		@Param('facilityID', MongoIdValidationPipe) facilityID: string,
 	) {
 		return await this.attendanceService.findMany({ facilityID }, options);
 	}
@@ -270,7 +271,7 @@ export class AdminController {
 	})
 	async getAllAttendancesByUser(
 		@Query() options: ListOptions<Attendance>,
-		@Param('userID') userID: string,
+		@Param('userID', MongoIdValidationPipe) userID: string,
 	) {
 		return await this.attendanceService.findMany(
 			{ accountID: userID },
@@ -331,7 +332,9 @@ export class AdminController {
 			} as ErrorResponse<null>,
 		},
 	})
-	async deteleAttendance(@Param('attendanceID') attendanceID: string) {
+	async deteleAttendance(
+		@Param('attendanceID', MongoIdValidationPipe) attendanceID: string,
+	) {
 		return await this.attendanceService.delete(attendanceID);
 	}
 
@@ -462,7 +465,7 @@ export class AdminController {
 		},
 	})
 	async updateCategory(
-		@Param('categoryID') categoryID: string,
+		@Param('categoryID', MongoIdValidationPipe) categoryID: string,
 		@Body() data: UpdateCategoryDto,
 	) {
 		return await this.facilityCategoryService.update(categoryID, data);
@@ -521,7 +524,9 @@ export class AdminController {
 			} as ErrorResponse<null>,
 		},
 	})
-	deleteCategory(@Param('categoryID') categoryID: string) {
+	deleteCategory(
+		@Param('categoryID', MongoIdValidationPipe) categoryID: string,
+	) {
 		return this.facilityCategoryService.delete(categoryID);
 	}
 

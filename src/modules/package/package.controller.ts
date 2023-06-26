@@ -50,6 +50,7 @@ import { CreatePromotionDto } from '../promotions/dto/create-promotion-dto';
 import { OwnershipPackageGuard } from 'src/guards/ownership/ownership-package.guard';
 import { PackageService } from './package.service';
 import { Public } from '../auth/decorators/public.decorator';
+import { MongoIdValidationPipe } from 'src/pipes/parseMongoId.pipe';
 
 @ApiTags('packages')
 @Controller('packages')
@@ -94,7 +95,9 @@ export class PackageController {
 			} as ErrorResponse<null>,
 		},
 	})
-	async getPackage(@Param('packageID') packageID: string) {
+	async getPackage(
+		@Param('packageID', MongoIdValidationPipe) packageID: string,
+	) {
 		return await this.packageService.findOneByID(packageID);
 	}
 
@@ -175,7 +178,7 @@ export class PackageController {
 		},
 	})
 	async updatePackage(
-		@Param('packageID') packageID: string,
+		@Param('packageID', MongoIdValidationPipe) packageID: string,
 		@Body() data: UpdatePackageDto,
 	) {
 		return await this.packageService.update(packageID, data);
@@ -227,7 +230,9 @@ export class PackageController {
 			} as ErrorResponse<null>,
 		},
 	})
-	async deletePackage(@Param('packageID') packageID: string) {
+	async deletePackage(
+		@Param('packageID', MongoIdValidationPipe) packageID: string,
+	) {
 		return await this.packageService.delete(packageID);
 	}
 

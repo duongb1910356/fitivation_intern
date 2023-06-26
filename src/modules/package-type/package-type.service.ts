@@ -4,7 +4,7 @@ import {
 } from './../counter/entities/counter.entity';
 import { CounterService } from './../counter/counter.service';
 import {
-	BadRequestException,
+	ForbiddenException,
 	Injectable,
 	NotFoundException,
 } from '@nestjs/common';
@@ -149,7 +149,7 @@ export class PackageTypeService {
 			{},
 		);
 		if (packagesData.total === 0) {
-			throw new BadRequestException('Please delete all packages before');
+			throw new ForbiddenException('Please delete all packages before');
 		}
 
 		await Promise.all([

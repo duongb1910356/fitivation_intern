@@ -33,6 +33,7 @@ import { Facility } from '../facility/schemas/facility.schema';
 import { FacilityScheduleService } from './facility-schedule.service';
 import { OwnershipScheduleGuard } from 'src/guards/ownership/ownership-schedule.guard';
 import { Public } from '../auth/decorators/public.decorator';
+import { MongoIdValidationPipe } from 'src/pipes/parseMongoId.pipe';
 
 @ApiTags('schedules')
 @Controller('schedules')
@@ -89,7 +90,9 @@ export class FacilityScheduleController {
 			} as ErrorResponse<null>,
 		},
 	})
-	async getSchedule(@Param('scheduleID') scheduleID: string) {
+	async getSchedule(
+		@Param('scheduleID', MongoIdValidationPipe) scheduleID: string,
+	) {
 		return await this.scheduleService.findOneByID(scheduleID, 'facilityID');
 	}
 
