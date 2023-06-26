@@ -300,8 +300,11 @@ export class FacilityController {
 		status: 400,
 		description: '[Input] invalid',
 	})
-	getReviewOfFacility(@Param('facilityID') facilityID) {
-		return this.facilityService.findManyReviews(facilityID);
+	getReviewOfFacility(
+		@Param('facilityID') facilityID,
+		@Query() filter: ListOptions<Review>,
+	) {
+		return this.facilityService.findManyReviews(facilityID, filter);
 	}
 
 	@Public()
@@ -414,8 +417,12 @@ export class FacilityController {
 		status: 400,
 		description: '[Input] invalid',
 	})
-	getPhotoFacility(@Param('facilityID') facilityID: string) {
-		return this.facilityService.findManyPhotos(facilityID);
+	getPhotoFacility(
+		@Param('facilityID') facilityID: string,
+		@Query() filter: ListOptions<Photo>,
+	) {
+		return this.facilityService.findManyPhotos(facilityID, filter);
+		// return this.pho;
 	}
 
 	// ATTENDANCE

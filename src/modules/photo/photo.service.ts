@@ -99,7 +99,9 @@ export class PhotoService {
 
 	async findMany(filter: ListOptions<Photo>): Promise<ListResponse<Photo>> {
 		const sortQuery = {};
-		sortQuery[filter.sortField] = filter.sortOrder === 'asc' ? 1 : -1;
+		if (filter.sortField) {
+			sortQuery[filter.sortField] = filter.sortOrder === 'asc' ? 1 : -1;
+		}
 		const limit = filter.limit || 0;
 		const offset = filter.offset || 0;
 		const result = await this.photoModel

@@ -179,7 +179,6 @@ export class FacilityService {
 		reviewDto: CreateReviewDto,
 		files?: { images?: Express.Multer.File[] },
 	): Promise<Facility> {
-		this.isOwnerFacility(id, req);
 		reviewDto.facilityID = id;
 		const createdReview = await this.reviewService.create(
 			req,
@@ -243,11 +242,6 @@ export class FacilityService {
 	}
 
 	async deletePhoto(id: string, req: any, listID: string[]): Promise<Facility> {
-		if (!this.isOwnerFacility(id, req)) {
-			throw new BadRequestException(
-				'You do not have permission to access this document',
-			);
-		}
 		const result = await this.facilityModel.findOneAndUpdate(
 			{ _id: id },
 			{ $pull: { photos: { _id: { $in: listID } } } },
@@ -268,11 +262,6 @@ export class FacilityService {
 		req: any,
 		listID: string[],
 	): Promise<Facility> {
-		if (!this.isOwnerFacility(facilityID, req)) {
-			throw new BadRequestException(
-				'You do not have permission to access this document',
-			);
-		}
 		const result = await this.facilityModel.findOneAndUpdate(
 			{ _id: facilityID },
 			{ $pull: { reviews: { _id: { $in: listID } } } },
@@ -287,13 +276,21 @@ export class FacilityService {
 		return result;
 	}
 
-	async findManyPhotos(facilityID: string): Promise<ListResponse<Photo>> {
-		return this.photoService.findMany({ ownerID: facilityID });
+	async findManyPhotos(
+		facilityID: string,
+		filter: ListOptions<Photo>,
+	): Promise<ListResponse<Photo>> {
+		filter.ownerID = facilityID;
+		return this.photoService.findMany(filter);
 	}
 
-	async findManyReviews(facilityID: string): Promise<ListResponse<Review>> {
+	async findManyReviews(
+		facilityID: string,
+		filter: ListOptions<Review>,
+	): Promise<ListResponse<Review>> {
 		const facility = await this.facilityModel.findById(facilityID);
-		return this.reviewService.findMany({ facilityID: facility });
+		filter.facilityID = facility;
+		return this.reviewService.findMany(filter);
 	}
 
 	async isOwnerFacility(facilityID: string, req: any): Promise<boolean> {
