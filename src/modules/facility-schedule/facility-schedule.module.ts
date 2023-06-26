@@ -15,5 +15,6 @@ import {
 	],
 	controllers: [FacilityScheduleController],
 	providers: [FacilityScheduleService],
+	exports: [FacilityScheduleService],
 })
 export class FacilityScheduleModule {}

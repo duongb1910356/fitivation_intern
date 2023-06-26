@@ -19,25 +19,16 @@ export class ReviewService {
 		reviewDto: CreateReviewDto,
 		files?: { images?: Express.Multer.File[] },
 	): Promise<Review> {
-		reviewDto.accountID = req.user.uid;
+		reviewDto.accountID = req.user.sub;
 		const createdReview = await this.reviewModel.create(reviewDto);
-
 		if (files && files.images) {
-			const photos = await this.photoService.uploadManyFile(files, {
-				ownerID: createdReview._id,
-			});
+			const photos = await this.photoService.uploadManyFile(
+				files,
+				createdReview._id,
+			);
 			createdReview.photos = photos.items;
 		}
 		return await createdReview.save();
-		// if (files && files.images) {
-		// 	const photoDto: CreatePhotoDto = {
-		// 		ownerID: generateUniqueId(),
-		// 	};
-		// 	const photos = await this.photoService.uploadManyFile(files, photoDto);
-		// 	reviewDto.photos = photos.items;
-		// }
-		// // if (Object.getPrototypeOf(files) != null) {
-		// // }
 	}
 
 	async findMany(filter: ListOptions<Review>): Promise<ListResponse<Review>> {

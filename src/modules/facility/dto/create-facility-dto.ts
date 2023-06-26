@@ -18,8 +18,8 @@ export class CreateFacilityDto {
 	@IsString()
 	facilityCategoryID: string;
 
-	@IsOptional()
 	@IsString()
+	@IsOptional()
 	ownerID: string;
 
 	@IsEnum(State)

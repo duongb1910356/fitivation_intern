@@ -7,8 +7,8 @@ import {
 	ApiTags,
 	ApiBadRequestResponse,
 } from '@nestjs/swagger';
-import { Public } from '../auth/utils';
 import { AddressService } from './address.service';
+import { Public } from '../auth/decorators/public.decorator';
 
 @ApiTags('address')
 @Controller('address')

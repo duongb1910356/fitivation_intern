@@ -23,7 +23,6 @@ import {
 	ApiParam,
 	ApiTags,
 } from '@nestjs/swagger';
-import { Public } from '../auth/utils';
 import { ApiDocsPagination } from 'src/decorators/swagger-form-data.decorator';
 import {
 	ErrorResponse,
@@ -31,6 +30,7 @@ import {
 } from 'src/shared/response/common-response';
 import { Brand } from './schemas/brand.schema';
 import { User } from '../users/schemas/user.schema';
+import { Public } from '../auth/decorators/public.decorator';
 
 @ApiTags('brands')
 @Controller('brands')

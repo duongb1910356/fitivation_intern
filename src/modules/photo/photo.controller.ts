@@ -28,7 +28,6 @@ import {
 	ApiTags,
 	ApiUnsupportedMediaTypeResponse,
 } from '@nestjs/swagger';
-import { Public } from '../auth/utils';
 import {
 	FileFieldsInterceptor,
 	FileInterceptor,
@@ -41,6 +40,7 @@ import {
 import { Photo } from './schemas/photo.schema';
 import { PhotoService } from './photo.service';
 import { CreatePhotoDto } from './dto/create-photo-dto';
+import { Public } from '../auth/decorators/public.decorator';
 import { ApiDocsPagination } from 'src/decorators/swagger-form-data.decorator';
 
 @ApiTags('photo')
@@ -48,6 +48,7 @@ import { ApiDocsPagination } from 'src/decorators/swagger-form-data.decorator';
 export class PhotoController {
 	constructor(private readonly photoService: PhotoService) {}
 
+	@Public()
 	@Post()
 	@ApiBearerAuth()
 	@ApiOperation({
@@ -112,7 +113,7 @@ export class PhotoController {
 		)
 		file: Express.Multer.File,
 	) {
-		return this.photoService.uploadOneFile(photoDto, file);
+		return this.photoService.uploadOneFile(photoDto.ownerID, file);
 	}
 
 	@Post('bulk')
@@ -177,7 +178,7 @@ export class PhotoController {
 		@Body() photoDto: CreatePhotoDto,
 	) {
 		if (files.images) {
-			return this.photoService.uploadManyFile(files, photoDto);
+			return this.photoService.uploadManyFile(files, photoDto.ownerID);
 		}
 		throw new BadRequestException('No files uploaded');
 	}

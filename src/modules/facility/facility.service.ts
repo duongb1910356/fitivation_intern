@@ -1,4 +1,8 @@
-import { ForbiddenException, Injectable } from '@nestjs/common';
+import {
+	BadRequestException,
+	Injectable,
+	NotFoundException,
+} from '@nestjs/common';
 import { Facility, FacilityDocument, State } from './schemas/facility.schema';
 import { PhotoService } from '../photo/photo.service';
 import { CreateFacilityDto } from './dto/create-facility-dto';
@@ -9,24 +13,106 @@ import { Model, isValidObjectId } from 'mongoose';
 import { ListOptions, ListResponse } from 'src/shared/response/common-response';
 import { appConfig } from 'src/app.config';
 import { UpdateFacilityDto } from './dto/update-facility-dto';
+import { FacilityScheduleService } from '../facility-schedule/facility-schedule.service';
+import { CreateFacilityScheduleDto } from '../facility-schedule/dto/create-facility-schedule-dto';
+import { HolidayDto } from '../holiday/dto/holiday-dto';
+import { ConditionHoliday, HolidayService } from '../holiday/holiday.service';
+import { Holiday } from '../holiday/entities/holiday.entity';
+import { PackageTypeService } from '../package-type/package-type.service';
+import { PackageType } from '../package-type/entities/package-type.entity';
+import { CreatePackageTypeDto } from '../package-type/dto/create-package-type-dto';
+import { UpdateOrderDto } from '../package-type/dto/update-order-dto';
+import { AttendanceService } from '../attendance/attendance.service';
+import { Photo } from '../photo/schemas/photo.schema';
+import { Review } from '../reviews/schemas/reviews.schema';
 
 @Injectable()
 export class FacilityService {
 	constructor(
-		// @Inject('FacilityRepository')
-		// private readonly facilityRepository: FacilityRepository,
 		@InjectModel(Facility.name) private facilityModel: Model<FacilityDocument>,
-
+		private readonly packageTypeService: PackageTypeService,
+		private readonly facilityScheduleService: FacilityScheduleService,
+		private readonly holidayService: HolidayService,
+		private readonly attendanceService: AttendanceService,
 		private readonly photoService: PhotoService,
 		private readonly reviewService: ReviewService,
 	) {}
+
+	async isOwner(id: string, uid: string): Promise<boolean> {
+		const facility = await this.findOneByID(id);
+		const owner = facility.ownerID.toString();
+		return uid === owner;
+	}
+
+	async getAllPackageType(id: string, filter: ListOptions<PackageType>) {
+		return await this.packageTypeService.findManyByFacility(id, filter);
+	}
+
+	async createPackageType(id: string, data: CreatePackageTypeDto) {
+		return await this.packageTypeService.create(id, data);
+	}
+
+	async swapPackageTypeInList(id: string, data: UpdateOrderDto) {
+		return this.packageTypeService.swapOrder(id, data);
+	}
+
+	async findAllSchedules(id: string) {
+		return await this.facilityScheduleService.findMany({
+			facilityID: id,
+		});
+	}
+
+	async getCurrentSchedule(id: string) {
+		const facility = await this.findOneByID(id);
+		const condition = {
+			facilityID: id,
+			type: facility.scheduleType,
+		};
+		return await this.facilityScheduleService.findOneByCondition(condition);
+	}
+
+	async createSchedule(id: string, data: CreateFacilityScheduleDto) {
+		return await this.facilityScheduleService.create(id, data);
+	}
+
+	async createHoliday(id: string, data: HolidayDto) {
+		return await this.holidayService.create(id, data);
+	}
+
+	async findAllHoliday(id: string, options: ListOptions<Holiday>) {
+		let condition: ConditionHoliday = { facilityID: id };
+		if (options.startDate) {
+			condition = {
+				...condition,
+				startDate: { $gte: options.startDate },
+			};
+		}
+		if (options.endDate) {
+			condition = {
+				...condition,
+				endDate: { $lte: options.endDate },
+			};
+		}
+		return await this.holidayService.findMany(condition, options);
+	}
+
+	async createAttendance(facilityID: string, accountID: string) {
+		return await this.attendanceService.create(facilityID, accountID);
+	}
+
+	async getAttendance(facilityID: string, accountID: string) {
+		return await this.attendanceService.findOneByCondition({
+			facilityID,
+			accountID,
+		});
+	}
 
 	async create(
 		createFacilityDto: CreateFacilityDto,
 		req: any,
 		files?: { images?: Express.Multer.File[] },
 	): Promise<Facility> {
-		createFacilityDto.ownerID = createFacilityDto.ownerID ?? req.user.uid;
+		createFacilityDto.ownerID = createFacilityDto.state ?? req.user.sub;
 		createFacilityDto.state = createFacilityDto.state ?? State.ACTIVE;
 
 		const facility = await this.facilityModel.create(createFacilityDto);
@@ -36,6 +122,7 @@ export class FacilityService {
 			});
 			facility.photos = photos.items;
 		}
+
 		return await facility.save();
 	}
 
@@ -44,7 +131,11 @@ export class FacilityService {
 		updateFacilityDto: UpdateFacilityDto,
 		req: any,
 	): Promise<Facility> {
-		this.isOwnerFacility(id, req);
+		if (!this.isOwnerFacility(id, req)) {
+			throw new BadRequestException(
+				'You do not have permission to access this document',
+			);
+		}
 		return await this.facilityModel.findOneAndUpdate(
 			{ _id: id },
 			updateFacilityDto,
@@ -72,11 +163,14 @@ export class FacilityService {
 	}
 
 	async findOneByID(id: string): Promise<Facility> {
-		const result = this.facilityModel
+		const facility = this.facilityModel
 			.findById(id)
 			.populate('brandID')
 			.populate('facilityCategoryID');
-		return result;
+		if (!facility) {
+			throw new NotFoundException('Facility not found');
+		}
+		return facility;
 	}
 
 	async addReview(
@@ -110,12 +204,14 @@ export class FacilityService {
 	async addPhoto(
 		id: any,
 		req: any,
-		files?: { images?: Express.Multer.File[] },
+		files: { images: Express.Multer.File[] },
 	): Promise<Facility> {
-		this.isOwnerFacility(id, req);
-		await this.photoService.uploadManyFile(files || null, {
-			ownerID: id,
-		});
+		if (!this.isOwnerFacility(id, req)) {
+			throw new BadRequestException(
+				'You do not have permission to access this document',
+			);
+		}
+		await this.photoService.uploadManyFile(files || null, id);
 		const sortPhoto = await this.photoService.findMany({
 			ownerID: id,
 			sortField: 'createdAt',
@@ -128,31 +224,43 @@ export class FacilityService {
 	}
 
 	async delete(id: string, req: any): Promise<boolean> {
-		this.isOwnerFacility(id, req);
-		const facility = await this.facilityModel.findById(id);
-		facility.reviews.forEach(async (el) => {
-			await this.reviewService.delete(el._id);
-		});
-		facility.photos.forEach(async (el) => {
-			await this.photoService.delete(el._id);
-		});
-		await this.facilityModel.findOneAndDelete({ _id: id });
-		return true;
+		if (!this.isOwnerFacility(id, req)) {
+			throw new BadRequestException(
+				'You do not have permission to access this document',
+			);
+		}
+		const facility = await this.facilityModel.findOneAndDelete({ _id: id });
+		if (facility) {
+			facility.reviews.forEach(async (el) => {
+				await this.reviewService.delete(el._id);
+			});
+			facility.photos.forEach(async (el) => {
+				await this.photoService.delete(el._id);
+			});
+			return true;
+		}
+		return false;
 	}
 
 	async deletePhoto(id: string, req: any, listID: string[]): Promise<Facility> {
-		this.isOwnerFacility(id, req);
+		if (!this.isOwnerFacility(id, req)) {
+			throw new BadRequestException(
+				'You do not have permission to access this document',
+			);
+		}
+		const result = await this.facilityModel.findOneAndUpdate(
+			{ _id: id },
+			{ $pull: { photos: { _id: { $in: listID } } } },
+			{ new: true },
+		);
+
 		listID.forEach(async (element) => {
 			if (isValidObjectId(element)) {
-				await this.facilityModel.findOneAndUpdate(
-					{ _id: id },
-					{ $pull: { photos: { _id: element } } },
-					{ new: true },
-				);
 				await this.photoService.delete(element);
 			}
 		});
-		return this.facilityModel.findById(id);
+
+		return result;
 	}
 
 	async deleteReview(
@@ -160,25 +268,36 @@ export class FacilityService {
 		req: any,
 		listID: string[],
 	): Promise<Facility> {
-		this.isOwnerFacility(facilityID, req);
-		listID.forEach(async (element) => {
-			if (isValidObjectId(element)) {
-				await this.facilityModel.findOneAndUpdate(
-					{ _id: facilityID },
-					{ $pull: { reviews: { _id: element } } },
-				);
-				await this.reviewService.delete(element);
-			}
-		});
-		return this.facilityModel.findById(facilityID);
-	}
-
-	async isOwnerFacility(facilityID: string, req: any): Promise<void> {
-		const ownerID = await this.facilityModel.findById(facilityID);
-		if (ownerID != req.user.uid) {
-			throw new ForbiddenException(
+		if (!this.isOwnerFacility(facilityID, req)) {
+			throw new BadRequestException(
 				'You do not have permission to access this document',
 			);
 		}
+		const result = await this.facilityModel.findOneAndUpdate(
+			{ _id: facilityID },
+			{ $pull: { reviews: { _id: { $in: listID } } } },
+			{ new: true },
+		);
+
+		listID.forEach(async (element) => {
+			if (isValidObjectId(element)) {
+				await this.reviewService.delete(element);
+			}
+		});
+		return result;
+	}
+
+	async findManyPhotos(facilityID: string): Promise<ListResponse<Photo>> {
+		return this.photoService.findMany({ ownerID: facilityID });
+	}
+
+	async findManyReviews(facilityID: string): Promise<ListResponse<Review>> {
+		const facility = await this.facilityModel.findById(facilityID);
+		return this.reviewService.findMany({ facilityID: facility });
+	}
+
+	async isOwnerFacility(facilityID: string, req: any): Promise<boolean> {
+		const ownerID = await this.facilityModel.findById(facilityID);
+		return ownerID != req.user.sub;
 	}
 }

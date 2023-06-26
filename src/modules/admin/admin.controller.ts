@@ -19,6 +19,7 @@ import {
 	ApiOkResponse,
 	ApiOperation,
 	ApiParam,
+	ApiQuery,
 	ApiTags,
 	ApiUnauthorizedResponse,
 } from '@nestjs/swagger';
@@ -47,9 +48,15 @@ import { PackageType } from '../package-type/entities/package-type.entity';
 import { TimeType, Package } from '../package/entities/package.entity';
 import { UpdateFacilityStateDto } from './dto/update-facility-state-dto';
 import { PackageTypeService } from '../package-type/package-type.service';
-import { Public } from '../auth/utils';
 import { PackageService } from '../package/package.service';
 import { FacilityCategoryService } from '../facility-category/facility-category.service';
+import {
+	ConditionSchedule,
+	FacilityScheduleService,
+} from '../facility-schedule/facility-schedule.service';
+import { ConditionHoliday, HolidayService } from '../holiday/holiday.service';
+import { AttendanceService } from '../attendance/attendance.service';
+import { Public } from '../auth/decorators/public.decorator';
 
 @ApiTags('admin')
 // @ApiBearerAuth()
@@ -62,6 +69,9 @@ export class AdminController {
 		private readonly packageTypeService: PackageTypeService,
 		private readonly packageService: PackageService,
 		private readonly facilityCategoryService: FacilityCategoryService,
+		private readonly facilityScheduleService: FacilityScheduleService,
+		private readonly holidayService: HolidayService,
+		private readonly attendanceService: AttendanceService,
 	) {}
 
 	//FACILITIES
@@ -197,12 +207,11 @@ export class AdminController {
 			} as ErrorResponse<null>,
 		},
 	})
-	getAllAttendancesByFacility(
-		@Query() filter: ListOptions<Attendance>,
+	async getAllAttendancesByFacility(
+		@Query() options: ListOptions<Attendance>,
 		@Param('facilityID') facilityID: string,
 	) {
-		console.log(filter, facilityID);
-		//
+		return await this.attendanceService.findMany({ facilityID }, options);
 	}
 
 	@Get('users/:userID/attendances')
@@ -259,12 +268,14 @@ export class AdminController {
 			} as ErrorResponse<null>,
 		},
 	})
-	getAllAttendancesByUser(
-		@Query() filter: ListOptions<Attendance>,
+	async getAllAttendancesByUser(
+		@Query() options: ListOptions<Attendance>,
 		@Param('userID') userID: string,
 	) {
-		console.log(filter, userID);
-		//
+		return await this.attendanceService.findMany(
+			{ accountID: userID },
+			options,
+		);
 	}
 
 	@Delete('attendances/:attendanceID')
@@ -320,9 +331,8 @@ export class AdminController {
 			} as ErrorResponse<null>,
 		},
 	})
-	deteleAttendance(@Param('attendanceID') attendanceID: string) {
-		console.log(attendanceID);
-		//
+	async deteleAttendance(@Param('attendanceID') attendanceID: string) {
+		return await this.attendanceService.delete(attendanceID);
 	}
 
 	// CATEGORIES
@@ -521,6 +531,18 @@ export class AdminController {
 		summary: 'Get All Schedules',
 		description: `Only admin can use this API`,
 	})
+	@ApiQuery({
+		name: 'facilityID',
+		type: String,
+		required: false,
+		description: 'facilityID',
+	})
+	@ApiQuery({
+		name: 'type',
+		type: String,
+		required: false,
+		description: 'Schedule Type',
+	})
 	@ApiDocsPagination('Schedule')
 	@ApiOkResponse({
 		schema: {
@@ -532,12 +554,18 @@ export class AdminController {
 						type: ScheduleType.DAILY,
 						openTime: [
 							{
-								shift: {
-									startTime: new Date(),
-									endTime: new Date(),
-								} as ShiftTime,
-							} as OpenTime,
-						],
+								shift: [
+									{
+										startTime: new Date('7/10/2023 06:00:00'),
+										endTime: new Date('7/10/2023 12:00:00'),
+									},
+									{
+										startTime: new Date('7/10/2023 13:00:00'),
+										endTime: new Date('7/10/2023 19:00:00'),
+									},
+								] as ShiftTime[],
+							},
+						] as OpenTime[],
 						createdAt: new Date(),
 						updatedAt: new Date(),
 					} as FacilitySchedule,
@@ -572,9 +600,21 @@ export class AdminController {
 			} as ErrorResponse<null>,
 		},
 	})
-	getAllSchedules(@Query() filter: ListOptions<FacilitySchedule>) {
-		console.log(filter);
-		//
+	async getAllSchedules(@Query() options: ListOptions<FacilitySchedule>) {
+		let condition: ConditionSchedule;
+		if (options.facilityID) {
+			condition = {
+				facilityID: options.facilityID.toString(),
+			};
+		}
+		if (options.type) {
+			condition = {
+				...condition,
+				type: options.type,
+			};
+		}
+		console.log(condition);
+		return await this.facilityScheduleService.findMany(condition, options);
 	}
 
 	//HOLIDAYS
@@ -584,6 +624,24 @@ export class AdminController {
 		description: `Only admin can use this API`,
 	})
 	@ApiDocsPagination('Holiday')
+	@ApiQuery({
+		name: 'startDate',
+		type: String,
+		required: false,
+		description: 'startDate',
+	})
+	@ApiQuery({
+		name: 'endDate',
+		type: String,
+		required: false,
+		description: 'endDate',
+	})
+	@ApiQuery({
+		name: 'facilityID',
+		type: String,
+		required: false,
+		description: 'facilityID',
+	})
 	@ApiOkResponse({
 		schema: {
 			example: {
@@ -628,9 +686,26 @@ export class AdminController {
 			} as ErrorResponse<null>,
 		},
 	})
-	getAllHolidays(@Query() filter: ListOptions<Holiday>) {
-		console.log(filter);
-		//
+	async getAllHolidays(@Query() options: ListOptions<Holiday>) {
+		let condition: ConditionHoliday = {};
+		if (options.facilityID) {
+			condition = {
+				facilityID: options.facilityID.toString(),
+			};
+		}
+		if (options.startDate) {
+			condition = {
+				...condition,
+				startDate: { $gte: options.startDate },
+			};
+		}
+		if (options.endDate) {
+			condition = {
+				...condition,
+				endDate: { $lte: options.endDate },
+			};
+		}
+		return await this.holidayService.findMany(condition, options);
 	}
 
 	//PACKAGES

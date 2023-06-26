@@ -9,13 +9,11 @@ export class OwnershipPackageTypeGuard implements CanActivate {
 		const { packageTypeID } = request.params;
 		const user = request.user;
 
-		const packageType = await this.packageTypeService.findById(packageTypeID, {
-			path: 'facilityID',
-		});
+		const isOwner = await this.packageTypeService.isOwner(
+			packageTypeID,
+			user.uid,
+		);
 
-		request.facilityID = packageType.facilityID._id.toString();
-		const owner = packageType.facilityID.ownerID.toString();
-
-		return user.uid === owner;
+		return isOwner;
 	}
 }

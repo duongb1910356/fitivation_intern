@@ -11,7 +11,10 @@ services:
       - .:/home/app
       - /home/app/node_modules
     environment:
-      - JWT_SECRET
+      - JWT_AT_SECRET
+      - JWT_RT_SECRET
+      - JWT_AT_EXPIRES_IN
+      - JWT_RT_EXPIRES_IN
       - MONGO_URI
       - APP_NAME
       - APP_VERSION

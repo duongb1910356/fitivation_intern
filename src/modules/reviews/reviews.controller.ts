@@ -30,7 +30,7 @@ import { ReviewService } from './reviews.service';
 import { Review } from './schemas/reviews.schema';
 import { ListOptions } from 'src/shared/response/common-response';
 import { ApiDocsPagination } from 'src/decorators/swagger-form-data.decorator';
-import { Public } from '../auth/utils';
+import { Public } from '../auth/decorators/public.decorator';
 
 @ApiTags('reviews')
 @Controller('reviews')

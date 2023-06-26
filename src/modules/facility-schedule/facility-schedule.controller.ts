@@ -19,25 +19,26 @@ import {
 	ApiTags,
 	ApiUnauthorizedResponse,
 } from '@nestjs/swagger';
-import { Roles } from 'src/decorators/role.decorator';
 import { ErrorResponse } from 'src/shared/response/common-response';
-import { UserRole } from '../users/schemas/user.schema';
-import { RolesGuard } from 'src/guards/role.guard';
 import {
 	FacilitySchedule,
 	ScheduleType,
 } from './entities/facility-schedule.entity';
 import { OpenTime, dayOfWeek } from './entities/open-time.entity';
 import { ShiftTime } from './entities/shift-time.entity';
-import { Public } from '../auth/utils';
 import { OpenTimeDto } from './dto/open-time-dto';
 import { ShiftTimeDto } from './dto/shift-time-dto';
 import { UpdateFacilityScheduleDto } from './dto/update-facility-schedule-dto';
 import { Facility } from '../facility/schemas/facility.schema';
+import { FacilityScheduleService } from './facility-schedule.service';
+import { OwnershipScheduleGuard } from 'src/guards/ownership/ownership-schedule.guard';
+import { Public } from '../auth/decorators/public.decorator';
 
 @ApiTags('schedules')
 @Controller('schedules')
 export class FacilityScheduleController {
+	constructor(private readonly scheduleService: FacilityScheduleService) {}
+
 	@Public()
 	@Get(':scheduleID')
 	@ApiOperation({
@@ -53,12 +54,18 @@ export class FacilityScheduleController {
 				type: ScheduleType.DAILY,
 				openTime: [
 					{
-						shift: {
-							startTime: new Date(),
-							endTime: new Date(),
-						} as ShiftTime,
-					} as OpenTime,
-				],
+						shift: [
+							{
+								startTime: new Date('7/10/2023 06:00:00'),
+								endTime: new Date('7/10/2023 12:00:00'),
+							},
+							{
+								startTime: new Date('7/10/2023 13:00:00'),
+								endTime: new Date('7/10/2023 19:00:00'),
+							},
+						] as ShiftTime[],
+					},
+				] as OpenTime[],
 				createdAt: new Date(),
 				updatedAt: new Date(),
 			} as FacilitySchedule,
@@ -82,14 +89,12 @@ export class FacilityScheduleController {
 			} as ErrorResponse<null>,
 		},
 	})
-	getSchedule(@Param('scheduleID') scheduleID: string) {
-		console.log(scheduleID);
-		//
+	async getSchedule(@Param('scheduleID') scheduleID: string) {
+		return await this.scheduleService.findOneByID(scheduleID, 'facilityID');
 	}
 
 	@ApiBearerAuth()
-	@UseGuards(RolesGuard)
-	@Roles(UserRole.FACILITY_OWNER)
+	@UseGuards(OwnershipScheduleGuard)
 	@Patch(':scheduleID')
 	@ApiOperation({
 		summary: 'Update Schedule by scheduleID',
@@ -105,69 +110,109 @@ export class FacilityScheduleController {
 		examples: {
 			Daily: {
 				value: {
-					OpenTime: [
+					openTime: [
 						{
-							shift: {
-								startTime: new Date(),
-								endTime: new Date(),
-							} as ShiftTimeDto,
+							shift: [
+								{
+									startTime: new Date('7/10/2023 06:00:00'),
+									endTime: new Date('7/10/2023 11:00:00'),
+								},
+								{
+									startTime: new Date('7/10/2023 13:00:00'),
+									endTime: new Date('7/10/2023 19:00:00'),
+								},
+							] as ShiftTimeDto[],
 						},
-					],
+					] as OpenTimeDto[],
 				} as UpdateFacilityScheduleDto,
 			},
 			Weekly: {
 				value: {
-					OpenTime: [
+					openTime: [
 						{
-							shift: {
-								startTime: new Date(),
-								endTime: new Date(),
-							} as ShiftTimeDto,
+							shift: [
+								{
+									startTime: new Date('7/10/2023 06:00:00'),
+									endTime: new Date('7/10/2023 11:00:00'),
+								},
+								{
+									startTime: new Date('7/10/2023 13:00:00'),
+									endTime: new Date('7/10/2023 19:00:00'),
+								},
+							] as ShiftTimeDto[],
 							dayOfWeek: dayOfWeek.MONDAY,
 						},
 						{
-							shift: {
-								startTime: new Date(),
-								endTime: new Date(),
-							} as ShiftTimeDto,
+							shift: [
+								{
+									startTime: new Date('7/10/2023 06:00:00'),
+									endTime: new Date('7/10/2023 11:00:00'),
+								},
+								{
+									startTime: new Date('7/10/2023 13:00:00'),
+									endTime: new Date('7/10/2023 19:00:00'),
+								},
+							] as ShiftTimeDto[],
 							dayOfWeek: dayOfWeek.TUESDAY,
 						},
 						{
-							shift: {
-								startTime: new Date(),
-								endTime: new Date(),
-							} as ShiftTimeDto,
+							shift: [
+								{
+									startTime: new Date('7/10/2023 06:00:00'),
+									endTime: new Date('7/10/2023 11:00:00'),
+								},
+								{
+									startTime: new Date('7/10/2023 13:00:00'),
+									endTime: new Date('7/10/2023 19:00:00'),
+								},
+							] as ShiftTimeDto[],
 							dayOfWeek: dayOfWeek.WEDNESDAY,
 						},
-						{},
 					] as OpenTimeDto[],
 				} as UpdateFacilityScheduleDto,
 			},
 			Monthly: {
 				value: {
-					OpenTime: [
+					openTime: [
 						{
-							shift: {
-								startTime: new Date(),
-								endTime: new Date(),
-							} as ShiftTimeDto,
+							shift: [
+								{
+									startTime: new Date('7/10/2023 06:00:00'),
+									endTime: new Date('7/10/2023 11:00:00'),
+								},
+								{
+									startTime: new Date('7/10/2023 13:00:00'),
+									endTime: new Date('7/10/2023 19:00:00'),
+								},
+							] as ShiftTimeDto[],
 							dayOfMonth: 1,
 						},
 						{
-							shift: {
-								startTime: new Date(),
-								endTime: new Date(),
-							} as ShiftTimeDto,
+							shift: [
+								{
+									startTime: new Date('7/10/2023 06:00:00'),
+									endTime: new Date('7/10/2023 11:00:00'),
+								},
+								{
+									startTime: new Date('7/10/2023 13:00:00'),
+									endTime: new Date('7/10/2023 19:00:00'),
+								},
+							] as ShiftTimeDto[],
 							dayOfMonth: 2,
 						},
 						{
-							shift: {
-								startTime: new Date(),
-								endTime: new Date(),
-							} as ShiftTimeDto,
+							shift: [
+								{
+									startTime: new Date('7/10/2023 06:00:00'),
+									endTime: new Date('7/10/2023 11:00:00'),
+								},
+								{
+									startTime: new Date('7/10/2023 13:00:00'),
+									endTime: new Date('7/10/2023 19:00:00'),
+								},
+							] as ShiftTimeDto[],
 							dayOfMonth: 3,
 						},
-						{},
 					] as OpenTimeDto[],
 				} as UpdateFacilityScheduleDto,
 			},
@@ -181,10 +226,16 @@ export class FacilityScheduleController {
 				type: ScheduleType.DAILY,
 				openTime: [
 					{
-						shift: {
-							startTime: new Date(),
-							endTime: new Date(),
-						} as ShiftTime,
+						shift: [
+							{
+								startTime: new Date('7/10/2023 06:00:00'),
+								endTime: new Date('7/10/2023 12:00:00'),
+							},
+							{
+								startTime: new Date('7/10/2023 13:00:00'),
+								endTime: new Date('7/10/2023 19:00:00'),
+							},
+						] as ShiftTime[],
 					} as OpenTime,
 				],
 				createdAt: new Date(),
@@ -228,17 +279,15 @@ export class FacilityScheduleController {
 			} as ErrorResponse<null>,
 		},
 	})
-	updateSchedule(
+	async updateSchedule(
 		@Param('scheduleID') scheduleID: string,
 		@Body() data: UpdateFacilityScheduleDto,
 	) {
-		console.log(scheduleID, data);
-		//
+		return await this.scheduleService.update(scheduleID, data);
 	}
 
 	@ApiBearerAuth()
-	@UseGuards(RolesGuard)
-	@Roles(UserRole.FACILITY_OWNER)
+	@UseGuards(OwnershipScheduleGuard)
 	@Delete(':scheduleID')
 	@ApiOperation({
 		summary: 'Delete Schedule Type by scheduleID',
@@ -292,8 +341,7 @@ export class FacilityScheduleController {
 			} as ErrorResponse<null>,
 		},
 	})
-	deleteSchedule(@Param('scheduleID') scheduleID: string) {
-		console.log(scheduleID);
-		//
+	async deleteSchedule(@Param('scheduleID') scheduleID: string) {
+		return await this.scheduleService.delete(scheduleID);
 	}
 }

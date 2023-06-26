@@ -15,7 +15,7 @@ export class BrandService {
 		createBrandDto: CreateBrandDto,
 		@Req() req: any,
 	): Promise<Brand> {
-		createBrandDto.accountID = req.user.uid;
+		createBrandDto.accountID = req.user.sub;
 		return await this.brandModel.create(createBrandDto);
 	}
 

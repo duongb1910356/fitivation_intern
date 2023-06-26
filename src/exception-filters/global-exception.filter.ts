@@ -22,7 +22,7 @@ export class GlobalExceptionFilter implements ExceptionFilter {
 		response.status(status).json({
 			code: status,
 			message: message,
-			data: null,
+			data: exception,
 		});
 	}
 }
