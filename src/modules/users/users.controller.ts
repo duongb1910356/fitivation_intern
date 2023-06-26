@@ -118,8 +118,8 @@ export class UsersController {
 		},
 	})
 	@Get(':id')
-	findUserByID(@Param('id') id: string) {
-		return this.userService.findOne();
+	findUserByID(@Param('id') id: string): Promise<User> {
+		return this.userService.findOneByID(id);
 	}
 
 	@ApiDocsPagination('user')
