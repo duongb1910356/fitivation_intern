@@ -35,13 +35,10 @@ import { Gender, User, UserRole, UserStatus } from './schemas/user.schema';
 import { UsersService } from './users.service';
 import { UserAddressDto } from './dto/user-address.dto';
 import { UserAddress } from './schemas/user-address.schema';
-import {
-	ErrorResponse,
-	ListOptions,
-	ListResponse,
-} from 'src/shared/response/common-response';
+import { ErrorResponse } from 'src/shared/response/common-response';
 import { ApiDocsPagination } from 'src/decorators/swagger-form-data.decorator';
 import { TokenResponse } from '../auth/types/token-response.types';
+import { ListResponse, QueryObject } from 'src/shared/utils/query-api';
 
 @ApiTags('users')
 @ApiBearerAuth()
