@@ -36,10 +36,6 @@ export class UsersService {
 		};
 	}
 
-	findOne() {
-		return 'getOne';
-	}
-
 	async findOneAndUpdate(obj: Partial<User>, updateUserDto: UpdateUserDto) {
 		const user = await this.userModel.findOneAndUpdate(obj, updateUserDto, {
 			new: true,
