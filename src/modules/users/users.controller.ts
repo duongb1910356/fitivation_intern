@@ -194,8 +194,8 @@ export class UsersController {
 		},
 	})
 	@Get()
-	findManyUsers(@Query() filter: ListOptions<User>) {
-		return this.userService.findMany();
+	findManyUsers(@Query() query: QueryObject): Promise<ListResponse<User>> {
+		return this.userService.findMany(query);
 	}
 
 	@ApiOperation({ summary: 'createUser', description: 'Create new user' })
