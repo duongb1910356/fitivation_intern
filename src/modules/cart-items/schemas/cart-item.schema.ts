@@ -15,7 +15,7 @@ export class CartItem extends BaseObject {
 
 	@Prop({
 		default: [],
-		type: mongoose.Schema.Types.ObjectId,
+		type: [mongoose.Schema.Types.ObjectId],
 		ref: 'Promotion',
 	})
 	promotionIDs?: string[];
