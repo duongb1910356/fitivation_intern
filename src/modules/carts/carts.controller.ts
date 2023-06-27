@@ -31,6 +31,72 @@ export class CartsController {
 	constructor(private readonly cartsService: CartsService) {}
 	@ApiTags('carts')
 	@ApiOperation({
+		summary: 'getCurrentUserCart',
+		description: 'Get logged user cart',
+	})
+	@ApiParam({ name: 'id', type: String, description: 'Cart ID' })
+	@ApiResponse({
+		status: 200,
+		schema: {
+			example: {
+				_id: '_id',
+				accountID: {},
+				CartItemIDs: {},
+				promotionIDs: {},
+				promotionPrice: 0,
+				totalPrice: 0,
+				createdAt: new Date(),
+				updatedAt: new Date(),
+			},
+		},
+	})
+	@ApiResponse({
+		status: 400,
+		schema: {
+			example: {
+				code: '400',
+				message: 'Bad request',
+				details: null,
+			} as ErrorResponse<null>,
+		},
+	})
+	@ApiResponse({
+		status: 401,
+		schema: {
+			example: {
+				code: '401',
+				message: 'Unauthorized',
+				details: null,
+			} as ErrorResponse<null>,
+		},
+	})
+	@ApiResponse({
+		status: 403,
+		schema: {
+			example: {
+				code: '403',
+				message: `Forbidden resource`,
+				details: null,
+			} as ErrorResponse<null>,
+		},
+	})
+	@ApiResponse({
+		status: 404,
+		schema: {
+			example: {
+				code: '404',
+				message: 'Not found document with that ID',
+				details: null,
+			} as ErrorResponse<null>,
+		},
+	})
+	@Get('carts/me')
+	getCurrentUserCart(@Param('id') id: string) {
+		return 'getCurrent';
+	}
+
+	@ApiTags('carts')
+	@ApiOperation({
 		summary: 'getManyCarts',
 		description: 'Get many carts',
 	})
