@@ -18,10 +18,14 @@ import {
 import { Encrypt } from 'src/shared/utils/encrypt';
 import { UpdateLoggedUserDataDto } from './dto/update-logged-user-data-dto';
 import { UpdateLoggedUserPasswordDto } from './dto/update-logged-user-password-dto';
+import { CartsService } from '../carts/carts.service';
 
 @Injectable()
 export class UsersService {
-	constructor(@InjectModel(User.name) private userModel: Model<UserDocument>) {}
+	constructor(
+		@InjectModel(User.name) private userModel: Model<UserDocument>,
+		private cartService: CartsService,
+	) {}
 
 	async findMany(query: QueryObject): Promise<ListResponse<User>> {
 		const queryFeatures = new QueryAPI(this.userModel, query)
@@ -98,6 +102,8 @@ export class UsersService {
 
 		user.refreshToken = undefined;
 
+		this.cartService.createCart(user._id);
+
 		return user;
 	}
 
@@ -105,6 +111,8 @@ export class UsersService {
 		const user = await this.userModel.findById(userID);
 
 		if (!user) throw new BadRequestException('Not found user with that ID');
+
+		await this.cartService.deleteOne(userID);
 
 		await this.userModel.deleteOne({ _id: userID });
 
