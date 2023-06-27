@@ -26,6 +26,9 @@ import { ListResponse } from 'src/shared/response/common-response';
 import { ApiDocsPagination } from 'src/decorators/swagger-form-data.decorator';
 import { PurchaseDto } from './dto/purchase-dto';
 import { GetCurrentUser } from 'src/decorators/get-current-user.decorator';
+import { UserRole } from '../users/schemas/user.schema';
+import { RolesGuard } from 'src/guards/role.guard';
+import { Roles } from 'src/decorators/role.decorator';
 
 @Controller('carts')
 @ApiTags('carts')
@@ -91,6 +94,8 @@ export class CartsController {
 		},
 	})
 	@Get('me')
+	// @Roles(UserRole.MEMBER)
+	// @UseGuards(RolesGuard)
 	getCurrentUserCart(@GetCurrentUser('sub') userID: string): Promise<Cart> {
 		return this.cartsService.getCurrent(userID);
 	}
@@ -353,6 +358,8 @@ export class CartsController {
 		},
 	})
 	@Patch('cart-items/:packageID')
+	// @Roles(UserRole.MEMBER)
+	// @UseGuards(RolesGuard)
 	addCartItemToCurrentCart(
 		@GetCurrentUser('sub') userID: string,
 		@Param('packageID') packageID: string,
@@ -402,6 +409,8 @@ export class CartsController {
 		},
 	})
 	@Delete('cart-items/:packageID')
+	// @Roles(UserRole.MEMBER)
+	// @UseGuards(RolesGuard)
 	removeCartItemToCurrentCart(
 		@GetCurrentUser('sub') userID: string,
 		@Param('packageID') cartItemID: string,
