@@ -24,6 +24,7 @@ import { Cart } from './schemas/cart.schema';
 import { ListResponse } from 'src/shared/response/common-response';
 import { ApiDocsPagination } from 'src/decorators/swagger-form-data.decorator';
 import { PurchaseDto } from './dto/purchase-dto';
+import { GetCurrentUser } from 'src/decorators/get-current-user.decorator';
 
 @Controller()
 @ApiBearerAuth()
@@ -91,8 +92,8 @@ export class CartsController {
 		},
 	})
 	@Get('carts/me')
-	getCurrentUserCart(@Param('id') id: string) {
-		return 'getCurrent';
+	getCurrentUserCart(@GetCurrentUser('sub') userID: string) {
+		return this.cartsService.getCurrent(userID);
 	}
 
 	@ApiTags('carts')
