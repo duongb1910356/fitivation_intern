@@ -25,7 +25,7 @@ export class CartItem extends BaseObject {
 	promotionPrice: number;
 
 	@Prop({ default: 0, type: Number, min: 0 })
-	totalPrice: number;
+	totalPrice?: number;
 }
 
 export const CartItemSchema = SchemaFactory.createForClass(CartItem);
