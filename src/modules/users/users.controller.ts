@@ -53,7 +53,34 @@ export class UsersController {
 		summary: 'getProfile',
 		description: 'Get loggedIn user info',
 	})
-	@ApiResponse({ type: User, status: 200 })
+	@ApiResponse({
+		type: User,
+		status: 200,
+		schema: {
+			example: {
+				_id: '',
+				role: UserRole.MEMBER,
+				username: 'member',
+				email: 'member@test.com',
+				password: 'string',
+				displayName: 'Admin user',
+				firstName: 'string',
+				lastName: 'string',
+				gender: Gender.MALE,
+				birthDate: new Date(),
+				tel: '0888888888',
+				address: {
+					province: 'Can Tho',
+					district: 'Ninh Kieu',
+					commune: 'Xuan Khanh',
+				} as unknown as UserAddress,
+				isMember: false,
+				status: UserStatus.ACTIVE,
+				createdAt: new Date(),
+				updatedAt: new Date(),
+			} as User,
+		},
+	})
 	@ApiResponse({
 		status: 400,
 		schema: {
