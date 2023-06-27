@@ -13,13 +13,13 @@ export class CartItem extends BaseObject {
 		type: mongoose.Schema.Types.ObjectId,
 		ref: 'Package',
 	})
-	packageID: Package;
+	packageID: string;
 
 	@Prop({
 		type: mongoose.Schema.Types.ObjectId,
 		ref: 'Promotion',
 	})
-	promotionIDs?: Promotion[];
+	promotionIDs?: string[];
 
 	@Prop({ default: 0, type: Number, min: 0 })
 	promotionPrice: number;
