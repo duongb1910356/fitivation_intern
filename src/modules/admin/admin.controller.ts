@@ -561,12 +561,12 @@ export class AdminController {
 							{
 								shift: [
 									{
-										startTime: new Date('7/10/2023 06:00:00'),
-										endTime: new Date('7/10/2023 12:00:00'),
+										startTime: '06:00',
+										endTime: '12:00',
 									},
 									{
-										startTime: new Date('7/10/2023 13:00:00'),
-										endTime: new Date('7/10/2023 19:00:00'),
+										startTime: '13:00',
+										endTime: '19:00',
 									},
 								] as ShiftTime[],
 							},
@@ -618,7 +618,6 @@ export class AdminController {
 				type: options.type,
 			};
 		}
-		console.log(condition);
 		return await this.facilityScheduleService.findMany(condition, options);
 	}
 
@@ -730,6 +729,7 @@ export class AdminController {
 						facilityID: {} as unknown as Facility,
 						type: TimeType.ONE_MONTH,
 						price: 100000,
+						benefits: ['Use of bathroom', 'Use of massage chair'],
 						createdAt: new Date(),
 						updatedAt: new Date(),
 					} as Package,
