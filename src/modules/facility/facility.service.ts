@@ -20,7 +20,7 @@ import { ListOptions, ListResponse } from 'src/shared/response/common-response';
 import { appConfig } from 'src/app.config';
 import { UpdateFacilityDto } from './dto/update-facility-dto';
 import { FacilityScheduleService } from '../facility-schedule/facility-schedule.service';
-import { CreateFacilityScheduleDto } from '../facility-schedule/dto/create-facility-schedule-dto';
+import { FacilityScheduleDto } from '../facility-schedule/dto/facility-schedule-dto';
 import { HolidayDto } from '../holiday/dto/holiday-dto';
 import { ConditionHoliday, HolidayService } from '../holiday/holiday.service';
 import { Holiday } from '../holiday/entities/holiday.entity';
@@ -83,7 +83,7 @@ export class FacilityService {
 		return await this.facilityScheduleService.findOneByCondition(condition);
 	}
 
-	async createSchedule(id: string, data: CreateFacilityScheduleDto) {
+	async createSchedule(id: string, data: FacilityScheduleDto) {
 		return await this.facilityScheduleService.create(id, data);
 	}
 

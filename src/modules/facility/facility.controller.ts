@@ -556,12 +556,12 @@ export class FacilityController {
 							{
 								shift: [
 									{
-										startTime: new Date('7/10/2023 06:00:00'),
-										endTime: new Date('7/10/2023 12:00:00'),
+										startTime: '06:00',
+										endTime: '12:00',
 									},
 									{
-										startTime: new Date('7/10/2023 13:00:00'),
-										endTime: new Date('7/10/2023 19:00:00'),
+										startTime: '13:00',
+										endTime: '19:00',
 									},
 								] as ShiftTime[],
 							},
@@ -639,12 +639,12 @@ export class FacilityController {
 					{
 						shift: [
 							{
-								startTime: new Date('7/10/2023 06:00:00'),
-								endTime: new Date('7/10/2023 12:00:00'),
+								startTime: '06:00',
+								endTime: '12:00',
 							},
 							{
-								startTime: new Date('7/10/2023 13:00:00'),
-								endTime: new Date('7/10/2023 19:00:00'),
+								startTime: '13:00',
+								endTime: '19:00',
 							},
 						] as ShiftTime[],
 					},
@@ -674,6 +674,167 @@ export class FacilityController {
 	})
 	async getCurrentScheduleByFacility(@Param('facilityID') facilityID: string) {
 		return this.facilityService.getCurrentSchedule(facilityID);
+	}
+
+	@ApiBearerAuth()
+	@UseGuards(OwnershipFacilityGuard)
+	@Post(':facilityID/schedules')
+	@ApiOperation({
+		summary: 'Create new Schedule by facilityID',
+		description: `Facility Owner can use this API`,
+	})
+	@ApiParam({
+		name: 'facilityID',
+		type: String,
+		description: 'Facility ID',
+	})
+	@ApiBody({
+		type: FacilityScheduleDto,
+		examples: {
+			Daily: {
+				value: {
+					type: ScheduleType.DAILY,
+					openTime: [
+						{
+							shift: [
+								{
+									startTime: '06:00',
+									endTime: '12:00',
+								},
+								{
+									startTime: '13:00',
+									endTime: '19:00',
+								},
+							] as ShiftTimeDto[],
+						},
+					] as OpenTimeDto[],
+				} as FacilityScheduleDto,
+			},
+			Weekly: {
+				value: {
+					type: ScheduleType.WEEKLY,
+					openTime: [
+						{
+							shift: [
+								{
+									startTime: '06:00',
+									endTime: '12:00',
+								},
+								{
+									startTime: '13:00',
+									endTime: '19:00',
+								},
+							] as ShiftTimeDto[],
+							dayOfWeek: dayOfWeek.MONDAY,
+						},
+						{
+							shift: [
+								{
+									startTime: '06:00',
+									endTime: '12:00',
+								},
+								{
+									startTime: '13:00',
+									endTime: '19:00',
+								},
+							] as ShiftTimeDto[],
+							dayOfWeek: dayOfWeek.TUESDAY,
+						},
+					] as OpenTimeDto[],
+				} as FacilityScheduleDto,
+			},
+			Monthly: {
+				value: {
+					type: ScheduleType.MONTHLY,
+					openTime: [
+						{
+							shift: [
+								{
+									startTime: '06:00',
+									endTime: '12:00',
+								},
+								{
+									startTime: '13:00',
+									endTime: '19:00',
+								},
+							] as ShiftTimeDto[],
+							dayOfMonth: 1,
+						},
+						{
+							shift: [
+								{
+									startTime: '06:00',
+									endTime: '12:00',
+								},
+								{
+									startTime: '13:00',
+									endTime: '19:00',
+								},
+							] as ShiftTimeDto[],
+							dayOfMonth: 2,
+						},
+					] as OpenTimeDto[],
+				} as FacilityScheduleDto,
+			},
+		},
+	})
+	@ApiCreatedResponse({
+		schema: {
+			example: {
+				_id: '6476ef7d1f0419cd330fe128',
+				facilityID: {} as unknown as Facility,
+				type: ScheduleType.DAILY,
+				openTime: [
+					{
+						shift: [
+							{
+								startTime: '06:00',
+								endTime: '12:00',
+							},
+							{
+								startTime: '13:00',
+								endTime: '19:00',
+							},
+						] as ShiftTime[],
+					} as OpenTime,
+				],
+				createdAt: new Date(),
+				updatedAt: new Date(),
+			} as FacilitySchedule,
+		},
+	})
+	@ApiUnauthorizedResponse({
+		schema: {
+			example: {
+				code: '401',
+				message: 'Unauthorized',
+				details: null,
+			} as ErrorResponse<null>,
+		},
+	})
+	@ApiForbiddenResponse({
+		schema: {
+			example: {
+				code: '403',
+				message: 'Forbidden resource',
+				details: null,
+			} as ErrorResponse<null>,
+		},
+	})
+	@ApiBadRequestResponse({
+		schema: {
+			example: {
+				code: '400',
+				message: '[Input] invalid!',
+				details: null,
+			} as ErrorResponse<null>,
+		},
+	})
+	async createScheduleByFacility(
+		@Param('facilityID') facilityID: string,
+		@Body() data: FacilityScheduleDto,
+	) {
+		return await this.facilityService.createSchedule(facilityID, data);
 	}
 
 	@Public()
@@ -804,167 +965,6 @@ export class FacilityController {
 		@Query() filter: ListOptions<PackageType>,
 	) {
 		return await this.facilityService.getAllPackageType(facilityID, filter);
-	}
-
-	@ApiBearerAuth()
-	@UseGuards(OwnershipFacilityGuard)
-	@Post(':facilityID/schedules')
-	@ApiOperation({
-		summary: 'Create new Schedule by facilityID',
-		description: `Facility Owner can use this API`,
-	})
-	@ApiParam({
-		name: 'facilityID',
-		type: String,
-		description: 'Facility ID',
-	})
-	@ApiBody({
-		type: CreateFacilityScheduleDto,
-		examples: {
-			Daily: {
-				value: {
-					type: ScheduleType.DAILY,
-					openTime: [
-						{
-							shift: [
-								{
-									startTime: new Date('7/10/2023 06:00:00'),
-									endTime: new Date('7/10/2023 12:00:00'),
-								},
-								{
-									startTime: new Date('7/10/2023 13:00:00'),
-									endTime: new Date('7/10/2023 19:00:00'),
-								},
-							] as ShiftTimeDto[],
-						},
-					] as OpenTimeDto[],
-				} as CreateFacilityScheduleDto,
-			},
-			Weekly: {
-				value: {
-					type: ScheduleType.WEEKLY,
-					openTime: [
-						{
-							shift: [
-								{
-									startTime: new Date('7/10/2023 06:00:00'),
-									endTime: new Date('7/10/2023 12:00:00'),
-								},
-								{
-									startTime: new Date('7/10/2023 13:00:00'),
-									endTime: new Date('7/10/2023 19:00:00'),
-								},
-							] as ShiftTimeDto[],
-							dayOfWeek: dayOfWeek.MONDAY,
-						},
-						{
-							shift: [
-								{
-									startTime: new Date('7/10/2023 06:00:00'),
-									endTime: new Date('7/10/2023 12:00:00'),
-								},
-								{
-									startTime: new Date('7/10/2023 13:00:00'),
-									endTime: new Date('7/10/2023 19:00:00'),
-								},
-							] as ShiftTimeDto[],
-							dayOfWeek: dayOfWeek.TUESDAY,
-						},
-					] as OpenTimeDto[],
-				} as CreateFacilityScheduleDto,
-			},
-			Monthly: {
-				value: {
-					type: ScheduleType.MONTHLY,
-					openTime: [
-						{
-							shift: [
-								{
-									startTime: new Date('7/10/2023 06:00:00'),
-									endTime: new Date('7/10/2023 12:00:00'),
-								},
-								{
-									startTime: new Date('7/10/2023 13:00:00'),
-									endTime: new Date('7/10/2023 19:00:00'),
-								},
-							] as ShiftTimeDto[],
-							dayOfMonth: 1,
-						},
-						{
-							shift: [
-								{
-									startTime: new Date('7/10/2023 06:00:00'),
-									endTime: new Date('7/10/2023 12:00:00'),
-								},
-								{
-									startTime: new Date('7/10/2023 13:00:00'),
-									endTime: new Date('7/10/2023 19:00:00'),
-								},
-							] as ShiftTimeDto[],
-							dayOfMonth: 2,
-						},
-					] as OpenTimeDto[],
-				} as CreateFacilityScheduleDto,
-			},
-		},
-	})
-	@ApiCreatedResponse({
-		schema: {
-			example: {
-				_id: '6476ef7d1f0419cd330fe128',
-				facilityID: {} as unknown as Facility,
-				type: ScheduleType.DAILY,
-				openTime: [
-					{
-						shift: [
-							{
-								startTime: new Date('7/10/2023 06:00:00'),
-								endTime: new Date('7/10/2023 12:00:00'),
-							},
-							{
-								startTime: new Date('7/10/2023 13:00:00'),
-								endTime: new Date('7/10/2023 19:00:00'),
-							},
-						] as ShiftTime[],
-					} as OpenTime,
-				],
-				createdAt: new Date(),
-				updatedAt: new Date(),
-			} as FacilitySchedule,
-		},
-	})
-	@ApiUnauthorizedResponse({
-		schema: {
-			example: {
-				code: '401',
-				message: 'Unauthorized',
-				details: null,
-			} as ErrorResponse<null>,
-		},
-	})
-	@ApiForbiddenResponse({
-		schema: {
-			example: {
-				code: '403',
-				message: 'Forbidden resource',
-				details: null,
-			} as ErrorResponse<null>,
-		},
-	})
-	@ApiBadRequestResponse({
-		schema: {
-			example: {
-				code: '400',
-				message: '[Input] invalid!',
-				details: null,
-			} as ErrorResponse<null>,
-		},
-	})
-	async createScheduleByFacility(
-		@Param('facilityID') facilityID: string,
-		@Body() data: CreateFacilityScheduleDto,
-	) {
-		return this.facilityService.createSchedule(facilityID, data);
 	}
 
 	@ApiBearerAuth()
