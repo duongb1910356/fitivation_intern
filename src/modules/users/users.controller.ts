@@ -11,6 +11,7 @@ import {
 	Post,
 	Query,
 	UploadedFile,
+	UseGuards,
 	UseInterceptors,
 } from '@nestjs/common';
 import { FileInterceptor } from '@nestjs/platform-express';
@@ -42,6 +43,8 @@ import { ListResponse, QueryObject } from 'src/shared/utils/query-api';
 import { GetCurrentUser } from 'src/decorators/get-current-user.decorator';
 import { UpdateLoggedUserDataDto } from './dto/update-logged-user-data-dto';
 import { UpdateLoggedUserPasswordDto } from './dto/update-logged-user-password-dto';
+import { RolesGuard } from 'src/guards/role.guard';
+import { Roles } from 'src/decorators/role.decorator';
 
 @ApiTags('users')
 @ApiBearerAuth()
@@ -92,6 +95,8 @@ export class UsersController {
 		},
 	})
 	@Get('me')
+	@Roles(UserRole.ADMIN, UserRole.FACILITY_OWNER, UserRole.MEMBER)
+	@UseGuards(RolesGuard)
 	getProfile(@GetCurrentUser('sub') userID: string) {
 		return this.userService.getCurrentUser(userID);
 	}
@@ -166,6 +171,8 @@ export class UsersController {
 		},
 	})
 	@Get()
+	@Roles(UserRole.ADMIN)
+	@UseGuards(RolesGuard)
 	findManyUsers(@Query() query: QueryObject): Promise<ListResponse<User>> {
 		return this.userService.findMany(query);
 	}
@@ -239,6 +246,8 @@ export class UsersController {
 		},
 	})
 	@Get(':id')
+	@Roles(UserRole.ADMIN)
+	@UseGuards(RolesGuard)
 	findUserByID(@Param('id') id: string): Promise<User> {
 		return this.userService.findOneByID(id);
 	}
@@ -351,6 +360,8 @@ export class UsersController {
 		},
 	})
 	@Post()
+	@Roles(UserRole.ADMIN)
+	@UseGuards(RolesGuard)
 	createUser(@Body() createUserDto: CreateUserDto): Promise<User> {
 		return this.userService.createOne(createUserDto);
 	}
@@ -392,6 +403,8 @@ export class UsersController {
 		},
 	})
 	@Patch('update-me')
+	@Roles(UserRole.ADMIN, UserRole.FACILITY_OWNER, UserRole.MEMBER)
+	@UseGuards(RolesGuard)
 	updateMyData(
 		@GetCurrentUser('sub') userID: string,
 		@Body() dto: UpdateLoggedUserDataDto,
@@ -435,6 +448,8 @@ export class UsersController {
 		},
 	})
 	@Patch('update-my-password')
+	@Roles(UserRole.ADMIN, UserRole.FACILITY_OWNER, UserRole.MEMBER)
+	@UseGuards(RolesGuard)
 	updateMyPassword(
 		@GetCurrentUser('sub') userID: string,
 		@Body() dto: UpdateLoggedUserPasswordDto,
@@ -538,6 +553,8 @@ export class UsersController {
 		},
 	})
 	@Patch('/:id')
+	@Roles(UserRole.ADMIN)
+	@UseGuards(RolesGuard)
 	updateUser(
 		@Body() dto: UpdateUserDto,
 		@Param('id') id: string,
@@ -580,6 +597,8 @@ export class UsersController {
 		},
 	})
 	@Delete('delete-me')
+	@Roles(UserRole.FACILITY_OWNER, UserRole.MEMBER)
+	@UseGuards(RolesGuard)
 	deleteMe(@GetCurrentUser('sub') userID: string): Promise<boolean> {
 		return this.userService.deleteMe(userID);
 	}
@@ -636,6 +655,8 @@ export class UsersController {
 		},
 	})
 	@Delete(':id')
+	@Roles(UserRole.ADMIN)
+	@UseGuards(RolesGuard)
 	deleteUser(@Param('id') id: string): Promise<boolean> {
 		return this.userService.deleteOne(id);
 	}
@@ -725,6 +746,8 @@ export class UsersController {
 		},
 	})
 	@Post(':id/avatar')
+	@Roles(UserRole.ADMIN, UserRole.FACILITY_OWNER, UserRole.MEMBER)
+	@UseGuards(RolesGuard)
 	uploadFile(
 		@Param('id') id,
 		@UploadedFile(
