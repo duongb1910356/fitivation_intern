@@ -35,14 +35,13 @@ export class CartsController {
 		summary: 'getCurrentUserCart',
 		description: 'Get logged user cart',
 	})
-	@ApiParam({ name: 'id', type: String, description: 'Cart ID' })
 	@ApiResponse({
 		status: 200,
 		schema: {
 			example: {
 				_id: '_id',
 				accountID: 'string',
-				CartItemIDs: [],
+				cartItemIDs: [],
 				promotionIDs: [],
 				promotionPrice: 0,
 				totalPrice: 0,
@@ -108,9 +107,9 @@ export class CartsController {
 				items: [
 					{
 						_id: '_id',
-						accountID: {},
-						CartItemIDs: {},
-						promotionIDs: {},
+						accountID: 'string',
+						cartItemIDs: [],
+						promotionIDs: [],
 						promotionPrice: 0,
 						totalPrice: 0,
 						createdAt: new Date(),
@@ -164,7 +163,6 @@ export class CartsController {
 		return 'getManyCarts';
 	}
 
-	@ApiTags('carts')
 	@ApiOperation({
 		summary: 'getOneCart',
 		description: 'Get one cart',
@@ -177,9 +175,9 @@ export class CartsController {
 				items: [
 					{
 						_id: '_id',
-						accountID: {},
-						CartItemIDs: {},
-						promotionIDs: {},
+						accountID: 'string',
+						cartItemIDs: [],
+						promotionIDs: [],
 						promotionPrice: 0,
 						totalPrice: 0,
 						createdAt: new Date(),
@@ -252,7 +250,7 @@ export class CartsController {
 		examples: {
 			example1: {
 				value: {
-					CartItemIDs: {},
+					cartItemIDs: {},
 					promotionIDs: [],
 					createdAt: new Date(),
 					updatedAt: new Date(),
@@ -317,14 +315,14 @@ export class CartsController {
 		summary: 'addCartItemToCurrentCart',
 		description: 'Add Cart-item to current Cart',
 	})
-	@ApiParam({ name: 'pacakgeID', type: String, description: 'Pacakge ID' })
+	@ApiParam({ name: 'packageID', type: String, description: 'Pacakge ID' })
 	@ApiResponse({
 		status: 200,
 		schema: {
 			example: {
 				_id: '_id',
 				accountID: 'string',
-				CartItemIDs: [],
+				cartItemIDs: [],
 				promotionIDs: [],
 				promotionPrice: 0,
 				totalPrice: 0,
@@ -333,9 +331,12 @@ export class CartsController {
 			} as Cart,
 		},
 	})
-	@Patch('cart-items/:pacakgeID')
-	addCartItemToCurrentCart(@Param('packgeID') packageID: string) {
-		return 'addCartItemToCurrentCart';
+	@Patch('cart-items/:packageID')
+	addCartItemToCurrentCart(
+		@GetCurrentUser('sub') userID: string,
+		@Param('packageID') packageID: string,
+	): Promise<boolean> {
+		return this.cartsService.addCartItemToCurrentCart(userID, packageID);
 	}
 
 	@ApiOperation({
@@ -349,7 +350,7 @@ export class CartsController {
 			example: {
 				_id: '_id',
 				accountID: 'string',
-				CartItemIDs: [],
+				cartItemIDs: [],
 				promotionIDs: [],
 				promotionPrice: 0,
 				totalPrice: 0,
@@ -358,8 +359,11 @@ export class CartsController {
 			} as Cart,
 		},
 	})
-	@Delete('cart-items/:pacakgeID')
-	removeCartItemToCurrentCart(@Param('packgeID') packageID: string) {
-		return 'removeCartItemToCurrentCart';
+	@Delete('cart-items/:packageID')
+	removeCartItemToCurrentCart(
+		@GetCurrentUser('sub') userID: string,
+		@Param('packageID') cartItemID: string,
+	): Promise<boolean> {
+		return this.cartsService.removeCartItemFromCurrentCart(userID, cartItemID);
 	}
 }
