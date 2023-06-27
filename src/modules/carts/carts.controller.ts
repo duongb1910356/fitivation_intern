@@ -85,7 +85,7 @@ export class CartsController {
 		schema: {
 			example: {
 				code: '404',
-				message: 'Not found document with that ID',
+				message: 'Bad request',
 				details: null,
 			} as ErrorResponse<null>,
 		},
@@ -250,7 +250,7 @@ export class CartsController {
 		examples: {
 			example1: {
 				value: {
-					cartItemIDs: {},
+					cartItemIDs: [],
 					promotionIDs: [],
 					createdAt: new Date(),
 					updatedAt: new Date(),
@@ -319,16 +319,37 @@ export class CartsController {
 	@ApiResponse({
 		status: 200,
 		schema: {
+			example: true,
+		},
+	})
+	@ApiResponse({
+		status: 400,
+		schema: {
 			example: {
-				_id: '_id',
-				accountID: 'string',
-				cartItemIDs: [],
-				promotionIDs: [],
-				promotionPrice: 0,
-				totalPrice: 0,
-				createdAt: new Date(),
-				updatedAt: new Date(),
-			} as Cart,
+				code: '400',
+				message: 'Bad request',
+				details: null,
+			} as ErrorResponse<null>,
+		},
+	})
+	@ApiResponse({
+		status: 401,
+		schema: {
+			example: {
+				code: '401',
+				message: 'Unauthorized',
+				details: null,
+			} as ErrorResponse<null>,
+		},
+	})
+	@ApiResponse({
+		status: 403,
+		schema: {
+			example: {
+				code: '403',
+				message: `Forbidden resource`,
+				details: null,
+			} as ErrorResponse<null>,
 		},
 	})
 	@Patch('cart-items/:packageID')
@@ -347,16 +368,37 @@ export class CartsController {
 	@ApiResponse({
 		status: 200,
 		schema: {
+			example: true,
+		},
+	})
+	@ApiResponse({
+		status: 400,
+		schema: {
 			example: {
-				_id: '_id',
-				accountID: 'string',
-				cartItemIDs: [],
-				promotionIDs: [],
-				promotionPrice: 0,
-				totalPrice: 0,
-				createdAt: new Date(),
-				updatedAt: new Date(),
-			} as Cart,
+				code: '400',
+				message: 'Bad request',
+				details: null,
+			} as ErrorResponse<null>,
+		},
+	})
+	@ApiResponse({
+		status: 401,
+		schema: {
+			example: {
+				code: '401',
+				message: 'Unauthorized',
+				details: null,
+			} as ErrorResponse<null>,
+		},
+	})
+	@ApiResponse({
+		status: 403,
+		schema: {
+			example: {
+				code: '403',
+				message: `Forbidden resource`,
+				details: null,
+			} as ErrorResponse<null>,
 		},
 	})
 	@Delete('cart-items/:packageID')
