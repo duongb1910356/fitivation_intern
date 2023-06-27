@@ -92,7 +92,7 @@ export class CartsController {
 		},
 	})
 	@Get('carts/me')
-	getCurrentUserCart(@GetCurrentUser('sub') userID: string) {
+	getCurrentUserCart(@GetCurrentUser('sub') userID: string): Promise<Cart> {
 		return this.cartsService.getCurrent(userID);
 	}
 
