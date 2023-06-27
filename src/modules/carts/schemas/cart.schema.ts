@@ -2,8 +2,6 @@ import { Prop, Schema, SchemaFactory } from '@nestjs/mongoose';
 import mongoose, { HydratedDocument } from 'mongoose';
 import { BaseObject } from 'src/shared/schemas/base-object.schema';
 import { User } from 'src/modules/users/schemas/user.schema';
-import { Promotion } from 'src/modules/promotions/schemas/promotion.schema';
-import { CartItem } from 'src/modules/cart-items/schemas/cart-item.schema';
 
 export type CartDocument = HydratedDocument<Cart>;
 
