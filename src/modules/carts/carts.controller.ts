@@ -29,7 +29,6 @@ import { PurchaseDto } from './dto/purchase-dto';
 @ApiBearerAuth()
 export class CartsController {
 	constructor(private readonly cartsService: CartsService) {}
-	@Get('carts')
 	@ApiTags('carts')
 	@ApiOperation({
 		summary: 'getManyCarts',
@@ -94,11 +93,11 @@ export class CartsController {
 			} as ErrorResponse<null>,
 		},
 	})
+	@Get('carts')
 	getManyCarts(@Query() filter: ListOptions<Cart>) {
 		return 'getManyCarts';
 	}
 
-	@Get('carts/:id')
 	@ApiTags('carts')
 	@ApiOperation({
 		summary: 'getOneCart',
@@ -173,11 +172,11 @@ export class CartsController {
 			} as ErrorResponse<null>,
 		},
 	})
+	@Get('carts/:id')
 	getOneCart(@Param('id') id: string) {
 		return 'getOneCart';
 	}
 
-	@Post('carts/purchase')
 	@ApiTags('carts')
 	@ApiOperation({
 		summary: 'purchaseInCart',
@@ -244,6 +243,7 @@ export class CartsController {
 			} as ErrorResponse<null>,
 		},
 	})
+	@Post('carts/purchase')
 	purchaseInCart(@Body() purchaseDto: PurchaseDto) {
 		return 'purchaseInCart';
 	}
