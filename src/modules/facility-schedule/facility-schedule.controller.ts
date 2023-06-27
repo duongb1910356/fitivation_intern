@@ -28,12 +28,12 @@ import { OpenTime, dayOfWeek } from './entities/open-time.entity';
 import { ShiftTime } from './entities/shift-time.entity';
 import { OpenTimeDto } from './dto/open-time-dto';
 import { ShiftTimeDto } from './dto/shift-time-dto';
-import { UpdateFacilityScheduleDto } from './dto/update-facility-schedule-dto';
 import { Facility } from '../facility/schemas/facility.schema';
 import { FacilityScheduleService } from './facility-schedule.service';
 import { OwnershipScheduleGuard } from 'src/guards/ownership/ownership-schedule.guard';
 import { Public } from '../auth/decorators/public.decorator';
 import { MongoIdValidationPipe } from 'src/pipes/parseMongoId.pipe';
+import { FacilityScheduleDto } from './dto/facility-schedule-dto';
 
 @ApiTags('schedules')
 @Controller('schedules')
@@ -57,12 +57,12 @@ export class FacilityScheduleController {
 					{
 						shift: [
 							{
-								startTime: new Date('7/10/2023 06:00:00'),
-								endTime: new Date('7/10/2023 12:00:00'),
+								startTime: '06:00',
+								endTime: '12:00',
 							},
 							{
-								startTime: new Date('7/10/2023 13:00:00'),
-								endTime: new Date('7/10/2023 19:00:00'),
+								startTime: '13:00',
+								endTime: '19:00',
 							},
 						] as ShiftTime[],
 					},
@@ -109,38 +109,40 @@ export class FacilityScheduleController {
 		description: 'Schedule ID',
 	})
 	@ApiBody({
-		type: UpdateFacilityScheduleDto,
+		type: FacilityScheduleDto,
 		examples: {
 			Daily: {
 				value: {
+					type: ScheduleType.DAILY,
 					openTime: [
 						{
 							shift: [
 								{
-									startTime: new Date('7/10/2023 06:00:00'),
-									endTime: new Date('7/10/2023 11:00:00'),
+									startTime: '06:00',
+									endTime: '10:00',
 								},
 								{
-									startTime: new Date('7/10/2023 13:00:00'),
-									endTime: new Date('7/10/2023 19:00:00'),
+									startTime: '13:00',
+									endTime: '18:00',
 								},
 							] as ShiftTimeDto[],
 						},
 					] as OpenTimeDto[],
-				} as UpdateFacilityScheduleDto,
+				} as FacilityScheduleDto,
 			},
 			Weekly: {
 				value: {
+					type: ScheduleType.WEEKLY,
 					openTime: [
 						{
 							shift: [
 								{
-									startTime: new Date('7/10/2023 06:00:00'),
-									endTime: new Date('7/10/2023 11:00:00'),
+									startTime: '06:00',
+									endTime: '10:00',
 								},
 								{
-									startTime: new Date('7/10/2023 13:00:00'),
-									endTime: new Date('7/10/2023 19:00:00'),
+									startTime: '13:00',
+									endTime: '18:00',
 								},
 							] as ShiftTimeDto[],
 							dayOfWeek: dayOfWeek.MONDAY,
@@ -148,12 +150,12 @@ export class FacilityScheduleController {
 						{
 							shift: [
 								{
-									startTime: new Date('7/10/2023 06:00:00'),
-									endTime: new Date('7/10/2023 11:00:00'),
+									startTime: '06:00',
+									endTime: '10:00',
 								},
 								{
-									startTime: new Date('7/10/2023 13:00:00'),
-									endTime: new Date('7/10/2023 19:00:00'),
+									startTime: '13:00',
+									endTime: '18:00',
 								},
 							] as ShiftTimeDto[],
 							dayOfWeek: dayOfWeek.TUESDAY,
@@ -161,31 +163,32 @@ export class FacilityScheduleController {
 						{
 							shift: [
 								{
-									startTime: new Date('7/10/2023 06:00:00'),
-									endTime: new Date('7/10/2023 11:00:00'),
+									startTime: '06:00',
+									endTime: '10:00',
 								},
 								{
-									startTime: new Date('7/10/2023 13:00:00'),
-									endTime: new Date('7/10/2023 19:00:00'),
+									startTime: '13:00',
+									endTime: '18:00',
 								},
 							] as ShiftTimeDto[],
 							dayOfWeek: dayOfWeek.WEDNESDAY,
 						},
 					] as OpenTimeDto[],
-				} as UpdateFacilityScheduleDto,
+				} as FacilityScheduleDto,
 			},
 			Monthly: {
 				value: {
+					type: ScheduleType.MONTHLY,
 					openTime: [
 						{
 							shift: [
 								{
-									startTime: new Date('7/10/2023 06:00:00'),
-									endTime: new Date('7/10/2023 11:00:00'),
+									startTime: '06:00',
+									endTime: '10:00',
 								},
 								{
-									startTime: new Date('7/10/2023 13:00:00'),
-									endTime: new Date('7/10/2023 19:00:00'),
+									startTime: '13:00',
+									endTime: '18:00',
 								},
 							] as ShiftTimeDto[],
 							dayOfMonth: 1,
@@ -193,12 +196,12 @@ export class FacilityScheduleController {
 						{
 							shift: [
 								{
-									startTime: new Date('7/10/2023 06:00:00'),
-									endTime: new Date('7/10/2023 11:00:00'),
+									startTime: '06:00',
+									endTime: '10:00',
 								},
 								{
-									startTime: new Date('7/10/2023 13:00:00'),
-									endTime: new Date('7/10/2023 19:00:00'),
+									startTime: '13:00',
+									endTime: '18:00',
 								},
 							] as ShiftTimeDto[],
 							dayOfMonth: 2,
@@ -206,18 +209,18 @@ export class FacilityScheduleController {
 						{
 							shift: [
 								{
-									startTime: new Date('7/10/2023 06:00:00'),
-									endTime: new Date('7/10/2023 11:00:00'),
+									startTime: '06:00',
+									endTime: '10:00',
 								},
 								{
-									startTime: new Date('7/10/2023 13:00:00'),
-									endTime: new Date('7/10/2023 19:00:00'),
+									startTime: '13:00',
+									endTime: '18:00',
 								},
 							] as ShiftTimeDto[],
 							dayOfMonth: 3,
 						},
 					] as OpenTimeDto[],
-				} as UpdateFacilityScheduleDto,
+				} as FacilityScheduleDto,
 			},
 		},
 	})
@@ -231,12 +234,12 @@ export class FacilityScheduleController {
 					{
 						shift: [
 							{
-								startTime: new Date('7/10/2023 06:00:00'),
-								endTime: new Date('7/10/2023 12:00:00'),
+								startTime: '06:00',
+								endTime: '10:00',
 							},
 							{
-								startTime: new Date('7/10/2023 13:00:00'),
-								endTime: new Date('7/10/2023 19:00:00'),
+								startTime: '13:00',
+								endTime: '18:00',
 							},
 						] as ShiftTime[],
 					} as OpenTime,
@@ -284,7 +287,7 @@ export class FacilityScheduleController {
 	})
 	async updateSchedule(
 		@Param('scheduleID') scheduleID: string,
-		@Body() data: UpdateFacilityScheduleDto,
+		@Body() data: FacilityScheduleDto,
 	) {
 		return await this.scheduleService.update(scheduleID, data);
 	}

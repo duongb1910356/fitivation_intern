@@ -21,7 +21,6 @@ export function ValidateScheduleType(validationOptions?: ValidationOptions) {
 
 					switch (type) {
 						case ScheduleType.DAILY:
-							console.log('daily');
 							openTime.forEach((item) => {
 								if (
 									item.hasOwnProperty('dayOfMonth') ||
@@ -34,7 +33,6 @@ export function ValidateScheduleType(validationOptions?: ValidationOptions) {
 							});
 							break;
 						case ScheduleType.WEEKLY:
-							console.log('weekly');
 							openTime.forEach((item) => {
 								if (
 									item.hasOwnProperty('dayOfMonth') ||
@@ -45,7 +43,6 @@ export function ValidateScheduleType(validationOptions?: ValidationOptions) {
 							});
 							break;
 						case ScheduleType.MONTHLY:
-							console.log('monthly');
 							openTime.forEach((item) => {
 								if (
 									!item.hasOwnProperty('dayOfMonth') ||
