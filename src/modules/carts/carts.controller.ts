@@ -312,6 +312,8 @@ export class CartsController {
 		},
 	})
 	@Post('purchase')
+	// @Roles(UserRole.MEMBER)
+	// @UseGuards(RolesGuard)
 	purchaseInCart(@Body() purchaseDto: PurchaseDto) {
 		return 'purchaseInCart';
 	}
