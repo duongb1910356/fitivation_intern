@@ -24,7 +24,7 @@ export class CartItem extends BaseObject {
 	@Prop({ default: 0, type: Number, min: 0 })
 	promotionPrice: number;
 
-	@Prop({ required: true, type: Number, min: 0 })
+	@Prop({ default: 0, type: Number, min: 0 })
 	totalPrice: number;
 }
 
