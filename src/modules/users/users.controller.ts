@@ -69,79 +69,6 @@ export class UsersController {
 		return this.userService.getCurrentUser(userID);
 	}
 
-	@ApiOperation({ summary: 'findUserByID', description: 'Get one user by ID' })
-	@ApiParam({ name: 'id', type: String, description: 'User ID' })
-	@ApiOkResponse({
-		schema: {
-			example: {
-				_id: '',
-				role: UserRole.MEMBER,
-				username: 'member',
-				email: 'member@test.com',
-				password: '123123123123',
-				displayName: 'Admin user',
-				firstName: 'string',
-				lastName: 'string',
-				gender: Gender.MALE,
-				birthDate: new Date(),
-				tel: '0888888888',
-				address: {
-					province: 'Can Tho',
-					district: 'Ninh Kieu',
-					commune: 'Xuan Khanh',
-				} as unknown as UserAddress,
-				isMember: false,
-				status: UserStatus.ACTIVE,
-				createdAt: new Date(),
-				updatedAt: new Date(),
-			} as User,
-		},
-	})
-	@ApiResponse({
-		status: 400,
-		schema: {
-			example: {
-				code: '400',
-				message: 'User not found',
-				details: null,
-			} as ErrorResponse<null>,
-		},
-	})
-	@ApiResponse({
-		status: 401,
-		schema: {
-			example: {
-				code: '401',
-				message: 'Unauthorized',
-				details: null,
-			} as ErrorResponse<null>,
-		},
-	})
-	@ApiResponse({
-		status: 403,
-		schema: {
-			example: {
-				code: '403',
-				message: `Forbidden resource`,
-				details: null,
-			} as ErrorResponse<null>,
-		},
-	})
-	@ApiResponse({
-		status: 404,
-		schema: {
-			example: {
-				code: '404',
-				message: 'Not found document with that ID',
-				details: null,
-			} as ErrorResponse<null>,
-		},
-	})
-	@Get(':id')
-	findUserByID(@Param('id') id: string): Promise<User> {
-		return this.userService.findOneByID(id);
-	}
-
 	@ApiDocsPagination('user')
 	@ApiOperation({ summary: 'findManyUsers', description: 'Get many users' })
 	@ApiResponse({
@@ -214,6 +141,79 @@ export class UsersController {
 	@Get()
 	findManyUsers(@Query() query: QueryObject): Promise<ListResponse<User>> {
 		return this.userService.findMany(query);
+	}
+
+	@ApiOperation({ summary: 'findUserByID', description: 'Get one user by ID' })
+	@ApiParam({ name: 'id', type: String, description: 'User ID' })
+	@ApiOkResponse({
+		schema: {
+			example: {
+				_id: '',
+				role: UserRole.MEMBER,
+				username: 'member',
+				email: 'member@test.com',
+				password: '123123123123',
+				displayName: 'Admin user',
+				firstName: 'string',
+				lastName: 'string',
+				gender: Gender.MALE,
+				birthDate: new Date(),
+				tel: '0888888888',
+				address: {
+					province: 'Can Tho',
+					district: 'Ninh Kieu',
+					commune: 'Xuan Khanh',
+				} as unknown as UserAddress,
+				isMember: false,
+				status: UserStatus.ACTIVE,
+				createdAt: new Date(),
+				updatedAt: new Date(),
+			} as User,
+		},
+	})
+	@ApiResponse({
+		status: 400,
+		schema: {
+			example: {
+				code: '400',
+				message: 'User not found',
+				details: null,
+			} as ErrorResponse<null>,
+		},
+	})
+	@ApiResponse({
+		status: 401,
+		schema: {
+			example: {
+				code: '401',
+				message: 'Unauthorized',
+				details: null,
+			} as ErrorResponse<null>,
+		},
+	})
+	@ApiResponse({
+		status: 403,
+		schema: {
+			example: {
+				code: '403',
+				message: `Forbidden resource`,
+				details: null,
+			} as ErrorResponse<null>,
+		},
+	})
+	@ApiResponse({
+		status: 404,
+		schema: {
+			example: {
+				code: '404',
+				message: 'Not found document with that ID',
+				details: null,
+			} as ErrorResponse<null>,
+		},
+	})
+	@Get(':id')
+	findUserByID(@Param('id') id: string): Promise<User> {
+		return this.userService.findOneByID(id);
 	}
 
 	@ApiOperation({ summary: 'createUser', description: 'Create new user' })
