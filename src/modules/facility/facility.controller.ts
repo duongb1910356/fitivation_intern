@@ -66,6 +66,16 @@ import { RolesGuard } from 'src/guards/role.guard';
 import { Roles } from 'src/decorators/role.decorator';
 import { User, UserRole } from '../users/schemas/user.schema';
 import { Attendance } from '../attendance/entities/attendance.entity';
+import { UpdateStatusFacilityDto } from './dto/update-status-facility';
+import { CreatePromotionDto } from '../promotions/dto/create-promotion-dto';
+import {
+	CustomerType,
+	Promotion,
+	PromotionMethod,
+	PromotionStatus,
+	PromotionType,
+} from '../promotions/schemas/promotion.schema';
+import { UpdatePromotionDto } from '../promotions/dto/update-promotion-dto';
 
 @ApiTags('facilities')
 @Controller('facilities')
@@ -300,7 +310,7 @@ export class FacilityController {
 		status: 400,
 		description: '[Input] invalid',
 	})
-	getReviewOfFacility(
+	getReviewFacility(
 		@Param('facilityID') facilityID,
 		@Query() filter: ListOptions<Review>,
 	) {
@@ -1415,6 +1425,71 @@ export class FacilityController {
 		return this.facilityService.update(facilityID, body, req);
 	}
 
+	@Patch(':facilityID/status')
+	@ApiBearerAuth()
+	@ApiOperation({
+		summary: 'Update status facility',
+	})
+	@ApiParam({ name: 'facilityID', type: String, description: 'Facility ID' })
+	@ApiBody({
+		type: UpdateFacilityDto,
+		examples: {
+			example1: {
+				value: {
+					status: Status.APPROVED,
+				},
+			},
+		},
+	})
+	@ApiOkResponse({
+		status: 200,
+		schema: {
+			example: {
+				code: 200,
+				message: 'Success',
+				data: {
+					_id: 'string',
+					brandID: {},
+					facilityCategoryID: {},
+					ownerID: {},
+					name: 'City Gym',
+					address: {
+						street: '30/4',
+						commune: 'Phường Xuân Khánh',
+						communeCode: '011',
+						district: 'Quận Ninh Kiều',
+						districtCode: '056',
+						province: 'Thành phố Cần Thơ',
+						provinceCode: '065',
+					},
+					averageStar: null,
+					summary: 'CHẤT LƯỢNG LÀ DANH DỰ',
+					description: 'ABC',
+					coordinates: [45, 54],
+					state: State.ACTIVE,
+					status: Status.APPROVED,
+					photos: [],
+					reviews: [],
+					scheduleType: ScheduleType.WEEKLY,
+					createdAt: new Date(),
+					updatedAt: new Date(),
+				} as Facility,
+			},
+		},
+	})
+	@ApiBadRequestResponse({
+		type: BadRequestException,
+		status: 400,
+		description: '[Input] invalid!',
+	})
+	updateStatus(
+		@Param('facilityID') facilityID,
+		@Body() body: UpdateStatusFacilityDto,
+		@Req() req: any,
+	) {
+		return this.facilityService.updateStatus(facilityID, req, body.status);
+	}
+
 	@Patch(':facilityID/reviews/add')
 	@ApiOperation({
 		summary: 'Add the newest reviews to the facility',
@@ -1742,5 +1817,313 @@ export class FacilityController {
 			req,
 			body.listDeleteID,
 		);
+	}
+
+	@UseGuards(RolesGuard)
+	@Roles(UserRole.FACILITY_OWNER)
+	@Post(':facilityID/promotions')
+	@ApiOperation({
+		summary: 'Create facility promotion',
+	})
+	@ApiBearerAuth()
+	@ApiParam({ name: 'facilityID', type: String, description: 'Facility id' })
+	@ApiBody({
+		type: CreatePromotionDto,
+		examples: {
+			test1: {
+				value: {
+					targetID: '6498f23e20d189a6b1607c7e',
+					type: 'FACILITY',
+					name: 'Mừng hè đi tập gym nè',
+					description: 'Chính sách mô tả',
+					couponCode: '066',
+					value: 10,
+					method: 'PERCENT',
+					minPriceApply: 0,
+					maxValue: 10000,
+					maxQuantity: 45,
+					startDate: new Date(),
+					endDate: new Date(),
+					customerType: 'MEMBER',
+					status: 'ACTIVE',
+				} as CreatePromotionDto,
+			},
+		},
+	})
+	@ApiOkResponse({
+		status: 200,
+		schema: {
+			example: {
+				code: 200,
+				message: 'Success',
+				data: {
+					_id: 'string',
+					targetID: '6498f23e20d189a6b1607c7e',
+					type: 'FACILITY',
+					name: 'Mừng hè đi tập gym nè',
+					description: 'Chính sách mô tả',
+					couponCode: '066',
+					value: 10,
+					method: 'PERCENT',
+					minPriceApply: 0,
+					maxValue: 10000,
+					maxQuantity: 45,
+					startDate: new Date(),
+					endDate: new Date(),
+					customerType: 'MEMBER',
+					status: 'ACTIVE',
+					createdAt: new Date(),
+					updatedAt: new Date(),
+				} as Promotion,
+			},
+		},
+	})
+	@ApiBadRequestResponse({
+		type: BadRequestException,
+		status: 400,
+		description: '[Input] invalid!',
+	})
+	createPromotion(
+		@Param('facilityID') id: string,
+		@Body() body: CreatePromotionDto,
+	) {
+		return this.facilityService.createPromotion(id, body);
+	}
+
+	@Public()
+	@Get(':facilityID/promotions')
+	@ApiParam({ name: 'facilityID', type: String, description: 'Facility id' })
+	@ApiOperation({
+		summary: 'Get many facility promotion',
+	})
+	@ApiOkResponse({
+		status: 200,
+		schema: {
+			example: {
+				code: 200,
+				message: 'Success',
+				data: {
+					_id: 'string',
+					targetID: '6498f23e20d189a6b1607c7e',
+					type: 'FACILITY',
+					name: 'Mừng hè đi tập gym nè',
+					description: 'Chính sách mô tả',
+					couponCode: '066',
+					value: 10,
+					method: 'PERCENT',
+					minPriceApply: 0,
+					maxValue: 10000,
+					maxQuantity: 45,
+					startDate: new Date(),
+					endDate: new Date(),
+					customerType: 'MEMBER',
+					status: 'ACTIVE',
+					createdAt: new Date(),
+					updatedAt: new Date(),
+				} as Promotion,
+			},
+		},
+	})
+	@ApiBadRequestResponse({
+		type: BadRequestException,
+		status: 400,
+		description: '[Input] invalid!',
+	})
+	findManyPromotion(@Param('facilityID') facilityID) {
+		return this.facilityService.findManyPromotion(facilityID);
+	}
+
+	@Patch('promotion/:promotionID')
+	@ApiBearerAuth()
+	@ApiOperation({
+		summary: 'update Facility Promotion',
+		description:
+			'Allow admin to update bill promotion\n\nAllow facility owner to update facility promotion or package promotion',
+	})
+	@ApiParam({ name: 'promotionID', type: String, description: 'Promotion ID' })
+	@ApiBody({
+		type: UpdatePromotionDto,
+		examples: {
+			Bill_Promotion: {
+				value: {
+					targetID: '649a60d5c6c4283af1e22d9c',
+					type: PromotionType.BILL,
+					name: 'string',
+					description: 'string',
+					couponCode: 'string',
+					value: 1,
+					method: PromotionMethod.NUMBER,
+					minPriceApply: 1,
+					maxValue: 1,
+					maxQuantity: 1,
+					startDate: new Date(),
+					endDate: new Date(),
+					customerType: CustomerType.CUSTOMER,
+					status: PromotionStatus.ACTIVE,
+				} as Promotion,
+			},
+			Facility_Promotion: {
+				value: {
+					targetID: {},
+					type: PromotionType.FACILITY,
+					name: 'string',
+					description: 'string',
+					couponCode: 'string',
+					value: 1,
+					method: PromotionMethod.NUMBER,
+					minPriceApply: 1,
+					maxValue: 1,
+					maxQuantity: 1,
+					startDate: new Date(),
+					endDate: new Date(),
+					customerType: CustomerType.CUSTOMER,
+					status: PromotionStatus.ACTIVE,
+					createdAt: new Date(),
+					updatedAt: new Date(),
+				} as Promotion,
+			},
+			Package_Promotion: {
+				value: {
+					targetID: {},
+					type: PromotionType.PACKAGE,
+					name: 'string',
+					description: 'string',
+					couponCode: 'string',
+					value: 1,
+					method: PromotionMethod.NUMBER,
+					minPriceApply: 1,
+					maxValue: 1,
+					maxQuantity: 1,
+					startDate: new Date(),
+					endDate: new Date(),
+					customerType: CustomerType.CUSTOMER,
+					status: PromotionStatus.ACTIVE,
+					createdAt: new Date(),
+					updatedAt: new Date(),
+				} as Promotion,
+			},
+		},
+	})
+	@ApiResponse({
+		status: 200,
+		schema: {
+			example: {
+				targetID: {},
+				type: PromotionType.BILL,
+				name: 'string',
+				description: 'string',
+				couponCode: 'string',
+				value: 1,
+				method: PromotionMethod.NUMBER,
+				minPriceApply: 1,
+				maxValue: 1,
+				maxQuantity: 1,
+				startDate: new Date(),
+				endDate: new Date(),
+				customerType: CustomerType.CUSTOMER,
+				status: PromotionStatus.ACTIVE,
+				createdAt: new Date(),
+				updatedAt: new Date(),
+			} as Promotion,
+		},
+	})
+	@ApiResponse({
+		status: 400,
+		schema: {
+			example: {
+				code: '400',
+				message: 'Bad request',
+				details: null,
+			} as ErrorResponse<null>,
+		},
+	})
+	@ApiResponse({
+		status: 401,
+		schema: {
+			example: {
+				code: '401',
+				message: 'Unauthorized',
+				details: null,
+			} as ErrorResponse<null>,
+		},
+	})
+	@ApiResponse({
+		status: 403,
+		schema: {
+			example: {
+				code: '403',
+				message: `Forbidden resource`,
+				details: null,
+			} as ErrorResponse<null>,
+		},
+	})
+	@ApiResponse({
+		status: 404,
+		schema: {
+			example: {
+				code: '404',
+				message: 'Not found document with that ID',
+				details: null,
+			} as ErrorResponse<null>,
+		},
+	})
+	async updatePromotion(
+		@Param('promotionID') promotionID: string,
+		@Body() body: UpdatePromotionDto,
+		@Req() req: any,
+	) {
+		return await this.facilityService.updatePromotion(promotionID, body, req);
+	}
+
+	@Delete('promotion/:promotionID')
+	@ApiBearerAuth()
+	@ApiOperation({
+		summary: 'delete Facility Promotion',
+		description:
+			'Allow admin to delete bill promotion\n\nAllow facility owner to delete facility promotion or package promotion',
+	})
+	@ApiParam({ name: 'promotionID', type: String, description: 'Promotion ID' })
+	@ApiResponse({
+		status: 200,
+		schema: {
+			example: {
+				code: '200',
+				message: 'Deleted successfully',
+				details: null,
+			},
+		},
+	})
+	@ApiResponse({
+		status: 401,
+		schema: {
+			example: {
+				code: '401',
+				message: 'Unauthorized',
+				details: null,
+			} as ErrorResponse<null>,
+		},
+	})
+	@ApiResponse({
+		status: 403,
+		schema: {
+			example: {
+				code: '403',
+				message: `Forbidden resource`,
+				details: null,
+			} as ErrorResponse<null>,
+		},
+	})
+	@ApiResponse({
+		status: 404,
+		schema: {
+			example: {
+				code: '404',
+				message: 'Not found document with that ID',
+				details: null,
+			} as ErrorResponse<null>,
+		},
+	})
+	deletePromotion(@Param('promotionID') promotionID: string, @Req() req: any) {
+		return this.facilityService.deletePromotion(promotionID, req);
 	}
 }

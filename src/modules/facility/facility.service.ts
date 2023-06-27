@@ -1,9 +1,15 @@
 import {
 	BadRequestException,
+	ForbiddenException,
 	Injectable,
 	NotFoundException,
 } from '@nestjs/common';
-import { Facility, FacilityDocument, State } from './schemas/facility.schema';
+import {
+	Facility,
+	FacilityDocument,
+	State,
+	Status,
+} from './schemas/facility.schema';
 import { PhotoService } from '../photo/photo.service';
 import { CreateFacilityDto } from './dto/create-facility-dto';
 import { ReviewService } from '../reviews/reviews.service';
@@ -25,6 +31,11 @@ import { UpdateOrderDto } from '../package-type/dto/update-order-dto';
 import { AttendanceService } from '../attendance/attendance.service';
 import { Photo } from '../photo/schemas/photo.schema';
 import { Review } from '../reviews/schemas/reviews.schema';
+import { UserRole } from '../users/schemas/user.schema';
+import { CreatePromotionDto } from '../promotions/dto/create-promotion-dto';
+import { Promotion } from '../promotions/schemas/promotion.schema';
+import { PromotionsService } from '../promotions/promotions.service';
+import { UpdatePromotionDto } from '../promotions/dto/update-promotion-dto';
 
 @Injectable()
 export class FacilityService {
@@ -36,6 +47,7 @@ export class FacilityService {
 		private readonly attendanceService: AttendanceService,
 		private readonly photoService: PhotoService,
 		private readonly reviewService: ReviewService,
+		private readonly promotionService: PromotionsService,
 	) {}
 
 	async isOwner(id: string, uid: string): Promise<boolean> {
@@ -131,7 +143,8 @@ export class FacilityService {
 		updateFacilityDto: UpdateFacilityDto,
 		req: any,
 	): Promise<Facility> {
-		if (!this.isOwnerFacility(id, req)) {
+		const checkOk = await this.isOwnerFacility(id, req);
+		if (!checkOk) {
 			throw new BadRequestException(
 				'You do not have permission to access this document',
 			);
@@ -205,7 +218,8 @@ export class FacilityService {
 		req: any,
 		files: { images: Express.Multer.File[] },
 	): Promise<Facility> {
-		if (!this.isOwnerFacility(id, req)) {
+		const checkOk = await this.isOwnerFacility(id, req);
+		if (!checkOk) {
 			throw new BadRequestException(
 				'You do not have permission to access this document',
 			);
@@ -223,7 +237,8 @@ export class FacilityService {
 	}
 
 	async delete(id: string, req: any): Promise<boolean> {
-		if (!this.isOwnerFacility(id, req)) {
+		const checkOk = await this.isOwnerFacility(id, req);
+		if (!checkOk) {
 			throw new BadRequestException(
 				'You do not have permission to access this document',
 			);
@@ -294,7 +309,64 @@ export class FacilityService {
 	}
 
 	async isOwnerFacility(facilityID: string, req: any): Promise<boolean> {
-		const ownerID = await this.facilityModel.findById(facilityID);
-		return ownerID != req.user.sub;
+		const facility = await this.facilityModel.findById(facilityID);
+		if (!facility) {
+			throw new BadRequestException('Facility not exist');
+		}
+		return facility.ownerID == req.user.sub;
+	}
+
+	async updateStatus(
+		facilityID: string,
+		req: any,
+		status: Status,
+	): Promise<Facility> {
+		if (req.user.role == UserRole.ADMIN) {
+			return this.facilityModel.findOneAndUpdate(
+				{ _id: facilityID },
+				{ status: status },
+				{ new: true },
+			);
+		}
+	}
+
+	async createPromotion(
+		id: string,
+		body: CreatePromotionDto,
+	): Promise<Promotion> {
+		return await this.promotionService.create(body);
+	}
+
+	// Tìm promotion khả dụng cho Facility
+	async findManyPromotion(
+		facilityID: string,
+	): Promise<ListResponse<Promotion>> {
+		return await this.promotionService.findMany({ targetID: facilityID });
+	}
+
+	async updatePromotion(
+		promotionID: string,
+		body: UpdatePromotionDto,
+		req: any,
+	) {
+		const promotion = await this.promotionService.findOneByID(promotionID);
+		const checkOk = await this.isOwnerFacility(promotion.targetID, req);
+		if (!checkOk) {
+			throw new ForbiddenException(
+				'You do not have permission to access this document',
+			);
+		}
+		return await this.promotionService.update(promotionID, body);
+	}
+
+	async deletePromotion(promotionID: string, req: any) {
+		const promotion = await this.promotionService.findOneByID(promotionID);
+		const checkOk = await this.isOwnerFacility(promotion.targetID, req);
+		if (!checkOk) {
+			throw new ForbiddenException(
+				'You do not have permission to access this document',
+			);
+		}
+		return await this.promotionService.delete(promotionID);
 	}
 }

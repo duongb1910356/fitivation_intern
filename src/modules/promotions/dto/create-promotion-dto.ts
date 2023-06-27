@@ -20,7 +20,6 @@ import { Type } from 'class-transformer';
 export class CreatePromotionDto {
 	@IsString()
 	@IsNotEmpty()
-	@MaxLength(12)
 	targetID: string;
 
 	@IsEnum(PromotionType)
@@ -48,15 +47,18 @@ export class CreatePromotionDto {
 	@IsNumber()
 	@Min(0)
 	value: number;
+
+	@IsEnum(PromotionMethod)
+	@IsNotEmpty()
 	method: PromotionMethod;
 
 	@IsNumber()
 	@Min(0)
-	minPriceApply: number;
+	minPriceApply: number; // áp dụng cho đơn có giá trừ ${minPriceApply} đồng
 
 	@IsNumber()
 	@Min(0)
-	maxValue: number;
+	maxValue: number; // mức giảm tối đa có thể
 
 	@IsNumber()
 	@Min(0)

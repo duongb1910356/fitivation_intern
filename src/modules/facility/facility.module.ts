@@ -9,6 +9,7 @@ import { Facility, FacilitySchemaFactory } from './schemas/facility.schema';
 import { FacilityService } from './facility.service';
 import { ReviewsModule } from '../reviews/reviews.module';
 import { PhotoModule } from '../photo/photo.module';
+import { PromotionsModule } from '../promotions/promotions.module';
 
 @Module({
 	// imports: [
@@ -36,6 +37,7 @@ import { PhotoModule } from '../photo/photo.module';
 		HolidayModule,
 		FacilityScheduleModule,
 		AttendanceModule,
+		PromotionsModule,
 	],
 	controllers: [FacilityController],
 	providers: [FacilityService],
