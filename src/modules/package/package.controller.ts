@@ -72,6 +72,7 @@ export class PackageController {
 				facilityID: {} as unknown as Facility,
 				type: TimeType.ONE_MONTH,
 				price: 100000,
+				benefits: ['Use of bathroom', 'Use of massage chair'],
 				createdAt: new Date(),
 				updatedAt: new Date(),
 			} as Package,
@@ -118,12 +119,18 @@ export class PackageController {
 		examples: {
 			Test1: {
 				value: {
-					price: 540000,
+					price: 90000,
+					benefits: ['Use of bathroom', 'Use of massage chair'],
 				} as UpdatePackageDto,
 			},
 			Test2: {
 				value: {
-					price: 90000,
+					price: 540000,
+					benefits: [
+						'Unlimited access',
+						'Use of bathroom',
+						'Use of massage chair',
+					],
 				} as UpdatePackageDto,
 			},
 		},
@@ -136,6 +143,7 @@ export class PackageController {
 				facilityID: {} as unknown as Facility,
 				type: TimeType.ONE_MONTH,
 				price: 90000,
+				benefits: ['Use of bathroom', 'Use of massage chair'],
 				createdAt: new Date(),
 				updatedAt: new Date(),
 			} as Package,

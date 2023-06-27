@@ -115,8 +115,13 @@ export class PackageTypeController {
 						_id: '6476ef7d1f0419cd330fe128',
 						packageTypeID: {} as unknown as PackageType,
 						facilityID: {} as unknown as Facility,
-						type: TimeType.ONE_MONTH,
+						type: TimeType.SIX_MONTH,
 						price: 100000,
+						benefits: [
+							'Unlimited access',
+							'Use of bathroom',
+							'Use of massage chair',
+						],
 						createdAt: new Date(),
 						updatedAt: new Date(),
 					} as Package,
@@ -177,12 +182,18 @@ export class PackageTypeController {
 				value: {
 					type: TimeType.ONE_MONTH,
 					price: 90000,
+					benefits: ['Use of bathroom'],
 				} as CreatePackageDto,
 			},
 			test2: {
 				value: {
 					type: TimeType.SIX_MONTH,
 					price: 540000,
+					benefits: [
+						'Unlimited access',
+						'Use of bathroom',
+						'Use of massage chair',
+					],
 				} as CreatePackageDto,
 			},
 		},
@@ -193,8 +204,13 @@ export class PackageTypeController {
 				_id: '6476ef7d1f0419cd330fe128',
 				packageTypeID: {} as unknown as PackageType,
 				facilityID: {} as unknown as Facility,
-				type: TimeType.ONE_MONTH,
+				type: TimeType.SIX_MONTH,
 				price: 100000,
+				benefits: [
+					'Unlimited access',
+					'Use of bathroom',
+					'Use of massage chair',
+				],
 				createdAt: new Date(),
 				updatedAt: new Date(),
 			} as Package,
