@@ -59,10 +59,6 @@ export class AuthService {
 	}
 
 	async signup(signupDto: SignupDto): Promise<TokenResponse> {
-		const passwordHashed = await Encrypt.hashData(signupDto.password);
-
-		signupDto.password = passwordHashed;
-
 		const newUser = await this.userService.createOne(signupDto);
 
 		const tokens = await this.signTokens(
