@@ -32,7 +32,7 @@ export class Bill extends BaseObject {
 
 	@Prop({
 		required: true,
-		type: mongoose.Schema.Types.ObjectId,
+		type: [mongoose.Schema.Types.ObjectId],
 		ref: 'BillItem',
 	})
 	billItems: BillItem[];
