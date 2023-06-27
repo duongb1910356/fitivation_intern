@@ -1,7 +1,6 @@
 import { Prop, Schema, SchemaFactory } from '@nestjs/mongoose';
 import mongoose, { HydratedDocument } from 'mongoose';
 import { BaseObject } from 'src/shared/schemas/base-object.schema';
-import { User } from 'src/modules/users/schemas/user.schema';
 
 export type CartDocument = HydratedDocument<Cart>;
 
@@ -14,7 +13,7 @@ export class Cart extends BaseObject {
 		type: [{ type: mongoose.Schema.Types.ObjectId, ref: 'CartItem' }],
 		default: [],
 	})
-	CartItemIDs?: string[];
+	cartItemIDs?: string[];
 
 	@Prop({
 		type: [{ type: mongoose.Schema.Types.ObjectId, ref: 'Promotion' }],
