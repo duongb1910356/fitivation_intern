@@ -6,10 +6,11 @@ import {
 	Query,
 	UseGuards,
 	Body,
+	Patch,
+	Delete,
 } from '@nestjs/common';
 import { CartsService } from './carts.service';
 import {
-	ApiBearerAuth,
 	ApiBody,
 	ApiOperation,
 	ApiParam,
@@ -26,11 +27,10 @@ import { ApiDocsPagination } from 'src/decorators/swagger-form-data.decorator';
 import { PurchaseDto } from './dto/purchase-dto';
 import { GetCurrentUser } from 'src/decorators/get-current-user.decorator';
 
-@Controller()
-@ApiBearerAuth()
+@Controller('carts')
+@ApiTags('carts')
 export class CartsController {
 	constructor(private readonly cartsService: CartsService) {}
-	@ApiTags('carts')
 	@ApiOperation({
 		summary: 'getCurrentUserCart',
 		description: 'Get logged user cart',
@@ -41,9 +41,9 @@ export class CartsController {
 		schema: {
 			example: {
 				_id: '_id',
-				accountID: {},
-				CartItemIDs: {},
-				promotionIDs: {},
+				accountID: 'string',
+				CartItemIDs: [],
+				promotionIDs: [],
 				promotionPrice: 0,
 				totalPrice: 0,
 				createdAt: new Date(),
@@ -91,12 +91,11 @@ export class CartsController {
 			} as ErrorResponse<null>,
 		},
 	})
-	@Get('carts/me')
+	@Get('me')
 	getCurrentUserCart(@GetCurrentUser('sub') userID: string): Promise<Cart> {
 		return this.cartsService.getCurrent(userID);
 	}
 
-	@ApiTags('carts')
 	@ApiOperation({
 		summary: 'getManyCarts',
 		description: 'Get many carts',
@@ -160,7 +159,7 @@ export class CartsController {
 			} as ErrorResponse<null>,
 		},
 	})
-	@Get('carts')
+	@Get()
 	getManyCarts(@Query() filter: ListOptions<Cart>) {
 		return 'getManyCarts';
 	}
@@ -239,12 +238,11 @@ export class CartsController {
 			} as ErrorResponse<null>,
 		},
 	})
-	@Get('carts/:id')
+	@Get(':id')
 	getOneCart(@Param('id') id: string) {
 		return 'getOneCart';
 	}
 
-	@ApiTags('carts')
 	@ApiOperation({
 		summary: 'purchaseInCart',
 		description: 'Allow customers to purchase packages in their cart',
@@ -310,8 +308,58 @@ export class CartsController {
 			} as ErrorResponse<null>,
 		},
 	})
-	@Post('carts/purchase')
+	@Post('purchase')
 	purchaseInCart(@Body() purchaseDto: PurchaseDto) {
 		return 'purchaseInCart';
+	}
+
+	@ApiOperation({
+		summary: 'addCartItemToCurrentCart',
+		description: 'Add Cart-item to current Cart',
+	})
+	@ApiParam({ name: 'pacakgeID', type: String, description: 'Pacakge ID' })
+	@ApiResponse({
+		status: 200,
+		schema: {
+			example: {
+				_id: '_id',
+				accountID: 'string',
+				CartItemIDs: [],
+				promotionIDs: [],
+				promotionPrice: 0,
+				totalPrice: 0,
+				createdAt: new Date(),
+				updatedAt: new Date(),
+			} as Cart,
+		},
+	})
+	@Patch('cart-items/:pacakgeID')
+	addCartItemToCurrentCart(@Param('packgeID') packageID: string) {
+		return 'addCartItemToCurrentCart';
+	}
+
+	@ApiOperation({
+		summary: 'removeCartItemToCurrentCart',
+		description: 'Remove cart-item to current Cart',
+	})
+	@ApiParam({ name: 'pacakgeID', type: String, description: 'Pacakge ID' })
+	@ApiResponse({
+		status: 200,
+		schema: {
+			example: {
+				_id: '_id',
+				accountID: 'string',
+				CartItemIDs: [],
+				promotionIDs: [],
+				promotionPrice: 0,
+				totalPrice: 0,
+				createdAt: new Date(),
+				updatedAt: new Date(),
+			} as Cart,
+		},
+	})
+	@Delete('cart-items/:pacakgeID')
+	removeCartItemToCurrentCart(@Param('packgeID') packageID: string) {
+		return 'removeCartItemToCurrentCart';
 	}
 }
