@@ -28,7 +28,7 @@ export class Bill extends BaseObject {
 		type: mongoose.Schema.Types.ObjectId,
 		ref: 'User',
 	})
-	accountID: User;
+	accountID: string;
 
 	@Prop({
 		required: true,
@@ -52,7 +52,7 @@ export class Bill extends BaseObject {
 	@Prop({ default: 0, type: Number, min: 0 })
 	promotionPrice: number;
 
-	@Prop({ required: true, type: Number, min: 0 })
+	@Prop({ default: 0, type: Number, min: 0 })
 	totalPrice: number;
 
 	@Prop({ default: BillStatus.ACTIVE, enum: BillStatus, type: String })

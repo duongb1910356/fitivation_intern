@@ -22,28 +22,28 @@ export enum BillItemStatus {
 @Schema({ timestamps: true })
 export class BillItem extends BaseObject {
 	@Prop({ required: true, type: mongoose.Schema.Types.ObjectId, ref: 'Brand' })
-	brandID: Brand;
+	brandID: string;
 
 	@Prop({
 		required: true,
 		type: mongoose.Schema.Types.ObjectId,
 		ref: 'Facility',
 	})
-	facilityID: Facility;
+	facilityID: string;
 
 	@Prop({
 		required: true,
 		type: mongoose.Schema.Types.ObjectId,
 		ref: 'PackageType',
 	})
-	packageTypeID: PackageType;
+	packageTypeID: string;
 
 	@Prop({
 		required: true,
 		type: mongoose.Schema.Types.ObjectId,
 		ref: 'Package',
 	})
-	packageID: Package;
+	packageID: string;
 
 	@Prop({
 		required: true,
@@ -66,14 +66,14 @@ export class BillItem extends BaseObject {
 	})
 	packageInfo: BillItemPackage;
 
-	@Prop({ type: [PromotionSchema] })
+	@Prop({ default: 0, type: [PromotionSchema] })
 	promotions?: Promotion[];
 
 	@Prop({ default: 0, type: Number, min: 0 })
-	promotionPrice: number;
+	promotionPrice?: number;
 
-	@Prop({ required: true, type: Number, min: 0 })
-	totalPrice: number;
+	@Prop({ default: 0, type: Number, min: 0 })
+	totalPrice?: number;
 
 	@Prop({ default: BillItemStatus.ACTIVE, enum: BillItemStatus, type: String })
 	status: BillItemStatus;

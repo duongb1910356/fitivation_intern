@@ -49,14 +49,14 @@ export class BillsController {
 				items: [
 					{
 						_id: '_id',
-						accountID: {},
+						accountID: 'string',
 						billItems: [
 							{
 								_id: '_id',
-								brandID: {},
-								facilityID: {},
-								packageTypeID: {},
-								packageID: {},
+								brandID: 'string',
+								facilityID: 'string',
+								packageTypeID: 'string',
+								packageID: 'string',
 								facilityInfo: {
 									brandName: 'string',
 									ownerFacilityName: 'string',
@@ -76,7 +76,7 @@ export class BillsController {
 								} as BillItemPackage,
 								promotions: [
 									{
-										targetID: {},
+										targetID: 'string',
 										type: PromotionType.PACKAGE,
 										name: 'string',
 										description: 'string',
@@ -208,14 +208,14 @@ export class BillsController {
 				items: [
 					{
 						_id: '_id',
-						accountID: {},
+						accountID: 'string',
 						billItems: [
 							{
 								_id: '_id',
-								brandID: {},
-								facilityID: {},
-								packageTypeID: {},
-								packageID: {},
+								brandID: 'string',
+								facilityID: 'string',
+								packageTypeID: 'string',
+								packageID: 'string',
 								facilityInfo: {
 									brandName: 'string',
 									ownerFacilityName: 'string',
@@ -235,7 +235,7 @@ export class BillsController {
 								} as BillItemPackage,
 								promotions: [
 									{
-										targetID: {},
+										targetID: 'string',
 										type: PromotionType.PACKAGE,
 										name: 'string',
 										description: 'string',
