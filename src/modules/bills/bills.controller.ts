@@ -16,7 +16,6 @@ import { ApiDocsPagination } from 'src/decorators/swagger-form-data.decorator';
 import {
 	ErrorResponse,
 	ListOptions,
-	ListResponse,
 } from 'src/shared/response/common-response';
 import {
 	CustomerType,
@@ -30,13 +29,15 @@ import { CreatePromotionDto } from '../promotions/dto/create-promotion-dto';
 import { BillItemPackage } from '../bill-items/schemas/bill-item-package.schema';
 import { BillItemPackageType } from '../bill-items/schemas/bill-item-package-type.schema';
 import { BillItemFacility } from '../bill-items/schemas/bill-item-facility.schema';
+import { GetCurrentUser } from 'src/decorators/get-current-user.decorator';
+import { ListResponse, QueryObject } from 'src/shared/utils/query-api';
+import { TokenPayload } from '../auth/types/token-payload.type';
 
 @Controller('bills')
 @ApiTags('bills')
 export class BillsController {
 	constructor(private readonly billsService: BillsService) {}
 
-	@Get()
 	@ApiOperation({
 		summary: 'getManyBills',
 		description: 'Get many bills',
@@ -148,14 +149,12 @@ export class BillsController {
 					},
 				] as Bill[],
 				total: 1,
-				options: {
-					limit: 1,
-					offset: 0,
-					searchField: {},
-					searchValue: '',
-					sortField: 'createdAt',
-					sortOrder: 'asc',
-				} as ListOptions<Bill>,
+				queryOptions: {
+					sort: 'string',
+					fields: 'string',
+					limit: 10,
+					page: 0,
+				} as QueryObject,
 			} as ListResponse<Bill>,
 		},
 	})
@@ -189,11 +188,14 @@ export class BillsController {
 			},
 		},
 	})
-	getManyBills(@Query() filter: ListOptions<Bill>) {
-		return 'getManyBills';
+	@Get()
+	getManyBills(
+		@GetCurrentUser() user: TokenPayload,
+		@Query() query: QueryObject,
+	): Promise<ListResponse<Bill>> {
+		return this.billsService.findMany(query, user);
 	}
 
-	@Get(':id')
 	@ApiOperation({
 		summary: 'getOneBill',
 		description: 'Get one bill',
@@ -305,14 +307,12 @@ export class BillsController {
 					},
 				] as Bill[],
 				total: 1,
-				options: {
-					limit: 1,
-					offset: 0,
-					searchField: {},
-					searchValue: '',
-					sortField: 'createdAt',
-					sortOrder: 'asc',
-				} as ListOptions<Bill>,
+				queryOptions: {
+					sort: 'string',
+					fields: 'string',
+					limit: 10,
+					page: 0,
+				} as QueryObject,
 			} as ListResponse<Bill>,
 		},
 	})
@@ -356,8 +356,12 @@ export class BillsController {
 			} as ErrorResponse<null>,
 		},
 	})
-	getOneBill(@Param('id') id: string) {
-		return 'getOneBill';
+	@Get(':id')
+	getOneBill(
+		@Param('id') billID: string,
+		@GetCurrentUser() user: TokenPayload,
+	): Promise<Bill> {
+		return this.billsService.findOneByID(billID, user);
 	}
 
 	@Get('promotions')
@@ -390,14 +394,12 @@ export class BillsController {
 					},
 				] as Promotion[],
 				total: 1,
-				options: {
-					limit: 1,
-					offset: 0,
-					searchField: {},
-					searchValue: '',
-					sortField: 'createdAt',
-					sortOrder: 'asc',
-				} as ListOptions<Promotion>,
+				queryOptions: {
+					sort: 'string',
+					fields: 'string',
+					limit: 10,
+					page: 0,
+				} as QueryObject,
 			} as ListResponse<Promotion>,
 		},
 	})
@@ -465,14 +467,12 @@ export class BillsController {
 					},
 				] as Promotion[],
 				total: 1,
-				options: {
-					limit: 1,
-					offset: 0,
-					searchField: {},
-					searchValue: '',
-					sortField: 'createdAt',
-					sortOrder: 'asc',
-				} as ListOptions<Promotion>,
+				queryOptions: {
+					sort: 'string',
+					fields: 'string',
+					limit: 10,
+					page: 0,
+				} as QueryObject,
 			} as ListResponse<Promotion>,
 		},
 	})
