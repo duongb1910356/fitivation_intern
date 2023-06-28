@@ -1,22 +1,43 @@
-import { Injectable } from '@nestjs/common';
-// import { CreateBillDto } from './dto/create-bill.dto';
-// import { UpdateBillDto } from './dto/update-bill.dto';
+import { Injectable, InternalServerErrorException } from '@nestjs/common';
+import { BillItem } from '../bill-items/schemas/bill-item.schema';
+import { InjectModel } from '@nestjs/mongoose';
+import { Bill, BillDocument, PaymentMethod } from './schemas/bill.schema';
+import { Model } from 'mongoose';
 
 @Injectable()
 export class BillsService {
-	// create(createBillDto: CreateBillDto) {
-	// 	return 'This action adds a new bill';
-	// }
-	// findAll() {
-	// 	return `This action returns all bills`;
-	// }
-	// findOne(id: number) {
-	// 	return `This action returns a #${id} bill`;
-	// }
-	// update(id: number, updateBillDto: UpdateBillDto) {
-	// 	return `This action updates a #${id} bill`;
-	// }
-	// remove(id: number) {
-	// 	return `This action removes a #${id} bill`;
-	// }
+	constructor(
+		@InjectModel(Bill.name)
+		private billModel: Model<BillDocument>,
+	) {}
+
+	async createOne(
+		userID: string,
+		billItems: BillItem[],
+		paymentOpt: any,
+	): Promise<Bill> {
+		let totalPrice = 0;
+
+		for (let i = 0; i < billItems.length; i++) {
+			totalPrice += billItems[i].totalPrice;
+		}
+
+		const billObj = {
+			accountID: userID,
+			billItems: billItems,
+			paymentMethod: paymentOpt.paymentMethod || PaymentMethod.CREDIT_CARD,
+			taxes: paymentOpt.taxes || 0,
+			description: paymentOpt.description || '',
+			promotions: [],
+			promotionPrice: 0,
+			totalPrice: totalPrice,
+		};
+
+		const bill = await this.billModel.create(billObj);
+
+		if (!bill)
+			throw new InternalServerErrorException('Create Bill-item failed');
+
+		return bill;
+	}
 }

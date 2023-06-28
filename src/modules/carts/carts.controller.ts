@@ -29,6 +29,7 @@ import { GetCurrentUser } from 'src/decorators/get-current-user.decorator';
 import { UserRole } from '../users/schemas/user.schema';
 import { RolesGuard } from 'src/guards/role.guard';
 import { Roles } from 'src/decorators/role.decorator';
+import { PaymentMethod } from '../bills/schemas/bill.schema';
 
 @Controller('carts')
 @ApiTags('carts')
@@ -255,10 +256,11 @@ export class CartsController {
 		examples: {
 			example1: {
 				value: {
-					cartItemIDs: [],
-					promotionIDs: [],
-					createdAt: new Date(),
-					updatedAt: new Date(),
+					paymentOpt: {
+						paymentMethod: PaymentMethod.CREDIT_CARD,
+						taxes: 0,
+						description: 'string',
+					},
 				},
 			},
 		},
@@ -314,8 +316,11 @@ export class CartsController {
 	@Post('purchase')
 	// @Roles(UserRole.MEMBER)
 	// @UseGuards(RolesGuard)
-	purchaseInCart(@Body() purchaseDto: PurchaseDto) {
-		return 'purchaseInCart';
+	purchaseInCart(
+		@GetCurrentUser('sub') userID: string,
+		@Body() paymentOpt: any,
+	) {
+		return this.cartsService.purchaseInCart(userID, paymentOpt);
 	}
 
 	@ApiOperation({

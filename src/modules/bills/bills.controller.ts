@@ -63,7 +63,7 @@ export class BillsController {
 									facilityName: 'string',
 									facilityAddress: {},
 									facilityCoordinatesLocation: [1, 1],
-									facilityPhoto: 'string',
+									facilityPhotos: [],
 								} as BillItemFacility,
 								packageTypeInfo: {
 									name: 'string',
@@ -222,7 +222,7 @@ export class BillsController {
 									facilityName: 'string',
 									facilityAddress: {},
 									facilityCoordinatesLocation: [1, 1],
-									facilityPhoto: 'string',
+									facilityPhotos: [],
 								} as BillItemFacility,
 								packageTypeInfo: {
 									name: 'string',

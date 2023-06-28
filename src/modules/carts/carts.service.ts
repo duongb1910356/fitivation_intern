@@ -2,15 +2,17 @@ import { BadRequestException, Injectable } from '@nestjs/common';
 import { Cart, CartDocument } from './schemas/cart.schema';
 import { Model } from 'mongoose';
 import { InjectModel } from '@nestjs/mongoose';
-import { PackageService } from '../package/package.service';
 import { CartItemsService } from '../cart-items/cart-items.service';
+import { BillItemsService } from '../bill-items/bill-items.service';
+import { BillsService } from '../bills/bills.service';
 
 @Injectable()
 export class CartsService {
 	constructor(
 		@InjectModel(Cart.name) private cartModel: Model<CartDocument>,
-		private packageService: PackageService,
 		private cartItemService: CartItemsService,
+		private billItemService: BillItemsService,
+		private billService: BillsService,
 	) {}
 
 	async createCart(userID: string): Promise<Cart> {
@@ -95,6 +97,27 @@ export class CartsService {
 		await this.cartItemService.deleteOne(cartItemID);
 
 		return true;
+	}
+
+	async purchaseInCart(userID: string, paymentOpt: any) {
+		//check payment
+
+		const cart = await this.getCurrent(userID);
+		const cartItemIDs: any = cart.cartItemIDs;
+
+		const packageIDs = [];
+		const billItems = [];
+
+		for (let i = 0; i < cartItemIDs.length; i++) {
+			packageIDs.push(cartItemIDs[i].packageID.toString());
+		}
+
+		for (let i = 0; i < packageIDs.length; i++) {
+			billItems.push(await this.billItemService.createOne(packageIDs[i]));
+			console.log(billItems);
+		}
+
+		await this.billService.createOne(userID, billItems, paymentOpt);
 	}
 
 	checkDuplicateCartItemProduct(cartItems: any[], productID: string): boolean {

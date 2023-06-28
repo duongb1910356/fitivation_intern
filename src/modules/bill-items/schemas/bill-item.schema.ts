@@ -11,6 +11,7 @@ import {
 import { BaseObject } from 'src/shared/schemas/base-object.schema';
 import { BillItemFacility } from './bill-item-facility.schema';
 import { BillItemPackage } from './bill-item-package.schema';
+import { BillItemPackageType } from './bill-item-package-type.schema';
 
 export type BillItemsDocument = HydratedDocument<BillItem>;
 
@@ -55,9 +56,9 @@ export class BillItem extends BaseObject {
 	@Prop({
 		required: true,
 		type: mongoose.Schema.Types.ObjectId,
-		ref: 'PackageType',
+		ref: 'BillItemPackageType',
 	})
-	packageTypeInfo: PackageType;
+	packageTypeInfo: BillItemPackageType;
 
 	@Prop({
 		required: true,
