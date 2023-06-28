@@ -189,7 +189,7 @@ export class BillsController {
 		},
 	})
 	@Get()
-	getManyBills(
+	findManyBills(
 		@GetCurrentUser() user: TokenPayload,
 		@Query() query: QueryObject,
 	): Promise<ListResponse<Bill>> {
@@ -357,7 +357,7 @@ export class BillsController {
 		},
 	})
 	@Get(':id')
-	getOneBill(
+	findOneBill(
 		@Param('id') billID: string,
 		@GetCurrentUser() user: TokenPayload,
 	): Promise<Bill> {
