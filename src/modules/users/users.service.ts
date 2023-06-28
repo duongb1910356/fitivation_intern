@@ -5,7 +5,12 @@ import {
 	NotFoundException,
 } from '@nestjs/common';
 import { InjectModel } from '@nestjs/mongoose';
-import { User, UserDocument, UserStatus } from './schemas/user.schema';
+import {
+	User,
+	UserDocument,
+	UserRole,
+	UserStatus,
+} from './schemas/user.schema';
 import { Model } from 'mongoose';
 import { CreateUserDto } from './dto/create-user-dto';
 import { SignupDto } from '../auth/dto/signup-dto';
@@ -102,7 +107,8 @@ export class UsersService {
 
 		user.refreshToken = undefined;
 
-		this.cartService.createCart(user._id);
+		if (user.role === UserRole.MEMBER)
+			await this.cartService.createCart(user._id);
 
 		return user;
 	}
