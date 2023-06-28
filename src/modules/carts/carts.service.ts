@@ -5,6 +5,7 @@ import { InjectModel } from '@nestjs/mongoose';
 import { CartItemsService } from '../cart-items/cart-items.service';
 import { BillItemsService } from '../bill-items/bill-items.service';
 import { BillsService } from '../bills/bills.service';
+import { Bill } from '../bills/schemas/bill.schema';
 
 @Injectable()
 export class CartsService {
@@ -99,7 +100,7 @@ export class CartsService {
 		return true;
 	}
 
-	async purchaseInCart(userID: string, paymentOpt: any) {
+	async purchaseInCart(userID: string, paymentOpt: any): Promise<Bill> {
 		//check payment
 
 		const cart = await this.getCurrent(userID);
@@ -117,7 +118,12 @@ export class CartsService {
 			console.log(billItems);
 		}
 
-		await this.billService.createOne(userID, billItems, paymentOpt);
+		const bill = await this.billService.createOne(
+			userID,
+			billItems,
+			paymentOpt,
+		);
+		return bill;
 	}
 
 	checkDuplicateCartItemProduct(cartItems: any[], productID: string): boolean {

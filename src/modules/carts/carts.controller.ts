@@ -29,7 +29,7 @@ import { GetCurrentUser } from 'src/decorators/get-current-user.decorator';
 import { UserRole } from '../users/schemas/user.schema';
 import { RolesGuard } from 'src/guards/role.guard';
 import { Roles } from 'src/decorators/role.decorator';
-import { PaymentMethod } from '../bills/schemas/bill.schema';
+import { Bill, PaymentMethod } from '../bills/schemas/bill.schema';
 
 @Controller('carts')
 @ApiTags('carts')
@@ -319,7 +319,7 @@ export class CartsController {
 	purchaseInCart(
 		@GetCurrentUser('sub') userID: string,
 		@Body() paymentOpt: any,
-	) {
+	): Promise<Bill> {
 		return this.cartsService.purchaseInCart(userID, paymentOpt);
 	}
 
