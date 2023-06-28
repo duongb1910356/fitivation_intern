@@ -22,10 +22,10 @@ export class CartsService {
 		return cart;
 	}
 
-	async getCurrent(userID: string): Promise<Cart> {
+	async getCurrent(userID: string, populateOpt: any): Promise<Cart> {
 		const cart = await this.cartModel
 			.findOne({ accountID: userID })
-			.populate({ path: 'cartItemIDs' });
+			.populate(populateOpt);
 
 		if (!cart) throw new BadRequestException(`Not found current user's cart`);
 
@@ -103,7 +103,7 @@ export class CartsService {
 	async purchaseInCart(userID: string, paymentOpt: any): Promise<Bill> {
 		//check payment
 
-		const cart = await this.getCurrent(userID);
+		const cart = await this.getCurrent(userID, 'cartItemIDs');
 		const cartItemIDs: any = cart.cartItemIDs;
 
 		const packageIDs = [];

@@ -10,5 +10,6 @@ import { Bill, BillSchema } from './schemas/bill.schema';
 	],
 	controllers: [BillsController],
 	providers: [BillsService],
+	exports: [BillsService],
 })
 export class BillsModule {}

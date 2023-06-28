@@ -252,11 +252,10 @@ export class PackageController {
 						packageID: {},
 						facilityInfo: {
 							brandName: 'string',
-							ownerFacilityName: 'string',
 							facilityName: 'string',
 							facilityAddress: {},
 							facilityCoordinatesLocation: [1, 1],
-							facilityPhoto: 'string',
+							facilityPhotos: [],
 						} as BillItemFacility,
 						packageTypeInfo: {
 							name: 'string',
@@ -375,11 +374,10 @@ export class PackageController {
 						packageID: {},
 						facilityInfo: {
 							brandName: 'string',
-							ownerFacilityName: 'string',
 							facilityName: 'string',
 							facilityAddress: {},
 							facilityCoordinatesLocation: [1, 1],
-							facilityPhoto: 'string',
+							facilityPhotos: [],
 						} as BillItemFacility,
 						packageTypeInfo: {
 							name: 'string',

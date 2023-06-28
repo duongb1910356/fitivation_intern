@@ -98,7 +98,7 @@ export class CartsController {
 	// @Roles(UserRole.MEMBER)
 	// @UseGuards(RolesGuard)
 	getCurrentUserCart(@GetCurrentUser('sub') userID: string): Promise<Cart> {
-		return this.cartsService.getCurrent(userID);
+		return this.cartsService.getCurrent(userID, 'cartItemIDs');
 	}
 
 	@ApiOperation({

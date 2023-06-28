@@ -10,9 +10,6 @@ export class BillItemFacility {
 	brandName: string;
 
 	@Prop({ required: true, type: String })
-	ownerFacilityName: string;
-
-	@Prop({ required: true, type: String })
 	facilityName: string;
 
 	@Prop({ required: true, type: Object })

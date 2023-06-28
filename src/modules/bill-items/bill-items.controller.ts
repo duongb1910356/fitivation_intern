@@ -45,7 +45,6 @@ export class BillItemsController {
 						packageID: 'string',
 						facilityInfo: {
 							brandName: 'string',
-							ownerFacilityName: 'string',
 							facilityName: 'string',
 							facilityAddress: {},
 							facilityCoordinatesLocation: [1, 1],
@@ -154,7 +153,6 @@ export class BillItemsController {
 						packageID: 'string',
 						facilityInfo: {
 							brandName: 'string',
-							ownerFacilityName: 'string',
 							facilityName: 'string',
 							facilityAddress: {},
 							facilityCoordinatesLocation: [1, 1],

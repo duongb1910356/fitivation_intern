@@ -29,11 +29,12 @@ export class Bill extends BaseObject {
 	})
 	accountID: string;
 
-	@Prop({
-		required: true,
-		type: [mongoose.Schema.Types.ObjectId],
-		ref: 'BillItem',
-	})
+	@Prop([
+		{
+			required: true,
+			type: BillItem,
+		},
+	])
 	billItems: BillItem[];
 
 	@Prop({ required: true, enum: PaymentMethod, type: String })

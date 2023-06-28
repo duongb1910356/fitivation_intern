@@ -48,22 +48,19 @@ export class BillItem extends BaseObject {
 
 	@Prop({
 		required: true,
-		type: mongoose.Schema.Types.ObjectId,
-		ref: 'BillItemFacility',
+		type: BillItemFacility,
 	})
 	facilityInfo: BillItemFacility;
 
 	@Prop({
 		required: true,
-		type: mongoose.Schema.Types.ObjectId,
-		ref: 'BillItemPackageType',
+		type: BillItemPackageType,
 	})
 	packageTypeInfo: BillItemPackageType;
 
 	@Prop({
 		required: true,
-		type: mongoose.Schema.Types.ObjectId,
-		ref: 'BillItemPackage',
+		type: BillItemPackage,
 	})
 	packageInfo: BillItemPackage;
 
