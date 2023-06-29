@@ -16,7 +16,6 @@ import {
 import { TokenPayload } from '../auth/types/token-payload.type';
 import { Bill } from '../bills/schemas/bill.schema';
 import { UserRole } from '../users/schemas/user.schema';
-import { FacilityService } from '../facility/facility.service';
 import { BillsService } from '../bills/bills.service';
 
 @Injectable()
@@ -107,7 +106,13 @@ export class BillItemsService {
 
 	async findOneByID(billItemId: string, user: TokenPayload): Promise<BillItem> {
 		const billItem = await this.billItemsModel.findById(billItemId);
-		const bill = await this.BillService.findOne(billItem._id.toString());
+
+		const bill = await this.BillService.findOne({
+			billItemIDs: {
+				_id: billItem._id.toString(),
+			},
+		});
+
 		if (
 			user.role === UserRole.MEMBER &&
 			user.sub.toString() !== bill.accountID.toString()

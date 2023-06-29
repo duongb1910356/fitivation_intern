@@ -4,7 +4,7 @@ import { BillItemsService } from './bill-items.service';
 import { MongooseModule } from '@nestjs/mongoose';
 import { BillItem, BillItemSchema } from './schemas/bill-item.schema';
 import { PackageModule } from '../package/package.module';
-import { FacilityModule } from '../facility/facility.module';
+import { BillsModule } from '../bills/bills.module';
 
 @Module({
 	imports: [
@@ -12,8 +12,8 @@ import { FacilityModule } from '../facility/facility.module';
 			{ name: BillItem.name, schema: BillItemSchema },
 		]),
 		PackageModule,
-		FacilityModule,
 		BillItemsModule,
+		BillsModule,
 	],
 	controllers: [BillItemsController],
 	providers: [BillItemsService],
