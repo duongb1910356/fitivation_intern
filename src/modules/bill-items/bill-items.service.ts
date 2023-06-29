@@ -17,6 +17,7 @@ import { TokenPayload } from '../auth/types/token-payload.type';
 import { Bill } from '../bills/schemas/bill.schema';
 import { UserRole } from '../users/schemas/user.schema';
 import { BillsService } from '../bills/bills.service';
+import { BrandService } from '../brand/brand.service';
 
 @Injectable()
 export class BillItemsService {
@@ -24,7 +25,8 @@ export class BillItemsService {
 		@InjectModel(BillItem.name)
 		private billItemsModel: Model<BillItemsDocument>,
 		private packageService: PackageService,
-		private BillService: BillsService,
+		private billService: BillsService,
+		private brandService: BrandService,
 	) {}
 
 	async findMany(query: QueryObject): Promise<ListResponse<Bill>> {
@@ -107,7 +109,7 @@ export class BillItemsService {
 	async findOneByID(billItemId: string, user: TokenPayload): Promise<BillItem> {
 		const billItem = await this.billItemsModel.findById(billItemId);
 
-		const bill = await this.BillService.findOne({
+		const bill = await this.billService.findOne({
 			billItems: { $in: billItem },
 		});
 
@@ -133,10 +135,9 @@ export class BillItemsService {
 			'facilityID packageTypeID',
 		);
 
-		// const brand = await this.brandService.findOne(
-		// 	packageItem.facilityID.toString(),
-		// );
-		const brand = { _id: '64944c7c2d7cf0ec0dbb4052', name: 'name' };
+		const brand = await this.brandService.findOneByID(
+			packageItem.facilityID.brandID.toString(),
+		);
 
 		const totalPrice = packageItem.price;
 
@@ -157,8 +158,7 @@ export class BillItemsService {
 					commune: packageItem.facilityID.address.commune,
 					communeCode: packageItem.facilityID.address.communeCode,
 				},
-				facilityCoordinatesLocation:
-					packageItem.facilityID.coordinationLocation,
+				facilityCoordinatesLocation: packageItem.facilityID.coordinates,
 				facilityPhotos: packageItem.facilityID.photos,
 			} as BillItemFacility,
 			packageTypeInfo: {
