@@ -86,6 +86,7 @@ export class BillsService {
 		}
 		return bill;
 	}
+
 	async findOne(condition: any): Promise<Bill> {
 		const bill = await this.billModel.findOne(condition);
 
