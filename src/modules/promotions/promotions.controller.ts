@@ -1,4 +1,4 @@
-import { Controller, Get, NotFoundException } from '@nestjs/common';
+import { Controller, Get, NotFoundException, Param } from '@nestjs/common';
 import {
 	ApiNotFoundResponse,
 	ApiOkResponse,
@@ -14,10 +14,14 @@ import {
 	PromotionType,
 } from './schemas/promotion.schema';
 import { Public } from '../auth/decorators/public.decorator';
+import { PromotionsService } from './promotions.service';
+import { MongoIdValidationPipe } from 'src/pipes/parseMongoId.pipe';
 
 @Controller('promotions')
 @ApiTags('promotions')
 export class PromotionsController {
+	constructor(private readonly promotionService: PromotionsService) {}
+
 	@Public()
 	@Get(':promotionID')
 	@ApiParam({ name: 'promotionID', type: String, description: 'Promotion ID' })
@@ -47,7 +51,9 @@ export class PromotionsController {
 		status: 404,
 		description: 'Promotion not found!',
 	})
-	getPromotionById() {
-		//
+	async getPromotionById(
+		@Param('promotionID', MongoIdValidationPipe) promotionID: string,
+	) {
+		return await this.promotionService.findOneByID(promotionID);
 	}
 }

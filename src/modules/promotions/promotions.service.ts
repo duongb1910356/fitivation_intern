@@ -37,13 +37,6 @@ export class PromotionsService {
 		condition: ConditionPromotion = {},
 		options: ListOptions<Promotion> = {},
 	): Promise<ListResponse<Promotion>> {
-		// const {
-		// 	limit = 10,
-		// 	offset = 0,
-		// 	sortField = 'startDate',
-		// 	sortOrder = 'desc',
-		// } = options;
-
 		const sortQuery = {};
 		sortQuery[options.sortField] = options.sortOrder === 'asc' ? 1 : -1;
 		const limit = options.limit || 0;
