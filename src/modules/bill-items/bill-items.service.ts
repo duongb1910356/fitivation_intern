@@ -1,10 +1,23 @@
-import { Injectable, InternalServerErrorException } from '@nestjs/common';
+import {
+	ForbiddenException,
+	Injectable,
+	InternalServerErrorException,
+} from '@nestjs/common';
 import { InjectModel } from '@nestjs/mongoose';
 import { Model } from 'mongoose';
 import { BillItem, BillItemsDocument } from './schemas/bill-item.schema';
 import { PackageService } from '../package/package.service';
-import { UsersService } from '../users/users.service';
 import { BillItemFacility } from './schemas/bill-item-facility.schema';
+import {
+	ListResponse,
+	QueryAPI,
+	QueryObject,
+} from 'src/shared/utils/query-api';
+import { TokenPayload } from '../auth/types/token-payload.type';
+import { Bill } from '../bills/schemas/bill.schema';
+import { UserRole } from '../users/schemas/user.schema';
+import { FacilityService } from '../facility/facility.service';
+import { BillsService } from '../bills/bills.service';
 
 @Injectable()
 export class BillItemsService {
@@ -12,10 +25,103 @@ export class BillItemsService {
 		@InjectModel(BillItem.name)
 		private billItemsModel: Model<BillItemsDocument>,
 		private packageService: PackageService,
+		private BillService: BillsService,
 	) {}
+
+	async findMany(query: QueryObject): Promise<ListResponse<Bill>> {
+		const queryFeatures = new QueryAPI(this.billItemsModel, query)
+			.filter()
+			.sort()
+			.limitfields()
+			.paginate();
+
+		const bills = await queryFeatures.queryModel;
+
+		return {
+			total: bills.length,
+			queryOptions: queryFeatures.queryOptions,
+			items: bills,
+		};
+	}
+
+	async findManyOneOwnFacility(
+		query: QueryObject,
+		facilityID: string,
+	): Promise<ListResponse<BillItem>> {
+		const queryFeatures = new QueryAPI(this.billItemsModel, query)
+			.filter()
+			.sort()
+			.limitfields()
+			.paginate();
+
+		const billItems = await queryFeatures.queryModel.find({ facilityID });
+
+		return {
+			total: billItems.length,
+			queryOptions: queryFeatures.queryOptions,
+			items: billItems,
+		};
+	}
+
+	async findManyOneOwnPackage(
+		query: QueryObject,
+		packageID: string,
+	): Promise<ListResponse<BillItem>> {
+		const queryFeatures = new QueryAPI(this.billItemsModel, query)
+			.filter()
+			.sort()
+			.limitfields()
+			.paginate();
+
+		const billItems = await queryFeatures.queryModel.find({ packageID });
+
+		return {
+			total: billItems.length,
+			queryOptions: queryFeatures.queryOptions,
+			items: billItems,
+		};
+	}
+
+	async findManyOneOwnBrand(
+		query: QueryObject,
+		brandID: string,
+	): Promise<ListResponse<BillItem>> {
+		const queryFeatures = new QueryAPI(this.billItemsModel, query)
+			.filter()
+			.sort()
+			.limitfields()
+			.paginate();
+
+		const billItems = await queryFeatures.queryModel.find({ brandID });
+
+		return {
+			total: billItems.length,
+			queryOptions: queryFeatures.queryOptions,
+			items: billItems,
+		};
+	}
 
 	async findOneByCondition(condition: any): Promise<BillItem> {
 		return await this.billItemsModel.findOne(condition);
+	}
+
+	async findOneByID(billItemId: string, user: TokenPayload): Promise<BillItem> {
+		const billItem = await this.billItemsModel.findById(billItemId);
+		const bill = await this.BillService.findOne(billItem._id.toString());
+		if (
+			user.role === UserRole.MEMBER &&
+			user.sub.toString() !== bill.accountID.toString()
+		) {
+			throw new ForbiddenException('Forbidden resource');
+		}
+		if (
+			user.role === UserRole.FACILITY_OWNER &&
+			!(await this.packageService.isOwner(billItem.packageID, user.sub))
+		) {
+			throw new ForbiddenException('Forbidden resource');
+		}
+
+		return billItem;
 	}
 
 	async createOne(packageID: string): Promise<BillItem> {
