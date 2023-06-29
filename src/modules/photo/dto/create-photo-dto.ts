@@ -8,7 +8,4 @@ export class CreatePhotoDto {
 	@IsString()
 	@IsOptional()
 	name?: string;
-
-	@IsString()
-	describe: string;
 }

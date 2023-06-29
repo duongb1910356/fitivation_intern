@@ -10,7 +10,7 @@ export class OwnershipScheduleGuard implements CanActivate {
 		const { scheduleID } = request.params;
 		const user = request.user;
 
-		const isOwner = await this.scheduleService.isOwner(scheduleID, user.uid);
+		const isOwner = await this.scheduleService.isOwner(scheduleID, user.sub);
 
 		return isOwner;
 	}
