@@ -50,7 +50,6 @@ import { Holiday } from '../holiday/entities/holiday.entity';
 import { PackageType } from '../package-type/entities/package-type.entity';
 import { ShiftTimeDto } from '../facility-schedule/dto/shift-time-dto';
 import { OpenTimeDto } from '../facility-schedule/dto/open-time-dto';
-import { CreateFacilityScheduleDto } from '../facility-schedule/dto/create-facility-schedule-dto';
 import { dayOfWeek } from '../facility-schedule/entities/open-time.entity';
 import { HolidayDto } from '../holiday/dto/holiday-dto';
 import { CreatePackageTypeDto } from '../package-type/dto/create-package-type-dto';
@@ -76,6 +75,7 @@ import {
 	PromotionType,
 } from '../promotions/schemas/promotion.schema';
 import { UpdatePromotionDto } from '../promotions/dto/update-promotion-dto';
+import { FacilityScheduleDto } from '../facility-schedule/dto/facility-schedule-dto';
 
 @ApiTags('facilities')
 @Controller('facilities')
