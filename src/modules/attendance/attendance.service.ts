@@ -97,15 +97,10 @@ export class AttendanceService {
 		const now = new Date();
 		const subscription = await this.subscriptionService.findOneByCondition({
 			accountID,
+			facilityID,
 			expires: { $gt: now },
 		});
 		if (!subscription) return false;
-
-		const billItem = await this.billItemService.findOneByCondition({
-			_id: subscription.billItemID,
-			facilityID,
-		});
-		if (!billItem) return false;
 
 		return true;
 	}

@@ -12,6 +12,7 @@ import { Attendance } from './entities/attendance.entity';
 import { Facility } from '../facility/schemas/facility.schema';
 import { AttendanceService } from './attendance.service';
 import { Public } from '../auth/decorators/public.decorator';
+import { MongoIdValidationPipe } from 'src/pipes/parseMongoId.pipe';
 
 @ApiTags('attendances')
 @Controller('attendances')
@@ -50,7 +51,9 @@ export class AttendanceController {
 			} as ErrorResponse<null>,
 		},
 	})
-	async getAttendance(@Param('attendanceID') attendanceID: string) {
+	async getAttendance(
+		@Param('attendanceID', MongoIdValidationPipe) attendanceID: string,
+	) {
 		return await this.attendanceService.findOneByCondition(
 			{
 				_id: attendanceID,

@@ -57,6 +57,7 @@ import {
 import { ConditionHoliday, HolidayService } from '../holiday/holiday.service';
 import { AttendanceService } from '../attendance/attendance.service';
 import { Public } from '../auth/decorators/public.decorator';
+import { MongoIdValidationPipe } from 'src/pipes/parseMongoId.pipe';
 
 @ApiTags('admin')
 // @ApiBearerAuth()
@@ -146,7 +147,7 @@ export class AdminController {
 		},
 	})
 	updateFacilityState(
-		@Param('facilityID') facilityID: string,
+		@Param('facilityID', MongoIdValidationPipe) facilityID: string,
 		@Body() data: UpdateFacilityStateDto,
 	) {
 		console.log(facilityID, data);
@@ -209,7 +210,7 @@ export class AdminController {
 	})
 	async getAllAttendancesByFacility(
 		@Query() options: ListOptions<Attendance>,
-		@Param('facilityID') facilityID: string,
+		@Param('facilityID', MongoIdValidationPipe) facilityID: string,
 	) {
 		return await this.attendanceService.findMany({ facilityID }, options);
 	}
@@ -270,7 +271,7 @@ export class AdminController {
 	})
 	async getAllAttendancesByUser(
 		@Query() options: ListOptions<Attendance>,
-		@Param('userID') userID: string,
+		@Param('userID', MongoIdValidationPipe) userID: string,
 	) {
 		return await this.attendanceService.findMany(
 			{ accountID: userID },
@@ -331,7 +332,9 @@ export class AdminController {
 			} as ErrorResponse<null>,
 		},
 	})
-	async deteleAttendance(@Param('attendanceID') attendanceID: string) {
+	async deteleAttendance(
+		@Param('attendanceID', MongoIdValidationPipe) attendanceID: string,
+	) {
 		return await this.attendanceService.delete(attendanceID);
 	}
 
@@ -462,7 +465,7 @@ export class AdminController {
 		},
 	})
 	async updateCategory(
-		@Param('categoryID') categoryID: string,
+		@Param('categoryID', MongoIdValidationPipe) categoryID: string,
 		@Body() data: UpdateCategoryDto,
 	) {
 		return await this.facilityCategoryService.update(categoryID, data);
@@ -521,7 +524,9 @@ export class AdminController {
 			} as ErrorResponse<null>,
 		},
 	})
-	deleteCategory(@Param('categoryID') categoryID: string) {
+	deleteCategory(
+		@Param('categoryID', MongoIdValidationPipe) categoryID: string,
+	) {
 		return this.facilityCategoryService.delete(categoryID);
 	}
 
@@ -556,12 +561,12 @@ export class AdminController {
 							{
 								shift: [
 									{
-										startTime: new Date('7/10/2023 06:00:00'),
-										endTime: new Date('7/10/2023 12:00:00'),
+										startTime: '06:00',
+										endTime: '12:00',
 									},
 									{
-										startTime: new Date('7/10/2023 13:00:00'),
-										endTime: new Date('7/10/2023 19:00:00'),
+										startTime: '13:00',
+										endTime: '19:00',
 									},
 								] as ShiftTime[],
 							},
@@ -613,7 +618,6 @@ export class AdminController {
 				type: options.type,
 			};
 		}
-		console.log(condition);
 		return await this.facilityScheduleService.findMany(condition, options);
 	}
 
@@ -725,6 +729,7 @@ export class AdminController {
 						facilityID: {} as unknown as Facility,
 						type: TimeType.ONE_MONTH,
 						price: 100000,
+						benefits: ['Use of bathroom', 'Use of massage chair'],
 						createdAt: new Date(),
 						updatedAt: new Date(),
 					} as Package,

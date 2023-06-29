@@ -1,4 +1,12 @@
-import { IsEnum, IsNotEmpty, IsNumber, Min } from 'class-validator';
+import {
+	ArrayMinSize,
+	IsArray,
+	IsEnum,
+	IsNotEmpty,
+	IsNumber,
+	IsString,
+	Min,
+} from 'class-validator';
 import { TimeType } from '../entities/package.entity';
 
 export class CreatePackageDto {
@@ -10,4 +18,10 @@ export class CreatePackageDto {
 	@IsNumber()
 	@Min(0)
 	price: number;
+
+	@IsNotEmpty()
+	@IsArray()
+	@IsString({ each: true })
+	@ArrayMinSize(1)
+	benefits: string[];
 }

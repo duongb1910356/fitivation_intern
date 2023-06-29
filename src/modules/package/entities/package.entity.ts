@@ -35,6 +35,9 @@ export class Package extends BaseObject {
 
 	@Prop({ type: Number, min: 0, required: true })
 	price: number;
+
+	@Prop({ type: [String] })
+	benefits: string[];
 }
 
 export const PackageSchema = SchemaFactory.createForClass(Package);

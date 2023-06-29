@@ -69,7 +69,6 @@ export class PackageService {
 		data: CreatePackageDto,
 	): Promise<Package> {
 		const packaegeData = { ...data, packageTypeID, facilityID };
-		console.log(packaegeData);
 		return await this.packageModel.create(packaegeData);
 	}
 

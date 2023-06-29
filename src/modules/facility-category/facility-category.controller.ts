@@ -16,6 +16,7 @@ import {
 } from 'src/shared/response/common-response';
 import { FacilityCategoryService } from './facility-category.service';
 import { Public } from '../auth/decorators/public.decorator';
+import { MongoIdValidationPipe } from 'src/pipes/parseMongoId.pipe';
 
 @ApiTags('categories')
 @Controller('categories')
@@ -90,7 +91,9 @@ export class FacilityCategoryController {
 			} as ErrorResponse<null>,
 		},
 	})
-	async getCategory(@Param('categoryID') categoryID: string) {
+	async getCategory(
+		@Param('categoryID', MongoIdValidationPipe) categoryID: string,
+	) {
 		return await this.facilityCategoryService.findOneById(categoryID);
 	}
 }
