@@ -255,7 +255,7 @@ export class CartsController {
 	@Get(':id')
 	// @Roles(UserRole.ADMIN)
 	// @UseGuards(RolesGuard)
-	getOneCart(@Param('id') id: string) {
+	findOneCart(@Param('id') id: string) {
 		return this.cartsService.findOneByID(id);
 	}
 
