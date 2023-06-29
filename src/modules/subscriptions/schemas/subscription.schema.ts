@@ -30,6 +30,13 @@ export class Subscription extends BaseObject {
 	})
 	packageID: string;
 
+	@Prop({
+		required: true,
+		type: mongoose.Schema.Types.ObjectId,
+		ref: 'Facility',
+	})
+	facilityID: string;
+
 	@Prop({ required: true, type: Date })
 	expires: Date;
 
