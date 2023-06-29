@@ -6,6 +6,7 @@ import { Cart, CartSchema } from './schemas/cart.schema';
 import { CartItemsModule } from '../cart-items/cart-items.module';
 import { BillItemsModule } from '../bill-items/bill-items.module';
 import { BillsModule } from '../bills/bills.module';
+import { SubscriptionsModule } from '../subscriptions/subscriptions.module';
 
 @Module({
 	imports: [
@@ -13,6 +14,7 @@ import { BillsModule } from '../bills/bills.module';
 		CartItemsModule,
 		BillItemsModule,
 		BillsModule,
+		SubscriptionsModule,
 	],
 	controllers: [CartsController],
 	providers: [CartsService],

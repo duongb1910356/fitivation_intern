@@ -6,6 +6,7 @@ import { CartItemsService } from '../cart-items/cart-items.service';
 import { BillItemsService } from '../bill-items/bill-items.service';
 import { BillsService } from '../bills/bills.service';
 import { Bill } from '../bills/schemas/bill.schema';
+import { SubscriptionsService } from '../subscriptions/subscriptions.service';
 
 @Injectable()
 export class CartsService {
@@ -14,20 +15,25 @@ export class CartsService {
 		private cartItemService: CartItemsService,
 		private billItemService: BillItemsService,
 		private billService: BillsService,
+		private subscriptionService: SubscriptionsService,
 	) {}
 
-	async createCart(userID: string): Promise<Cart> {
+	async createOne(userID: string): Promise<Cart> {
 		const cart = await this.cartModel.create({ accountID: userID });
+
+		if (!cart) throw new BadRequestException('Create cart failed');
 
 		return cart;
 	}
 
-	async getCurrent(userID: string, populateOpt: any): Promise<Cart> {
+	async getCurrent(userID: string, populateOpt?: any): Promise<Cart> {
 		const cart = await this.cartModel
 			.findOne({ accountID: userID })
 			.populate(populateOpt);
 
 		if (!cart) throw new BadRequestException(`Not found current user's cart`);
+
+		await this.updatePrice(userID);
 
 		return cart;
 	}
@@ -53,8 +59,6 @@ export class CartsService {
 		const cart = await this.cartModel
 			.findOne({ accountID: userID })
 			.populate({ path: 'cartItemIDs' });
-
-		if (!cart) throw new BadRequestException(`Not found current user's cart`);
 
 		const isDuplicateProduct = this.checkDuplicateCartItemProduct(
 			cart.cartItemIDs,
@@ -101,11 +105,10 @@ export class CartsService {
 	}
 
 	async purchaseInCart(userID: string, paymentOpt: any): Promise<Bill> {
-		//check payment
+		// ...check payment
 
 		const cart = await this.getCurrent(userID, 'cartItemIDs');
 		const cartItemIDs: any = cart.cartItemIDs;
-
 		const packageIDs = [];
 		const billItems = [];
 
@@ -115,7 +118,13 @@ export class CartsService {
 
 		for (let i = 0; i < packageIDs.length; i++) {
 			billItems.push(await this.billItemService.createOne(packageIDs[i]));
-			console.log(billItems);
+			console.log(userID, billItems[i]._id.toString(), packageIDs[i]);
+
+			await this.subscriptionService.createOne(
+				userID,
+				billItems[i]._id.toString(),
+				packageIDs[i].toString(),
+			);
 		}
 
 		const bill = await this.billService.createOne(
@@ -123,6 +132,10 @@ export class CartsService {
 			billItems,
 			paymentOpt,
 		);
+
+		for (let i = 0; i < cartItemIDs.length; i++) {
+			await this.removeCartItemFromCurrentCart(userID, cartItemIDs[i]);
+		}
 		return bill;
 	}
 
@@ -132,5 +145,29 @@ export class CartsService {
 			if (cartItems[i].packageID.toString() === productID) isDuplicate = true;
 		}
 		return isDuplicate;
+	}
+
+	async updatePrice(userID: string): Promise<boolean> {
+		const cart = await this.cartModel
+			.findOne({ accountID: userID })
+			.populate({ path: 'cartItemIDs' });
+
+		const cartItemIDs: any = cart.cartItemIDs;
+
+		if (cartItemIDs.length === 0)
+			throw new BadRequestException('Have at least one cart-item in cart');
+
+		let totalPrice = 0;
+		for (let i = 0; i < cartItemIDs.length; i++) {
+			await this.cartItemService.updatePrice(cartItemIDs[i]._id.toString());
+		}
+
+		for (let i = 0; i < cartItemIDs.length; i++) {
+			totalPrice += cartItemIDs[i].totalPrice;
+		}
+		cart.totalPrice = totalPrice;
+		cart.save();
+
+		return true;
 	}
 }
