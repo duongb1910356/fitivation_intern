@@ -116,7 +116,7 @@ export class UsersService {
 	async deleteOne(userID: string): Promise<boolean> {
 		const user = await this.userModel.findById(userID);
 
-		if (!user) throw new BadRequestException('Not found user with that ID');
+		if (!user) throw new NotFoundException('Not found user with that ID');
 
 		await this.cartService.deleteOne(userID);
 

@@ -1,4 +1,8 @@
-import { BadRequestException, Injectable } from '@nestjs/common';
+import {
+	BadRequestException,
+	Injectable,
+	NotFoundException,
+} from '@nestjs/common';
 import { Cart, CartDocument } from './schemas/cart.schema';
 import { Model } from 'mongoose';
 import { InjectModel } from '@nestjs/mongoose';
@@ -33,7 +37,7 @@ export class CartsService {
 			.findOne({ accountID: userID })
 			.populate(populateOpt);
 
-		if (!cart) throw new BadRequestException(`Not found current user's cart`);
+		if (!cart) throw new NotFoundException(`Not found current user's cart`);
 
 		await this.updatePrice(userID);
 
@@ -43,7 +47,7 @@ export class CartsService {
 	async deleteOne(userID: string): Promise<boolean> {
 		const cart = await this.cartModel.findOne({ accountID: userID });
 
-		if (!cart) throw new BadRequestException(`Not found current user's cart`);
+		if (!cart) throw new NotFoundException(`Not found current user's cart`);
 
 		const cartItems = cart.cartItemIDs;
 
@@ -94,7 +98,7 @@ export class CartsService {
 			)
 			.populate({ path: 'cartItemIDs' });
 
-		if (!cart) throw new BadRequestException(`Not found current user's cart`);
+		if (!cart) throw new NotFoundException(`Not found current user's cart`);
 		console.log(cart.totalPrice, cartItem.totalPrice);
 
 		cart.totalPrice -= cartItem.totalPrice;
