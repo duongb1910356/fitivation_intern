@@ -36,6 +36,7 @@ import { CreatePackageDto } from '../package/dto/create-package-dto';
 import { PackageTypeService } from './package-type.service';
 import { OwnershipPackageTypeGuard } from 'src/guards/ownership/ownership-package-type.guard';
 import { Public } from '../auth/decorators/public.decorator';
+import { MongoIdValidationPipe } from 'src/pipes/parseMongoId.pipe';
 
 @ApiTags('package-types')
 @Controller('package-types')
@@ -85,7 +86,9 @@ export class PackageTypeController {
 			} as ErrorResponse<null>,
 		},
 	})
-	async getPackageType(@Param('packageTypeID') packageTypeID: string) {
+	async getPackageType(
+		@Param('packageTypeID', MongoIdValidationPipe) packageTypeID: string,
+	) {
 		return await this.packageTypeService.findOneByID(
 			packageTypeID,
 			'facilityID',
@@ -112,8 +115,13 @@ export class PackageTypeController {
 						_id: '6476ef7d1f0419cd330fe128',
 						packageTypeID: {} as unknown as PackageType,
 						facilityID: {} as unknown as Facility,
-						type: TimeType.ONE_MONTH,
+						type: TimeType.SIX_MONTH,
 						price: 100000,
+						benefits: [
+							'Unlimited access',
+							'Use of bathroom',
+							'Use of massage chair',
+						],
 						createdAt: new Date(),
 						updatedAt: new Date(),
 					} as Package,
@@ -149,7 +157,7 @@ export class PackageTypeController {
 		},
 	})
 	async getAllPackages(
-		@Param('packageTypeID') packageTypeID: string,
+		@Param('packageTypeID', MongoIdValidationPipe) packageTypeID: string,
 		@Query() filter: ListOptions<Package>,
 	) {
 		return await this.packageTypeService.getAllPackages(packageTypeID, filter);
@@ -157,7 +165,6 @@ export class PackageTypeController {
 
 	@ApiBearerAuth()
 	@UseGuards(OwnershipPackageTypeGuard)
-	@Public()
 	@Post(':packageTypeID/packages')
 	@ApiOperation({
 		summary: 'Create new Package by packageTypeID',
@@ -175,12 +182,18 @@ export class PackageTypeController {
 				value: {
 					type: TimeType.ONE_MONTH,
 					price: 90000,
+					benefits: ['Use of bathroom'],
 				} as CreatePackageDto,
 			},
 			test2: {
 				value: {
 					type: TimeType.SIX_MONTH,
 					price: 540000,
+					benefits: [
+						'Unlimited access',
+						'Use of bathroom',
+						'Use of massage chair',
+					],
 				} as CreatePackageDto,
 			},
 		},
@@ -191,8 +204,13 @@ export class PackageTypeController {
 				_id: '6476ef7d1f0419cd330fe128',
 				packageTypeID: {} as unknown as PackageType,
 				facilityID: {} as unknown as Facility,
-				type: TimeType.ONE_MONTH,
+				type: TimeType.SIX_MONTH,
 				price: 100000,
+				benefits: [
+					'Unlimited access',
+					'Use of bathroom',
+					'Use of massage chair',
+				],
 				createdAt: new Date(),
 				updatedAt: new Date(),
 			} as Package,
@@ -226,7 +244,7 @@ export class PackageTypeController {
 		},
 	})
 	async createPackage(
-		@Param('packageTypeID') packageTypeID: string,
+		@Param('packageTypeID', MongoIdValidationPipe) packageTypeID: string,
 		@Body() data: CreatePackageDto,
 	) {
 		return await this.packageTypeService.createPackage(packageTypeID, data);
@@ -234,7 +252,6 @@ export class PackageTypeController {
 
 	@ApiBearerAuth()
 	@UseGuards(OwnershipPackageTypeGuard)
-	@Public()
 	@Patch(':packageTypeID')
 	@ApiOperation({
 		summary: 'Update Package Type by packageTypeID',
@@ -315,7 +332,7 @@ export class PackageTypeController {
 		},
 	})
 	async updatePackageType(
-		@Param('packageTypeID') packageTypeID: string,
+		@Param('packageTypeID', MongoIdValidationPipe) packageTypeID: string,
 		@Body() data: UpdatePackageTypeDto,
 	) {
 		return await this.packageTypeService.update(packageTypeID, data);
@@ -323,7 +340,6 @@ export class PackageTypeController {
 
 	@ApiBearerAuth()
 	@UseGuards(OwnershipPackageTypeGuard)
-	@Public()
 	@Delete(':packageTypeID')
 	@ApiOperation({
 		summary: 'Delete Package Type by packageTypeID',
@@ -377,7 +393,9 @@ export class PackageTypeController {
 			} as ErrorResponse<null>,
 		},
 	})
-	async deletePackageType(@Param('packageTypeID') packageTypeID: string) {
+	async deletePackageType(
+		@Param('packageTypeID', MongoIdValidationPipe) packageTypeID: string,
+	) {
 		return await this.packageTypeService.delete(packageTypeID);
 	}
 }

@@ -9,7 +9,7 @@ import { OpenTimeDto } from './open-time-dto';
 import { Type } from 'class-transformer';
 import { ValidateScheduleType } from './schedule-type-validator';
 
-export class CreateFacilityScheduleDto {
+export class FacilityScheduleDto {
 	@IsNotEmpty()
 	@IsEnum(ScheduleType)
 	type: ScheduleType;

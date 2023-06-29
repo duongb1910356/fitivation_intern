@@ -10,7 +10,7 @@ export class OwnershipHolidayGuard implements CanActivate {
 		const { holidayID } = request.params;
 		const user = request.user;
 
-		const isOwner = await this.holidayService.isOwner(holidayID, user.uid);
+		const isOwner = await this.holidayService.isOwner(holidayID, user.sub);
 
 		return isOwner;
 	}

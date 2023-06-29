@@ -17,14 +17,20 @@ export function ValidateShiftsOverlap(validationOptions?: ValidationOptions) {
 
 					const shifts = value as ShiftTimeDto[];
 					const sortedShifts = [...shifts].sort(
-						(a, b) => a.startTime.getTime() - b.startTime.getTime(),
+						(a, b) =>
+							new Date(`2000-01-01 ${a.startTime}:00.000Z`).getTime() -
+							new Date(`2000-01-01 ${b.startTime}:00.000Z`).getTime(),
 					);
 
 					for (let i = 0; i < sortedShifts.length - 1; i++) {
 						const currentShift = sortedShifts[i];
 						const nextShift = sortedShifts[i + 1];
+						const endTimeCurrent = new Date(
+							`2000-01-01 ${currentShift}:00.000Z`,
+						);
+						const startTimeNext = new Date(`2000-01-01 ${nextShift}:00.000Z`);
 
-						if (currentShift.endTime >= nextShift.startTime) {
+						if (endTimeCurrent >= startTimeNext) {
 							throw new BadRequestException('Shifts must not overlap');
 						}
 					}

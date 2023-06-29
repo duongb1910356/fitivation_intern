@@ -8,4 +8,5 @@ export const appConfig = {
 	jwtAccessExpiresIn: process.env.JWT_AT_EXPIRES_IN,
 	jwtRefreshSecret: process.env.JWT_RT_SECRET,
 	jwtRefreshExpiresIn: process.env.JWT_RT_EXPIRES_IN,
+	maxElementEmbedd: process.env.MAX_ELEMENT_EMBEDD,
 };

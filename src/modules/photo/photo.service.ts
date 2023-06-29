@@ -1,60 +1,129 @@
-import {
-	BadRequestException,
-	Injectable,
-	NotFoundException,
-} from '@nestjs/common';
+import { BadRequestException, Injectable } from '@nestjs/common';
 import { InjectModel } from '@nestjs/mongoose';
-import { existsSync, mkdirSync, unlinkSync, writeFileSync } from 'fs';
+import { existsSync, mkdirSync, writeFileSync } from 'fs';
 import { appConfig } from 'src/app.config';
 import { Photo, PhotoDocument } from './schemas/photo.schema';
-import { Model } from 'mongoose';
 import { CreatePhotoDto } from './dto/create-photo-dto';
-import { SuccessResponse } from 'src/shared/response/success-response';
 import { GenFileName } from 'src/shared/utils/gen-filename';
+import { ListOptions, ListResponse } from 'src/shared/response/common-response';
+import { Model, isValidObjectId } from 'mongoose';
 
 @Injectable()
 export class PhotoService {
+	// @Inject('PhotoRepository')
+	// private readonly photoRepository: PhotoRepository,
 	constructor(
 		@InjectModel(Photo.name) private photoModel: Model<PhotoDocument>,
 	) {}
 
-	uploadFile(
-		file: Express.Multer.File,
-		photoDto: CreatePhotoDto,
-	): Promise<Photo> {
-		try {
-			const dir = `${appConfig.fileRoot}/${photoDto.ownerID}`;
+	// async uploadOneFile(
+	// 	photoDto: CreatePhotoDto,
+	// 	file: Express.Multer.File,
+	// ): Promise<Photo> {
+	// 	const dir = `${appConfig.fileRoot}/${photoDto.ownerID}`;
+	// 	if (!existsSync(dir)) {
+	// 		mkdirSync(dir, { recursive: true });
+	// 	}
+	// 	const fileName = GenFileName.gen(file.mimetype);
+	// 	writeFileSync(`${dir}/${fileName}`, file.buffer);
+	// 	const input: CreatePhotoDto = {
+	// 		ownerID: photoDto.ownerID,
+	// 		name: fileName,
+	// 	};
+	// 	return this.photoModel.create(input);
+	// }
+
+	// async uploadManyFile(
+	// 	files: { images?: Express.Multer.File[] },
+	// 	photoDto: CreatePhotoDto,
+	// ): Promise<ListResponse<Photo>> {
+	// 	try {
+	// 		const uploadPromises: Promise<Photo>[] = [];
+
+	// 		for (const avatarFile of files.images) {
+	// 			const uploadPromise = this.uploadOneFile(photoDto, avatarFile);
+	// 			uploadPromises.push(uploadPromise);
+	// 		}
+	// 		const data = await Promise.all(uploadPromises);
+
+	// 		return {
+	// 			items: data,
+	// 			total: data.length,
+	// 			options: {},
+	// 		};
+	// 	} catch (error) {
+	// 		throw new BadRequestException('Uploading failed');
+	// 	}
+	// }
+
+	async uploadOneFile(ownerID: any, file: Express.Multer.File): Promise<Photo> {
+		if (isValidObjectId(ownerID) && file) {
+			const dir = `${appConfig.fileRoot}/${ownerID}`;
 			if (!existsSync(dir)) {
 				mkdirSync(dir, { recursive: true });
 			}
 			const fileName = GenFileName.gen(file.mimetype);
 			writeFileSync(`${dir}/${fileName}`, file.buffer);
 			const input: CreatePhotoDto = {
-				ownerID: photoDto.ownerID,
+				ownerID: ownerID,
 				name: fileName,
-				describe: photoDto.describe,
 			};
 			return this.photoModel.create(input);
-		} catch (error) {
-			throw new Error('Uploading failed');
 		}
 	}
 
-	async findOne(filter: Partial<Photo>): Promise<Photo> {
-		return await this.photoModel.findOne(filter);
-	}
-
-	async deleteOne(id: string): Promise<SuccessResponse<Photo>> {
+	async uploadManyFile(
+		files: { images?: Express.Multer.File[] },
+		ownerID: any,
+	): Promise<ListResponse<Photo>> {
 		try {
-			const deletedPhoto = await this.photoModel.findByIdAndDelete(id);
-			if (!deletedPhoto) {
-				throw new NotFoundException('Photo not found!');
+			if (isValidObjectId(ownerID) && files && files.images) {
+				const uploadPromises: Promise<Photo>[] = [];
+
+				for (const img of files.images) {
+					const uploadPromise = this.uploadOneFile(ownerID, img);
+					uploadPromises.push(uploadPromise);
+				}
+				const data = await Promise.all(uploadPromises);
+
+				return {
+					items: data,
+					total: data.length,
+					options: {},
+				};
 			}
-			const imagePath = `${appConfig.fileRoot}/${deletedPhoto.ownerID}/${deletedPhoto.name}`;
-			unlinkSync(imagePath);
-			return null;
-		} catch (err) {
-			throw new BadRequestException(err);
+		} catch (error) {
+			throw new BadRequestException('Uploading failed');
 		}
+	}
+
+	async findMany(filter: ListOptions<Photo>): Promise<ListResponse<Photo>> {
+		const sortQuery = {};
+		if (filter.sortField) {
+			sortQuery[filter.sortField] = filter.sortOrder === 'asc' ? 1 : -1;
+		}
+		const limit = filter.limit || 0;
+		const offset = filter.offset || 0;
+		const result = await this.photoModel
+			.find(filter)
+			.sort(sortQuery)
+			.skip(offset)
+			.limit(limit);
+		return {
+			items: result,
+			total: result?.length,
+			options: filter,
+		};
+	}
+
+	async findOneByID(id: string): Promise<Photo> {
+		return await this.photoModel.findById(id);
+	}
+
+	async delete(id: string): Promise<boolean> {
+		if (isValidObjectId(id)) {
+			await this.photoModel.findOneAndDelete({ _id: id });
+		}
+		return null;
 	}
 }

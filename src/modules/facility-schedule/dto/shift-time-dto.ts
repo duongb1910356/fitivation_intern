@@ -1,16 +1,11 @@
-import { Type } from 'class-transformer';
-import { IsDate, IsNotEmpty } from 'class-validator';
-import { IsStartTimeBeforeEndTime } from './shift-time-validator';
+import { IsNotEmpty } from 'class-validator';
+import { ShiftTimeTransform } from './shift-time-transform';
 
 export class ShiftTimeDto {
 	@IsNotEmpty()
-	@IsDate()
-	@Type(() => Date)
-	@IsStartTimeBeforeEndTime()
-	startTime: Date;
+	@ShiftTimeTransform()
+	startTime: string;
 
 	@IsNotEmpty()
-	@IsDate()
-	@Type(() => Date)
-	endTime: Date;
+	endTime: string;
 }
