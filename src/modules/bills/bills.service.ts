@@ -15,6 +15,7 @@ import {
 } from 'src/shared/utils/query-api';
 import { UserRole } from '../users/schemas/user.schema';
 import { TokenPayload } from '../auth/types/token-payload.type';
+import { PaymentOptDto } from '../carts/dto/payment-options-dto';
 
 @Injectable()
 export class BillsService {
@@ -26,7 +27,7 @@ export class BillsService {
 	async createOne(
 		userID: string,
 		billItems: BillItem[],
-		paymentOpt: any,
+		paymentOpt: PaymentOptDto,
 	): Promise<Bill> {
 		let totalPrice = 0;
 
