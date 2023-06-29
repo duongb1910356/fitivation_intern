@@ -2,6 +2,7 @@ import {
 	ForbiddenException,
 	Injectable,
 	InternalServerErrorException,
+	NotFoundException,
 } from '@nestjs/common';
 import { InjectModel } from '@nestjs/mongoose';
 import { Model } from 'mongoose';
@@ -113,7 +114,10 @@ export class BillItemsService {
 	}
 
 	async findOneByCondition(condition: any): Promise<BillItem> {
-		return await this.billItemsModel.findOne(condition);
+		const billItem = await this.billItemsModel.findOne(condition);
+		if (!billItem) throw new NotFoundException('Not found bill-item');
+
+		return billItem;
 	}
 
 	async findOneByID(billItemId: string, user: TokenPayload): Promise<BillItem> {
