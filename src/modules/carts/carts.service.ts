@@ -7,6 +7,7 @@ import { BillItemsService } from '../bill-items/bill-items.service';
 import { BillsService } from '../bills/bills.service';
 import { Bill } from '../bills/schemas/bill.schema';
 import { SubscriptionsService } from '../subscriptions/subscriptions.service';
+import { PackageService } from '../package/package.service';
 
 @Injectable()
 export class CartsService {
@@ -16,6 +17,7 @@ export class CartsService {
 		private billItemService: BillItemsService,
 		private billService: BillsService,
 		private subscriptionService: SubscriptionsService,
+		private packageService: PackageService,
 	) {}
 
 	async createOne(userID: string): Promise<Cart> {
@@ -118,12 +120,15 @@ export class CartsService {
 
 		for (let i = 0; i < packageIDs.length; i++) {
 			billItems.push(await this.billItemService.createOne(packageIDs[i]));
-			console.log(userID, billItems[i]._id.toString(), packageIDs[i]);
+
+			const facilityID = (await this.packageService.findOneByID(packageIDs[i]))
+				.facilityID;
 
 			await this.subscriptionService.createOne(
 				userID,
 				billItems[i]._id.toString(),
 				packageIDs[i].toString(),
+				facilityID.toString(),
 			);
 		}
 

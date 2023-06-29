@@ -7,6 +7,7 @@ import { CartItemsModule } from '../cart-items/cart-items.module';
 import { BillItemsModule } from '../bill-items/bill-items.module';
 import { BillsModule } from '../bills/bills.module';
 import { SubscriptionsModule } from '../subscriptions/subscriptions.module';
+import { PackageModule } from '../package/package.module';
 
 @Module({
 	imports: [
@@ -15,6 +16,7 @@ import { SubscriptionsModule } from '../subscriptions/subscriptions.module';
 		BillItemsModule,
 		BillsModule,
 		SubscriptionsModule,
+		PackageModule,
 	],
 	controllers: [CartsController],
 	providers: [CartsService],
