@@ -43,4 +43,14 @@ export class CartItemsService {
 
 		return true;
 	}
+
+	async updatePrice(cartItemID: string): Promise<boolean> {
+		const cartItem = await this.cartItemModel.findById(cartItemID);
+		const packageItem = await this.packgeService.findOneByID(
+			cartItem.packageID,
+		);
+		cartItem.totalPrice = packageItem.price;
+		cartItem.save();
+		return true;
+	}
 }
