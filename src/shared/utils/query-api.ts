@@ -32,6 +32,7 @@ export class QueryAPI {
 		let queryStr = JSON.stringify(queryObj);
 
 		queryStr = queryStr
+			.replace(/%2C/g, ',')
 			.replace(/\b(search)\b/g, `regex`)
 			.replace(/\b(gte|gt|lte|lt|regex)\b/g, (match) => `$${match}`)
 			.replace(/(?<="\$regex":)"(.*?)"/g, (match) => `${match},"$options":"i"`);
@@ -56,8 +57,11 @@ export class QueryAPI {
 	}
 
 	limitfields() {
-		if (this.queryObj.fields) {
-			const fields = this.queryObj.fields.split(',').join(' ');
+		const queryStr = JSON.stringify(this.queryObj).replace(/%2C/g, ',');
+		const queryStrObj = JSON.parse(queryStr);
+
+		if (queryStrObj.fields) {
+			const fields = queryStrObj.fields.split(',').join(' ');
 
 			this.queryModel = this.queryModel.select(fields);
 			this.queryOptions.fields = fields;
@@ -69,8 +73,11 @@ export class QueryAPI {
 	}
 
 	paginate() {
-		const page = this.queryObj.page * 1 || 1;
-		const limit = this.queryObj.limit * 1 || Number.POSITIVE_INFINITY;
+		const queryStr = JSON.stringify(this.queryObj).replace(/%2C/g, ',');
+		const queryStrObj = JSON.parse(queryStr);
+
+		const page = queryStrObj.page * 1 || 1;
+		const limit = queryStrObj.limit * 1 || Number.POSITIVE_INFINITY;
 
 		const skip = (page - 1) * limit;
 
