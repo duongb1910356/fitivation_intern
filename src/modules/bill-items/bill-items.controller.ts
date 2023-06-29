@@ -1,11 +1,10 @@
-import { Controller, Get, Param, Query } from '@nestjs/common';
+import { Controller, Get, Param, Query, UseGuards } from '@nestjs/common';
 import { BillItemsService } from './bill-items.service';
 import { ApiOperation, ApiParam, ApiResponse, ApiTags } from '@nestjs/swagger';
 import { BillItem, BillItemStatus } from './schemas/bill-item.schema';
 import {
 	ErrorResponse,
 	ListOptions,
-	ListResponse,
 } from 'src/shared/response/common-response';
 import { ApiDocsPagination } from 'src/decorators/swagger-form-data.decorator';
 import {
@@ -19,15 +18,21 @@ import { TimeType } from '../package/entities/package.entity';
 import { BillItemFacility } from './schemas/bill-item-facility.schema';
 import { BillItemPackageType } from './schemas/bill-item-package-type.schema';
 import { BillItemPackage } from './schemas/bill-item-package.schema';
+import { Roles } from 'src/decorators/role.decorator';
+import { RolesGuard } from 'src/guards/role.guard';
+import { UserRole } from '../users/schemas/user.schema';
+import { ListResponse, QueryObject } from 'src/shared/utils/query-api';
+import { GetCurrentUser } from 'src/decorators/get-current-user.decorator';
+import { TokenPayload } from '../auth/types/token-payload.type';
 
 @Controller('bill-items')
+@ApiTags('bill-items')
 export class BillItemsController {
 	constructor(private readonly billItemsService: BillItemsService) {}
 
 	@Get()
-	@ApiTags('bill-items')
 	@ApiOperation({
-		summary: 'getManyBillItems',
+		summary: 'findManyBillItems',
 		description:
 			'Allow customer to get many of their bill-items\n\nAllow admin to get many bill-items',
 	})
@@ -87,14 +92,12 @@ export class BillItemsController {
 					},
 				] as BillItem[],
 				total: 1,
-				options: {
-					limit: 1,
-					offset: 0,
-					searchField: {},
-					searchValue: '',
-					sortField: 'createdAt',
-					sortOrder: 'asc',
-				} as ListOptions<BillItem>,
+				queryOptions: {
+					sort: 'string',
+					fields: 'string',
+					limit: 10,
+					page: 0,
+				} as QueryObject,
 			} as ListResponse<BillItem>,
 		},
 	})
@@ -128,16 +131,17 @@ export class BillItemsController {
 			} as ErrorResponse<null>,
 		},
 	})
-	getManyBillItems(@Query() filter: ListOptions<BillItem>) {
-		return 'getManyBillItems';
+	// @Roles(UserRole.ADMIN)
+	// @UseGuards(RolesGuard)
+	findManyBillItems(@Query() query: QueryObject) {
+		return this.billItemsService.findMany(query);
 	}
 
 	@Get(':id')
-	@ApiTags('bill-items')
 	@ApiOperation({
-		summary: 'getOneBillItem',
+		summary: 'findOneBillItem',
 		description:
-			'Allow customer to get one of their bill-items\n\nAllow admin to get one of bill-item',
+			'Allow customer to get one of their bill-items\n\nAllow admin to get one of bill-item\n\nAllow facility owner to get one of bill-item',
 	})
 	@ApiParam({ name: 'id', type: String, description: 'Bill-item ID' })
 	@ApiResponse({
@@ -195,14 +199,12 @@ export class BillItemsController {
 					},
 				] as BillItem[],
 				total: 1,
-				options: {
-					limit: 1,
-					offset: 0,
-					searchField: {},
-					searchValue: '',
-					sortField: 'createdAt',
-					sortOrder: 'asc',
-				} as ListOptions<BillItem>,
+				queryOptions: {
+					sort: 'string',
+					fields: 'string',
+					limit: 10,
+					page: 0,
+				} as QueryObject,
 			} as ListResponse<BillItem>,
 		},
 	})
@@ -246,7 +248,12 @@ export class BillItemsController {
 			} as ErrorResponse<null>,
 		},
 	})
-	getOneBillItems(@Param('id') id: string) {
-		return 'getOneBillItems';
+	// @Roles(UserRole.ADMIN, UserRole.FACILITY_OWNER, UserRole.MEMBER)
+	// @UseGuards(RolesGuard)
+	findOneBillItem(
+		@Param('id') id: string,
+		@GetCurrentUser() user: TokenPayload,
+	): Promise<BillItem> {
+		return this.billItemsService.findOneByID(id, user);
 	}
 }
