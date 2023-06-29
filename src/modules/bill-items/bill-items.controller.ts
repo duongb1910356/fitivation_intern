@@ -131,13 +131,12 @@ export class BillItemsController {
 			} as ErrorResponse<null>,
 		},
 	})
-	// @Roles(UserRole.ADMIN)
-	// @UseGuards(RolesGuard)
+	@Roles(UserRole.ADMIN)
+	@UseGuards(RolesGuard)
 	findManyBillItems(@Query() query: QueryObject) {
 		return this.billItemsService.findMany(query);
 	}
 
-	@Get(':id')
 	@ApiOperation({
 		summary: 'findOneBillItem',
 		description:
@@ -248,6 +247,7 @@ export class BillItemsController {
 			} as ErrorResponse<null>,
 		},
 	})
+	@Get(':id')
 	// @Roles(UserRole.ADMIN, UserRole.FACILITY_OWNER, UserRole.MEMBER)
 	// @UseGuards(RolesGuard)
 	findOneBillItem(
