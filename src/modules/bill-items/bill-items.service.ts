@@ -29,19 +29,29 @@ export class BillItemsService {
 		private brandService: BrandService,
 	) {}
 
-	async findMany(query: QueryObject): Promise<ListResponse<Bill>> {
+	async findMany(
+		query: QueryObject,
+		user: TokenPayload,
+	): Promise<ListResponse<Bill>> {
 		const queryFeatures = new QueryAPI(this.billItemsModel, query)
 			.filter()
 			.sort()
 			.limitfields()
 			.paginate();
 
-		const bills = await queryFeatures.queryModel;
+		if (user.role === UserRole.MEMBER) {
+			queryFeatures.queryModel.find({ accountID: user.sub });
+		}
+		if (user.role === UserRole.FACILITY_OWNER) {
+			queryFeatures.queryModel.find({ ownerID: user.sub });
+		}
+
+		const billItems = await queryFeatures.queryModel;
 
 		return {
-			total: bills.length,
+			total: billItems.length,
 			queryOptions: queryFeatures.queryOptions,
-			items: bills,
+			items: billItems,
 		};
 	}
 
@@ -146,6 +156,7 @@ export class BillItemsService {
 			facilityID: packageItem.facilityID._id.toString(),
 			packageTypeID: packageItem.packageTypeID._id.toString(),
 			packageID: packageID.toString(),
+			ownerFacilityID: packageItem.facilityID.ownerID.toString(),
 			facilityInfo: {
 				brandName: brand.name,
 				facilityName: packageItem.facilityID.name,

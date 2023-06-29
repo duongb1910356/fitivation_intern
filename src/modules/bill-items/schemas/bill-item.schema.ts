@@ -48,6 +48,13 @@ export class BillItem extends BaseObject {
 
 	@Prop({
 		required: true,
+		type: mongoose.Schema.Types.ObjectId,
+		ref: 'User',
+	})
+	ownerFacilityID: string;
+
+	@Prop({
+		required: true,
 		type: BillItemFacility,
 	})
 	facilityInfo: BillItemFacility;

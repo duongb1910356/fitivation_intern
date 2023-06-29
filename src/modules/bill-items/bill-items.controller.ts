@@ -48,6 +48,7 @@ export class BillItemsController {
 						facilityID: 'string',
 						packageTypeID: 'string',
 						packageID: 'string',
+						ownerFacilityID: 'string',
 						facilityInfo: {
 							brandName: 'string',
 							facilityName: 'string',
@@ -131,10 +132,13 @@ export class BillItemsController {
 			} as ErrorResponse<null>,
 		},
 	})
-	@Roles(UserRole.ADMIN)
+	@Roles(UserRole.ADMIN, UserRole.FACILITY_OWNER, UserRole.MEMBER)
 	@UseGuards(RolesGuard)
-	findManyBillItems(@Query() query: QueryObject) {
-		return this.billItemsService.findMany(query);
+	findManyBillItems(
+		@Query() query: QueryObject,
+		@GetCurrentUser() user: TokenPayload,
+	) {
+		return this.billItemsService.findMany(query, user);
 	}
 
 	@ApiOperation({
@@ -154,6 +158,7 @@ export class BillItemsController {
 						facilityID: 'string',
 						packageTypeID: 'string',
 						packageID: 'string',
+						ownerFacilityID: 'string',
 						facilityInfo: {
 							brandName: 'string',
 							facilityName: 'string',
