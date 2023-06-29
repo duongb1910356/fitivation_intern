@@ -1,4 +1,5 @@
 import {
+	BadRequestException,
 	Body,
 	Controller,
 	Delete,
@@ -7,6 +8,7 @@ import {
 	Patch,
 	Post,
 	Query,
+	Req,
 	UseGuards,
 } from '@nestjs/common';
 import {
@@ -51,6 +53,7 @@ import { OwnershipPackageGuard } from 'src/guards/ownership/ownership-package.gu
 import { PackageService } from './package.service';
 import { Public } from '../auth/decorators/public.decorator';
 import { MongoIdValidationPipe } from 'src/pipes/parseMongoId.pipe';
+import { UpdatePromotionDto } from '../promotions/dto/update-promotion-dto';
 
 @ApiTags('packages')
 @Controller('packages')
@@ -490,309 +493,159 @@ export class PackageController {
 		return 'getOneBillItemOneOwnPackage';
 	}
 
-	@Get('promotions')
-	@ApiDocsPagination('promotion')
+	@ApiBearerAuth()
+	@UseGuards(OwnershipPackageGuard)
+	@Post(':packageID/promotions')
 	@ApiOperation({
-		summary: 'getManyPackagePromotionsOfAllOwnPackages',
-		description:
-			'Allow facility owner to get many packages promotions of all own packages',
+		summary: 'Create package promotion',
 	})
-	@ApiResponse({
-		status: 200,
-		schema: {
-			example: {
-				items: [
-					{
-						targetID: 'string',
-						type: PromotionType.PACKAGE,
-						name: 'string',
-						description: 'string',
-						couponCode: 'string',
-						value: 1,
-						method: PromotionMethod.NUMBER,
-						minPriceApply: 0,
-						maxQuantity: 0,
-						startDate: new Date(),
-						endDate: new Date(),
-						customerType: CustomerType.CUSTOMER,
-						status: PromotionStatus.ACTIVE,
-						createdAt: new Date(),
-						updatedAt: new Date(),
-					},
-				] as Promotion[],
-				total: 1,
-				options: {
-					limit: 1,
-					offset: 0,
-					searchField: {},
-					searchValue: '',
-					sortField: 'createdAt',
-					sortOrder: 'asc',
-				} as ListOptions<Promotion>,
-			} as ListResponse<Promotion>,
-		},
-	})
-	@ApiResponse({
-		status: 400,
-		schema: {
-			example: {
-				code: '400',
-				message: 'Bad request',
-				details: null,
-			} as ErrorResponse<null>,
-		},
-	})
-	@ApiResponse({
-		status: 401,
-		schema: {
-			example: {
-				code: '401',
-				message: 'Unauthorized',
-				details: null,
-			} as ErrorResponse<null>,
-		},
-	})
-	@ApiResponse({
-		status: 403,
-		schema: {
-			example: {
-				code: '403',
-				message: `Forbidden resource`,
-				details: null,
-			} as ErrorResponse<null>,
-		},
-	})
-	getManyPackagePromotionsOfAllOwnPackages(
-		@Query() filter: ListOptions<Promotion>,
-	) {
-		console.log(filter);
-		return 'getManyPackagePromotionsOfAllOwnPackages';
-	}
-
-	@Get(':packagesID/promotions')
-	@ApiDocsPagination('promotion')
-	@ApiOperation({
-		summary: 'getManyPackagesPromotionsOfOnePackage',
-		description:
-			'Allow facility owner to get many package promotions of one own package\n\nAllow customer/admin to get many package promotions of one facility',
-	})
-	@ApiParam({ name: 'packagesID', type: String, description: 'Facility ID' })
-	@ApiResponse({
-		status: 200,
-		schema: {
-			example: {
-				items: [
-					{
-						targetID: 'string',
-						type: PromotionType.PACKAGE,
-						name: 'string',
-						description: 'string',
-						couponCode: 'string',
-						value: 1,
-						method: PromotionMethod.NUMBER,
-						minPriceApply: 0,
-						maxQuantity: 0,
-						startDate: new Date(),
-						endDate: new Date(),
-						customerType: CustomerType.CUSTOMER,
-						status: PromotionStatus.ACTIVE,
-						createdAt: new Date(),
-						updatedAt: new Date(),
-					},
-				] as Promotion[],
-				total: 1,
-				options: {
-					limit: 1,
-					offset: 0,
-					searchField: {},
-					searchValue: '',
-					sortField: 'createdAt',
-					sortOrder: 'asc',
-				} as ListOptions<Promotion>,
-			} as ListResponse<Promotion>,
-		},
-	})
-	@ApiResponse({
-		status: 400,
-		schema: {
-			example: {
-				code: '400',
-				message: 'Bad request',
-				details: null,
-			} as ErrorResponse<null>,
-		},
-	})
-	@ApiResponse({
-		status: 401,
-		schema: {
-			example: {
-				code: '401',
-				message: 'Unauthorized',
-				details: null,
-			} as ErrorResponse<null>,
-		},
-	})
-	@ApiResponse({
-		status: 403,
-		schema: {
-			example: {
-				code: '403',
-				message: `Forbidden resource`,
-				details: null,
-			} as ErrorResponse<null>,
-		},
-	})
-	@ApiResponse({
-		status: 404,
-		schema: {
-			example: {
-				code: '404',
-				message: 'Not found document with that ID',
-				details: null,
-			} as ErrorResponse<null>,
-		},
-	})
-	getManyPackagesPromotionsOfOnePackage(
-		@Param('packagesID') packagesID: string,
-		@Query() filter: ListOptions<Promotion>,
-	) {
-		console.log(filter);
-		return 'getManyPackagesPromotionsOfOnePackage';
-	}
-
-	@Get(':packagesID/promotions/:promotionID')
-	@ApiOperation({
-		summary: 'getOnePackagePromotionOfOnePackage',
-		description:
-			'Allow facility owner to get one package promotion of one own package\n\nAllow customer/admin to get one package promotion of one facility',
-	})
-	@ApiResponse({
-		status: 200,
-		schema: {
-			example: {
-				items: [
-					{
-						targetID: 'string',
-						type: PromotionType.PACKAGE,
-						name: 'string',
-						description: 'string',
-						couponCode: 'string',
-						value: 1,
-						method: PromotionMethod.NUMBER,
-						minPriceApply: 0,
-						maxQuantity: 0,
-						startDate: new Date(),
-						endDate: new Date(),
-						customerType: CustomerType.CUSTOMER,
-						status: PromotionStatus.ACTIVE,
-						createdAt: new Date(),
-						updatedAt: new Date(),
-					},
-				] as Promotion[],
-				total: 1,
-				options: {
-					limit: 1,
-					offset: 0,
-					searchField: {},
-					searchValue: '',
-					sortField: 'createdAt',
-					sortOrder: 'asc',
-				} as ListOptions<Promotion>,
-			} as ListResponse<Promotion>,
-		},
-	})
-	@ApiResponse({
-		status: 400,
-		schema: {
-			example: {
-				code: '400',
-				message: 'Bad request',
-				details: null,
-			} as ErrorResponse<null>,
-		},
-	})
-	@ApiResponse({
-		status: 401,
-		schema: {
-			example: {
-				code: '401',
-				message: 'Unauthorized',
-				details: null,
-			} as ErrorResponse<null>,
-		},
-	})
-	@ApiResponse({
-		status: 403,
-		schema: {
-			example: {
-				code: '403',
-				message: `Forbidden resource`,
-				details: null,
-			} as ErrorResponse<null>,
-		},
-	})
-	@ApiResponse({
-		status: 404,
-		schema: {
-			example: {
-				code: '404',
-				message: 'Not found document with that ID',
-				details: null,
-			} as ErrorResponse<null>,
-		},
-	})
-	@ApiParam({ name: 'packagesID', type: String, description: 'Facility ID' })
-	@ApiParam({ name: 'promotionID', type: String, description: 'Promotion ID' })
-	getOnePackagePromotionOfOnePackage(
-		@Param('packagesID') packagesID: string,
-		@Param('promotionID') promotionID: string,
-	) {
-		console.log(packagesID, promotionID);
-		return 'getOnePackagePromotionOfOnePackage';
-	}
-
-	@Post(':packagesID/promotions')
-	@ApiOperation({
-		summary: 'createPackagePromotion',
-		description:
-			'Allow facility owner to create one package promotions of one own package',
-	})
-	@ApiParam({ name: 'packagesID', type: String, description: 'Facility ID' })
+	@ApiBearerAuth()
+	@ApiParam({ name: 'packageID', type: String, description: 'packageID' })
 	@ApiBody({
 		type: CreatePromotionDto,
 		examples: {
-			ADMIN: {
+			test1: {
 				value: {
-					targetID: 'string',
+					name: 'Mừng hè đi tập gym nè',
+					description: 'Chính sách mô tả',
+					couponCode: '066',
+					value: 10,
+					method: 'PERCENT',
+					minPriceApply: 0,
+					maxValue: 10000,
+					maxQuantity: 45,
+					startDate: new Date(),
+					endDate: new Date(),
+					customerType: 'MEMBER',
+					status: 'ACTIVE',
+				} as CreatePromotionDto,
+			},
+		},
+	})
+	@ApiOkResponse({
+		status: 200,
+		schema: {
+			example: {
+				code: 200,
+				message: 'Success',
+				data: {
+					_id: 'string',
+					targetID: '6498f23e20d189a6b1607c7e',
 					type: PromotionType.PACKAGE,
+					name: 'Mừng hè đi tập gym nè',
+					description: 'Chính sách mô tả',
+					couponCode: '066',
+					value: 10,
+					method: 'PERCENT',
+					minPriceApply: 0,
+					maxValue: 10000,
+					maxQuantity: 45,
+					startDate: new Date(),
+					endDate: new Date(),
+					customerType: 'MEMBER',
+					status: 'ACTIVE',
+					createdAt: new Date(),
+					updatedAt: new Date(),
+				} as Promotion,
+			},
+		},
+	})
+	@ApiBadRequestResponse({
+		type: BadRequestException,
+		status: 400,
+		description: '[Input] invalid!',
+	})
+	createPromotion(
+		@Param('packageID') packageID: string,
+		@Body() body: CreatePromotionDto,
+	) {
+		return this.packageService.createPromotion(packageID, body);
+	}
+
+	@Public()
+	@Get(':packageID/promotions')
+	@ApiParam({ name: 'packageID', type: String, description: 'packageID' })
+	@ApiOperation({
+		summary: 'Get many package promotion',
+	})
+	@ApiOkResponse({
+		status: 200,
+		schema: {
+			example: {
+				code: 200,
+				message: 'Success',
+				data: {
+					_id: 'string',
+					targetID: '6498f23e20d189a6b1607c7e',
+					type: 'FACILITY',
+					name: 'Mừng hè đi tập gym nè',
+					description: 'Chính sách mô tả',
+					couponCode: '066',
+					value: 10,
+					method: 'PERCENT',
+					minPriceApply: 0,
+					maxValue: 10000,
+					maxQuantity: 45,
+					startDate: new Date(),
+					endDate: new Date(),
+					customerType: 'MEMBER',
+					status: 'ACTIVE',
+					createdAt: new Date(),
+					updatedAt: new Date(),
+				} as Promotion,
+			},
+		},
+	})
+	@ApiBadRequestResponse({
+		type: BadRequestException,
+		status: 400,
+		description: '[Input] invalid!',
+	})
+	findManyPromotion(@Param('packageID') packageID) {
+		return this.packageService.findManyPromotion(packageID);
+	}
+
+	@ApiBearerAuth()
+	@Patch('promotion/:promotionID')
+	@ApiOperation({
+		summary: 'update Package Promotion',
+		description: 'Allow facility owner to update package promotion',
+	})
+	@ApiParam({ name: 'promotionID', type: String, description: 'Promotion ID' })
+	@ApiBody({
+		type: UpdatePromotionDto,
+		examples: {
+			Test1: {
+				value: {
 					name: 'string',
 					description: 'string',
 					couponCode: 'string',
 					value: 1,
 					method: PromotionMethod.NUMBER,
-					minPriceApply: 0,
-					maxQuantity: 0,
-					startDate: new Date(),
+					minPriceApply: 1,
+					maxValue: 1,
+					maxQuantity: 1,
 					endDate: new Date(),
 					customerType: CustomerType.CUSTOMER,
-				},
+					status: PromotionStatus.ACTIVE,
+				} as UpdatePromotionDto,
 			},
 		},
 	})
 	@ApiResponse({
-		status: 201,
+		status: 200,
 		schema: {
 			example: {
-				targetID: 'string',
+				targetID: {},
 				type: PromotionType.PACKAGE,
 				name: 'string',
 				description: 'string',
 				couponCode: 'string',
 				value: 1,
 				method: PromotionMethod.NUMBER,
-				minPriceApply: 0,
-				maxQuantity: 0,
-				startDate: new Date(),
+				minPriceApply: 1,
+				maxValue: 1,
+				maxQuantity: 1,
 				endDate: new Date(),
 				customerType: CustomerType.CUSTOMER,
 				status: PromotionStatus.ACTIVE,
@@ -841,7 +694,62 @@ export class PackageController {
 			} as ErrorResponse<null>,
 		},
 	})
-	createPackagePromotion() {
-		return 'createPackagePromotion';
+	async updatePromotion(
+		@Param('promotionID') promotionID: string,
+		@Body() body: UpdatePromotionDto,
+		@Req() req: any,
+	) {
+		return await this.packageService.updatePromotion(promotionID, body, req);
+	}
+
+	@ApiBearerAuth()
+	@Delete('promotion/:promotionID')
+	@ApiOperation({
+		summary: 'delete package Promotion',
+		description: 'Allow facility owner to delete package promotion',
+	})
+	@ApiParam({ name: 'promotionID', type: String, description: 'Promotion ID' })
+	@ApiResponse({
+		status: 200,
+		schema: {
+			example: {
+				code: '200',
+				message: 'Deleted successfully',
+				details: null,
+			},
+		},
+	})
+	@ApiResponse({
+		status: 401,
+		schema: {
+			example: {
+				code: '401',
+				message: 'Unauthorized',
+				details: null,
+			} as ErrorResponse<null>,
+		},
+	})
+	@ApiResponse({
+		status: 403,
+		schema: {
+			example: {
+				code: '403',
+				message: `Forbidden resource`,
+				details: null,
+			} as ErrorResponse<null>,
+		},
+	})
+	@ApiResponse({
+		status: 404,
+		schema: {
+			example: {
+				code: '404',
+				message: 'Not found document with that ID',
+				details: null,
+			} as ErrorResponse<null>,
+		},
+	})
+	deletePromotion(@Param('promotionID') promotionID: string, @Req() req: any) {
+		return this.packageService.deletePromotion(promotionID, req);
 	}
 }

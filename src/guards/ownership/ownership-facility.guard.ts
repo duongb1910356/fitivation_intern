@@ -10,7 +10,7 @@ export class OwnershipFacilityGuard implements CanActivate {
 		const { facilityID } = request.params;
 		const user = request.user;
 
-		const isOwner = await this.facilityService.isOwner(facilityID, user.uid);
+		const isOwner = await this.facilityService.isOwner(facilityID, user.sub);
 
 		return isOwner;
 	}

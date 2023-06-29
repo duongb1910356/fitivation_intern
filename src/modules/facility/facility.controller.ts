@@ -1819,8 +1819,8 @@ export class FacilityController {
 		);
 	}
 
-	@UseGuards(RolesGuard)
-	@Roles(UserRole.FACILITY_OWNER)
+	@ApiBearerAuth()
+	@UseGuards(OwnershipFacilityGuard)
 	@Post(':facilityID/promotions')
 	@ApiOperation({
 		summary: 'Create facility promotion',
@@ -1832,8 +1832,6 @@ export class FacilityController {
 		examples: {
 			test1: {
 				value: {
-					targetID: '6498f23e20d189a6b1607c7e',
-					type: 'FACILITY',
 					name: 'Mừng hè đi tập gym nè',
 					description: 'Chính sách mô tả',
 					couponCode: '066',
@@ -1929,43 +1927,22 @@ export class FacilityController {
 		status: 400,
 		description: '[Input] invalid!',
 	})
-	findManyPromotion(@Param('facilityID') facilityID) {
+	findManyPromotion(@Param('facilityID') facilityID: string) {
 		return this.facilityService.findManyPromotion(facilityID);
 	}
 
-	@Patch('promotion/:promotionID')
 	@ApiBearerAuth()
+	@Patch('promotion/:promotionID')
 	@ApiOperation({
 		summary: 'update Facility Promotion',
-		description:
-			'Allow admin to update bill promotion\n\nAllow facility owner to update facility promotion or package promotion',
+		description: 'Allow facility owner to update facility promotion',
 	})
 	@ApiParam({ name: 'promotionID', type: String, description: 'Promotion ID' })
 	@ApiBody({
 		type: UpdatePromotionDto,
 		examples: {
-			Bill_Promotion: {
-				value: {
-					targetID: '649a60d5c6c4283af1e22d9c',
-					type: PromotionType.BILL,
-					name: 'string',
-					description: 'string',
-					couponCode: 'string',
-					value: 1,
-					method: PromotionMethod.NUMBER,
-					minPriceApply: 1,
-					maxValue: 1,
-					maxQuantity: 1,
-					startDate: new Date(),
-					endDate: new Date(),
-					customerType: CustomerType.CUSTOMER,
-					status: PromotionStatus.ACTIVE,
-				} as Promotion,
-			},
 			Facility_Promotion: {
 				value: {
-					targetID: {},
-					type: PromotionType.FACILITY,
 					name: 'string',
 					description: 'string',
 					couponCode: 'string',
@@ -1974,33 +1951,10 @@ export class FacilityController {
 					minPriceApply: 1,
 					maxValue: 1,
 					maxQuantity: 1,
-					startDate: new Date(),
 					endDate: new Date(),
 					customerType: CustomerType.CUSTOMER,
 					status: PromotionStatus.ACTIVE,
-					createdAt: new Date(),
-					updatedAt: new Date(),
-				} as Promotion,
-			},
-			Package_Promotion: {
-				value: {
-					targetID: {},
-					type: PromotionType.PACKAGE,
-					name: 'string',
-					description: 'string',
-					couponCode: 'string',
-					value: 1,
-					method: PromotionMethod.NUMBER,
-					minPriceApply: 1,
-					maxValue: 1,
-					maxQuantity: 1,
-					startDate: new Date(),
-					endDate: new Date(),
-					customerType: CustomerType.CUSTOMER,
-					status: PromotionStatus.ACTIVE,
-					createdAt: new Date(),
-					updatedAt: new Date(),
-				} as Promotion,
+				} as UpdatePromotionDto,
 			},
 		},
 	})
@@ -2075,12 +2029,11 @@ export class FacilityController {
 		return await this.facilityService.updatePromotion(promotionID, body, req);
 	}
 
-	@Delete('promotion/:promotionID')
 	@ApiBearerAuth()
+	@Delete('promotion/:promotionID')
 	@ApiOperation({
 		summary: 'delete Facility Promotion',
-		description:
-			'Allow admin to delete bill promotion\n\nAllow facility owner to delete facility promotion or package promotion',
+		description: 'Allow facility owner to delete facility promotion',
 	})
 	@ApiParam({ name: 'promotionID', type: String, description: 'Promotion ID' })
 	@ApiResponse({

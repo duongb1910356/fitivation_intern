@@ -33,7 +33,10 @@ import { Photo } from '../photo/schemas/photo.schema';
 import { Review } from '../reviews/schemas/reviews.schema';
 import { UserRole } from '../users/schemas/user.schema';
 import { CreatePromotionDto } from '../promotions/dto/create-promotion-dto';
-import { Promotion } from '../promotions/schemas/promotion.schema';
+import {
+	Promotion,
+	PromotionType,
+} from '../promotions/schemas/promotion.schema';
 import { PromotionsService } from '../promotions/promotions.service';
 import { UpdatePromotionDto } from '../promotions/dto/update-promotion-dto';
 
@@ -334,7 +337,8 @@ export class FacilityService {
 		id: string,
 		body: CreatePromotionDto,
 	): Promise<Promotion> {
-		return await this.promotionService.create(body);
+		const data = { targetID: id, type: PromotionType.FACILITY, ...body };
+		return await this.promotionService.create(data);
 	}
 
 	// Tìm promotion khả dụng cho Facility
@@ -350,7 +354,9 @@ export class FacilityService {
 		req: any,
 	) {
 		const promotion = await this.promotionService.findOneByID(promotionID);
+
 		const checkOk = await this.isOwnerFacility(promotion.targetID, req);
+		console.log(checkOk);
 		if (!checkOk) {
 			throw new ForbiddenException(
 				'You do not have permission to access this document',
