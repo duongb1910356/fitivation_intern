@@ -8,7 +8,6 @@ import {
 import { Brand } from '../../brand/schemas/brand.schema';
 import { Photo, PhotoSchema } from 'src/modules/photo/schemas/photo.schema';
 import { FacilityCategory } from 'src/modules/facility-category/entities/facility-category';
-import { User } from 'src/modules/users/schemas/user.schema';
 import { appConfig } from 'src/app.config';
 
 export enum State {
