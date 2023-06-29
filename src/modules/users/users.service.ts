@@ -108,7 +108,7 @@ export class UsersService {
 		user.refreshToken = undefined;
 
 		if (user.role === UserRole.MEMBER)
-			await this.cartService.createCart(user._id);
+			await this.cartService.createOne(user._id);
 
 		return user;
 	}
