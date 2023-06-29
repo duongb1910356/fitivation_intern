@@ -2,6 +2,7 @@ import {
 	ForbiddenException,
 	Injectable,
 	InternalServerErrorException,
+	NotFoundException,
 } from '@nestjs/common';
 import { BillItem } from '../bill-items/schemas/bill-item.schema';
 import { InjectModel } from '@nestjs/mongoose';
@@ -83,6 +84,13 @@ export class BillsService {
 		) {
 			throw new ForbiddenException('Forbidden resource');
 		}
+		return bill;
+	}
+	async findOne(condition: any): Promise<Bill> {
+		const bill = await this.billModel.findOne(condition);
+
+		if (!bill) throw new NotFoundException('Bill not found');
+
 		return bill;
 	}
 }
