@@ -108,7 +108,7 @@ export class BillItemsService {
 		const billItem = await this.billItemsModel.findById(billItemId);
 
 		const bill = await this.BillService.findOne({
-			billItemIDs: {
+			billItems: {
 				_id: billItem._id.toString(),
 			},
 		});
