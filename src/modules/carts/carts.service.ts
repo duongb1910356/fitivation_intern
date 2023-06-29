@@ -12,6 +12,12 @@ import { BillsService } from '../bills/bills.service';
 import { Bill } from '../bills/schemas/bill.schema';
 import { SubscriptionsService } from '../subscriptions/subscriptions.service';
 import { PackageService } from '../package/package.service';
+import {
+	ListResponse,
+	QueryAPI,
+	QueryObject,
+} from 'src/shared/utils/query-api';
+import { PaymentOptDto } from './dto/payment-options-dto';
 
 @Injectable()
 export class CartsService {
@@ -23,6 +29,30 @@ export class CartsService {
 		private subscriptionService: SubscriptionsService,
 		private packageService: PackageService,
 	) {}
+
+	async findMany(query: QueryObject): Promise<ListResponse<Cart>> {
+		const queryFeatures = new QueryAPI(this.cartModel, query)
+			.filter()
+			.sort()
+			.limitfields()
+			.paginate();
+
+		const carts = await queryFeatures.queryModel;
+
+		return {
+			total: carts.length,
+			queryOptions: queryFeatures.queryOptions,
+			items: carts,
+		};
+	}
+
+	async findOneByID(cartID: string): Promise<Cart> {
+		const cart = await this.cartModel.findById(cartID);
+
+		if (!cart) throw new NotFoundException('Not found user with that ID');
+
+		return cart;
+	}
 
 	async createOne(userID: string): Promise<Cart> {
 		const cart = await this.cartModel.create({ accountID: userID });
@@ -89,7 +119,7 @@ export class CartsService {
 		userID: string,
 		cartItemID: string,
 	): Promise<boolean> {
-		const cartItem = await this.cartItemService.findOne(cartItemID);
+		const cartItem = await this.cartItemService.findOneByID(cartItemID);
 
 		const cart = await this.cartModel
 			.findOneAndUpdate(
@@ -110,10 +140,17 @@ export class CartsService {
 		return true;
 	}
 
-	async purchaseInCart(userID: string, paymentOpt: any): Promise<Bill> {
+	async purchaseInCart(
+		userID: string,
+		paymentOpt: PaymentOptDto,
+	): Promise<Bill> {
 		// ...check payment
 
 		const cart = await this.getCurrent(userID, 'cartItemIDs');
+
+		if (cart.cartItemIDs.length === 0)
+			throw new BadRequestException('Have at least one cart-item in cart');
+
 		const cartItemIDs: any = cart.cartItemIDs;
 		const packageIDs = [];
 		const billItems = [];
@@ -162,9 +199,6 @@ export class CartsService {
 			.populate({ path: 'cartItemIDs' });
 
 		const cartItemIDs: any = cart.cartItemIDs;
-
-		if (cartItemIDs.length === 0)
-			throw new BadRequestException('Have at least one cart-item in cart');
 
 		let totalPrice = 0;
 		for (let i = 0; i < cartItemIDs.length; i++) {
