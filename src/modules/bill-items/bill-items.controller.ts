@@ -2,10 +2,7 @@ import { Controller, Get, Param, Query, UseGuards } from '@nestjs/common';
 import { BillItemsService } from './bill-items.service';
 import { ApiOperation, ApiParam, ApiResponse, ApiTags } from '@nestjs/swagger';
 import { BillItem, BillItemStatus } from './schemas/bill-item.schema';
-import {
-	ErrorResponse,
-	ListOptions,
-} from 'src/shared/response/common-response';
+import { ErrorResponse } from 'src/shared/response/common-response';
 import { ApiDocsPagination } from 'src/decorators/swagger-form-data.decorator';
 import {
 	CustomerType,
