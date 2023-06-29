@@ -364,7 +364,6 @@ export class BillsController {
 		return this.billsService.findOneByID(billID, user);
 	}
 
-	@Get('promotions')
 	@ApiDocsPagination('promotion')
 	@ApiOperation({
 		summary: 'getManyBillPromotions',
@@ -433,11 +432,11 @@ export class BillsController {
 			} as ErrorResponse<null>,
 		},
 	})
+	@Get('promotions')
 	getManyBillPromotions(@Query() filter: ListOptions<Promotion>) {
 		return 'getManyPromotions';
 	}
 
-	@Get('promotions/:id')
 	@ApiOperation({
 		summary: 'getOneBillPromotion',
 		description: 'Allow user to get one bill promotion',
@@ -516,6 +515,7 @@ export class BillsController {
 			} as ErrorResponse<null>,
 		},
 	})
+	@Get('promotions/:id')
 	getOneBillPromotion(@Param('id') id: string) {
 		return 'getOneBillPromotion';
 	}
