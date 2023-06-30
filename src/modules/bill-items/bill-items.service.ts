@@ -17,7 +17,6 @@ import {
 import { TokenPayload } from '../auth/types/token-payload.type';
 import { Bill } from '../bills/schemas/bill.schema';
 import { UserRole } from '../users/schemas/user.schema';
-import { BillsService } from '../bills/bills.service';
 import { BrandService } from '../brand/brand.service';
 
 @Injectable()
@@ -26,7 +25,6 @@ export class BillItemsService {
 		@InjectModel(BillItem.name)
 		private billItemsModel: Model<BillItemsDocument>,
 		private packageService: PackageService,
-		private billService: BillsService,
 		private brandService: BrandService,
 	) {}
 
@@ -123,13 +121,9 @@ export class BillItemsService {
 	async findOneByID(billItemId: string, user: TokenPayload): Promise<BillItem> {
 		const billItem = await this.billItemsModel.findById(billItemId);
 
-		const bill = await this.billService.findOne({
-			billItems: { $in: billItem },
-		});
-
 		if (
 			user.role === UserRole.MEMBER &&
-			user.sub.toString() !== bill.accountID.toString()
+			user.sub.toString() !== billItem.accountID.toString()
 		) {
 			throw new ForbiddenException('Forbidden resource');
 		}
@@ -143,7 +137,7 @@ export class BillItemsService {
 		return billItem;
 	}
 
-	async createOne(packageID: string): Promise<BillItem> {
+	async createOne(packageID: string, userID: string): Promise<BillItem> {
 		const packageItem = await this.packageService.findOneByID(
 			packageID,
 			'facilityID packageTypeID',
@@ -161,6 +155,7 @@ export class BillItemsService {
 			packageTypeID: packageItem.packageTypeID._id.toString(),
 			packageID: packageID.toString(),
 			ownerFacilityID: packageItem.facilityID.ownerID.toString(),
+			accountID: userID,
 			facilityInfo: {
 				brandName: brand.name,
 				facilityName: packageItem.facilityID.name,
@@ -196,5 +191,14 @@ export class BillItemsService {
 			throw new InternalServerErrorException('Create Bill-item failed');
 
 		return billItem;
+	}
+	async deleteOneByID(billItemID: string): Promise<boolean> {
+		const billItem = await this.billItemsModel.findById(billItemID);
+
+		if (!billItem) throw new NotFoundException('Bill-item not found');
+
+		await this.billItemsModel.deleteOne({ _id: billItemID });
+
+		return true;
 	}
 }

@@ -46,6 +46,7 @@ export class BillItemsController {
 						packageTypeID: 'string',
 						packageID: 'string',
 						ownerFacilityID: 'string',
+						accountID: 'string',
 						facilityInfo: {
 							brandName: 'string',
 							facilityName: 'string',
@@ -156,6 +157,7 @@ export class BillItemsController {
 						packageTypeID: 'string',
 						packageID: 'string',
 						ownerFacilityID: 'string',
+						accountID: 'string',
 						facilityInfo: {
 							brandName: 'string',
 							facilityName: 'string',

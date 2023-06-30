@@ -160,7 +160,9 @@ export class CartsService {
 		}
 
 		for (let i = 0; i < packageIDs.length; i++) {
-			billItems.push(await this.billItemService.createOne(packageIDs[i]));
+			billItems.push(
+				await this.billItemService.createOne(packageIDs[i], userID),
+			);
 
 			const facilityID = (await this.packageService.findOneByID(packageIDs[i]))
 				.facilityID;
