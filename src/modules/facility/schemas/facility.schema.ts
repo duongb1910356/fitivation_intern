@@ -8,7 +8,6 @@ import {
 import { Brand } from '../../brand/schemas/brand.schema';
 import { Photo, PhotoSchema } from 'src/modules/photo/schemas/photo.schema';
 import { FacilityCategory } from 'src/modules/facility-category/entities/facility-category';
-import { User } from 'src/modules/users/schemas/user.schema';
 import { appConfig } from 'src/app.config';
 
 export enum State {
@@ -58,7 +57,7 @@ export class Facility extends BaseObject {
 	facilityCategoryID: FacilityCategory;
 
 	@Prop({ type: mongoose.Schema.Types.ObjectId, ref: 'User', required: true })
-	ownerID: User;
+	ownerID: string;
 
 	@Prop({ type: String, required: true })
 	name: string;

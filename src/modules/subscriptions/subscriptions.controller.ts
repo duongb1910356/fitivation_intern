@@ -1,23 +1,36 @@
-import { Controller, Get, Param, Patch, Query } from '@nestjs/common';
+import {
+	Controller,
+	Get,
+	Param,
+	Patch,
+	Query,
+	UseGuards,
+} from '@nestjs/common';
 import { ApiOperation, ApiParam, ApiResponse, ApiTags } from '@nestjs/swagger';
 import { ApiDocsPagination } from 'src/decorators/swagger-form-data.decorator';
 import {
 	ErrorResponse,
 	ListOptions,
-	ListResponse,
 } from 'src/shared/response/common-response';
 import {
 	Subscription,
 	SubscriptionStatus,
 } from './schemas/subscription.schema';
+import { Roles } from 'src/decorators/role.decorator';
+import { UserRole } from '../users/schemas/user.schema';
+import { RolesGuard } from 'src/guards/role.guard';
+import { SubscriptionsService } from './subscriptions.service';
+import { ListResponse, QueryObject } from 'src/shared/utils/query-api';
+import { GetCurrentUser } from 'src/decorators/get-current-user.decorator';
+import { TokenPayload } from '../auth/types/token-payload.type';
 
 @Controller('subscriptions')
 @ApiTags('subscriptions')
 export class SubscriptionsController {
-	@Get()
+	constructor(private readonly subscriptionService: SubscriptionsService) {}
 	@ApiDocsPagination('subscription')
 	@ApiOperation({
-		summary: 'getManySubscriptions',
+		summary: 'findManySubscriptions',
 		description: 'Get many subscriptions',
 	})
 	@ApiResponse({
@@ -26,22 +39,22 @@ export class SubscriptionsController {
 			example: {
 				items: [
 					{
-						accountID: {},
-						billItemID: {},
+						accountID: 'string',
+						billItemID: 'string',
+						packageID: 'string',
+						facilityID: 'string',
 						expires: new Date(),
 						status: SubscriptionStatus.ACTIVE,
 						renew: false,
 					},
 				] as Subscription[],
 				total: 1,
-				options: {
-					limit: 1,
-					offset: 0,
-					searchField: {},
-					searchValue: '',
-					sortField: 'createdAt',
-					sortOrder: 'asc',
-				} as ListOptions<Subscription>,
+				queryOptions: {
+					sort: 'string',
+					fields: 'string',
+					limit: 10,
+					page: 0,
+				} as QueryObject,
 			} as ListResponse<Subscription>,
 		},
 	})
@@ -75,12 +88,17 @@ export class SubscriptionsController {
 			} as ErrorResponse<null>,
 		},
 	})
-	getManySubscriptions(@Query() filter: ListOptions<Subscription>) {
-		return 'getManySubscriptions';
+	@Get()
+	// @Roles(UserRole.MEMBER, UserRole.ADMIN)
+	// @UseGuards(RolesGuard)
+	findManySubscriptions(
+		@Query() query: QueryObject,
+		@GetCurrentUser() user: TokenPayload,
+	): Promise<ListResponse<Subscription>> {
+		return this.subscriptionService.findMany(query, user);
 	}
-	@Get(':id')
 	@ApiOperation({
-		summary: 'getOneSubscription',
+		summary: 'FindOneSubscription',
 		description: 'Get one subscription',
 	})
 	@ApiParam({ name: 'id', type: String, description: 'Subscription ID' })
@@ -90,22 +108,22 @@ export class SubscriptionsController {
 			example: {
 				items: [
 					{
-						accountID: {},
-						billItemID: {},
+						accountID: 'string',
+						billItemID: 'string',
+						packageID: 'string',
+						facilityID: 'string',
 						expires: new Date(),
 						status: SubscriptionStatus.ACTIVE,
 						renew: false,
 					},
 				] as Subscription[],
 				total: 1,
-				options: {
-					limit: 1,
-					offset: 0,
-					searchField: {},
-					searchValue: '',
-					sortField: 'createdAt',
-					sortOrder: 'asc',
-				} as ListOptions<Subscription>,
+				queryOptions: {
+					sort: 'string',
+					fields: 'string',
+					limit: 10,
+					page: 0,
+				} as QueryObject,
 			} as ListResponse<Subscription>,
 		},
 	})
@@ -149,11 +167,16 @@ export class SubscriptionsController {
 			} as ErrorResponse<null>,
 		},
 	})
-	getOneSubscription(@Param('id') id: string) {
-		return 'getOneSubscription';
+	@Get(':id')
+	// @Roles(UserRole.MEMBER, UserRole.ADMIN)
+	// @UseGuards(RolesGuard)
+	findOneSubscription(
+		@Param('id') id: string,
+		@GetCurrentUser() user: TokenPayload,
+	): Promise<Subscription> {
+		return this.subscriptionService.findOneByID(id, user);
 	}
 
-	@Patch(':id/renew')
 	@ApiOperation({
 		summary: 'renew',
 		description: 'Allow customer to extend package when package was expired',
@@ -163,8 +186,10 @@ export class SubscriptionsController {
 		status: 200,
 		schema: {
 			example: {
-				accountID: {},
-				billItemID: {},
+				accountID: 'string',
+				billItemID: 'string',
+				packageID: 'string',
+				facilityID: 'string',
 				expires: new Date(),
 				status: SubscriptionStatus.ACTIVE,
 				renew: true,
@@ -221,7 +246,13 @@ export class SubscriptionsController {
 			} as ErrorResponse<null>,
 		},
 	})
-	renew(@Param('id') id: string) {
-		return 'renew';
+	@Patch('renew/:id')
+	// @Roles(UserRole.MEMBER)
+	// @UseGuards(RolesGuard)
+	renew(
+		@GetCurrentUser() user: TokenPayload,
+		@Param('id') id: string,
+	): Promise<Subscription> {
+		return this.subscriptionService.renew(id, user);
 	}
 }
