@@ -7,7 +7,6 @@ import {
 } from 'src/modules/reviews/schemas/reviews.schema';
 import { Brand } from '../../brand/schemas/brand.schema';
 import { Photo, PhotoSchema } from 'src/modules/photo/schemas/photo.schema';
-import { FacilityCategory } from 'src/modules/facility-category/entities/facility-category';
 import { appConfig } from 'src/app.config';
 
 export enum State {
@@ -50,11 +49,10 @@ export class Facility extends BaseObject {
 	brandID: Brand;
 
 	@Prop({
-		type: mongoose.Schema.Types.ObjectId,
-		ref: 'FacilityCategory',
+		type: [{ type: mongoose.Schema.Types.ObjectId, ref: 'FacilityCategory' }],
 		required: true,
 	})
-	facilityCategoryID: FacilityCategory;
+	facilityCategoryID: string[];
 
 	@Prop({ type: mongoose.Schema.Types.ObjectId, ref: 'User', required: true })
 	ownerID: string;
@@ -72,6 +70,9 @@ export class Facility extends BaseObject {
 		commune: string;
 		communeCode: string;
 	};
+
+	@Prop({ type: String, required: false, default: '' })
+	fullAddress: string;
 
 	@Prop({ default: '' })
 	summary: string;
@@ -121,5 +122,13 @@ export const FacilitySchema = SchemaFactory.createForClass(Facility);
 
 export const FacilitySchemaFactory = () => {
 	const facilitySchema = FacilitySchema;
+
+	facilitySchema.pre('save', async function (next) {
+		// eslint-disable-next-line @typescript-eslint/no-this-alias
+		const facility = this;
+		facility.fullAddress = `${facility.address.street}, ${facility.address.commune}, ${facility.address.district}, ${facility.address.province}`;
+		return next();
+	});
+
 	return facilitySchema;
 };
