@@ -14,14 +14,28 @@ export enum SubscriptionStatus {
 @Schema({ timestamps: true })
 export class Subscription extends BaseObject {
 	@Prop({ required: true, type: mongoose.Schema.Types.ObjectId, ref: 'User' })
-	accountID: User;
+	accountID: string;
 
 	@Prop({
 		required: true,
 		type: mongoose.Schema.Types.ObjectId,
 		ref: 'BillItem',
 	})
-	billItemID: BillItem;
+	billItemID: string;
+
+	@Prop({
+		required: true,
+		type: mongoose.Schema.Types.ObjectId,
+		ref: 'Package',
+	})
+	packageID: string;
+
+	@Prop({
+		required: true,
+		type: mongoose.Schema.Types.ObjectId,
+		ref: 'Facility',
+	})
+	facilityID: string;
 
 	@Prop({ required: true, type: Date })
 	expires: Date;

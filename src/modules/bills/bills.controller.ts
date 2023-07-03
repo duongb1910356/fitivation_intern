@@ -16,7 +16,6 @@ import { ApiDocsPagination } from 'src/decorators/swagger-form-data.decorator';
 import {
 	ErrorResponse,
 	ListOptions,
-	ListResponse,
 } from 'src/shared/response/common-response';
 import {
 	CustomerType,
@@ -30,15 +29,17 @@ import { CreatePromotionDto } from '../promotions/dto/create-promotion-dto';
 import { BillItemPackage } from '../bill-items/schemas/bill-item-package.schema';
 import { BillItemPackageType } from '../bill-items/schemas/bill-item-package-type.schema';
 import { BillItemFacility } from '../bill-items/schemas/bill-item-facility.schema';
+import { GetCurrentUser } from 'src/decorators/get-current-user.decorator';
+import { ListResponse, QueryObject } from 'src/shared/utils/query-api';
+import { TokenPayload } from '../auth/types/token-payload.type';
 
 @Controller('bills')
 @ApiTags('bills')
 export class BillsController {
 	constructor(private readonly billsService: BillsService) {}
 
-	@Get()
 	@ApiOperation({
-		summary: 'getManyBills',
+		summary: 'findManyBills',
 		description: 'Get many bills',
 	})
 	@ApiDocsPagination('bill')
@@ -49,21 +50,20 @@ export class BillsController {
 				items: [
 					{
 						_id: '_id',
-						accountID: {},
+						accountID: 'string',
 						billItems: [
 							{
 								_id: '_id',
-								brandID: {},
-								facilityID: {},
-								packageTypeID: {},
-								packageID: {},
+								brandID: 'string',
+								facilityID: 'string',
+								packageTypeID: 'string',
+								packageID: 'string',
+								ownerFacilityID: 'string',
 								facilityInfo: {
 									brandName: 'string',
-									ownerFacilityName: 'string',
-									facilityName: 'string',
 									facilityAddress: {},
 									facilityCoordinatesLocation: [1, 1],
-									facilityPhoto: 'string',
+									facilityPhotos: [],
 								} as BillItemFacility,
 								packageTypeInfo: {
 									name: 'string',
@@ -76,7 +76,7 @@ export class BillsController {
 								} as BillItemPackage,
 								promotions: [
 									{
-										targetID: {},
+										targetID: 'string',
 										type: PromotionType.PACKAGE,
 										name: 'string',
 										description: 'string',
@@ -150,14 +150,12 @@ export class BillsController {
 					},
 				] as Bill[],
 				total: 1,
-				options: {
-					limit: 1,
-					offset: 0,
-					searchField: {},
-					searchValue: '',
-					sortField: 'createdAt',
-					sortOrder: 'asc',
-				} as ListOptions<Bill>,
+				queryOptions: {
+					sort: 'string',
+					fields: 'string',
+					limit: 10,
+					page: 0,
+				} as QueryObject,
 			} as ListResponse<Bill>,
 		},
 	})
@@ -191,13 +189,16 @@ export class BillsController {
 			},
 		},
 	})
-	getManyBills(@Query() filter: ListOptions<Bill>) {
-		return 'getManyBills';
+	@Get()
+	findManyBills(
+		@GetCurrentUser() user: TokenPayload,
+		@Query() query: QueryObject,
+	): Promise<ListResponse<Bill>> {
+		return this.billsService.findMany(query, user);
 	}
 
-	@Get(':id')
 	@ApiOperation({
-		summary: 'getOneBill',
+		summary: 'findOneBill',
 		description: 'Get one bill',
 	})
 	@ApiParam({ name: 'id', type: String, description: 'Bill ID' })
@@ -205,68 +206,35 @@ export class BillsController {
 		status: 200,
 		schema: {
 			example: {
-				items: [
+				_id: '_id',
+				accountID: 'string',
+				billItems: [
 					{
 						_id: '_id',
-						accountID: {},
-						billItems: [
-							{
-								_id: '_id',
-								brandID: {},
-								facilityID: {},
-								packageTypeID: {},
-								packageID: {},
-								facilityInfo: {
-									brandName: 'string',
-									ownerFacilityName: 'string',
-									facilityName: 'string',
-									facilityAddress: {},
-									facilityCoordinatesLocation: [1, 1],
-									facilityPhoto: 'string',
-								} as BillItemFacility,
-								packageTypeInfo: {
-									name: 'string',
-									description: 'string',
-									price: 1,
-								} as BillItemPackageType,
-								packageInfo: {
-									type: TimeType.ONE_MONTH,
-									price: 1,
-								} as BillItemPackage,
-								promotions: [
-									{
-										targetID: {},
-										type: PromotionType.PACKAGE,
-										name: 'string',
-										description: 'string',
-										couponCode: 'string',
-										value: 1,
-										method: PromotionMethod.NUMBER,
-										minPriceApply: 1,
-										maxValue: 1,
-										maxQuantity: 1,
-										startDate: new Date(),
-										endDate: new Date(),
-										customerType: CustomerType.CUSTOMER,
-										status: PromotionStatus.ACTIVE,
-										createdAt: new Date(),
-										updatedAt: new Date(),
-									},
-								] as Promotion[],
-								promotionPrice: 1,
-								totalPrice: 1,
-								status: BillItemStatus.ACTIVE,
-								createdAt: new Date(),
-								updatedAt: new Date(),
-							},
-						] as BillItem[],
-						paymentMethod: PaymentMethod.CREDIT_CARD,
-						taxes: 0,
-						description: 'string',
+						brandID: 'string',
+						facilityID: 'string',
+						packageTypeID: 'string',
+						packageID: 'string',
+						ownerFacilityID: 'string',
+						facilityInfo: {
+							brandName: 'string',
+							facilityAddress: {},
+							facilityCoordinatesLocation: [1, 1],
+							facilityPhotos: [],
+						} as BillItemFacility,
+						packageTypeInfo: {
+							name: 'string',
+							description: 'string',
+							price: 1,
+						} as BillItemPackageType,
+						packageInfo: {
+							type: TimeType.ONE_MONTH,
+							price: 1,
+						} as BillItemPackage,
 						promotions: [
 							{
-								targetID: {},
-								type: PromotionType.FACILITY,
+								targetID: 'string',
+								type: PromotionType.PACKAGE,
 								name: 'string',
 								description: 'string',
 								couponCode: 'string',
@@ -282,42 +250,61 @@ export class BillsController {
 								createdAt: new Date(),
 								updatedAt: new Date(),
 							},
-							{
-								targetID: {},
-								type: PromotionType.BILL,
-								name: 'string',
-								description: 'string',
-								couponCode: 'string',
-								value: 1,
-								method: PromotionMethod.NUMBER,
-								minPriceApply: 1,
-								maxValue: 1,
-								maxQuantity: 1,
-								startDate: new Date(),
-								endDate: new Date(),
-								customerType: CustomerType.CUSTOMER,
-								status: PromotionStatus.ACTIVE,
-								createdAt: new Date(),
-								updatedAt: new Date(),
-							},
-						],
-						promotionPrice: 0,
-						totalPrice: 0,
-						status: BillStatus.ACTIVE,
+						] as Promotion[],
+						promotionPrice: 1,
+						totalPrice: 1,
+						status: BillItemStatus.ACTIVE,
 						createdAt: new Date(),
 						updatedAt: new Date(),
 					},
-				] as Bill[],
-				total: 1,
-				options: {
-					limit: 1,
-					offset: 0,
-					searchField: {},
-					searchValue: '',
-					sortField: 'createdAt',
-					sortOrder: 'asc',
-				} as ListOptions<Bill>,
-			} as ListResponse<Bill>,
+				] as BillItem[],
+				paymentMethod: PaymentMethod.CREDIT_CARD,
+				taxes: 0,
+				description: 'string',
+				promotions: [
+					{
+						targetID: {},
+						type: PromotionType.FACILITY,
+						name: 'string',
+						description: 'string',
+						couponCode: 'string',
+						value: 1,
+						method: PromotionMethod.NUMBER,
+						minPriceApply: 1,
+						maxValue: 1,
+						maxQuantity: 1,
+						startDate: new Date(),
+						endDate: new Date(),
+						customerType: CustomerType.CUSTOMER,
+						status: PromotionStatus.ACTIVE,
+						createdAt: new Date(),
+						updatedAt: new Date(),
+					},
+					{
+						targetID: {},
+						type: PromotionType.BILL,
+						name: 'string',
+						description: 'string',
+						couponCode: 'string',
+						value: 1,
+						method: PromotionMethod.NUMBER,
+						minPriceApply: 1,
+						maxValue: 1,
+						maxQuantity: 1,
+						startDate: new Date(),
+						endDate: new Date(),
+						customerType: CustomerType.CUSTOMER,
+						status: PromotionStatus.ACTIVE,
+						createdAt: new Date(),
+						updatedAt: new Date(),
+					},
+				],
+				promotionPrice: 0,
+				totalPrice: 0,
+				status: BillStatus.ACTIVE,
+				createdAt: new Date(),
+				updatedAt: new Date(),
+			} as Bill,
 		},
 	})
 	@ApiResponse({
@@ -360,14 +347,17 @@ export class BillsController {
 			} as ErrorResponse<null>,
 		},
 	})
-	getOneBill(@Param('id') id: string) {
-		return 'getOneBill';
+	@Get(':id')
+	findOneBill(
+		@Param('id') billID: string,
+		@GetCurrentUser() user: TokenPayload,
+	): Promise<Bill> {
+		return this.billsService.findOneByID(billID, user);
 	}
 
-	@Get('promotions')
 	@ApiDocsPagination('promotion')
 	@ApiOperation({
-		summary: 'getManyBillPromotions',
+		summary: 'findManyBillPromotions',
 		description: 'Allow user to get many bills promotions',
 	})
 	@ApiResponse({
@@ -394,14 +384,12 @@ export class BillsController {
 					},
 				] as Promotion[],
 				total: 1,
-				options: {
-					limit: 1,
-					offset: 0,
-					searchField: {},
-					searchValue: '',
-					sortField: 'createdAt',
-					sortOrder: 'asc',
-				} as ListOptions<Promotion>,
+				queryOptions: {
+					sort: 'string',
+					fields: 'string',
+					limit: 10,
+					page: 0,
+				} as QueryObject,
 			} as ListResponse<Promotion>,
 		},
 	})
@@ -435,13 +423,13 @@ export class BillsController {
 			} as ErrorResponse<null>,
 		},
 	})
-	getManyBillPromotions(@Query() filter: ListOptions<Promotion>) {
-		return 'getManyPromotions';
+	@Get('promotions')
+	findManyBillPromotions(@Query() filter: ListOptions<Promotion>) {
+		return 'findManyPromotions';
 	}
 
-	@Get('promotions/:id')
 	@ApiOperation({
-		summary: 'getOneBillPromotion',
+		summary: 'findOneBillPromotion',
 		description: 'Allow user to get one bill promotion',
 	})
 	@ApiParam({ name: 'id', type: String, description: 'Promotion ID' })
@@ -469,14 +457,12 @@ export class BillsController {
 					},
 				] as Promotion[],
 				total: 1,
-				options: {
-					limit: 1,
-					offset: 0,
-					searchField: {},
-					searchValue: '',
-					sortField: 'createdAt',
-					sortOrder: 'asc',
-				} as ListOptions<Promotion>,
+				queryOptions: {
+					sort: 'string',
+					fields: 'string',
+					limit: 10,
+					page: 0,
+				} as QueryObject,
 			} as ListResponse<Promotion>,
 		},
 	})
@@ -520,7 +506,8 @@ export class BillsController {
 			} as ErrorResponse<null>,
 		},
 	})
-	getOneBillPromotion(@Param('id') id: string) {
+	@Get('promotions/:id')
+	findOneBillPromotion(@Param('id') id: string) {
 		return 'getOneBillPromotion';
 	}
 

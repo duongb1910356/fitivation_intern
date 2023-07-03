@@ -12,6 +12,7 @@ import { JwtService } from '@nestjs/jwt';
 import { appConfig } from '../../app.config';
 import { Encrypt } from 'src/shared/utils/encrypt';
 import { LoginDto } from './dto/login-dto';
+import { UserStatus } from '../users/schemas/user.schema';
 
 @Injectable()
 export class AuthService {
@@ -58,10 +59,6 @@ export class AuthService {
 	}
 
 	async signup(signupDto: SignupDto): Promise<TokenResponse> {
-		const passwordHashed = await Encrypt.hashData(signupDto.password);
-
-		signupDto.password = passwordHashed;
-
 		const newUser = await this.userService.createOne(signupDto);
 
 		const tokens = await this.signTokens(
@@ -77,6 +74,10 @@ export class AuthService {
 
 	async login(loginDto: LoginDto): Promise<TokenResponse> {
 		const user = await this.userService.findOneByEmail(loginDto.email);
+
+		if (user.status === UserStatus.INACTIVE) {
+			throw new BadRequestException('User status inactive');
+		}
 
 		const isMatched = await Encrypt.compareData(
 			user.password,
@@ -98,7 +99,9 @@ export class AuthService {
 		if (user.refreshToken === null)
 			throw new BadRequestException('User already logout');
 
-		await this.userService.findOneByIDAndUpdate(userID, { refreshToken: null });
+		await this.userService.findOneByIDAndUpdate(userID, {
+			refreshToken: null,
+		});
 
 		return true;
 	}
