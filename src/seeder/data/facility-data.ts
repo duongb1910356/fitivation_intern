@@ -24,7 +24,7 @@ export const facilitiesData = [
 		summary: 'Chất lượng là danh dự',
 		description:
 			"Lorem Ipsum is simply dummy text of the printing and typesetting industry. Lorem Ipsum has been the industry's standard dummy text ever since the 1500s, when an unknown printer took a galley of type and scrambled it to make a type specimen book",
-		coordinates: [10.044071865857335, 105.77827419395031],
+		location: { coordinates: [105.77827419395031, 10.044071865857335] },
 		state: 'ACTIVE',
 		status: 'APPROVED',
 		scheduleType: 'DAILY',
@@ -157,7 +157,7 @@ export const facilitiesData = [
 		summary: 'Chất lượng là danh dự',
 		description:
 			"Lorem Ipsum is simply dummy text of the printing and typesetting industry. Lorem Ipsum has been the industry's standard dummy text ever since the 1500s, when an unknown printer took a galley of type and scrambled it to make a type specimen book",
-		coordinates: [10.031966330522316, 105.76892820319247],
+		location: { coordinates: [105.76892820319247, 10.031966330522316] },
 		state: 'ACTIVE',
 		status: 'APPROVED',
 		scheduleType: 'WEEKLY',
@@ -289,7 +289,7 @@ export const facilitiesData = [
 		summary: 'Chất lượng là danh dự',
 		description:
 			"Lorem Ipsum is simply dummy text of the printing and typesetting industry. Lorem Ipsum has been the industry's standard dummy text ever since the 1500s, when an unknown printer took a galley of type and scrambled it to make a type specimen book",
-		coordinates: [10.027851057940572, 105.77291088739058],
+		location: { coordinates: [105.77291088739058, 10.027851057940572] },
 		state: 'ACTIVE',
 		status: 'APPROVED',
 		scheduleType: 'MONTHLY',

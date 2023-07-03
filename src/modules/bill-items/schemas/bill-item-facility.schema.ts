@@ -23,8 +23,22 @@ export class BillItemFacility {
 		communeCode: string;
 	};
 
-	@Prop({ type: Array })
-	facilityCoordinatesLocation?: [number, number];
+	// @Prop({ type: Array })
+	@Prop({
+		type: {
+			type: String,
+			enum: ['Point'],
+			default: 'Point',
+		},
+		coordinates: {
+			type: [Number],
+			required: true,
+		},
+	})
+	facilityCoordinatesLocation?: {
+		type: string;
+		coordinates: [number, number];
+	};
 
 	@Prop({
 		type: [{ type: mongoose.Schema.Types.ObjectId, ref: 'Photo', defautl: [] }],

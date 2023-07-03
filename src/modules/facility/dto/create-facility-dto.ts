@@ -4,10 +4,26 @@ import {
 	IsString,
 	IsOptional,
 	IsEnum,
+	IsNumber,
+	IsObject,
+	ArrayMinSize,
+	ArrayMaxSize,
 } from 'class-validator';
 import { State, ScheduleType } from '../../../shared/enum/facility.enum';
 import { CreateAddressDto } from 'src/modules/address/dto/create-address-dto';
 import { Photo } from 'src/modules/photo/schemas/photo.schema';
+
+export class LocationDTO {
+	@IsArray()
+	@ArrayMinSize(2)
+	@ArrayMaxSize(2)
+	@IsNumber({}, { each: true })
+	coordinates: [number, number];
+
+	@IsString()
+	@IsOptional()
+	type?: string = 'Point';
+}
 
 export class CreateFacilityDto {
 	@IsNotEmpty()
@@ -15,8 +31,8 @@ export class CreateFacilityDto {
 	brandID: string;
 
 	@IsNotEmpty()
-	@IsString()
-	facilityCategoryID: string;
+	@IsArray()
+	facilityCategoryID: string[];
 
 	@IsString()
 	@IsOptional()
@@ -25,6 +41,9 @@ export class CreateFacilityDto {
 	@IsEnum(State)
 	@IsOptional()
 	state?: State;
+
+	@IsNotEmpty()
+	location: LocationDTO;
 
 	@IsNotEmpty()
 	@IsString()
@@ -41,8 +60,8 @@ export class CreateFacilityDto {
 	@IsOptional()
 	description: string;
 
-	@IsArray()
-	coordinates?: number[];
+	// @IsArray()
+	// coordinates?: number[];
 
 	@IsEnum(ScheduleType)
 	scheduleType: ScheduleType;
@@ -50,4 +69,7 @@ export class CreateFacilityDto {
 	@IsArray()
 	@IsOptional()
 	photos: Photo[];
+
+	@IsString()
+	phone: string;
 }

@@ -41,8 +41,6 @@ export interface Address {
 	};
 }
 
-export type FacilityDocument = HydratedDocument<Facility>;
-
 @Schema({ timestamps: true })
 export class Facility extends BaseObject {
 	@Prop({ type: mongoose.Schema.Types.ObjectId, ref: 'Brand', required: true })
@@ -80,8 +78,45 @@ export class Facility extends BaseObject {
 	@Prop({ default: '' })
 	description: string;
 
-	@Prop({ type: [Number], required: false, default: [] })
+	@Prop({
+		type: [Number],
+		required: false,
+		default: [],
+	})
 	coordinates: [number, number];
+
+	@Prop({
+		type: {
+			type: String,
+			enum: ['Point'],
+			default: 'Point',
+		},
+		coordinates: {
+			type: [Number],
+			required: true,
+			validate: [
+				{
+					validator: (value: number[]) => value.length === 2,
+					message: 'Coordinates must be an array of length 2.',
+				},
+				{
+					validator: (value: number[]) =>
+						typeof value[0] === 'number' &&
+						typeof value[1] === 'number' &&
+						value[0] >= -180 &&
+						value[0] <= 180 &&
+						value[1] >= -90 &&
+						value[1] <= 90,
+					message: 'Invalid longitude or latitude.',
+				},
+			],
+		},
+	})
+	location: {
+		type: string;
+		index: '2dsphere';
+		coordinates: [number, number];
+	};
 
 	@Prop({ enum: State, default: State.ACTIVE })
 	state: State;
@@ -91,6 +126,9 @@ export class Facility extends BaseObject {
 
 	@Prop({ required: false, min: 0 })
 	averageStar: number;
+
+	@Prop({ type: String, required: true })
+	phone: string;
 
 	@Prop({
 		type: [{ type: PhotoSchema, required: true }],
@@ -119,6 +157,9 @@ export class Facility extends BaseObject {
 }
 
 export const FacilitySchema = SchemaFactory.createForClass(Facility);
+FacilitySchema.index({ location: '2dsphere' });
+
+export type FacilityDocument = Document & Facility;
 
 export const FacilitySchemaFactory = () => {
 	const facilitySchema = FacilitySchema;
