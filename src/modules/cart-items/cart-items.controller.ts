@@ -24,10 +24,13 @@ import {
 import { CartItem } from './schemas/cart-item.schema';
 import { CreateCartItemDto } from './dto/create-cart-item-dto';
 import { UpdateCartItemDto } from './dto/update-cart-item-dto';
+import { CartItemsService } from './cart-items.service';
 
 @Controller('cart-items')
 @ApiTags('cart-items')
 export class CartItemsController {
+	constructor(private readonly cartItemsService: CartItemsService) {}
+
 	@Get()
 	@ApiDocsPagination('cart-item')
 	@ApiOperation({
@@ -363,8 +366,25 @@ export class CartItemsController {
 	}
 
 	@Patch(':cartItemID/promotions/:promotionID')
-	addPackagePromotionToCartItem() {}
+	// @Roles(UserRole.ADMIN, UserRole.MEMBER)
+	// @UseGuards(RolesGuard)
+	addPackagePromotionToCartItem(
+		@Param('cartItemID') cartItemID: string,
+		@Param('promotionID') promotionID: string,
+	) {
+		return this.cartItemsService.addPackagePromotionToCartItem(
+			cartItemID,
+			promotionID,
+		);
+	}
 
 	@Delete(':cartItemID/promotions/:promotionID')
-	removePackagePromotionToCartItem() {}
+	// @Roles(UserRole.ADMIN, UserRole.MEMBER)
+	// @UseGuards(RolesGuard)
+	removePackagePromotionToCartItem(
+		@Param('cartItemID') cartItemID: string,
+		@Param('promotionID') promotionID: string,
+	) {
+		//
+	}
 }

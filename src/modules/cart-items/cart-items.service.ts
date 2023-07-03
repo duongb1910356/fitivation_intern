@@ -1,14 +1,20 @@
-import { BadRequestException, Injectable } from '@nestjs/common';
+import {
+	BadRequestException,
+	Injectable,
+	NotFoundException,
+} from '@nestjs/common';
 import { InjectModel } from '@nestjs/mongoose';
 import { CartItem, CartItemDocument } from './schemas/cart-item.schema';
 import { Model } from 'mongoose';
 import { PackageService } from '../package/package.service';
+import { PromotionsService } from '../promotions/promotions.service';
 
 @Injectable()
 export class CartItemsService {
 	constructor(
 		@InjectModel(CartItem.name) private cartItemModel: Model<CartItemDocument>,
 		private packgeService: PackageService,
+		private promotionService: PromotionsService,
 	) {}
 
 	async findOneByID(cartItemID: string): Promise<CartItem> {
