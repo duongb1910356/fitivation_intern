@@ -384,6 +384,8 @@ export class FacilityService {
 		const regex = new RegExp(search.split('').join('.*'), 'i');
 		const latitude = parseFloat(filter.latitude.toString());
 		const longitude = parseFloat(filter.longitude.toString());
+		const limit = filter.limit || 0;
+		const offset = filter.offset || 0;
 
 		const facilities = await this.facilityModel.aggregate([
 			{
@@ -409,6 +411,12 @@ export class FacilityService {
 				$sort: {
 					distance: sortOrder === 'asc' ? 1 : -1,
 				},
+			},
+			{
+				$skip: offset,
+			},
+			{
+				$limit: limit,
 			},
 		]);
 
