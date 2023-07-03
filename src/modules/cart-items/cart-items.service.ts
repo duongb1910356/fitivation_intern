@@ -14,7 +14,7 @@ export class CartItemsService {
 	async findOneByID(cartItemID: string): Promise<CartItem> {
 		const cartItem = await this.cartItemModel.findOne({ _id: cartItemID });
 
-		if (!cartItem) throw new BadRequestException(`Not found cart-item`);
+		if (!cartItem) throw new NotFoundException(`Not found cart-item`);
 
 		return cartItem;
 	}
