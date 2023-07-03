@@ -364,27 +364,4 @@ export class CartItemsController {
 	deleteCartItem(@Param('id') id: string) {
 		return 'deleteCartItem';
 	}
-
-	@Patch(':cartItemID/promotions/:promotionID')
-	// @Roles(UserRole.ADMIN, UserRole.MEMBER)
-	// @UseGuards(RolesGuard)
-	addPackagePromotionToCartItem(
-		@Param('cartItemID') cartItemID: string,
-		@Param('promotionID') promotionID: string,
-	) {
-		return this.cartItemsService.addPackagePromotionToCartItem(
-			cartItemID,
-			promotionID,
-		);
-	}
-
-	@Delete(':cartItemID/promotions/:promotionID')
-	// @Roles(UserRole.ADMIN, UserRole.MEMBER)
-	// @UseGuards(RolesGuard)
-	removePackagePromotionToCartItem(
-		@Param('cartItemID') cartItemID: string,
-		@Param('promotionID') promotionID: string,
-	) {
-		//
-	}
 }
