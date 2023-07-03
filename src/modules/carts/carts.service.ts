@@ -77,7 +77,7 @@ export class CartsService {
 	async deleteOne(userID: string): Promise<boolean> {
 		const cart = await this.cartModel.findOne({ accountID: userID });
 
-		if (!cart) throw new NotFoundException(`Not found current user's cart`);
+		if (!cart) return false;
 
 		const cartItems = cart.cartItemIDs;
 

@@ -195,7 +195,7 @@ export class BillItemsService {
 	async deleteOneByID(billItemID: string): Promise<boolean> {
 		const billItem = await this.billItemsModel.findById(billItemID);
 
-		if (!billItem) throw new NotFoundException('Bill-item not found');
+		if (!billItem) return false;
 
 		await this.billItemsModel.deleteOne({ _id: billItemID });
 

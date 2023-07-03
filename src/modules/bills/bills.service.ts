@@ -103,7 +103,7 @@ export class BillsService {
 	async deleteOneByID(billID: string): Promise<boolean> {
 		const bill = await this.billModel.findById(billID);
 
-		if (!bill) throw new NotFoundException('Bill not found');
+		if (!bill) return false;
 
 		const billItems = bill.billItems;
 

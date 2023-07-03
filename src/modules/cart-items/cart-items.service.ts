@@ -36,8 +36,7 @@ export class CartItemsService {
 	async deleteOne(cartItemID: string): Promise<boolean> {
 		const cartItem = await this.cartItemModel.findById(cartItemID);
 
-		if (!cartItem)
-			throw new BadRequestException('Not found cart-item with that ID');
+		if (!cartItem) return false;
 
 		await this.cartItemModel.deleteOne({ _id: cartItemID });
 
