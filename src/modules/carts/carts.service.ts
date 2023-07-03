@@ -204,7 +204,10 @@ export class CartsService {
 
 		let totalPrice = 0;
 		for (let i = 0; i < cartItemIDs.length; i++) {
-			await this.cartItemService.updatePrice(cartItemIDs[i]._id.toString());
+			await this.cartItemService.updatePrice(
+				cartItemIDs[i]._id.toString(),
+				cartItemIDs[i].promotionIDs[0],
+			);
 		}
 
 		for (let i = 0; i < cartItemIDs.length; i++) {
@@ -214,5 +217,40 @@ export class CartsService {
 		cart.save();
 
 		return true;
+	}
+
+	async addPackagePromotionToCartItemInCurrentCart(
+		userID: string,
+		cartItemID: string,
+		promotionID: string,
+	): Promise<boolean> {
+		const cart = await this.cartModel.findOne({
+			accountID: userID,
+		});
+
+		if (!cart) throw new NotFoundException(`Not found current user's cart`);
+
+		const isValid = this.checkValidCartItemInCurrentCart(cart, cartItemID);
+
+		if (!isValid)
+			throw new BadRequestException(`Not found cart-item in user's cart`);
+
+		await this.cartItemService.addPackagePromotionToCartItem(
+			cartItemID,
+			promotionID,
+		);
+		return true;
+	}
+
+	checkValidCartItemInCurrentCart(cart: Cart, cartItemID: string) {
+		let valid = false;
+
+		for (let i = 0; i < cart.cartItemIDs.length; i++) {
+			if (cart.cartItemIDs[i].toString() === cartItemID) {
+				valid = true;
+			}
+		}
+
+		return valid;
 	}
 }
