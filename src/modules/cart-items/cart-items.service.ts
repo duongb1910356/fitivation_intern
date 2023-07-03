@@ -8,6 +8,11 @@ import { CartItem, CartItemDocument } from './schemas/cart-item.schema';
 import { Model } from 'mongoose';
 import { PackageService } from '../package/package.service';
 import { PromotionsService } from '../promotions/promotions.service';
+import {
+	Promotion,
+	PromotionMethod,
+	PromotionType,
+} from '../promotions/schemas/promotion.schema';
 
 @Injectable()
 export class CartItemsService {
@@ -124,7 +129,12 @@ export class CartItemsService {
 				throw new BadRequestException(
 					`Can't apply promotion price because package price is less than min price apply`,
 				);
-		cartItem.totalPrice = packageItem.price;
+			}
+		}
+
+		// update price
+		await this.updatePrice(cartItem, promotion._id.toString());
+		cartItem.promotionIDs.push(promotion._id);
 		cartItem.save();
 		return true;
 	}
