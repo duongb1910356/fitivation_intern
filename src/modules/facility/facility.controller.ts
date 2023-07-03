@@ -13,6 +13,7 @@ import {
 	UploadedFiles,
 	UseGuards,
 	UseInterceptors,
+	ValidationPipe,
 } from '@nestjs/common';
 import {
 	ApiBadRequestResponse,
@@ -76,6 +77,7 @@ import {
 } from '../promotions/schemas/promotion.schema';
 import { UpdatePromotionDto } from '../promotions/dto/update-promotion-dto';
 import { FacilityScheduleDto } from '../facility-schedule/dto/facility-schedule-dto';
+import { IsNumber, IsString, Max, Min } from 'class-validator';
 
 @ApiTags('facilities')
 @Controller('facilities')

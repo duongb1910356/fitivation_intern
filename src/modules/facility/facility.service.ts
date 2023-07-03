@@ -380,12 +380,17 @@ export class FacilityService {
 	async searchFacilityByAddress(
 		filter: ListOptions<any>,
 	): Promise<ListResponse<any>> {
-		const { search, sortOrder } = filter;
-		const regex = new RegExp(search.split('').join('.*'), 'i');
+		if (!filter.latitude || !filter.longitude) {
+			throw new BadRequestException('You must provide a location');
+		}
+
+		const sortOrder = filter.sortOrder || 'asc';
+		const search = filter.search || '';
 		const latitude = parseFloat(filter.latitude.toString());
 		const longitude = parseFloat(filter.longitude.toString());
-		const limit = filter.limit || 0;
+		const limit = filter.limit || 10;
 		const offset = filter.offset || 0;
+		const regex = new RegExp(search.split('').join('.*'), 'i');
 
 		const facilities = await this.facilityModel.aggregate([
 			{
