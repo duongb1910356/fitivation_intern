@@ -13,7 +13,6 @@ import {
 	UploadedFiles,
 	UseGuards,
 	UseInterceptors,
-	ValidationPipe,
 } from '@nestjs/common';
 import {
 	ApiBadRequestResponse,
@@ -77,7 +76,6 @@ import {
 } from '../promotions/schemas/promotion.schema';
 import { UpdatePromotionDto } from '../promotions/dto/update-promotion-dto';
 import { FacilityScheduleDto } from '../facility-schedule/dto/facility-schedule-dto';
-import { IsNumber, IsString, Max, Min } from 'class-validator';
 
 @ApiTags('facilities')
 @Controller('facilities')
@@ -177,7 +175,83 @@ export class FacilityController {
 		return await this.facilityService.findMany(filter);
 	}
 
+	@Public()
 	@Get('search')
+	@ApiOperation({
+		summary: 'search facility by address và location',
+	})
+	@ApiQuery({
+		name: 'longitude',
+		type: Number,
+		required: true,
+		example: 105.77291088739058,
+	})
+	@ApiQuery({
+		name: 'latitude',
+		type: Number,
+		required: true,
+		example: 10.027851057940572,
+	})
+	@ApiQuery({
+		name: 'search',
+		type: String,
+		required: false,
+		example: 'cần thơ',
+	})
+	@ApiQuery({
+		name: 'sortOrder',
+		type: String,
+		required: false,
+		example: 'asc',
+	})
+	@ApiOkResponse({
+		schema: {
+			example: {
+				items: [
+					{
+						_id: '6476ef7d1f0419cd330fe128',
+						facilityID: {} as unknown as Facility,
+						type: ScheduleType.DAILY,
+						openTime: [
+							{
+								shift: [
+									{
+										startTime: '06:00',
+										endTime: '12:00',
+									},
+									{
+										startTime: '13:00',
+										endTime: '19:00',
+									},
+								] as ShiftTime[],
+							},
+						] as OpenTime[],
+						createdAt: new Date(),
+						updatedAt: new Date(),
+					} as FacilitySchedule,
+				],
+				total: 1,
+				options: {
+					limit: 10,
+					offset: 0,
+					searchField: 'facilityID',
+					searchValue: 'string',
+					sortField: 'type',
+					sortOrder: 'asc',
+				} as ListOptions<FacilitySchedule>,
+			} as ListResponse<FacilitySchedule>,
+		},
+	})
+	@ApiBadRequestResponse({
+		type: BadRequestException,
+		status: 400,
+		description: 'You have to provide lacation',
+	})
+	@ApiNotFoundResponse({
+		type: NotFoundException,
+		status: 404,
+		description: 'Not found facilities',
+	})
 	searchFacilityByAddress(@Query() filter: ListOptions<Facility>) {
 		return this.facilityService.searchFacilityByAddress(filter);
 	}
