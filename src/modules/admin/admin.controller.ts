@@ -7,7 +7,7 @@ import {
 	Patch,
 	Post,
 	Query,
-	UseGuards,
+	Req,
 } from '@nestjs/common';
 import {
 	ApiBadRequestResponse,
@@ -23,9 +23,7 @@ import {
 	ApiTags,
 	ApiUnauthorizedResponse,
 } from '@nestjs/swagger';
-import { Roles } from 'src/decorators/role.decorator';
-import { RolesGuard } from 'src/guards/role.guard';
-import { User, UserRole } from '../users/schemas/user.schema';
+import { User } from '../users/schemas/user.schema';
 import { ApiDocsPagination } from 'src/decorators/swagger-form-data.decorator';
 import {
 	ListOptions,
@@ -33,7 +31,7 @@ import {
 	ErrorResponse,
 } from 'src/shared/response/common-response';
 import { Attendance } from '../attendance/entities/attendance.entity';
-import { Facility, State } from '../facility/schemas/facility.schema';
+import { Facility, State, Status } from '../facility/schemas/facility.schema';
 import { CreateCategoryDto } from '../facility-category/dto/create-category-dto';
 import { UpdateCategoryDto } from '../facility-category/dto/update-category-dto';
 import { FacilityCategory } from '../facility-category/entities/facility-category';
@@ -58,12 +56,14 @@ import { ConditionHoliday, HolidayService } from '../holiday/holiday.service';
 import { AttendanceService } from '../attendance/attendance.service';
 import { Public } from '../auth/decorators/public.decorator';
 import { MongoIdValidationPipe } from 'src/pipes/parseMongoId.pipe';
+import { UpdateStatusFacilityDto } from '../facility/dto/update-status-facility';
+import { FacilityService } from '../facility/facility.service';
 
 @ApiTags('admin')
 // @ApiBearerAuth()
 // @UseGuards(RolesGuard)
 // @Roles(UserRole.ADMIN)
-@Public()
+// @Public()
 @Controller('admin')
 export class AdminController {
 	constructor(
@@ -73,12 +73,14 @@ export class AdminController {
 		private readonly facilityScheduleService: FacilityScheduleService,
 		private readonly holidayService: HolidayService,
 		private readonly attendanceService: AttendanceService,
+		private readonly facilityService: FacilityService,
 	) {}
 
 	//FACILITIES
-	@Patch('facilities/:facilityID/changeState')
+	@Patch('facilities/:facilityID/changeStatus')
+	@ApiBearerAuth()
 	@ApiOperation({
-		summary: 'Update facility state',
+		summary: 'Update facility status',
 		description: `Only admin can use this API`,
 	})
 	@ApiParam({
@@ -92,14 +94,14 @@ export class AdminController {
 			ACTIVE: {
 				summary: 'ACTIVE',
 				value: {
-					state: State.ACTIVE,
-				} as UpdateFacilityStateDto,
+					status: Status.APPROVED,
+				} as UpdateStatusFacilityDto,
 			},
-			INACTIVE: {
-				summary: 'INACTIVE',
+			PENDING: {
+				summary: 'PENDING',
 				value: {
-					state: State.INACTIVE,
-				} as UpdateFacilityStateDto,
+					status: Status.PENDING,
+				} as UpdateStatusFacilityDto,
 			},
 		},
 	})
@@ -132,7 +134,7 @@ export class AdminController {
 		schema: {
 			example: {
 				code: '404',
-				message: 'Not found category to update!',
+				message: 'Not found facility to update!',
 				details: null,
 			} as ErrorResponse<null>,
 		},
@@ -148,9 +150,11 @@ export class AdminController {
 	})
 	updateFacilityState(
 		@Param('facilityID', MongoIdValidationPipe) facilityID: string,
-		@Body() data: UpdateFacilityStateDto,
+		@Body() data: UpdateStatusFacilityDto,
+		@Req() req: any,
 	) {
-		console.log(facilityID, data);
+		console.log('data ', data);
+		return this.facilityService.updateStatus(facilityID, req, data.status);
 	}
 
 	// ATTENDANCES
