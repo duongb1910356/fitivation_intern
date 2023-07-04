@@ -76,6 +76,12 @@ export class SubscriptionsService {
 		) {
 			throw new ForbiddenException('Forbidden resource');
 		}
+
+		await this.checkDateAndUpdateDateIsExpired(
+			subscription._id.toString(),
+			user,
+		);
+
 		return subscription;
 	}
 
