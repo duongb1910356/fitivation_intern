@@ -6,7 +6,13 @@ import {
 	Query,
 	UseGuards,
 } from '@nestjs/common';
-import { ApiOperation, ApiParam, ApiResponse, ApiTags } from '@nestjs/swagger';
+import {
+	ApiBearerAuth,
+	ApiOperation,
+	ApiParam,
+	ApiResponse,
+	ApiTags,
+} from '@nestjs/swagger';
 import { ApiDocsPagination } from 'src/decorators/swagger-form-data.decorator';
 import {
 	ErrorResponse,
@@ -26,6 +32,7 @@ import { TokenPayload } from '../auth/types/token-payload.type';
 
 @Controller('subscriptions')
 @ApiTags('subscriptions')
+@ApiBearerAuth()
 export class SubscriptionsController {
 	constructor(private readonly subscriptionService: SubscriptionsService) {}
 	@ApiDocsPagination('subscription')
@@ -89,8 +96,8 @@ export class SubscriptionsController {
 		},
 	})
 	@Get()
-	// @Roles(UserRole.MEMBER, UserRole.ADMIN)
-	// @UseGuards(RolesGuard)
+	@Roles(UserRole.MEMBER, UserRole.ADMIN)
+	@UseGuards(RolesGuard)
 	findManySubscriptions(
 		@Query() query: QueryObject,
 		@GetCurrentUser() user: TokenPayload,
@@ -168,8 +175,8 @@ export class SubscriptionsController {
 		},
 	})
 	@Get(':id')
-	// @Roles(UserRole.MEMBER, UserRole.ADMIN)
-	// @UseGuards(RolesGuard)
+	@Roles(UserRole.MEMBER, UserRole.ADMIN)
+	@UseGuards(RolesGuard)
 	findOneSubscription(
 		@Param('id') id: string,
 		@GetCurrentUser() user: TokenPayload,
@@ -247,8 +254,8 @@ export class SubscriptionsController {
 		},
 	})
 	@Patch('renew/:id')
-	// @Roles(UserRole.MEMBER)
-	// @UseGuards(RolesGuard)
+	@Roles(UserRole.MEMBER)
+	@UseGuards(RolesGuard)
 	renew(
 		@GetCurrentUser() user: TokenPayload,
 		@Param('id') id: string,
