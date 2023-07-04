@@ -1038,9 +1038,8 @@ export class FacilityController {
 		return await this.facilityService.createHoliday(facilityID, data);
 	}
 
-	// @ApiBearerAuth()
-	// @UseGuards(OwnershipFacilityGuard)
-	@Public()
+	@ApiBearerAuth()
+	@UseGuards(OwnershipFacilityGuard)
 	@Post(':facilityID/package-types')
 	@ApiOperation({
 		summary: 'Create new Package Type by facilityID',
