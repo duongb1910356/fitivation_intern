@@ -63,13 +63,13 @@ export class CartsService {
 	}
 
 	async getCurrent(userID: string, populateOpt?: any): Promise<Cart> {
+		await this.updatePrice(userID);
+
 		const cart = await this.cartModel
 			.findOne({ accountID: userID })
 			.populate(populateOpt);
 
 		if (!cart) throw new NotFoundException(`Not found current user's cart`);
-
-		await this.updatePrice(userID);
 
 		return cart;
 	}
@@ -213,6 +213,7 @@ export class CartsService {
 		for (let i = 0; i < cartItemIDs.length; i++) {
 			totalPrice += cartItemIDs[i].totalPrice;
 		}
+
 		cart.totalPrice = totalPrice;
 		await cart.save();
 

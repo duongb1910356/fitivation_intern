@@ -180,7 +180,7 @@ export class SubscriptionsService {
 		subscription.renew = false;
 		await subscription.save();
 
-		return subscription;
+		return await this.subscriptionsModel.findById(subscriptionID);
 	}
 
 	async deleteOneByBillItemID(billItemID: string): Promise<boolean> {
