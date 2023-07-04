@@ -121,6 +121,8 @@ export class BillItemsService {
 	async findOneByID(billItemId: string, user: TokenPayload): Promise<BillItem> {
 		const billItem = await this.billItemsModel.findById(billItemId);
 
+		if (!billItem) throw new NotFoundException('Not found bill item');
+
 		if (
 			user.role === UserRole.MEMBER &&
 			user.sub.toString() !== billItem.accountID.toString()
