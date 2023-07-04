@@ -1,9 +1,5 @@
 import { Prop, Schema, SchemaFactory } from '@nestjs/mongoose';
 import mongoose, { HydratedDocument } from 'mongoose';
-import { Brand } from 'src/modules/brand/schemas/brand.schema';
-import { Facility } from 'src/modules/facility/schemas/facility.schema';
-import { PackageType } from 'src/modules/package-type/entities/package-type.entity';
-import { Package } from 'src/modules/package/entities/package.entity';
 import {
 	Promotion,
 	PromotionSchema,
@@ -52,6 +48,13 @@ export class BillItem extends BaseObject {
 		ref: 'User',
 	})
 	ownerFacilityID: string;
+
+	@Prop({
+		required: true,
+		type: mongoose.Schema.Types.ObjectId,
+		ref: 'User',
+	})
+	accountID: string;
 
 	@Prop({
 		required: true,

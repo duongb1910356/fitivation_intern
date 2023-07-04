@@ -24,11 +24,14 @@ import {
 import { CartItem } from './schemas/cart-item.schema';
 import { CreateCartItemDto } from './dto/create-cart-item-dto';
 import { UpdateCartItemDto } from './dto/update-cart-item-dto';
+import { CartItemsService } from './cart-items.service';
 
 @Controller('cart-items')
+@ApiTags('cart-items')
 export class CartItemsController {
-	@Get('cart-items')
-	@ApiTags('cart-items')
+	constructor(private readonly cartItemsService: CartItemsService) {}
+
+	@Get()
 	@ApiDocsPagination('cart-item')
 	@ApiOperation({
 		summary: 'getManyCartItems',
@@ -93,8 +96,7 @@ export class CartItemsController {
 	getManyCartItems(@Query() filter: ListOptions<CartItem>) {
 		return 'getManyCartItems';
 	}
-	@Get('cart-items/:id')
-	@ApiTags('cart-items')
+	@Get(':id')
 	@ApiOperation({ summary: 'getOneCartItem', description: 'Get one cart-item' })
 	@ApiParam({ name: 'cartID', type: String, description: 'Cart ID' })
 	@ApiResponse({
@@ -166,8 +168,7 @@ export class CartItemsController {
 	getOneCartItem(@Param('id') id: string) {
 		return 'getOneCartItem';
 	}
-	@Post('cart-items')
-	@ApiTags('cart-items')
+	@Post()
 	@ApiOperation({
 		summary: 'createCartItem',
 		description: 'Create one cart-item',
@@ -229,8 +230,7 @@ export class CartItemsController {
 	createCartItem(@Body() createCartItemDto: CreateCartItemDto) {
 		return 'createCartItem';
 	}
-	@Patch('cart-items/:id')
-	@ApiTags('cart-items')
+	@Patch(':id')
 	@ApiOperation({
 		summary: 'updateCartItem',
 		description: 'Update one cart-item',
@@ -306,8 +306,7 @@ export class CartItemsController {
 	) {
 		return 'updateCartItem';
 	}
-	@Delete('cart-items/:id')
-	@ApiTags('cart-items')
+	@Delete(':id')
 	@ApiOperation({
 		summary: 'deleteCartItem',
 		description: 'Delete one cart-item',

@@ -42,6 +42,7 @@ import { BillItemPackage } from '../bill-items/schemas/bill-item-package.schema'
 import { BillItemPackageType } from '../bill-items/schemas/bill-item-package-type.schema';
 import { BillItemFacility } from '../bill-items/schemas/bill-item-facility.schema';
 import { TimeType } from '../package/entities/package.entity';
+import { TokenPayload } from '../auth/types/token-payload.type';
 
 @Controller('carts')
 @ApiTags('carts')
@@ -110,7 +111,14 @@ export class CartsController {
 	// @Roles(UserRole.MEMBER)
 	// @UseGuards(RolesGuard)
 	getCurrentUserCart(@GetCurrentUser('sub') userID: string): Promise<Cart> {
-		return this.cartsService.getCurrent(userID, 'cartItemIDs');
+		return this.cartsService.getCurrent(userID, {
+			path: 'cartItemIDs',
+			populate: {
+				path: 'packageID',
+				select: 'price type -_id',
+				model: 'Package',
+			},
+		});
 	}
 
 	@ApiOperation({
@@ -534,5 +542,31 @@ export class CartsController {
 		@Param('packageID') cartItemID: string,
 	): Promise<boolean> {
 		return this.cartsService.removeCartItemFromCurrentCart(userID, cartItemID);
+	}
+
+	@Patch('cart-items/:cartItemID/promotions/:promotionID')
+	// @Roles(UserRole.ADMIN, UserRole.MEMBER)
+	// @UseGuards(RolesGuard)
+	addPackagePromotionToCartItem(
+		@GetCurrentUser('sub') userID: string,
+		@Param('cartItemID') cartItemID: string,
+		@Param('promotionID') promotionID: string,
+	): Promise<boolean> {
+		return this.cartsService.addPackagePromotionToCartItemInCurrentCart(
+			userID,
+			cartItemID,
+			promotionID,
+		);
+	}
+
+	@Delete('cart-items/:cartItemID/promotions/:promotionID')
+	// @Roles(UserRole.ADMIN, UserRole.MEMBER)
+	// @UseGuards(RolesGuard)
+	removePackagePromotionToCartItem(
+		@GetCurrentUser('sub') userID: string,
+		@Param('cartItemID') cartItemID: string,
+		@Param('promotionID') promotionID: string,
+	) {
+		//
 	}
 }

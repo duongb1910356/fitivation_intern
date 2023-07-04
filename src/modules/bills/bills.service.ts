@@ -16,12 +16,16 @@ import {
 import { UserRole } from '../users/schemas/user.schema';
 import { TokenPayload } from '../auth/types/token-payload.type';
 import { PaymentOptDto } from '../carts/dto/payment-options-dto';
+import { BillItemsService } from '../bill-items/bill-items.service';
+import { SubscriptionsService } from '../subscriptions/subscriptions.service';
 
 @Injectable()
 export class BillsService {
 	constructor(
 		@InjectModel(Bill.name)
 		private billModel: Model<BillDocument>,
+		private billItemService: BillItemsService,
+		private subscriptionService: SubscriptionsService,
 	) {}
 
 	async createOne(
@@ -94,5 +98,24 @@ export class BillsService {
 		if (!bill) throw new NotFoundException('Bill not found');
 
 		return bill;
+	}
+
+	async deleteOneByID(billID: string): Promise<boolean> {
+		const bill = await this.billModel.findById(billID);
+
+		if (!bill) return false;
+
+		const billItems = bill.billItems;
+
+		for (let i = 0; i < billItems.length; i++) {
+			await this.billItemService.deleteOneByID(billItems[i]._id.toString());
+			await this.subscriptionService.deleteOneByBillItemID(
+				billItems[i]._id.toString(),
+			);
+		}
+
+		await this.billModel.deleteOne({ _id: billID });
+
+		return true;
 	}
 }

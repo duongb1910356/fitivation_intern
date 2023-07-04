@@ -27,8 +27,8 @@ export enum PromotionStatus {
 
 @Schema({ timestamps: true })
 export class Promotion extends BaseObject {
-	@Prop({ required: true, type: String })
-	targetID: string;
+	@Prop({ type: String })
+	targetID?: string;
 
 	@Prop({ required: true, enum: PromotionType, type: String })
 	type: PromotionType;
