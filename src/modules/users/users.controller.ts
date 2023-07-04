@@ -45,6 +45,7 @@ import { UpdateLoggedUserDataDto } from './dto/update-logged-user-data-dto';
 import { UpdateLoggedUserPasswordDto } from './dto/update-logged-user-password-dto';
 import { RolesGuard } from 'src/guards/role.guard';
 import { Roles } from 'src/decorators/role.decorator';
+import { Public } from '../auth/decorators/public.decorator';
 
 @ApiTags('users')
 @ApiBearerAuth()
@@ -61,9 +62,9 @@ export class UsersController {
 		status: 200,
 		schema: {
 			example: {
-				_id: '',
+				_id: 'string',
 				role: UserRole.MEMBER,
-				username: 'member',
+				username: 'member1',
 				email: 'member@test.com',
 				password: 'string',
 				displayName: 'Admin user',
@@ -71,7 +72,7 @@ export class UsersController {
 				lastName: 'string',
 				gender: Gender.MALE,
 				birthDate: new Date(),
-				tel: '0888888888',
+				tel: '0987654321',
 				address: {
 					province: 'Can Tho',
 					district: 'Ninh Kieu',
@@ -108,7 +109,7 @@ export class UsersController {
 			example: {
 				items: [
 					{
-						_id: '',
+						_id: 'string',
 						role: UserRole.MEMBER,
 						username: 'member',
 						email: 'member@test.com',
@@ -118,7 +119,7 @@ export class UsersController {
 						lastName: 'string',
 						gender: Gender.MALE,
 						birthDate: new Date(),
-						tel: '0888888888',
+						tel: '0987654321',
 						address: {
 							province: 'Can Tho',
 							district: 'Ninh Kieu',
@@ -182,7 +183,7 @@ export class UsersController {
 	@ApiOkResponse({
 		schema: {
 			example: {
-				_id: '',
+				_id: 'string',
 				role: UserRole.MEMBER,
 				username: 'member',
 				email: 'member@test.com',
@@ -192,7 +193,7 @@ export class UsersController {
 				lastName: 'string',
 				gender: Gender.MALE,
 				birthDate: new Date(),
-				tel: '0888888888',
+				tel: '0987654321',
 				address: {
 					province: 'Can Tho',
 					district: 'Ninh Kieu',
@@ -257,18 +258,18 @@ export class UsersController {
 		type: CreateUserDto,
 		examples: {
 			ADMIN: {
-				summary: 'Admin',
+				summary: 'Admin account',
 				value: {
 					role: UserRole.ADMIN,
 					username: 'admin',
 					email: 'admin@test.com',
-					password: 'string',
-					displayName: 'Admin user',
+					password: '123123123',
+					displayName: 'Admin User',
 					firstName: 'string',
 					lastName: 'string',
 					gender: Gender.MALE,
 					birthDate: new Date(),
-					tel: '0888888888',
+					tel: '0987654321',
 					address: {
 						province: 'Can Tho',
 						district: 'Ninh Kieu',
@@ -277,25 +278,46 @@ export class UsersController {
 					isMember: false,
 				} as CreateUserDto,
 			},
-			USER: {
-				summary: 'User',
+			CUSTOMER: {
+				summary: 'Customer account',
 				value: {
 					role: UserRole.MEMBER,
-					username: 'member',
-					email: 'member@test.com',
-					password: 'string',
-					displayName: 'Admin user',
+					username: 'customer1',
+					email: 'customer1@test.com',
+					password: '123123123',
+					displayName: 'Customer User',
 					firstName: 'string',
 					lastName: 'string',
 					gender: Gender.MALE,
 					birthDate: new Date(),
-					tel: '0888888888',
+					tel: '0987654321',
 					address: {
 						province: 'Can Tho',
 						district: 'Ninh Kieu',
 						commune: 'Xuan Khanh',
 					} as UserAddressDto,
-					status: UserStatus.ACTIVE,
+					isMember: false,
+				} as CreateUserDto,
+			},
+			FACILITY_OWNER: {
+				summary: 'Facility owner account',
+				value: {
+					role: UserRole.FACILITY_OWNER,
+					username: 'facility-owner1',
+					email: 'owner1@test.com',
+					password: '123123123',
+					displayName: 'Facility Owner User',
+					firstName: 'string',
+					lastName: 'string',
+					gender: Gender.MALE,
+					birthDate: new Date(),
+					tel: '0987654321',
+					address: {
+						province: 'Can Tho',
+						district: 'Ninh Kieu',
+						commune: 'Xuan Khanh',
+					} as UserAddressDto,
+					isMember: false,
 				} as CreateUserDto,
 			},
 		},
@@ -306,7 +328,7 @@ export class UsersController {
 				code: 201,
 				message: 'Success',
 				data: {
-					_id: '',
+					_id: 'string',
 					role: UserRole.MEMBER,
 					username: 'member',
 					email: 'member@test.com',
@@ -316,7 +338,7 @@ export class UsersController {
 					lastName: 'string',
 					gender: Gender.MALE,
 					birthDate: new Date(),
-					tel: '0888888888',
+					tel: '0987654321',
 					address: {
 						province: 'Can Tho',
 						district: 'Ninh Kieu',
@@ -362,6 +384,7 @@ export class UsersController {
 	@Post()
 	// @Roles(UserRole.ADMIN)
 	// @UseGuards(RolesGuard)
+	@Public()
 	createUser(@Body() createUserDto: CreateUserDto): Promise<User> {
 		return this.userService.createOne(createUserDto);
 	}
@@ -475,7 +498,7 @@ export class UsersController {
 					lastName: 'string',
 					gender: Gender.MALE,
 					birthDate: new Date(),
-					tel: '0888888888',
+					tel: '0987654321',
 					address: {
 						province: 'Can Tho',
 						district: 'Ninh Kieu',
@@ -490,7 +513,7 @@ export class UsersController {
 	@ApiOkResponse({
 		schema: {
 			example: {
-				_id: '',
+				_id: 'string',
 				role: UserRole.MEMBER,
 				username: 'member',
 				email: 'member@test.com',
@@ -500,7 +523,7 @@ export class UsersController {
 				lastName: 'string',
 				gender: Gender.MALE,
 				birthDate: new Date(),
-				tel: '0888888888',
+				tel: '0987654321',
 				address: {
 					province: 'Can Tho',
 					district: 'Ninh Kieu',
@@ -672,7 +695,7 @@ export class UsersController {
 	@ApiOkResponse({
 		schema: {
 			example: {
-				_id: '',
+				_id: 'string',
 				role: UserRole.MEMBER,
 				username: 'member',
 				email: 'member@test.com',
@@ -682,7 +705,7 @@ export class UsersController {
 				lastName: 'string',
 				gender: Gender.MALE,
 				birthDate: new Date(),
-				tel: '0888888888',
+				tel: '0987654321',
 				address: {
 					province: 'Can Tho',
 					district: 'Ninh Kieu',

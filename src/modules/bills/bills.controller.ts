@@ -1,4 +1,4 @@
-import { Controller, Get, Param, Post, Query } from '@nestjs/common';
+import { Controller, Delete, Get, Param, Post, Query } from '@nestjs/common';
 import {
 	ApiOperation,
 	ApiResponse,
@@ -32,6 +32,8 @@ import { BillItemFacility } from '../bill-items/schemas/bill-item-facility.schem
 import { GetCurrentUser } from 'src/decorators/get-current-user.decorator';
 import { ListResponse, QueryObject } from 'src/shared/utils/query-api';
 import { TokenPayload } from '../auth/types/token-payload.type';
+import { UserRole } from '../users/schemas/user.schema';
+import { Roles } from 'src/decorators/role.decorator';
 
 @Controller('bills')
 @ApiTags('bills')
@@ -59,6 +61,7 @@ export class BillsController {
 								packageTypeID: 'string',
 								packageID: 'string',
 								ownerFacilityID: 'string',
+								accountID: 'string',
 								facilityInfo: {
 									brandName: 'string',
 									facilityAddress: {},
@@ -192,6 +195,8 @@ export class BillsController {
 		},
 	})
 	@Get()
+	// @Roles(UserRole.ADMIN, UserRole.MEMBER)
+	// @UseGuards(RolesGuard)
 	findManyBills(
 		@GetCurrentUser() user: TokenPayload,
 		@Query() query: QueryObject,
@@ -218,6 +223,7 @@ export class BillsController {
 						packageTypeID: 'string',
 						packageID: 'string',
 						ownerFacilityID: 'string',
+						accountID: 'string',
 						facilityInfo: {
 							brandName: 'string',
 							facilityAddress: {},
@@ -352,11 +358,61 @@ export class BillsController {
 		},
 	})
 	@Get(':id')
+	// @Roles(UserRole.ADMIN, UserRole.MEMBER)
+	// @UseGuards(RolesGuard)
 	findOneBill(
 		@Param('id') billID: string,
 		@GetCurrentUser() user: TokenPayload,
 	): Promise<Bill> {
 		return this.billsService.findOneByID(billID, user);
+	}
+
+	@ApiOperation({
+		summary: 'deleteBill',
+		description: 'Allow admin to delete one bill',
+	})
+	@ApiParam({ name: 'id', type: String, description: 'Bill ID' })
+	@ApiResponse({
+		status: 200,
+		schema: {
+			example: true,
+		},
+	})
+	@ApiResponse({
+		status: 401,
+		schema: {
+			example: {
+				code: '401',
+				message: 'Unauthorized',
+				details: null,
+			} as ErrorResponse<null>,
+		},
+	})
+	@ApiResponse({
+		status: 403,
+		schema: {
+			example: {
+				code: '403',
+				message: `Forbidden resource`,
+				details: null,
+			} as ErrorResponse<null>,
+		},
+	})
+	@ApiResponse({
+		status: 404,
+		schema: {
+			example: {
+				code: '404',
+				message: 'Not found document with that ID',
+				details: null,
+			} as ErrorResponse<null>,
+		},
+	})
+	@Delete(':id')
+	// @Roles(UserRole.ADMIN)
+	// @UseGuards(RolesGuard)
+	deleteBill(@Param('id') id: string): Promise<boolean> {
+		return this.billsService.deleteOneByID(id);
 	}
 
 	@ApiDocsPagination('promotion')

@@ -153,11 +153,11 @@ export class PackageTypeService {
 		const packageType = await this.findOneByID(packageTypeID);
 		if (!packageType) throw new NotFoundException('PackageType not found');
 
-		const packagesData = await this.packageService.findManyByPackageType(
-			packageTypeID,
-			{},
-		);
-		if (packagesData.total === 0) {
+		const countPackages =
+			await this.packageService.countNumberOfPackageByPackageType(
+				packageTypeID,
+			);
+		if (countPackages !== 0) {
 			throw new ForbiddenException('Please delete all packages before');
 		}
 

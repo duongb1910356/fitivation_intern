@@ -33,13 +33,13 @@ export class AuthController {
 	@ApiBody({
 		type: SignupDto,
 		examples: {
-			USER: {
-				summary: 'User',
+			CUSTOMER: {
+				summary: 'Sign up customer account',
 				value: {
-					username: 'test1',
-					email: 'test1@test.com',
+					username: 'customer1',
+					email: 'customer1@test.com',
 					password: '123123123',
-					displayName: 'User1',
+					displayName: 'Customer User',
 				} as SignupDto,
 			},
 		},
@@ -75,16 +75,23 @@ export class AuthController {
 		type: LoginDto,
 		examples: {
 			ADMIN: {
-				summary: 'Admin',
+				summary: 'Admin account',
 				value: {
-					email: 'test1@test.com',
+					email: 'admin@test.com',
 					password: '123123123',
 				} as LoginDto,
 			},
-			USER: {
-				summary: 'User',
+			CUSTOMER: {
+				summary: 'Customer account',
 				value: {
-					email: 'test2@test.com',
+					email: 'customer1@test.com',
+					password: '123123123',
+				} as LoginDto,
+			},
+			FACILITY_OWNER: {
+				summary: 'Facility Owner account',
+				value: {
+					email: 'owner1@test.com',
 					password: '123123123',
 				} as LoginDto,
 			},

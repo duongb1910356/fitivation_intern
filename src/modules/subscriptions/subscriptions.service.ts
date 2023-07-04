@@ -176,4 +176,14 @@ export class SubscriptionsService {
 
 		return subscription;
 	}
+
+	async deleteOneByBillItemID(billItemID: string): Promise<boolean> {
+		const subscription = await this.subscriptionsModel.findOne({ billItemID });
+
+		if (!subscription) throw new NotFoundException('Subscription not found');
+
+		await this.subscriptionsModel.deleteOne({ billItemID });
+
+		return true;
+	}
 }
