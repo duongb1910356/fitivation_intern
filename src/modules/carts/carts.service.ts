@@ -64,6 +64,7 @@ export class CartsService {
 
 	async getCurrent(userID: string, populateOpt?: any): Promise<Cart> {
 		await this.updatePrice(userID);
+		await this.updatePrice(userID);
 
 		const cart = await this.cartModel
 			.findOne({ accountID: userID })
