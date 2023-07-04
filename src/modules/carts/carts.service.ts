@@ -110,7 +110,7 @@ export class CartsService {
 
 		cart.totalPrice += cartItem.totalPrice;
 
-		cart.save();
+		await cart.save();
 
 		return true;
 	}
@@ -133,7 +133,7 @@ export class CartsService {
 
 		cart.totalPrice -= cartItem.totalPrice;
 
-		cart.save();
+		await cart.save();
 
 		await this.cartItemService.deleteOne(cartItemID);
 
@@ -214,7 +214,7 @@ export class CartsService {
 			totalPrice += cartItemIDs[i].totalPrice;
 		}
 		cart.totalPrice = totalPrice;
-		cart.save();
+		await cart.save();
 
 		return true;
 	}
