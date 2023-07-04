@@ -7,7 +7,6 @@ import {
 import {
 	Facility,
 	FacilityDocument,
-	FacilitySchema,
 	State,
 	Status,
 } from './schemas/facility.schema';
@@ -260,7 +259,11 @@ export class FacilityService {
 		return false;
 	}
 
-	async deletePhoto(id: string, req: any, listID: string[]): Promise<Facility> {
+	async deletePhoto(
+		id: string,
+		_req: any,
+		listID: string[],
+	): Promise<Facility> {
 		const result = await this.facilityModel.findOneAndUpdate(
 			{ _id: id },
 			{ $pull: { photos: { _id: { $in: listID } } } },
@@ -278,7 +281,7 @@ export class FacilityService {
 
 	async deleteReview(
 		facilityID: string,
-		req: any,
+		_req: any,
 		listID: string[],
 	): Promise<Facility> {
 		const result = await this.facilityModel.findOneAndUpdate(
@@ -380,10 +383,17 @@ export class FacilityService {
 	async searchFacilityByAddress(
 		filter: ListOptions<any>,
 	): Promise<ListResponse<any>> {
-		const { search, sortOrder } = filter;
-		const regex = new RegExp(search.split('').join('.*'), 'i');
+		if (!filter.latitude || !filter.longitude) {
+			throw new BadRequestException('You must provide a location');
+		}
+
+		const sortOrder = filter.sortOrder || 'asc';
+		const search = filter.search || '';
 		const latitude = parseFloat(filter.latitude.toString());
 		const longitude = parseFloat(filter.longitude.toString());
+		const limit = filter.limit || 10;
+		const offset = filter.offset || 0;
+		const regex = new RegExp(search.split('').join('.*'), 'i');
 
 		const facilities = await this.facilityModel.aggregate([
 			{
@@ -410,7 +420,17 @@ export class FacilityService {
 					distance: sortOrder === 'asc' ? 1 : -1,
 				},
 			},
+			{
+				$skip: offset,
+			},
+			{
+				$limit: limit,
+			},
 		]);
+
+		if (!facilities) {
+			throw new NotFoundException('Not found facilities');
+		}
 
 		return {
 			items: facilities,
