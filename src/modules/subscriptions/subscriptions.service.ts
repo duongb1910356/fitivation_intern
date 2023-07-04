@@ -128,14 +128,14 @@ export class SubscriptionsService {
 
 		if (new Date(subscription.expires) <= new Date(Date.now())) {
 			subscription.renew = true;
-			subscription.save();
+			await subscription.save();
 			return {
 				message: 'Subscription was expired',
 				subscription,
 			};
 		} else {
 			subscription.renew = false;
-			subscription.save();
+			await subscription.save();
 			return {
 				message: 'Subscription has not expired',
 				subscription,
@@ -178,7 +178,7 @@ export class SubscriptionsService {
 
 		subscription.expires = newExpires;
 		subscription.renew = false;
-		subscription.save();
+		await subscription.save();
 
 		return subscription;
 	}
