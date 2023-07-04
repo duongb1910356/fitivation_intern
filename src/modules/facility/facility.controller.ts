@@ -31,7 +31,7 @@ import {
 	ApiUnauthorizedResponse,
 } from '@nestjs/swagger';
 import { FileFieldsInterceptor } from '@nestjs/platform-express';
-import { CreateFacilityDto } from './dto/create-facility-dto';
+import { CreateFacilityDto, LocationDTO } from './dto/create-facility-dto';
 import { Facility } from './schemas/facility.schema';
 import {
 	ErrorResponse,
@@ -110,7 +110,7 @@ export class FacilityController {
 						},
 						summary: 'Phòng gym thân thiện',
 						description: 'Nhiều dụng cụ tập luyện',
-						coordinates: [65, 56],
+						location: { coordinates: [10.031966330522316, 105.76892820319247] },
 						state: State.ACTIVE,
 						status: Status.APPROVED,
 						averageStar: null,
@@ -148,7 +148,7 @@ export class FacilityController {
 						scheduleType: ScheduleType.DAILY,
 						createdAt: new Date(),
 						updatedAt: new Date(),
-					} as Facility,
+					},
 				],
 				total: 1,
 				options: {
@@ -173,6 +173,11 @@ export class FacilityController {
 	})
 	async getManyFacility(@Query() filter: ListOptions<Facility>) {
 		return await this.facilityService.findMany(filter);
+	}
+
+	@Get('search')
+	searchFacilityByAddress(@Query() filter: ListOptions<Facility>) {
+		return this.facilityService.searchFacilityByAddress(filter);
 	}
 
 	@Public()
@@ -200,7 +205,7 @@ export class FacilityController {
 			},
 			summary: 'Phòng gym thân thiện',
 			description: 'Nhiều dụng cụ tập luyện',
-			coordinates: [65, 56],
+			location: { coordinates: [10.031966330522316, 105.76892820319247] },
 			state: State.ACTIVE,
 			status: Status.APPROVED,
 			averageStar: null,
@@ -350,7 +355,9 @@ export class FacilityController {
 							},
 							summary: 'Phòng gym thân thiện',
 							description: 'Nhiều dụng cụ tập luyện',
-							coordinates: [65, 56],
+							location: {
+								coordinates: [10.031966330522316, 105.76892820319247],
+							},
 							state: State.ACTIVE,
 							status: Status.APPROVED,
 							averageStar: 5,
@@ -1206,7 +1213,7 @@ export class FacilityController {
 					},
 					summary: 'Phòng gym thân thiện',
 					description: 'Nhiều dụng cụ tập luyện',
-					coordinates: [65, 56],
+					location: { coordinates: [10.031966330522316, 105.76892820319247] },
 					state: State.ACTIVE,
 					status: Status.APPROVED,
 					averageStar: 5,
@@ -1232,6 +1239,7 @@ export class FacilityController {
 			images?: Express.Multer.File[];
 		},
 	) {
+		console.log('dto >> ', createFacilityDto);
 		return this.facilityService.create(
 			createFacilityDto,
 			req,
@@ -1372,6 +1380,7 @@ export class FacilityController {
 					coordinates: [45, 54],
 					scheduleType: ScheduleType.WEEKLY,
 					state: State.ACTIVE,
+					location: { coordinates: [105, 10] } as LocationDTO,
 				} as UpdateFacilityDto,
 			},
 		},
@@ -1400,7 +1409,7 @@ export class FacilityController {
 					averageStar: null,
 					summary: 'CHẤT LƯỢNG LÀ DANH DỰ',
 					description: 'ABC',
-					coordinates: [45, 54],
+					location: { coordinates: [10.031966330522316, 105.76892820319247] },
 					state: State.ACTIVE,
 					status: Status.APPROVED,
 					photos: [],
@@ -1465,7 +1474,7 @@ export class FacilityController {
 					averageStar: null,
 					summary: 'CHẤT LƯỢNG LÀ DANH DỰ',
 					description: 'ABC',
-					coordinates: [45, 54],
+					location: { coordinates: [10.031966330522316, 105.76892820319247] },
 					state: State.ACTIVE,
 					status: Status.APPROVED,
 					photos: [],
@@ -1541,7 +1550,9 @@ export class FacilityController {
 					},
 					summary: 'Phòng gym thân thiện',
 					description: 'Nhiều dụng cụ tập luyện',
-					coordinationLocation: [65, 56],
+					coordinationlocation: {
+						coordinates: [10.031966330522316, 105.76892820319247],
+					},
 					state: State.ACTIVE,
 					status: Status.APPROVED,
 					averageStar: 5,
@@ -1641,7 +1652,7 @@ export class FacilityController {
 					averageStar: null,
 					summary: 'CHẤT LƯỢNG LÀ DANH DỰ',
 					description: 'ABC',
-					coordinates: [45, 54],
+					location: { coordinates: [10.031966330522316, 105.76892820319247] },
 					state: State.ACTIVE,
 					status: Status.APPROVED,
 					photos: [],
@@ -1715,7 +1726,7 @@ export class FacilityController {
 					averageStar: null,
 					summary: 'CHẤT LƯỢNG LÀ DANH DỰ',
 					description: 'ABC',
-					coordinates: [45, 54],
+					location: { coordinates: [10.031966330522316, 105.76892820319247] },
 					state: State.ACTIVE,
 					status: Status.APPROVED,
 					photos: [],
@@ -1790,7 +1801,7 @@ export class FacilityController {
 					averageStar: null,
 					summary: 'CHẤT LƯỢNG LÀ DANH DỰ',
 					description: 'ABC',
-					coordinates: [45, 54],
+					location: { coordinates: [10.031966330522316, 105.76892820319247] },
 					state: State.ACTIVE,
 					status: Status.APPROVED,
 					photos: [],

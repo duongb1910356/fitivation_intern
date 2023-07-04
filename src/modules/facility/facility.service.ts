@@ -7,6 +7,7 @@ import {
 import {
 	Facility,
 	FacilityDocument,
+	FacilitySchema,
 	State,
 	Status,
 } from './schemas/facility.schema';
@@ -127,7 +128,7 @@ export class FacilityService {
 		req: any,
 		files?: { images?: Express.Multer.File[] },
 	): Promise<Facility> {
-		createFacilityDto.ownerID = createFacilityDto.state ?? req.user.sub;
+		createFacilityDto.ownerID = createFacilityDto.ownerID ?? req.user.sub;
 		createFacilityDto.state = createFacilityDto.state ?? State.ACTIVE;
 
 		const facility = await this.facilityModel.create(createFacilityDto);
@@ -374,5 +375,47 @@ export class FacilityService {
 			);
 		}
 		return await this.promotionService.delete(promotionID);
+	}
+
+	async searchFacilityByAddress(
+		filter: ListOptions<any>,
+	): Promise<ListResponse<any>> {
+		const { search, sortOrder } = filter;
+		const regex = new RegExp(search.split('').join('.*'), 'i');
+		const latitude = parseFloat(filter.latitude.toString());
+		const longitude = parseFloat(filter.longitude.toString());
+
+		const facilities = await this.facilityModel.aggregate([
+			{
+				$geoNear: {
+					near: {
+						type: 'Point',
+						coordinates: [longitude, latitude],
+					},
+					distanceField: 'distance',
+					spherical: true,
+					// maxDistance: 5000, // Khoảng cách tối đa (đơn vị mét)
+				},
+			},
+			{
+				$addFields: {
+					distance: '$distance',
+				},
+			},
+			{
+				$match: { fullAddress: regex },
+			},
+			{
+				$sort: {
+					distance: sortOrder === 'asc' ? 1 : -1,
+				},
+			},
+		]);
+
+		return {
+			items: facilities,
+			total: facilities.length,
+			options: filter,
+		};
 	}
 }

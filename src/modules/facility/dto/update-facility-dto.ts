@@ -1,6 +1,7 @@
 import { IsOptional, IsString, IsEnum, IsArray } from 'class-validator';
 import { CreateAddressDto } from 'src/modules/address/dto/create-address-dto';
 import { State, ScheduleType } from '../schemas/facility.schema';
+import { LocationDTO } from './create-facility-dto';
 
 export class UpdateFacilityDto {
 	@IsOptional()
@@ -34,9 +35,12 @@ export class UpdateFacilityDto {
 	@IsOptional()
 	description: string;
 
-	@IsArray()
+	// @IsArray()
+	// @IsOptional()
+	// coordinates?: number[];
+
 	@IsOptional()
-	coordinates?: number[];
+	location: LocationDTO;
 
 	@IsEnum(ScheduleType)
 	@IsOptional()
