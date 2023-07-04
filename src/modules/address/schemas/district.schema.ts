@@ -10,7 +10,7 @@ export class District extends BaseObject {
 	@Prop({ required: true })
 	name: string;
 
-	@Prop({ required: true, unique: true, index: true })
+	@Prop({ required: true, index: true })
 	code: string;
 
 	@Prop({ type: String, ref: 'Province', required: true })

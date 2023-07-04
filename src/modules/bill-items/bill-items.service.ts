@@ -168,7 +168,7 @@ export class BillItemsService {
 					commune: packageItem.facilityID.address.commune,
 					communeCode: packageItem.facilityID.address.communeCode,
 				},
-				facilityCoordinatesLocation: packageItem.facilityID.coordinates,
+				facilityCoordinatesLocation: packageItem.facilityID.location,
 				facilityPhotos: packageItem.facilityID.photos,
 			} as BillItemFacility,
 			packageTypeInfo: {

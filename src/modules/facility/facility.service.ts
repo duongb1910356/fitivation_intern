@@ -127,7 +127,7 @@ export class FacilityService {
 		req: any,
 		files?: { images?: Express.Multer.File[] },
 	): Promise<Facility> {
-		createFacilityDto.ownerID = createFacilityDto.state ?? req.user.sub;
+		createFacilityDto.ownerID = createFacilityDto.ownerID ?? req.user.sub;
 		createFacilityDto.state = createFacilityDto.state ?? State.ACTIVE;
 
 		const facility = await this.facilityModel.create(createFacilityDto);
@@ -259,7 +259,11 @@ export class FacilityService {
 		return false;
 	}
 
-	async deletePhoto(id: string, req: any, listID: string[]): Promise<Facility> {
+	async deletePhoto(
+		id: string,
+		_req: any,
+		listID: string[],
+	): Promise<Facility> {
 		const result = await this.facilityModel.findOneAndUpdate(
 			{ _id: id },
 			{ $pull: { photos: { _id: { $in: listID } } } },
@@ -277,7 +281,7 @@ export class FacilityService {
 
 	async deleteReview(
 		facilityID: string,
-		req: any,
+		_req: any,
 		listID: string[],
 	): Promise<Facility> {
 		const result = await this.facilityModel.findOneAndUpdate(
@@ -374,5 +378,64 @@ export class FacilityService {
 			);
 		}
 		return await this.promotionService.delete(promotionID);
+	}
+
+	async searchFacilityByAddress(
+		filter: ListOptions<any>,
+	): Promise<ListResponse<any>> {
+		if (!filter.latitude || !filter.longitude) {
+			throw new BadRequestException('You must provide a location');
+		}
+
+		const sortOrder = filter.sortOrder || 'asc';
+		const search = filter.search || '';
+		const latitude = parseFloat(filter.latitude.toString());
+		const longitude = parseFloat(filter.longitude.toString());
+		const limit = filter.limit || 10;
+		const offset = filter.offset || 0;
+		const regex = new RegExp(search.split('').join('.*'), 'i');
+
+		const facilities = await this.facilityModel.aggregate([
+			{
+				$geoNear: {
+					near: {
+						type: 'Point',
+						coordinates: [longitude, latitude],
+					},
+					distanceField: 'distance',
+					spherical: true,
+					// maxDistance: 5000, // Khoảng cách tối đa (đơn vị mét)
+				},
+			},
+			{
+				$addFields: {
+					distance: '$distance',
+				},
+			},
+			{
+				$match: { fullAddress: regex },
+			},
+			{
+				$sort: {
+					distance: sortOrder === 'asc' ? 1 : -1,
+				},
+			},
+			{
+				$skip: offset,
+			},
+			{
+				$limit: limit,
+			},
+		]);
+
+		if (!facilities) {
+			throw new NotFoundException('Not found facilities');
+		}
+
+		return {
+			items: facilities,
+			total: facilities.length,
+			options: filter,
+		};
 	}
 }

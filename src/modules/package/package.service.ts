@@ -75,6 +75,19 @@ export class PackageService {
 		};
 	}
 
+	async countNumberOfPackageByPackageType(
+		packageTypeID: string,
+	): Promise<number> {
+		let count: number;
+		const packages = await this.packageModel.find({ packageTypeID });
+
+		if (!packages) {
+			count = 0;
+		} else count = packages.length;
+
+		return count;
+	}
+
 	async create(
 		packageTypeID: string,
 		facilityID: string,

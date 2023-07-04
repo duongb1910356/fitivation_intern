@@ -58,7 +58,9 @@ export class BillItemsController {
 							brandName: 'string',
 							facilityName: 'string',
 							facilityAddress: {},
-							facilityCoordinatesLocation: [1, 1],
+							facilityCoordinatesLocation: {
+								coordinates: [10.027851057940572, 105.77291088739058],
+							},
 							facilityPhotos: [],
 						} as BillItemFacility,
 						packageTypeInfo: {
@@ -169,7 +171,9 @@ export class BillItemsController {
 							brandName: 'string',
 							facilityName: 'string',
 							facilityAddress: {},
-							facilityCoordinatesLocation: [1, 1],
+							facilityCoordinatesLocation: {
+								coordinates: [10.027851057940572, 105.77291088739058],
+							},
 							facilityPhotos: [],
 						} as BillItemFacility,
 						packageTypeInfo: {
