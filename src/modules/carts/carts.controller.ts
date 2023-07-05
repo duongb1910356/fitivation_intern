@@ -117,8 +117,16 @@ export class CartsController {
 			path: 'cartItemIDs',
 			populate: {
 				path: 'packageID',
-				select: 'price type',
 				model: 'Package',
+				populate: {
+					path: 'packageTypeID',
+					model: 'PackageType',
+					populate: {
+						path: 'facilityID',
+						model: 'Facility',
+						select: '-reviews',
+					},
+				},
 			},
 		});
 	}
@@ -273,20 +281,20 @@ export class CartsController {
 		summary: 'purchaseInCart',
 		description: 'Allow customers to purchase packages in their cart',
 	})
-	@ApiBody({
-		type: PaymentOptDto,
-		examples: {
-			example1: {
-				value: {
-					paymentOpt: {
-						paymentMethod: PaymentMethod.CREDIT_CARD,
-						taxes: 0,
-						description: 'string',
-					},
-				},
-			},
-		},
-	})
+	// @ApiBody({
+	// 	type: PaymentOptDto,
+	// 	examples: {
+	// 		example1: {
+	// 			value: {
+	// 				paymentOpt: {
+	// 					paymentMethod: PaymentMethod.CREDIT_CARD,
+	// 					taxes: 0,
+	// 					description: 'string',
+	// 				},
+	// 			},
+	// 		},
+	// 	},
+	// })
 	@ApiResponse({
 		status: 200,
 		schema: {
