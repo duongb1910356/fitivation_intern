@@ -12,7 +12,6 @@ import {
 import { CartsService } from './carts.service';
 import {
 	ApiBearerAuth,
-	ApiBody,
 	ApiOperation,
 	ApiParam,
 	ApiResponse,
@@ -43,7 +42,6 @@ import { BillItemPackage } from '../bill-items/schemas/bill-item-package.schema'
 import { BillItemPackageType } from '../bill-items/schemas/bill-item-package-type.schema';
 import { BillItemFacility } from '../bill-items/schemas/bill-item-facility.schema';
 import { TimeType } from '../package/entities/package.entity';
-import { TokenPayload } from '../auth/types/token-payload.type';
 
 @Controller('carts')
 @ApiTags('carts')
@@ -60,7 +58,78 @@ export class CartsController {
 			example: {
 				_id: '_id',
 				accountID: 'string',
-				cartItemIDs: [],
+				cartItemIDs: [
+					{
+						_id: 'string',
+						packageID: {
+							_id: 'string',
+							packageTypeID: {
+								_id: 'string',
+								facilityID: {
+									_id: 'string',
+									location: {
+										coordinates: [1, 1],
+										type: 'Point',
+									},
+									createdAt: '2023-06-29T07:35:43.345Z',
+									updatedAt: '2023-06-29T07:36:49.766Z',
+									brandID: '64944c7c2d7cf0ec0dbb4051',
+									facilityCategoryID: ['string', 'string', 'string', 'string'],
+									ownerID: 'string',
+									name: 'string',
+									address: {
+										street: 'string',
+										commune: 'string',
+										communeCode: 'string',
+										district: 'string',
+										districtCode: 'string',
+										province: 'string',
+										provinceCode: 'string',
+									},
+									fullAddress: 'string',
+									summary: 'string',
+									description: 'string',
+									coordinates: [],
+									state: 'ACTIVE',
+									status: 'APPROVED',
+									phone: '84906943567',
+									photos: [
+										{
+											createdAt: '2023-06-29T07:36:22.758Z',
+											updatedAt: '2023-06-29T07:36:22.758Z',
+											ownerID: 'string',
+											name: 'string',
+											_id: 'string',
+											__v: 0,
+											imageURL: 'Link URL',
+										},
+									],
+									scheduleType: 'DAILY',
+								},
+								name: 'string',
+								description: 'string',
+								price: 0,
+								order: 1,
+								__v: 0,
+								createdAt: '2023-07-04T07:12:35.159Z',
+								updatedAt: '2023-07-04T07:12:35.159Z',
+							},
+							facilityID: 'string',
+							type: '3',
+							price: 0,
+							benefits: ['string'],
+							__v: 0,
+							createdAt: new Date(),
+							updatedAt: new Date(),
+						},
+						promotionIDs: [],
+						promotionPrice: 0,
+						totalPrice: 0,
+						createdAt: new Date(),
+						updatedAt: new Date(),
+						__v: 0,
+					},
+				],
 				promotionIDs: [],
 				promotionPrice: 0,
 				totalPrice: 0,

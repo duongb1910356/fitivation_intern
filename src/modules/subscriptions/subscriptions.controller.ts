@@ -14,10 +14,7 @@ import {
 	ApiTags,
 } from '@nestjs/swagger';
 import { ApiDocsPagination } from 'src/decorators/swagger-form-data.decorator';
-import {
-	ErrorResponse,
-	ListOptions,
-} from 'src/shared/response/common-response';
+import { ErrorResponse } from 'src/shared/response/common-response';
 import {
 	Subscription,
 	SubscriptionStatus,
@@ -29,6 +26,11 @@ import { SubscriptionsService } from './subscriptions.service';
 import { ListResponse, QueryObject } from 'src/shared/utils/query-api';
 import { GetCurrentUser } from 'src/decorators/get-current-user.decorator';
 import { TokenPayload } from '../auth/types/token-payload.type';
+import {
+	BillItem,
+	BillItemStatus,
+} from '../bill-items/schemas/bill-item.schema';
+import { Package, TimeType } from '../package/entities/package.entity';
 
 @Controller('subscriptions')
 @ApiTags('subscriptions')
@@ -46,14 +48,69 @@ export class SubscriptionsController {
 			example: {
 				items: [
 					{
+						_id: '_id',
 						accountID: 'string',
-						billItemID: 'string',
-						packageID: 'string',
-						facilityID: 'string',
+						billItemID: {
+							_id: 'string',
+							brandID: 'string',
+							facilityID: 'string',
+							packageTypeID: 'string',
+							packageID: 'string',
+							ownerFacilityID: 'string',
+							accountID: 'string',
+							promotions: [],
+							promotionPrice: 0,
+							totalPrice: 0,
+							status: BillItemStatus.ACTIVE,
+						} as BillItem,
+						packageID: {
+							_id: 'string',
+							packageTypeID: 'string',
+							facilityID: 'string',
+							type: TimeType.THREE_MONTH,
+							price: 0,
+							benefits: ['string'],
+						} as Package,
+						facilityID: {
+							_id: 'string',
+							location: {
+								coordinates: [1, 1],
+								type: 'Point',
+							},
+							brandID: '64944c7c2d7cf0ec0dbb4051',
+							facilityCategoryID: ['string', 'string', 'string', 'string'],
+							ownerID: 'string',
+							name: 'string',
+							address: {
+								street: 'string',
+								commune: 'string',
+								communeCode: 'string',
+								district: 'string',
+								districtCode: 'string',
+								province: 'string',
+								provinceCode: 'string',
+							},
+							fullAddress: 'string',
+							summary: 'string',
+							description: 'string',
+							coordinates: [1, 1],
+							state: 'ACTIVE',
+							status: 'APPROVED',
+							phone: '84906943567',
+							photos: [
+								{
+									ownerID: 'string',
+									name: 'string',
+									_id: 'string',
+									imageURL: 'Link URL',
+								},
+							],
+							scheduleType: 'DAILY',
+						},
 						expires: new Date(),
 						status: SubscriptionStatus.ACTIVE,
 						renew: false,
-					},
+					} as Subscription,
 				] as Subscription[],
 				total: 1,
 				queryOptions: {
@@ -113,25 +170,71 @@ export class SubscriptionsController {
 		status: 200,
 		schema: {
 			example: {
-				items: [
-					{
-						accountID: 'string',
-						billItemID: 'string',
-						packageID: 'string',
+				data: {
+					_id: '_id',
+					accountID: 'string',
+					billItemID: {
+						_id: 'string',
+						brandID: 'string',
 						facilityID: 'string',
-						expires: new Date(),
-						status: SubscriptionStatus.ACTIVE,
-						renew: false,
+						packageTypeID: 'string',
+						packageID: 'string',
+						ownerFacilityID: 'string',
+						accountID: 'string',
+						promotions: [],
+						promotionPrice: 0,
+						totalPrice: 0,
+						status: BillItemStatus.ACTIVE,
+					} as BillItem,
+					packageID: {
+						_id: 'string',
+						packageTypeID: 'string',
+						facilityID: 'string',
+						type: TimeType.THREE_MONTH,
+						price: 0,
+						benefits: ['string'],
+					} as Package,
+					facilityID: {
+						_id: 'string',
+						location: {
+							coordinates: [1, 1],
+							type: 'Point',
+						},
+						brandID: '64944c7c2d7cf0ec0dbb4051',
+						facilityCategoryID: ['string', 'string', 'string', 'string'],
+						ownerID: 'string',
+						name: 'string',
+						address: {
+							street: 'string',
+							commune: 'string',
+							communeCode: 'string',
+							district: 'string',
+							districtCode: 'string',
+							province: 'string',
+							provinceCode: 'string',
+						},
+						fullAddress: 'string',
+						summary: 'string',
+						description: 'string',
+						coordinates: [1, 1],
+						state: 'ACTIVE',
+						status: 'APPROVED',
+						phone: '84906943567',
+						photos: [
+							{
+								ownerID: 'string',
+								name: 'string',
+								_id: 'string',
+								imageURL: 'Link URL',
+							},
+						],
+						scheduleType: 'DAILY',
 					},
-				] as Subscription[],
-				total: 1,
-				queryOptions: {
-					sort: 'string',
-					fields: 'string',
-					limit: 10,
-					page: 0,
-				} as QueryObject,
-			} as ListResponse<Subscription>,
+					expires: new Date(),
+					status: SubscriptionStatus.ACTIVE,
+					renew: false,
+				} as Subscription,
+			},
 		},
 	})
 	@ApiResponse({
@@ -193,10 +296,65 @@ export class SubscriptionsController {
 		status: 200,
 		schema: {
 			example: {
+				_id: '_id',
 				accountID: 'string',
-				billItemID: 'string',
-				packageID: 'string',
-				facilityID: 'string',
+				billItemID: {
+					_id: 'string',
+					brandID: 'string',
+					facilityID: 'string',
+					packageTypeID: 'string',
+					packageID: 'string',
+					ownerFacilityID: 'string',
+					accountID: 'string',
+					promotions: [],
+					promotionPrice: 0,
+					totalPrice: 0,
+					status: BillItemStatus.ACTIVE,
+				} as BillItem,
+				packageID: {
+					_id: 'string',
+					packageTypeID: 'string',
+					facilityID: 'string',
+					type: TimeType.THREE_MONTH,
+					price: 0,
+					benefits: ['string'],
+				} as Package,
+				facilityID: {
+					_id: 'string',
+					location: {
+						coordinates: [1, 1],
+						type: 'Point',
+					},
+					brandID: '64944c7c2d7cf0ec0dbb4051',
+					facilityCategoryID: ['string', 'string', 'string', 'string'],
+					ownerID: 'string',
+					name: 'string',
+					address: {
+						street: 'string',
+						commune: 'string',
+						communeCode: 'string',
+						district: 'string',
+						districtCode: 'string',
+						province: 'string',
+						provinceCode: 'string',
+					},
+					fullAddress: 'string',
+					summary: 'string',
+					description: 'string',
+					coordinates: [1, 1],
+					state: 'ACTIVE',
+					status: 'APPROVED',
+					phone: '84906943567',
+					photos: [
+						{
+							ownerID: 'string',
+							name: 'string',
+							_id: 'string',
+							imageURL: 'Link URL',
+						},
+					],
+					scheduleType: 'DAILY',
+				},
 				expires: new Date(),
 				status: SubscriptionStatus.ACTIVE,
 				renew: true,
