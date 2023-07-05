@@ -26,11 +26,6 @@ import { SubscriptionsService } from './subscriptions.service';
 import { ListResponse, QueryObject } from 'src/shared/utils/query-api';
 import { GetCurrentUser } from 'src/decorators/get-current-user.decorator';
 import { TokenPayload } from '../auth/types/token-payload.type';
-import {
-	BillItem,
-	BillItemStatus,
-} from '../bill-items/schemas/bill-item.schema';
-import { Package, TimeType } from '../package/entities/package.entity';
 
 @Controller('subscriptions')
 @ApiTags('subscriptions')
