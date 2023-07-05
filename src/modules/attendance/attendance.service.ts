@@ -52,8 +52,6 @@ export class AttendanceService {
 			.sort({ [sortField]: sortOrder === 'asc' ? 1 : -1 })
 			.limit(limit)
 			.skip(offset);
-		if (!attendances.length)
-			throw new NotFoundException('Attendances not found');
 
 		return {
 			items: attendances,
