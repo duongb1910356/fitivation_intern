@@ -204,7 +204,19 @@ export class SubscriptionsService {
 		subscription.renew = false;
 		await subscription.save();
 
-		return await this.subscriptionsModel.findById(subscriptionID);
+		return await this.subscriptionsModel
+			.findById(subscriptionID)
+			.populate({
+				path: 'billItemID',
+				select: '-facilityInfo -packageTypeInfo -packageInfo',
+			})
+			.populate({
+				path: 'packageID',
+			})
+			.populate({
+				path: 'facilityID',
+				select: '-reviews',
+			});
 	}
 
 	async deleteOneByBillItemID(billItemID: string): Promise<boolean> {
