@@ -23,14 +23,14 @@ export class Subscription extends BaseObject {
 		type: mongoose.Schema.Types.ObjectId,
 		ref: 'BillItem',
 	})
-	billItemID: string | BillItem;
+	billItemID: string;
 
 	@Prop({
 		required: true,
 		type: mongoose.Schema.Types.ObjectId,
 		ref: 'Package',
 	})
-	packageID: string | Package;
+	packageID: string;
 
 	@Prop({
 		required: true,
