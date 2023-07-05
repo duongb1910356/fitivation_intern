@@ -1067,8 +1067,8 @@ export class FacilityController {
 		examples: {
 			test: {
 				value: {
-					startDate: new Date(),
-					endDate: new Date(),
+					startDate: new Date('2024-07-01T11:43:14.752Z'),
+					endDate: new Date('2024-07-02T11:43:14.752Z'),
 					content: 'string',
 				} as HolidayDto,
 			},
@@ -1079,8 +1079,8 @@ export class FacilityController {
 			example: {
 				_id: '6476ef7d1f0419cd330fe128',
 				facilityID: {} as unknown as Facility,
-				startDate: new Date(+1),
-				endDate: new Date(),
+				startDate: new Date('2024-07-01T11:43:14.752Z'),
+				endDate: new Date('2024-07-02T11:43:14.752Z'),
 				content: 'string',
 				createdAt: new Date(),
 				updatedAt: new Date(),

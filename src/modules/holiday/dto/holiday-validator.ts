@@ -16,8 +16,8 @@ export function IsStartDateBeforeEndDate(
 			options: validationOptions,
 			validator: {
 				validate(value: any, args: ValidationArguments) {
-					const startDate = new Date(value).setHours(0, 0, 0, 0);
-					const endDate = new Date(args.object['endDate']).setHours(0, 0, 0, 0);
+					const startDate = new Date(value);
+					const endDate = new Date(args.object['endDate']);
 
 					if (startDate >= endDate)
 						throw new BadRequestException(`startDate must be before endDate`);
