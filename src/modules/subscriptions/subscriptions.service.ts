@@ -47,7 +47,18 @@ export class SubscriptionsService {
 			queryFeatures.queryModel.find({ accountID: user.sub });
 		}
 
-		const subscription = await queryFeatures.queryModel;
+		const subscription = await queryFeatures.queryModel
+			.populate({
+				path: 'billItemID',
+				select: '-facilityInfo -packageTypeInfo -packageInfo',
+			})
+			.populate({
+				path: 'packageID',
+			})
+			.populate({
+				path: 'facilityID',
+				select: '-reviews',
+			});
 
 		for (let i = 0; i < subscription.length; i++) {
 			await this.checkDateAndUpdateDateIsExpired(
@@ -66,7 +77,19 @@ export class SubscriptionsService {
 		subscriptionID: string,
 		user: TokenPayload,
 	): Promise<Subscription> {
-		const subscription = await this.subscriptionsModel.findById(subscriptionID);
+		const subscription = await this.subscriptionsModel
+			.findById(subscriptionID)
+			.populate({
+				path: 'billItemID',
+				select: '-facilityInfo -packageTypeInfo -packageInfo',
+			})
+			.populate({
+				path: 'packageID',
+			})
+			.populate({
+				path: 'facilityID',
+				select: '-reviews',
+			});
 
 		if (!subscription) throw new BadRequestException('Subscription not found');
 
@@ -136,9 +159,10 @@ export class SubscriptionsService {
 		} else {
 			subscription.renew = false;
 			await subscription.save();
+
 			return {
 				message: 'Subscription has not expired',
-				subscription,
+				subscription: await this.subscriptionsModel.findById(subscriptionID),
 			};
 		}
 	}
