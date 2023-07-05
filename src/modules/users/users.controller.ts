@@ -45,7 +45,6 @@ import { UpdateLoggedUserDataDto } from './dto/update-logged-user-data-dto';
 import { UpdateLoggedUserPasswordDto } from './dto/update-logged-user-password-dto';
 import { RolesGuard } from 'src/guards/role.guard';
 import { Roles } from 'src/decorators/role.decorator';
-import { Public } from '../auth/decorators/public.decorator';
 
 @ApiTags('users')
 @ApiBearerAuth()
@@ -384,7 +383,6 @@ export class UsersController {
 	@Post()
 	@Roles(UserRole.ADMIN)
 	@UseGuards(RolesGuard)
-	@Public()
 	createUser(@Body() createUserDto: CreateUserDto): Promise<User> {
 		return this.userService.createOne(createUserDto);
 	}
