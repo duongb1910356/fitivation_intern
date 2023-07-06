@@ -1,4 +1,5 @@
 import {
+	BadRequestException,
 	Body,
 	Controller,
 	Delete,
@@ -7,12 +8,15 @@ import {
 	Patch,
 	Post,
 	Query,
+	UploadedFile,
 	UseGuards,
+	UseInterceptors,
 } from '@nestjs/common';
 import {
 	ApiBadRequestResponse,
 	ApiBearerAuth,
 	ApiBody,
+	ApiConsumes,
 	ApiCreatedResponse,
 	ApiForbiddenResponse,
 	ApiNotFoundResponse,
@@ -58,6 +62,8 @@ import { ConditionHoliday, HolidayService } from '../holiday/holiday.service';
 import { AttendanceService } from '../attendance/attendance.service';
 import { Public } from '../auth/decorators/public.decorator';
 import { MongoIdValidationPipe } from 'src/pipes/parseMongoId.pipe';
+import { FileInterceptor } from '@nestjs/platform-express';
+import { IsNotEmpty } from 'class-validator';
 
 @ApiTags('admin')
 // @ApiBearerAuth()
@@ -344,14 +350,18 @@ export class AdminController {
 		summary: 'Create category',
 		description: `Only admin can use this API`,
 	})
+	@ApiConsumes('multipart/form-data')
 	@ApiBody({
-		type: CreateCategoryDto,
-		examples: {
-			test: {
-				value: {
-					type: 'SPA',
-					name: 'SPA',
-				} as CreateCategoryDto,
+		schema: {
+			type: 'object',
+			properties: {
+				photo: {
+					description: 'Photo not check Send empty value',
+					type: 'string',
+					format: 'binary',
+				},
+				type: { type: 'string' },
+				name: { type: 'string' },
 			},
 		},
 	})
@@ -393,8 +403,13 @@ export class AdminController {
 			} as ErrorResponse<null>,
 		},
 	})
-	async createCategory(@Body() data: CreateCategoryDto) {
-		return await this.facilityCategoryService.create(data);
+	@UseInterceptors(FileInterceptor('photo'))
+	async createCategory(
+		@Body() data: CreateCategoryDto,
+		@UploadedFile() photo: Express.Multer.File,
+	) {
+		if (!photo) throw new BadRequestException('Photo not empty');
+		return await this.facilityCategoryService.create(data, photo);
 	}
 
 	@Patch('categories/:categoryID')
@@ -407,13 +422,17 @@ export class AdminController {
 		type: String,
 		description: 'Category ID',
 	})
+	@ApiConsumes('multipart/form-data')
 	@ApiBody({
-		type: UpdateCategoryDto,
-		examples: {
-			test: {
-				value: {
-					name: 'string',
-				} as UpdateCategoryDto,
+		schema: {
+			type: 'object',
+			properties: {
+				photo: {
+					description: 'Photo not check Send empty value',
+					type: 'string',
+					format: 'binary',
+				},
+				name: { type: 'string' },
 			},
 		},
 	})
@@ -464,11 +483,13 @@ export class AdminController {
 			} as ErrorResponse<null>,
 		},
 	})
+	@UseInterceptors(FileInterceptor('photo'))
 	async updateCategory(
 		@Param('categoryID', MongoIdValidationPipe) categoryID: string,
 		@Body() data: UpdateCategoryDto,
+		@UploadedFile() photo: Express.Multer.File,
 	) {
-		return await this.facilityCategoryService.update(categoryID, data);
+		return await this.facilityCategoryService.update(categoryID, data, photo);
 	}
 
 	@Delete('categories/:categoryID')

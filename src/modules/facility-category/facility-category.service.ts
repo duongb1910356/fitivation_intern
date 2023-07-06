@@ -8,12 +8,14 @@ import { Model } from 'mongoose';
 import { ListOptions, ListResponse } from 'src/shared/response/common-response';
 import { CreateCategoryDto } from './dto/create-category-dto';
 import { UpdateCategoryDto } from './dto/update-category-dto';
+import { PhotoService } from '../photo/photo.service';
 
 @Injectable()
 export class FacilityCategoryService {
 	constructor(
 		@InjectModel(FacilityCategory.name)
 		private categoryModel: Model<FacilityCategoryDocument>,
+		private readonly photoService: PhotoService,
 	) {}
 
 	async findOneById(categoryID: string): Promise<FacilityCategory> {
@@ -41,27 +43,43 @@ export class FacilityCategoryService {
 		};
 	}
 
-	async create(data: CreateCategoryDto): Promise<FacilityCategory> {
-		return this.categoryModel.create(data);
+	async create(
+		data: CreateCategoryDto,
+		file: Express.Multer.File,
+	): Promise<FacilityCategory> {
+		const category = await this.categoryModel.create(data);
+		const photo = await this.photoService.uploadOneFile(category._id, file);
+		category.photo = photo;
+		return await category.save();
 	}
 
-	async update(categoryID: string, data: UpdateCategoryDto) {
+	async update(
+		categoryID: string,
+		data: UpdateCategoryDto,
+		file?: Express.Multer.File,
+	) {
 		const category = await this.categoryModel.findByIdAndUpdate(
 			categoryID,
 			data,
 			{ new: true },
 		);
 		if (!category) throw new NotFoundException('Category not found');
+
+		if (file) {
+			await this.photoService.delete(category.photo._id);
+			const photo = await this.photoService.uploadOneFile(categoryID, file);
+			category.photo = photo;
+			await category.save();
+		}
 		return category;
 	}
 
 	async delete(categoryID: string): Promise<string> {
 		const category = await this.categoryModel.findByIdAndDelete(categoryID);
-
 		if (!category) {
 			throw new NotFoundException('Category not found');
 		}
-
+		await this.photoService.delete(category.photo._id);
 		return 'Delete Category successful';
 	}
 }
