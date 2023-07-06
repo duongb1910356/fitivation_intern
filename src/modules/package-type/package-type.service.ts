@@ -44,6 +44,15 @@ export class PackageTypeService {
 		return packageType;
 	}
 
+	// async findOne(filter: ListOptions<PackageType>) {
+	// 	const { sortOrder, sortField } = filter;
+	// 	const sortQuery = {};
+	// 	sortQuery[filter.sortField] = filter.sortOrder === 'asc' ? 1 : -1;
+	// 	return await this.packageTypeModel
+	// 		.find(filter)
+	// 		.sort({ sortField: sortOrder == 'asc' ? 1 : -1 });
+	// }
+
 	async findMany(
 		filter: ListOptions<PackageType>,
 	): Promise<ListResponse<PackageType>> {

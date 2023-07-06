@@ -2,8 +2,8 @@ export const userData = [
 	{
 		_id: '6497c6807a114f5b35a393fd',
 		role: 'FACILITY_OWNER',
-		username: 'owner',
-		email: 'owner@test.com',
+		username: 'owner1',
+		email: 'owner1@test.com',
 		password:
 			'00a4344cc5eb4f9af9ff5fde0c629348aae3ca49e7c8a490e9dcce516742acba1fda143476d90568ad3f31d0ec7bc572df2718fcf1233df153235c4ab5abe4c2.a8ba91b747c915d90946f3b9f9397446',
 		refreshToken: null,
@@ -58,8 +58,8 @@ export const userData = [
 	{
 		_id: '649a8f8ab185ffb672485391',
 		role: 'MEMBER',
-		username: 'member',
-		email: 'member@test.com',
+		username: 'customer1',
+		email: 'customer1@test.com',
 		password:
 			'712cf3bceba7e501647e6d1d056658ecb4019d6bd39e3a183dd7df7bd38308f29afde375a51c5d095fc9fb716939bd09324e9c21650152dc67fc7ba55efa5e6b.a7b6621486f7bfb813750da75f150978',
 		refreshToken:

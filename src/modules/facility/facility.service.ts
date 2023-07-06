@@ -39,12 +39,14 @@ import {
 } from '../promotions/schemas/promotion.schema';
 import { PromotionsService } from '../promotions/promotions.service';
 import { UpdatePromotionDto } from '../promotions/dto/update-promotion-dto';
+import { PackageService } from '../package/package.service';
 
 @Injectable()
 export class FacilityService {
 	constructor(
 		@InjectModel(Facility.name) private facilityModel: Model<FacilityDocument>,
 		private readonly packageTypeService: PackageTypeService,
+		private readonly packageService: PackageService,
 		private readonly facilityScheduleService: FacilityScheduleService,
 		private readonly holidayService: HolidayService,
 		private readonly attendanceService: AttendanceService,
@@ -417,7 +419,7 @@ export class FacilityService {
 			},
 			{
 				$sort: {
-					distance: sortOrder === 'asc' ? 1 : -1,
+					distance: 1,
 				},
 			},
 			{
@@ -432,9 +434,40 @@ export class FacilityService {
 			throw new NotFoundException('Not found facilities');
 		}
 
+		const result = await Promise.all(
+			facilities.map(async (el) => {
+				const foundPackage =
+					await this.packageService.findPackageWithLowestPrice(el._id);
+				return { ...el, package: foundPackage };
+			}),
+		);
+
+		result.sort((a, b) => {
+			const priceA = a.package.price;
+			const priceB = b.package.price;
+
+			if (sortOrder === 'asc') {
+				if (priceA < priceB) {
+					return -1;
+				} else if (priceA > priceB) {
+					return 1;
+				} else {
+					return 0;
+				}
+			} else if (sortOrder === 'desc') {
+				if (priceA > priceB) {
+					return -1;
+				} else if (priceA < priceB) {
+					return 1;
+				} else {
+					return 0;
+				}
+			}
+		});
+
 		return {
-			items: facilities,
-			total: facilities.length,
+			items: result,
+			total: result.length,
 			options: filter,
 		};
 	}

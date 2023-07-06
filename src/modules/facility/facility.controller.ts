@@ -1198,72 +1198,79 @@ export class FacilityController {
 
 	@Post()
 	@ApiBearerAuth()
+	@UseGuards(RolesGuard)
+	@Roles(UserRole.FACILITY_OWNER)
 	@ApiOperation({
 		summary: 'Create a new facility',
 	})
 	@ApiConsumes('multipart/form-data')
 	@ApiBody({
-		// type: CreateFacilityDto,
-		// examples: {
-		// 	example1: {
-		// 		value: {
-		// 			brandID: '64951fa2d6fe6b9d23357331',
-		// 			facilityCategoryID: '64951fa2d6fe6b9d23357331',
-		// 			name: 'City gym',
-		// 			address: {
-		// 				street: '30/4',
-		// 				province: 'Thành phố Cần Thơ',
-		// 				provinceCode: '065',
-		// 				district: 'Quận Ninh Kiều',
-		// 				districtCode: '066',
-		// 				commune: 'Phường Xuân Khánh',
-		// 				communeCode: '067',
-		// 			},
-		// 			summary: 'CHẤT LƯỢNG LÀ DANH DỰ',
-		// 			description: 'HIỆN ĐẠI BẬT NHẤT',
-		// 			coordinates: [45, 54],
-		// 			scheduleType: ScheduleType.WEEKLY,
-		// 			photos: [],
-		// 		} as CreateFacilityDto,
-		// 	},
-		// },
-		schema: {
-			type: 'object',
-			properties: {
-				images: {
-					type: 'array',
-					items: {
-						type: 'string',
-						format: 'binary',
+		type: CreateFacilityDto,
+		examples: {
+			example1: {
+				value: {
+					brandID: '64944c7c2d7cf0ec0dbb4051',
+					facilityCategoryID: [
+						'64944c7c2d7cf0ec0dbb4051',
+						'64944c7c2d7cf0ec0dbb4051',
+					],
+					name: 'California Fitness & Yoga Cần Thơ',
+					address: {
+						street: 'Vincom 209 đường 30/4',
+						commune: 'Xuân Khánh',
+						communeCode: '066',
+						district: 'Ninh Kiều',
+						districtCode: '067',
+						province: 'Cần Thơ',
+						provinceCode: '065',
 					},
-				},
-				brandID: { type: 'string' },
-				facilityCategoryID: { type: 'string' },
-				name: { type: 'string' },
-				address: {
-					type: 'object',
-					properties: {
-						street: { type: 'string' },
-						province: { type: 'string' },
-						provinceCode: { type: 'string' },
-						district: { type: 'string' },
-						districtCode: { type: 'string' },
-						commune: { type: 'string' },
-						communeCode: { type: 'string' },
-					},
-				},
-				summary: { type: 'string' },
-				description: { type: 'string' },
-				coordinates: {
-					type: 'array',
-					items: {
-						type: 'number',
-						format: 'number',
-					},
-				},
-				scheduleType: { type: 'string', enum: ['DAILY', 'WEEKLY', 'MONTHLY'] },
+					location: { coordinates: [105.778274, 10.04407] },
+					summary: 'Chất lượng là danh dự',
+					description:
+						"Lorem Ipsum is simply dummy text of the printing and typesetting industry. Lorem Ipsum has been the industry's standard dummy text ever since the 1500s, when an unknown printer took a galley of type and scrambled it to make a type specimen book",
+					state: 'ACTIVE',
+					scheduleType: 'DAILY',
+					phone: '84906943567',
+				} as CreateFacilityDto,
 			},
 		},
+		// schema: {
+		// 	type: 'object',
+		// 	properties: {
+		// 		images: {
+		// 			type: 'array',
+		// 			items: {
+		// 				type: 'string',
+		// 				format: 'binary',
+		// 			},
+		// 		},
+		// 		brandID: { type: 'string' },
+		// 		facilityCategoryID: { type: 'string' },
+		// 		name: { type: 'string' },
+		// 		address: {
+		// 			type: 'object',
+		// 			properties: {
+		// 				street: { type: 'string' },
+		// 				province: { type: 'string' },
+		// 				provinceCode: { type: 'string' },
+		// 				district: { type: 'string' },
+		// 				districtCode: { type: 'string' },
+		// 				commune: { type: 'string' },
+		// 				communeCode: { type: 'string' },
+		// 			},
+		// 		},
+		// 		summary: { type: 'string' },
+		// 		description: { type: 'string' },
+		// 		coordinates: {
+		// 			type: 'array',
+		// 			items: {
+		// 				type: 'number',
+		// 				format: 'number',
+		// 			},
+		// 		},
+		// 		scheduleType: { type: 'string', enum: ['DAILY', 'WEEKLY', 'MONTHLY'] },
+		// 	},
+		// },
 	})
 	@ApiOkResponse({
 		status: 200,
@@ -1348,6 +1355,7 @@ export class FacilityController {
 		status: 404,
 		description: 'Facility not found!',
 	})
+	@UseGuards(OwnershipFacilityGuard)
 	deleteFacilityById(@Param('facilityID') facilityID, @Req() req: any) {
 		return this.facilityService.delete(facilityID, req);
 	}
@@ -1501,6 +1509,7 @@ export class FacilityController {
 		status: 400,
 		description: '[Input] invalid!',
 	})
+	@UseGuards(OwnershipFacilityGuard)
 	updateFacility(
 		@Param('facilityID') facilityID,
 		@Body() body: UpdateFacilityDto,
