@@ -49,7 +49,6 @@ export class HolidayService {
 			.sort({ [sortField]: sortOrder === 'asc' ? 1 : -1 })
 			.limit(limit)
 			.skip(offset);
-		if (!holidays.length) throw new NotFoundException('Holidays not found');
 
 		return {
 			items: holidays,
