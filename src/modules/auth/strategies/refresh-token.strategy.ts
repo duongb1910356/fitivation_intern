@@ -21,12 +21,12 @@ export class RefreshTokenStrategy extends PassportStrategy(
 		req: Request,
 		payload: TokenPayload,
 	): Promise<TokenPayloadWithRefreshToken> {
-		const refreshToken = req.headers.authorization.split(' ')[1];
+		const refreshToken = req.cookies.refreshToken;
 
 		return { ...payload, refreshToken };
 	}
 
-	private static extractJwtFromCookie(req: Request) {
+	private static extractJwtFromCookie(req: Request): string | null {
 		if (req.cookies && req.cookies.refreshToken) {
 			return req.cookies.refreshToken;
 		}
