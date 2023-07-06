@@ -5,6 +5,7 @@ import {
 	HttpStatus,
 	Patch,
 	Post,
+	Res,
 	UseGuards,
 } from '@nestjs/common';
 import {
@@ -24,6 +25,7 @@ import { ErrorResponse } from 'src/shared/response/common-response';
 import { Public } from './decorators/public.decorator';
 import { GetCurrentUser } from 'src/decorators/get-current-user.decorator';
 import { RefreshTokenGuard } from './guards/refresh-token.guard';
+import { Response } from 'express';
 
 @Controller('auth')
 @ApiTags('auth')
@@ -68,8 +70,20 @@ export class AuthController {
 	@Post('signup')
 	@Public()
 	@HttpCode(HttpStatus.CREATED)
-	async signup(@Body() signupDto: SignupDto): Promise<TokenResponse> {
-		return this.authService.signup(signupDto);
+	async signup(
+		@Body() signupDto: SignupDto,
+		@Res({ passthrough: true }) res: Response,
+	): Promise<TokenResponse> {
+		const tokenRes: TokenResponse = await this.authService.signup(signupDto);
+
+		res.cookie('accessToken', tokenRes.accessToken, {
+			httpOnly: true,
+			secure: true,
+			sameSite: 'lax',
+			expires: new Date(Date.now() + 7 * 24 * 60 * 1000),
+		});
+
+		return tokenRes;
 	}
 
 	@ApiOperation({ summary: 'login', description: 'Allow user login' })
@@ -120,9 +134,20 @@ export class AuthController {
 	})
 	@Post('login')
 	@Public()
-	@HttpCode(HttpStatus.OK)
-	async login(@Body() loginDto: LoginDto): Promise<TokenResponse> {
-		return this.authService.login(loginDto);
+	async login(
+		@Body() loginDto: LoginDto,
+		@Res({ passthrough: true }) res: Response,
+	): Promise<TokenResponse> {
+		const tokenRes: TokenResponse = await this.authService.login(loginDto);
+
+		res.cookie('accessToken', tokenRes.accessToken, {
+			httpOnly: true,
+			secure: true,
+			sameSite: 'lax',
+			expires: new Date(Date.now() + 7 * 24 * 60 * 1000),
+		});
+
+		return tokenRes;
 	}
 
 	@ApiOperation({ summary: 'logout', description: 'Allow user log out' })
@@ -139,7 +164,12 @@ export class AuthController {
 	})
 	@Post('logout')
 	@HttpCode(HttpStatus.NO_CONTENT)
-	async logout(@GetCurrentUser('sub') userID: string): Promise<boolean> {
+	async logout(
+		@GetCurrentUser('sub') userID: string,
+		@Res({ passthrough: true }) res: Response,
+	): Promise<boolean> {
+		res.clearCookie('accessToken');
+
 		return this.authService.logout(userID);
 	}
 
@@ -167,11 +197,24 @@ export class AuthController {
 	@Public()
 	@UseGuards(RefreshTokenGuard)
 	@HttpCode(HttpStatus.OK)
-	refreshTokens(
+	async refreshTokens(
 		@GetCurrentUser('sub') userID: string,
 		@GetCurrentUser('refreshToken') refreshToken: string,
+		@Res({ passthrough: true }) res: Response,
 	): Promise<TokenResponse> {
-		return this.authService.refreshTokens(userID, refreshToken);
+		const tokenRes: TokenResponse = await this.authService.refreshTokens(
+			userID,
+			refreshToken,
+		);
+
+		res.cookie('accessToken', tokenRes.accessToken, {
+			httpOnly: true,
+			secure: true,
+			sameSite: 'lax',
+			expires: new Date(Date.now() + 7 * 24 * 60 * 1000),
+		});
+
+		return tokenRes;
 	}
 
 	@ApiOperation({
