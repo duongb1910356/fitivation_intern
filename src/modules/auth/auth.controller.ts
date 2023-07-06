@@ -74,16 +74,7 @@ export class AuthController {
 		@Body() signupDto: SignupDto,
 		@Res({ passthrough: true }) res: Response,
 	): Promise<TokenResponse> {
-		const tokenRes: TokenResponse = await this.authService.signup(signupDto);
-
-		res.cookie('accessToken', tokenRes.accessToken, {
-			httpOnly: true,
-			secure: true,
-			sameSite: 'lax',
-			expires: new Date(Date.now() + 7 * 24 * 60 * 1000),
-		});
-
-		return tokenRes;
+		return await this.authService.signup(signupDto, res);
 	}
 
 	@ApiOperation({ summary: 'login', description: 'Allow user login' })
@@ -138,16 +129,7 @@ export class AuthController {
 		@Body() loginDto: LoginDto,
 		@Res({ passthrough: true }) res: Response,
 	): Promise<TokenResponse> {
-		const tokenRes: TokenResponse = await this.authService.login(loginDto);
-
-		res.cookie('accessToken', tokenRes.accessToken, {
-			httpOnly: true,
-			secure: true,
-			sameSite: 'lax',
-			expires: new Date(Date.now() + 7 * 24 * 60 * 1000),
-		});
-
-		return tokenRes;
+		return await this.authService.login(loginDto, res);
 	}
 
 	@ApiOperation({ summary: 'logout', description: 'Allow user log out' })
@@ -168,9 +150,7 @@ export class AuthController {
 		@GetCurrentUser('sub') userID: string,
 		@Res({ passthrough: true }) res: Response,
 	): Promise<boolean> {
-		res.clearCookie('accessToken');
-
-		return this.authService.logout(userID);
+		return await this.authService.logout(userID, res);
 	}
 
 	@ApiOperation({ summary: 'refreshToken', description: 'Refresh new token' })
@@ -202,19 +182,7 @@ export class AuthController {
 		@GetCurrentUser('refreshToken') refreshToken: string,
 		@Res({ passthrough: true }) res: Response,
 	): Promise<TokenResponse> {
-		const tokenRes: TokenResponse = await this.authService.refreshTokens(
-			userID,
-			refreshToken,
-		);
-
-		res.cookie('accessToken', tokenRes.accessToken, {
-			httpOnly: true,
-			secure: true,
-			sameSite: 'lax',
-			expires: new Date(Date.now() + 7 * 24 * 60 * 1000),
-		});
-
-		return tokenRes;
+		return await this.authService.refreshTokens(userID, refreshToken, res);
 	}
 
 	@ApiOperation({
