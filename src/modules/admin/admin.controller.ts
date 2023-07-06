@@ -63,7 +63,6 @@ import { AttendanceService } from '../attendance/attendance.service';
 import { Public } from '../auth/decorators/public.decorator';
 import { MongoIdValidationPipe } from 'src/pipes/parseMongoId.pipe';
 import { FileInterceptor } from '@nestjs/platform-express';
-import { IsNotEmpty } from 'class-validator';
 
 @ApiTags('admin')
 // @ApiBearerAuth()
