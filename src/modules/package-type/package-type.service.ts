@@ -154,19 +154,13 @@ export class PackageTypeService {
 
 		await Promise.all([
 			this.packageTypeModel.findByIdAndDelete(packageTypeID),
-			this.decreaseAfterDeletion(
-				packageType.facilityID.toString(),
-				packageType.order,
-			),
+			this.decreaseAfterDeletion(packageType.facilityID._id, packageType.order),
 		]);
 
 		return 'Delete PackageType successfull!!!';
 	}
 
-	private async decreaseAfterDeletion(
-		facilityID: string,
-		deletedOrder: number,
-	) {
+	async decreaseAfterDeletion(facilityID: string, deletedOrder: number) {
 		//decrease Counter by one
 		const counterData = {
 			targetObject: TargetObject.FACILITY,
