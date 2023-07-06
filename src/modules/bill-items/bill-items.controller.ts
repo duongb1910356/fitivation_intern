@@ -1,6 +1,12 @@
 import { Controller, Get, Param, Query, UseGuards } from '@nestjs/common';
 import { BillItemsService } from './bill-items.service';
-import { ApiOperation, ApiParam, ApiResponse, ApiTags } from '@nestjs/swagger';
+import {
+	ApiBearerAuth,
+	ApiOperation,
+	ApiParam,
+	ApiResponse,
+	ApiTags,
+} from '@nestjs/swagger';
 import { BillItem, BillItemStatus } from './schemas/bill-item.schema';
 import { ErrorResponse } from 'src/shared/response/common-response';
 import { ApiDocsPagination } from 'src/decorators/swagger-form-data.decorator';
@@ -24,6 +30,7 @@ import { TokenPayload } from '../auth/types/token-payload.type';
 
 @Controller('bill-items')
 @ApiTags('bill-items')
+@ApiBearerAuth()
 export class BillItemsController {
 	constructor(private readonly billItemsService: BillItemsService) {}
 
@@ -256,8 +263,8 @@ export class BillItemsController {
 		},
 	})
 	@Get(':id')
-	// @Roles(UserRole.ADMIN, UserRole.FACILITY_OWNER, UserRole.MEMBER)
-	// @UseGuards(RolesGuard)
+	@Roles(UserRole.ADMIN, UserRole.FACILITY_OWNER, UserRole.MEMBER)
+	@UseGuards(RolesGuard)
 	findOneBillItem(
 		@Param('id') id: string,
 		@GetCurrentUser() user: TokenPayload,
