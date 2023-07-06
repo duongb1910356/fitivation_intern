@@ -62,7 +62,12 @@ export class HolidayService {
 			facilityID,
 			data,
 		);
-		const holidayData = { facilityID, startDate, endDate };
+		const holidayData = {
+			facilityID,
+			startDate,
+			endDate,
+			content: data.content,
+		};
 		return await this.holidayModel.create(holidayData);
 	}
 
