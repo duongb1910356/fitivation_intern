@@ -41,6 +41,8 @@ export interface Address {
 	};
 }
 
+export type FacilityDocument = HydratedDocument<Facility>;
+
 @Schema({ timestamps: true })
 export class Facility extends BaseObject {
 	@Prop({ type: mongoose.Schema.Types.ObjectId, ref: 'Brand', required: true })
@@ -158,8 +160,6 @@ export class Facility extends BaseObject {
 
 export const FacilitySchema = SchemaFactory.createForClass(Facility);
 FacilitySchema.index({ location: '2dsphere' });
-
-export type FacilityDocument = Document & Facility;
 
 export const FacilitySchemaFactory = () => {
 	const facilitySchema = FacilitySchema;
