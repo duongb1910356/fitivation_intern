@@ -11,6 +11,7 @@ import {
 	Post,
 	Query,
 	UploadedFile,
+	UseGuards,
 	UseInterceptors,
 } from '@nestjs/common';
 import { FileInterceptor } from '@nestjs/platform-express';
@@ -35,13 +36,15 @@ import { Gender, User, UserRole, UserStatus } from './schemas/user.schema';
 import { UsersService } from './users.service';
 import { UserAddressDto } from './dto/user-address.dto';
 import { UserAddress } from './schemas/user-address.schema';
-import {
-	ErrorResponse,
-	ListOptions,
-	ListResponse,
-} from 'src/shared/response/common-response';
+import { ErrorResponse } from 'src/shared/response/common-response';
 import { ApiDocsPagination } from 'src/decorators/swagger-form-data.decorator';
 import { TokenResponse } from '../auth/types/token-response.types';
+import { ListResponse, QueryObject } from 'src/shared/utils/query-api';
+import { GetCurrentUser } from 'src/decorators/get-current-user.decorator';
+import { UpdateLoggedUserDataDto } from './dto/update-logged-user-data-dto';
+import { UpdateLoggedUserPasswordDto } from './dto/update-logged-user-password-dto';
+import { RolesGuard } from 'src/guards/role.guard';
+import { Roles } from 'src/decorators/role.decorator';
 
 @ApiTags('users')
 @ApiBearerAuth()
@@ -49,22 +52,147 @@ import { TokenResponse } from '../auth/types/token-response.types';
 export class UsersController {
 	constructor(private userService: UsersService) {}
 
-	@ApiOperation({ summary: 'getUserByID', description: 'Get one user by ID' })
-	@ApiParam({ name: 'id', type: String, description: 'User ID' })
-	@ApiOkResponse({
+	@ApiOperation({
+		summary: 'getProfile',
+		description: 'Get loggedIn user info',
+	})
+	@ApiResponse({
+		type: User,
+		status: 200,
 		schema: {
 			example: {
-				_id: '',
+				_id: 'string',
 				role: UserRole.MEMBER,
-				username: 'member',
+				username: 'member1',
 				email: 'member@test.com',
-				password: '123123123123',
+				password: 'string',
 				displayName: 'Admin user',
 				firstName: 'string',
 				lastName: 'string',
 				gender: Gender.MALE,
 				birthDate: new Date(),
-				tel: '0888888888',
+				tel: '0987654321',
+				address: {
+					province: 'Can Tho',
+					district: 'Ninh Kieu',
+					commune: 'Xuan Khanh',
+				} as unknown as UserAddress,
+				isMember: false,
+				status: UserStatus.ACTIVE,
+				createdAt: new Date(),
+				updatedAt: new Date(),
+			} as User,
+		},
+	})
+	@ApiResponse({
+		status: 400,
+		schema: {
+			example: {
+				code: '400',
+				message: 'Token invalid',
+				details: null,
+			} as ErrorResponse<null>,
+		},
+	})
+	@Get('me')
+	@Roles(UserRole.ADMIN, UserRole.FACILITY_OWNER, UserRole.MEMBER)
+	@UseGuards(RolesGuard)
+	getProfile(@GetCurrentUser('sub') userID: string) {
+		return this.userService.getCurrentUser(userID);
+	}
+
+	@ApiDocsPagination('user')
+	@ApiOperation({ summary: 'findManyUsers', description: 'Get many users' })
+	@ApiResponse({
+		schema: {
+			example: {
+				items: [
+					{
+						_id: 'string',
+						role: UserRole.MEMBER,
+						username: 'member',
+						email: 'member@test.com',
+						password: 'string',
+						displayName: 'Admin user',
+						firstName: 'string',
+						lastName: 'string',
+						gender: Gender.MALE,
+						birthDate: new Date(),
+						tel: '0987654321',
+						address: {
+							province: 'Can Tho',
+							district: 'Ninh Kieu',
+							commune: 'Xuan Khanh',
+						} as unknown as UserAddress,
+						isMember: false,
+						status: UserStatus.ACTIVE,
+						createdAt: new Date(),
+						updatedAt: new Date(),
+					} as User,
+				],
+				total: 1,
+				queryOptions: {
+					sort: 'string',
+					fields: 'string',
+					limit: 10,
+					page: 0,
+				} as QueryObject,
+			} as ListResponse<User>,
+		},
+	})
+	@ApiResponse({
+		status: 400,
+		schema: {
+			example: {
+				code: '400',
+				message: 'Input invalid',
+				details: null,
+			} as ErrorResponse<null>,
+		},
+	})
+	@ApiResponse({
+		status: 401,
+		schema: {
+			example: {
+				code: '401',
+				message: 'Unauthorized',
+				details: null,
+			} as ErrorResponse<null>,
+		},
+	})
+	@ApiResponse({
+		status: 403,
+		schema: {
+			example: {
+				code: '403',
+				message: `Forbidden resource`,
+				details: null,
+			} as ErrorResponse<null>,
+		},
+	})
+	@Get()
+	@Roles(UserRole.ADMIN)
+	@UseGuards(RolesGuard)
+	findManyUsers(@Query() query: QueryObject): Promise<ListResponse<User>> {
+		return this.userService.findMany(query);
+	}
+
+	@ApiOperation({ summary: 'findUserByID', description: 'Get one user by ID' })
+	@ApiParam({ name: 'id', type: String, description: 'User ID' })
+	@ApiOkResponse({
+		schema: {
+			example: {
+				_id: 'string',
+				role: UserRole.MEMBER,
+				username: 'member',
+				email: 'member@test.com',
+				password: 'string',
+				displayName: 'Admin user',
+				firstName: 'string',
+				lastName: 'string',
+				gender: Gender.MALE,
+				birthDate: new Date(),
+				tel: '0987654321',
 				address: {
 					province: 'Can Tho',
 					district: 'Ninh Kieu',
@@ -118,84 +246,10 @@ export class UsersController {
 		},
 	})
 	@Get(':id')
-	findOneUser(@Param('id') id) {
-		return this.userService.findOne();
-	}
-
-	@ApiDocsPagination('user')
-	@ApiOperation({ summary: 'getManyUsers', description: 'Get many users' })
-	@ApiResponse({
-		schema: {
-			example: {
-				items: [
-					{
-						_id: '',
-						role: UserRole.MEMBER,
-						username: 'member',
-						email: 'member@test.com',
-						password: '123123123123',
-						displayName: 'Admin user',
-						firstName: 'string',
-						lastName: 'string',
-						gender: Gender.MALE,
-						birthDate: new Date(),
-						tel: '0888888888',
-						address: {
-							province: 'Can Tho',
-							district: 'Ninh Kieu',
-							commune: 'Xuan Khanh',
-						} as unknown as UserAddress,
-						isMember: false,
-						status: UserStatus.ACTIVE,
-						createdAt: new Date(),
-						updatedAt: new Date(),
-					} as User,
-				],
-				total: 1,
-				options: {
-					limit: 10,
-					offset: 0,
-					searchField: '_id',
-					searchValue: 'string',
-					sortField: '_id',
-					sortOrder: 'asc',
-				} as ListOptions<User>,
-			} as ListResponse<User>,
-		},
-	})
-	@ApiResponse({
-		status: 400,
-		schema: {
-			example: {
-				code: '400',
-				message: 'Input invalid',
-				details: null,
-			} as ErrorResponse<null>,
-		},
-	})
-	@ApiResponse({
-		status: 401,
-		schema: {
-			example: {
-				code: '401',
-				message: 'Unauthorized',
-				details: null,
-			} as ErrorResponse<null>,
-		},
-	})
-	@ApiResponse({
-		status: 403,
-		schema: {
-			example: {
-				code: '403',
-				message: `Forbidden resource`,
-				details: null,
-			} as ErrorResponse<null>,
-		},
-	})
-	@Get()
-	findManyUsers(@Query() filter: ListOptions<User>) {
-		return this.userService.findMany();
+	@Roles(UserRole.ADMIN)
+	@UseGuards(RolesGuard)
+	findUserByID(@Param('id') id: string): Promise<User> {
+		return this.userService.findOneByID(id);
 	}
 
 	@ApiOperation({ summary: 'createUser', description: 'Create new user' })
@@ -203,18 +257,18 @@ export class UsersController {
 		type: CreateUserDto,
 		examples: {
 			ADMIN: {
-				summary: 'Admin',
+				summary: 'Admin account',
 				value: {
 					role: UserRole.ADMIN,
 					username: 'admin',
 					email: 'admin@test.com',
-					password: '123123123123',
-					displayName: 'Admin user',
+					password: '123123123',
+					displayName: 'Admin User',
 					firstName: 'string',
 					lastName: 'string',
 					gender: Gender.MALE,
 					birthDate: new Date(),
-					tel: '0888888888',
+					tel: '0987654321',
 					address: {
 						province: 'Can Tho',
 						district: 'Ninh Kieu',
@@ -223,25 +277,46 @@ export class UsersController {
 					isMember: false,
 				} as CreateUserDto,
 			},
-			USER: {
-				summary: 'User',
+			CUSTOMER: {
+				summary: 'Customer account',
 				value: {
 					role: UserRole.MEMBER,
-					username: 'member',
-					email: 'member@test.com',
-					password: '123123123123',
-					displayName: 'Admin user',
+					username: 'customer1',
+					email: 'customer1@test.com',
+					password: '123123123',
+					displayName: 'Customer User',
 					firstName: 'string',
 					lastName: 'string',
 					gender: Gender.MALE,
 					birthDate: new Date(),
-					tel: '0888888888',
+					tel: '0987654321',
 					address: {
 						province: 'Can Tho',
 						district: 'Ninh Kieu',
 						commune: 'Xuan Khanh',
 					} as UserAddressDto,
-					status: UserStatus.ACTIVE,
+					isMember: false,
+				} as CreateUserDto,
+			},
+			FACILITY_OWNER: {
+				summary: 'Facility owner account',
+				value: {
+					role: UserRole.FACILITY_OWNER,
+					username: 'facility-owner1',
+					email: 'owner1@test.com',
+					password: '123123123',
+					displayName: 'Facility Owner User',
+					firstName: 'string',
+					lastName: 'string',
+					gender: Gender.MALE,
+					birthDate: new Date(),
+					tel: '0987654321',
+					address: {
+						province: 'Can Tho',
+						district: 'Ninh Kieu',
+						commune: 'Xuan Khanh',
+					} as UserAddressDto,
+					isMember: false,
 				} as CreateUserDto,
 			},
 		},
@@ -252,17 +327,17 @@ export class UsersController {
 				code: 201,
 				message: 'Success',
 				data: {
-					_id: '',
+					_id: 'string',
 					role: UserRole.MEMBER,
 					username: 'member',
 					email: 'member@test.com',
-					password: '123123123123',
+					password: 'string',
 					displayName: 'Admin user',
 					firstName: 'string',
 					lastName: 'string',
 					gender: Gender.MALE,
 					birthDate: new Date(),
-					tel: '0888888888',
+					tel: '0987654321',
 					address: {
 						province: 'Can Tho',
 						district: 'Ninh Kieu',
@@ -306,9 +381,101 @@ export class UsersController {
 		},
 	})
 	@Post()
-	createUser(@Body() createUserDto: CreateUserDto) {
-		console.log('controller');
+	@Roles(UserRole.ADMIN)
+	@UseGuards(RolesGuard)
+	createUser(@Body() createUserDto: CreateUserDto): Promise<User> {
 		return this.userService.createOne(createUserDto);
+	}
+
+	@ApiOperation({
+		summary: 'updateMyData',
+		description:
+			'Allow user update personal account data but (this endpoint does not use to update password)',
+	})
+	@ApiCreatedResponse({ type: TokenResponse, status: 200 })
+	@ApiResponse({
+		status: 400,
+		schema: {
+			example: {
+				code: '400',
+				message: 'Input invalid',
+				details: null,
+			} as ErrorResponse<null>,
+		},
+	})
+	@ApiResponse({
+		status: 401,
+		schema: {
+			example: {
+				code: '401',
+				message: 'Unauthorized',
+				details: null,
+			} as ErrorResponse<null>,
+		},
+	})
+	@ApiResponse({
+		status: 403,
+		schema: {
+			example: {
+				code: '403',
+				message: `Forbidden resource`,
+				details: null,
+			} as ErrorResponse<null>,
+		},
+	})
+	@Patch('update-me')
+	@Roles(UserRole.ADMIN, UserRole.FACILITY_OWNER, UserRole.MEMBER)
+	@UseGuards(RolesGuard)
+	updateMyData(
+		@GetCurrentUser('sub') userID: string,
+		@Body() dto: UpdateLoggedUserDataDto,
+	): Promise<User> {
+		return this.userService.updateMyData(userID, dto);
+	}
+
+	@ApiOperation({
+		summary: 'updatePassword',
+		description: 'Allow current user update password',
+	})
+	@ApiCreatedResponse({ type: TokenResponse, status: 200 })
+	@ApiResponse({
+		status: 400,
+		schema: {
+			example: {
+				code: '400',
+				message: 'Input invalid',
+				details: null,
+			} as ErrorResponse<null>,
+		},
+	})
+	@ApiResponse({
+		status: 401,
+		schema: {
+			example: {
+				code: '401',
+				message: 'Unauthorized',
+				details: null,
+			} as ErrorResponse<null>,
+		},
+	})
+	@ApiResponse({
+		status: 403,
+		schema: {
+			example: {
+				code: '403',
+				message: `Forbidden resource`,
+				details: null,
+			} as ErrorResponse<null>,
+		},
+	})
+	@Patch('update-my-password')
+	@Roles(UserRole.ADMIN, UserRole.FACILITY_OWNER, UserRole.MEMBER)
+	@UseGuards(RolesGuard)
+	updateMyPassword(
+		@GetCurrentUser('sub') userID: string,
+		@Body() dto: UpdateLoggedUserPasswordDto,
+	): Promise<boolean> {
+		return this.userService.updateMyPassword(userID, dto);
 	}
 
 	@ApiOperation({
@@ -329,7 +496,7 @@ export class UsersController {
 					lastName: 'string',
 					gender: Gender.MALE,
 					birthDate: new Date(),
-					tel: '0888888888',
+					tel: '0987654321',
 					address: {
 						province: 'Can Tho',
 						district: 'Ninh Kieu',
@@ -344,17 +511,17 @@ export class UsersController {
 	@ApiOkResponse({
 		schema: {
 			example: {
-				_id: '',
+				_id: 'string',
 				role: UserRole.MEMBER,
 				username: 'member',
 				email: 'member@test.com',
-				password: '123123123123',
+				password: 'string',
 				displayName: 'Admin user',
 				firstName: 'string',
 				lastName: 'string',
 				gender: Gender.MALE,
 				birthDate: new Date(),
-				tel: '0888888888',
+				tel: '0987654321',
 				address: {
 					province: 'Can Tho',
 					district: 'Ninh Kieu',
@@ -407,8 +574,54 @@ export class UsersController {
 		},
 	})
 	@Patch('/:id')
-	updateUser(@Body() updateUserDto: UpdateUserDto, @Param('id') id: string) {
-		return this.userService.updateOne();
+	@Roles(UserRole.ADMIN)
+	@UseGuards(RolesGuard)
+	updateUser(
+		@Body() dto: UpdateUserDto,
+		@Param('id') id: string,
+	): Promise<User> {
+		return this.userService.findOneByIDAndUpdate(id, dto);
+	}
+
+	@ApiOperation({
+		summary: 'deleteMe',
+		description: 'Allow user inactive personal account data',
+	})
+	@ApiResponse({
+		status: 200,
+		schema: {
+			example: {
+				code: '200',
+				message: 'This account will delete after 15 days no login',
+				details: null,
+			},
+		},
+	})
+	@ApiResponse({
+		status: 401,
+		schema: {
+			example: {
+				code: '401',
+				message: 'Unauthorized',
+				details: null,
+			} as ErrorResponse<null>,
+		},
+	})
+	@ApiResponse({
+		status: 403,
+		schema: {
+			example: {
+				code: '403',
+				message: `Forbidden resource`,
+				details: null,
+			} as ErrorResponse<null>,
+		},
+	})
+	@Delete('delete-me')
+	@Roles(UserRole.FACILITY_OWNER, UserRole.MEMBER)
+	@UseGuards(RolesGuard)
+	deleteMe(@GetCurrentUser('sub') userID: string): Promise<boolean> {
+		return this.userService.deleteMe(userID);
 	}
 
 	@ApiOperation({ summary: 'deleteUser', description: 'Delete user ' })
@@ -463,107 +676,10 @@ export class UsersController {
 		},
 	})
 	@Delete(':id')
-	deleteUser(@Param() id: string) {
+	@Roles(UserRole.ADMIN)
+	@UseGuards(RolesGuard)
+	deleteUser(@Param('id') id: string): Promise<boolean> {
 		return this.userService.deleteOne(id);
-	}
-
-	@ApiOperation({
-		summary: 'getProfile',
-		description: 'Get loggedIn user info',
-	})
-	@ApiResponse({ type: User, status: 200 })
-	@ApiResponse({
-		status: 400,
-		schema: {
-			example: {
-				code: '400',
-				message: 'Token invalid',
-				details: null,
-			} as ErrorResponse<null>,
-		},
-	})
-	@Get('me')
-	getProfile() {
-		return 'getMe';
-	}
-
-	@ApiOperation({
-		summary: 'updateMe',
-		description: 'Allow user update personal account data',
-	})
-	@ApiCreatedResponse({ type: TokenResponse, status: 200 })
-	@ApiResponse({
-		status: 400,
-		schema: {
-			example: {
-				code: '400',
-				message: 'Input invalid',
-				details: null,
-			} as ErrorResponse<null>,
-		},
-	})
-	@ApiResponse({
-		status: 401,
-		schema: {
-			example: {
-				code: '401',
-				message: 'Unauthorized',
-				details: null,
-			} as ErrorResponse<null>,
-		},
-	})
-	@ApiResponse({
-		status: 403,
-		schema: {
-			example: {
-				code: '403',
-				message: `Forbidden resource`,
-				details: null,
-			} as ErrorResponse<null>,
-		},
-	})
-	@Patch('update-me')
-	updateMe() {
-		return 'updateMe';
-	}
-
-	@ApiOperation({
-		summary: 'deleteMe',
-		description: 'Allow user inactive personal account data',
-	})
-	@ApiResponse({
-		status: 200,
-		schema: {
-			example: {
-				code: '200',
-				message: 'This account will delete after 15 days no login',
-				details: null,
-			},
-		},
-	})
-	@ApiResponse({
-		status: 401,
-		schema: {
-			example: {
-				code: '401',
-				message: 'Unauthorized',
-				details: null,
-			} as ErrorResponse<null>,
-		},
-	})
-	@ApiResponse({
-		status: 403,
-		schema: {
-			example: {
-				code: '403',
-				message: `Forbidden resource`,
-				details: null,
-			} as ErrorResponse<null>,
-		},
-	})
-	@Delete('delete-me')
-	deleteMe() {
-		return 'deleteMe';
 	}
 
 	@ApiOperation({
@@ -577,17 +693,17 @@ export class UsersController {
 	@ApiOkResponse({
 		schema: {
 			example: {
-				_id: '',
+				_id: 'string',
 				role: UserRole.MEMBER,
 				username: 'member',
 				email: 'member@test.com',
-				password: '123123123123',
+				password: 'string',
 				displayName: 'Admin user',
 				firstName: 'string',
 				lastName: 'string',
 				gender: Gender.MALE,
 				birthDate: new Date(),
-				tel: '0888888888',
+				tel: '0987654321',
 				address: {
 					province: 'Can Tho',
 					district: 'Ninh Kieu',
@@ -651,6 +767,8 @@ export class UsersController {
 		},
 	})
 	@Post(':id/avatar')
+	@Roles(UserRole.ADMIN, UserRole.FACILITY_OWNER, UserRole.MEMBER)
+	@UseGuards(RolesGuard)
 	uploadFile(
 		@Param('id') id,
 		@UploadedFile(

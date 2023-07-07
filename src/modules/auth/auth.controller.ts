@@ -5,8 +5,10 @@ import {
 	HttpStatus,
 	Patch,
 	Post,
+	UseGuards,
 } from '@nestjs/common';
 import {
+	ApiBearerAuth,
 	ApiBody,
 	ApiCreatedResponse,
 	ApiOperation,
@@ -20,9 +22,12 @@ import { SignupDto } from './dto/signup-dto';
 import { TokenResponse } from './types/token-response.types';
 import { ErrorResponse } from 'src/shared/response/common-response';
 import { Public } from './decorators/public.decorator';
+import { GetCurrentUser } from 'src/decorators/get-current-user.decorator';
+import { RefreshTokenGuard } from './guards/refresh-token.guard';
 
-@ApiTags('auth')
 @Controller('auth')
+@ApiTags('auth')
+@ApiBearerAuth()
 export class AuthController {
 	constructor(private readonly authService: AuthService) {}
 
@@ -30,13 +35,13 @@ export class AuthController {
 	@ApiBody({
 		type: SignupDto,
 		examples: {
-			USER: {
-				summary: 'User',
+			CUSTOMER: {
+				summary: 'Sign up customer account',
 				value: {
-					username: 'test1',
-					email: 'test1@test.com',
+					username: 'customer1',
+					email: 'customer1@test.com',
 					password: '123123123',
-					displayName: 'User1',
+					displayName: 'Customer User',
 				} as SignupDto,
 			},
 		},
@@ -72,16 +77,23 @@ export class AuthController {
 		type: LoginDto,
 		examples: {
 			ADMIN: {
-				summary: 'Admin',
+				summary: 'Admin account',
 				value: {
-					email: 'test1@test.com',
+					email: 'admin@test.com',
 					password: '123123123',
 				} as LoginDto,
 			},
-			USER: {
-				summary: 'User',
+			CUSTOMER: {
+				summary: 'Customer account',
 				value: {
-					email: 'test2@test.com',
+					email: 'customer1@test.com',
+					password: '123123123',
+				} as LoginDto,
+			},
+			FACILITY_OWNER: {
+				summary: 'Facility Owner account',
+				value: {
+					email: 'owner1@test.com',
 					password: '123123123',
 				} as LoginDto,
 			},
@@ -126,8 +138,9 @@ export class AuthController {
 		},
 	})
 	@Post('logout')
-	async logout() {
-		this.authService.logout();
+	@HttpCode(HttpStatus.NO_CONTENT)
+	async logout(@GetCurrentUser('sub') userID: string): Promise<boolean> {
+		return this.authService.logout(userID);
 	}
 
 	@ApiOperation({ summary: 'refreshToken', description: 'Refresh new token' })
@@ -151,8 +164,14 @@ export class AuthController {
 		},
 	})
 	@Post('refresh-token')
-	refreshTokens() {
-		return this.authService.refreshTokens();
+	@Public()
+	@UseGuards(RefreshTokenGuard)
+	@HttpCode(HttpStatus.OK)
+	refreshTokens(
+		@GetCurrentUser('sub') userID: string,
+		@GetCurrentUser('refreshToken') refreshToken: string,
+	): Promise<TokenResponse> {
+		return this.authService.refreshTokens(userID, refreshToken);
 	}
 
 	@ApiOperation({
@@ -206,45 +225,5 @@ export class AuthController {
 	@Patch('reset-password/:resetPasswordToken')
 	resetPassword() {
 		return 'resetPassword';
-	}
-
-	@ApiOperation({
-		summary: 'updatePassword',
-		description: 'Allow user update password',
-	})
-	@ApiCreatedResponse({ type: TokenResponse, status: 200 })
-	@ApiResponse({
-		status: 400,
-		schema: {
-			example: {
-				code: '400',
-				message: 'Input invalid',
-				details: null,
-			} as ErrorResponse<null>,
-		},
-	})
-	@ApiResponse({
-		status: 401,
-		schema: {
-			example: {
-				code: '401',
-				message: 'Unauthorized',
-				details: null,
-			} as ErrorResponse<null>,
-		},
-	})
-	@ApiResponse({
-		status: 403,
-		schema: {
-			example: {
-				code: '403',
-				message: `Forbidden resource`,
-				details: null,
-			} as ErrorResponse<null>,
-		},
-	})
-	@Patch('update-password')
-	updatePassword() {
-		return 'updatePassword';
 	}
 }

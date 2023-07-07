@@ -10,9 +10,8 @@ import {
 } from './entities/facility-schedule.entity';
 import { InjectModel } from '@nestjs/mongoose';
 import { Model } from 'mongoose';
-import { CreateFacilityScheduleDto } from './dto/create-facility-schedule-dto';
 import { ListOptions, ListResponse } from 'src/shared/response/common-response';
-import { UpdateFacilityScheduleDto } from './dto/update-facility-schedule-dto';
+import { FacilityScheduleDto } from './dto/facility-schedule-dto';
 
 export type ConditionSchedule = {
 	facilityID?: string;
@@ -70,7 +69,6 @@ export class FacilityScheduleService {
 			.sort({ [sortField]: sortOrder === 'asc' ? 1 : -1 })
 			.limit(limit)
 			.skip(offset);
-		if (!schedules.length) throw new NotFoundException('Schedules not found');
 
 		return {
 			items: schedules,
@@ -81,7 +79,7 @@ export class FacilityScheduleService {
 
 	async create(
 		facilityID: string,
-		data: CreateFacilityScheduleDto,
+		data: FacilityScheduleDto,
 	): Promise<FacilitySchedule> {
 		const isExist = await this.scheduleModel.findOne({
 			facilityID,
@@ -100,8 +98,20 @@ export class FacilityScheduleService {
 
 	async update(
 		scheduleID: string,
-		data: UpdateFacilityScheduleDto,
+		data: FacilityScheduleDto,
 	): Promise<FacilitySchedule> {
+		const scheduleCurrent = await this.findOneByID(scheduleID);
+		const isExist = await this.scheduleModel.findOne({
+			facilityID: scheduleCurrent.facilityID.toString(),
+			type: data.type,
+			_id: { $ne: scheduleID },
+		});
+		if (isExist) {
+			throw new BadRequestException(
+				`${data.type} STYLE SCHEDULE ALREADY EXISTS`,
+			);
+		}
+
 		const schedule = await this.scheduleModel.findByIdAndUpdate(
 			scheduleID,
 			data,

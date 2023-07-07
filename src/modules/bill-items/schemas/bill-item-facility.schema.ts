@@ -1,5 +1,6 @@
 import { Prop, Schema, SchemaFactory } from '@nestjs/mongoose';
-import { HydratedDocument } from 'mongoose';
+import mongoose, { HydratedDocument } from 'mongoose';
+import { Photo } from 'src/modules/photo/schemas/photo.schema';
 
 export type BillItemFacilityDocument = HydratedDocument<BillItemFacility>;
 
@@ -7,9 +8,6 @@ export type BillItemFacilityDocument = HydratedDocument<BillItemFacility>;
 export class BillItemFacility {
 	@Prop({ required: true, type: String })
 	brandName: string;
-
-	@Prop({ required: true, type: String })
-	ownerFacilityName: string;
 
 	@Prop({ required: true, type: String })
 	facilityName: string;
@@ -25,11 +23,32 @@ export class BillItemFacility {
 		communeCode: string;
 	};
 
-	@Prop({ type: Array })
-	facilityCoordinatesLocation?: [number, number];
+	// @Prop({ type: Array })
+	@Prop({
+		type: {
+			type: String,
+			enum: ['Point'],
+			default: 'Point',
+		},
+		coordinates: {
+			type: [Number],
+			required: true,
+		},
+	})
+	facilityCoordinatesLocation?: {
+		type: string;
+		coordinates: [number, number];
+	};
 
-	@Prop({ type: String })
-	facilityPhoto?: string;
+	@Prop({
+		type: [{ type: mongoose.Schema.Types.ObjectId, ref: 'Photo', defautl: [] }],
+		validate: {
+			validator: (photos: any[]) => photos.length <= 5,
+			message: 'Facility have 5 photo latest',
+		},
+		default: [],
+	})
+	facilityPhotos?: Photo[];
 }
 
 export const BillItemFacilitySchema =

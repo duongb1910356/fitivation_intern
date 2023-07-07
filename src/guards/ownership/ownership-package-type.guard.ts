@@ -11,7 +11,7 @@ export class OwnershipPackageTypeGuard implements CanActivate {
 
 		const isOwner = await this.packageTypeService.isOwner(
 			packageTypeID,
-			user.uid,
+			user.sub,
 		);
 
 		return isOwner;

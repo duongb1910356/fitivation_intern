@@ -6,12 +6,16 @@ import {
 	MinDate,
 } from 'class-validator';
 import { IsStartDateBeforeEndDate } from './holiday-validator';
-import { Transform } from 'class-transformer';
+import { Transform, TransformFnParams } from 'class-transformer';
 
 export class HolidayDto {
 	@IsNotEmpty()
 	@IsDate()
-	@Transform(({ value }) => new Date(value))
+	@Transform(({ value }: TransformFnParams) => {
+		const date = new Date(value);
+		date.setMinutes(0, 0, 0);
+		return date;
+	})
 	@MinDate(new Date())
 	@IsStartDateBeforeEndDate()
 	startDate: Date;
@@ -19,7 +23,11 @@ export class HolidayDto {
 	@IsNotEmpty()
 	@IsDate()
 	@MinDate(new Date())
-	@Transform(({ value }) => new Date(value))
+	@Transform(({ value }: TransformFnParams) => {
+		const date = new Date(value);
+		date.setMinutes(0, 0, 0);
+		return date;
+	})
 	endDate: Date;
 
 	@IsOptional()

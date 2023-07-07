@@ -7,7 +7,7 @@ import {
 	Patch,
 	Post,
 	Query,
-	UseGuards,
+	Req,
 } from '@nestjs/common';
 import {
 	ApiBadRequestResponse,
@@ -23,9 +23,7 @@ import {
 	ApiTags,
 	ApiUnauthorizedResponse,
 } from '@nestjs/swagger';
-import { Roles } from 'src/decorators/role.decorator';
-import { RolesGuard } from 'src/guards/role.guard';
-import { User, UserRole } from '../users/schemas/user.schema';
+import { User } from '../users/schemas/user.schema';
 import { ApiDocsPagination } from 'src/decorators/swagger-form-data.decorator';
 import {
 	ListOptions,
@@ -33,7 +31,7 @@ import {
 	ErrorResponse,
 } from 'src/shared/response/common-response';
 import { Attendance } from '../attendance/entities/attendance.entity';
-import { Facility, State } from '../facility/schemas/facility.schema';
+import { Facility, State, Status } from '../facility/schemas/facility.schema';
 import { CreateCategoryDto } from '../facility-category/dto/create-category-dto';
 import { UpdateCategoryDto } from '../facility-category/dto/update-category-dto';
 import { FacilityCategory } from '../facility-category/entities/facility-category';
@@ -57,12 +55,15 @@ import {
 import { ConditionHoliday, HolidayService } from '../holiday/holiday.service';
 import { AttendanceService } from '../attendance/attendance.service';
 import { Public } from '../auth/decorators/public.decorator';
+import { MongoIdValidationPipe } from 'src/pipes/parseMongoId.pipe';
+import { UpdateStatusFacilityDto } from '../facility/dto/update-status-facility';
+import { FacilityService } from '../facility/facility.service';
 
 @ApiTags('admin')
 // @ApiBearerAuth()
 // @UseGuards(RolesGuard)
 // @Roles(UserRole.ADMIN)
-@Public()
+// @Public()
 @Controller('admin')
 export class AdminController {
 	constructor(
@@ -72,12 +73,14 @@ export class AdminController {
 		private readonly facilityScheduleService: FacilityScheduleService,
 		private readonly holidayService: HolidayService,
 		private readonly attendanceService: AttendanceService,
+		private readonly facilityService: FacilityService,
 	) {}
 
 	//FACILITIES
-	@Patch('facilities/:facilityID/changeState')
+	@Patch('facilities/:facilityID/changeStatus')
+	@ApiBearerAuth()
 	@ApiOperation({
-		summary: 'Update facility state',
+		summary: 'Update facility status',
 		description: `Only admin can use this API`,
 	})
 	@ApiParam({
@@ -91,14 +94,14 @@ export class AdminController {
 			ACTIVE: {
 				summary: 'ACTIVE',
 				value: {
-					state: State.ACTIVE,
-				} as UpdateFacilityStateDto,
+					status: Status.APPROVED,
+				} as UpdateStatusFacilityDto,
 			},
-			INACTIVE: {
-				summary: 'INACTIVE',
+			PENDING: {
+				summary: 'PENDING',
 				value: {
-					state: State.INACTIVE,
-				} as UpdateFacilityStateDto,
+					status: Status.PENDING,
+				} as UpdateStatusFacilityDto,
 			},
 		},
 	})
@@ -131,7 +134,7 @@ export class AdminController {
 		schema: {
 			example: {
 				code: '404',
-				message: 'Not found category to update!',
+				message: 'Not found facility to update!',
 				details: null,
 			} as ErrorResponse<null>,
 		},
@@ -146,10 +149,12 @@ export class AdminController {
 		},
 	})
 	updateFacilityState(
-		@Param('facilityID') facilityID: string,
-		@Body() data: UpdateFacilityStateDto,
+		@Param('facilityID', MongoIdValidationPipe) facilityID: string,
+		@Body() data: UpdateStatusFacilityDto,
+		@Req() req: any,
 	) {
-		console.log(facilityID, data);
+		console.log('data ', data);
+		return this.facilityService.updateStatus(facilityID, req, data.status);
 	}
 
 	// ATTENDANCES
@@ -209,7 +214,7 @@ export class AdminController {
 	})
 	async getAllAttendancesByFacility(
 		@Query() options: ListOptions<Attendance>,
-		@Param('facilityID') facilityID: string,
+		@Param('facilityID', MongoIdValidationPipe) facilityID: string,
 	) {
 		return await this.attendanceService.findMany({ facilityID }, options);
 	}
@@ -270,7 +275,7 @@ export class AdminController {
 	})
 	async getAllAttendancesByUser(
 		@Query() options: ListOptions<Attendance>,
-		@Param('userID') userID: string,
+		@Param('userID', MongoIdValidationPipe) userID: string,
 	) {
 		return await this.attendanceService.findMany(
 			{ accountID: userID },
@@ -331,7 +336,9 @@ export class AdminController {
 			} as ErrorResponse<null>,
 		},
 	})
-	async deteleAttendance(@Param('attendanceID') attendanceID: string) {
+	async deteleAttendance(
+		@Param('attendanceID', MongoIdValidationPipe) attendanceID: string,
+	) {
 		return await this.attendanceService.delete(attendanceID);
 	}
 
@@ -462,7 +469,7 @@ export class AdminController {
 		},
 	})
 	async updateCategory(
-		@Param('categoryID') categoryID: string,
+		@Param('categoryID', MongoIdValidationPipe) categoryID: string,
 		@Body() data: UpdateCategoryDto,
 	) {
 		return await this.facilityCategoryService.update(categoryID, data);
@@ -521,7 +528,9 @@ export class AdminController {
 			} as ErrorResponse<null>,
 		},
 	})
-	deleteCategory(@Param('categoryID') categoryID: string) {
+	deleteCategory(
+		@Param('categoryID', MongoIdValidationPipe) categoryID: string,
+	) {
 		return this.facilityCategoryService.delete(categoryID);
 	}
 
@@ -556,12 +565,12 @@ export class AdminController {
 							{
 								shift: [
 									{
-										startTime: new Date('7/10/2023 06:00:00'),
-										endTime: new Date('7/10/2023 12:00:00'),
+										startTime: '06:00',
+										endTime: '12:00',
 									},
 									{
-										startTime: new Date('7/10/2023 13:00:00'),
-										endTime: new Date('7/10/2023 19:00:00'),
+										startTime: '13:00',
+										endTime: '19:00',
 									},
 								] as ShiftTime[],
 							},
@@ -613,7 +622,6 @@ export class AdminController {
 				type: options.type,
 			};
 		}
-		console.log(condition);
 		return await this.facilityScheduleService.findMany(condition, options);
 	}
 
@@ -725,6 +733,7 @@ export class AdminController {
 						facilityID: {} as unknown as Facility,
 						type: TimeType.ONE_MONTH,
 						price: 100000,
+						benefits: ['Use of bathroom', 'Use of massage chair'],
 						createdAt: new Date(),
 						updatedAt: new Date(),
 					} as Package,

@@ -1,10 +1,17 @@
-import { Controller, Get, Param, Post, Query } from '@nestjs/common';
+import {
+	Controller,
+	Delete,
+	Get,
+	Param,
+	Query,
+	UseGuards,
+} from '@nestjs/common';
 import {
 	ApiOperation,
 	ApiResponse,
 	ApiTags,
 	ApiParam,
-	ApiBody,
+	ApiBearerAuth,
 } from '@nestjs/swagger';
 import { BillsService } from './bills.service';
 import { Bill, BillStatus, PaymentMethod } from './schemas/bill.schema';
@@ -13,11 +20,7 @@ import {
 	BillItemStatus,
 } from '../bill-items/schemas/bill-item.schema';
 import { ApiDocsPagination } from 'src/decorators/swagger-form-data.decorator';
-import {
-	ErrorResponse,
-	ListOptions,
-	ListResponse,
-} from 'src/shared/response/common-response';
+import { ErrorResponse } from 'src/shared/response/common-response';
 import {
 	CustomerType,
 	Promotion,
@@ -26,19 +29,28 @@ import {
 	PromotionType,
 } from '../promotions/schemas/promotion.schema';
 import { TimeType } from '../package/entities/package.entity';
-import { CreatePromotionDto } from '../promotions/dto/create-promotion-dto';
 import { BillItemPackage } from '../bill-items/schemas/bill-item-package.schema';
 import { BillItemPackageType } from '../bill-items/schemas/bill-item-package-type.schema';
 import { BillItemFacility } from '../bill-items/schemas/bill-item-facility.schema';
+import { GetCurrentUser } from 'src/decorators/get-current-user.decorator';
+import { ListResponse, QueryObject } from 'src/shared/utils/query-api';
+import { TokenPayload } from '../auth/types/token-payload.type';
+import { UserRole } from '../users/schemas/user.schema';
+import { Roles } from 'src/decorators/role.decorator';
+import { RolesGuard } from 'src/guards/role.guard';
+import { BillItemsService } from '../bill-items/bill-items.service';
 
 @Controller('bills')
 @ApiTags('bills')
+@ApiBearerAuth()
 export class BillsController {
-	constructor(private readonly billsService: BillsService) {}
+	constructor(
+		private readonly billsService: BillsService,
+		private readonly billItemsService: BillItemsService,
+	) {}
 
-	@Get()
 	@ApiOperation({
-		summary: 'getManyBills',
+		summary: 'findManyBills',
 		description: 'Get many bills',
 	})
 	@ApiDocsPagination('bill')
@@ -49,21 +61,23 @@ export class BillsController {
 				items: [
 					{
 						_id: '_id',
-						accountID: {},
+						accountID: 'string',
 						billItems: [
 							{
 								_id: '_id',
-								brandID: {},
-								facilityID: {},
-								packageTypeID: {},
-								packageID: {},
+								brandID: 'string',
+								facilityID: 'string',
+								packageTypeID: 'string',
+								packageID: 'string',
+								ownerFacilityID: 'string',
+								accountID: 'string',
 								facilityInfo: {
 									brandName: 'string',
-									ownerFacilityName: 'string',
-									facilityName: 'string',
 									facilityAddress: {},
-									facilityCoordinatesLocation: [1, 1],
-									facilityPhoto: 'string',
+									facilityCoordinatesLocation: {
+										coordinates: [10.027851057940572, 105.77291088739058],
+									},
+									facilityPhotos: [],
 								} as BillItemFacility,
 								packageTypeInfo: {
 									name: 'string',
@@ -76,7 +90,7 @@ export class BillsController {
 								} as BillItemPackage,
 								promotions: [
 									{
-										targetID: {},
+										targetID: 'string',
 										type: PromotionType.PACKAGE,
 										name: 'string',
 										description: 'string',
@@ -150,14 +164,12 @@ export class BillsController {
 					},
 				] as Bill[],
 				total: 1,
-				options: {
-					limit: 1,
-					offset: 0,
-					searchField: {},
-					searchValue: '',
-					sortField: 'createdAt',
-					sortOrder: 'asc',
-				} as ListOptions<Bill>,
+				queryOptions: {
+					sort: 'string',
+					fields: 'string',
+					limit: 10,
+					page: 0,
+				} as QueryObject,
 			} as ListResponse<Bill>,
 		},
 	})
@@ -191,13 +203,18 @@ export class BillsController {
 			},
 		},
 	})
-	getManyBills(@Query() filter: ListOptions<Bill>) {
-		return 'getManyBills';
+	@Get()
+	@Roles(UserRole.ADMIN, UserRole.MEMBER)
+	@UseGuards(RolesGuard)
+	findManyBills(
+		@GetCurrentUser() user: TokenPayload,
+		@Query() query: QueryObject,
+	): Promise<ListResponse<Bill>> {
+		return this.billsService.findMany(query, user);
 	}
 
-	@Get(':id')
 	@ApiOperation({
-		summary: 'getOneBill',
+		summary: 'findOneBill',
 		description: 'Get one bill',
 	})
 	@ApiParam({ name: 'id', type: String, description: 'Bill ID' })
@@ -205,68 +222,249 @@ export class BillsController {
 		status: 200,
 		schema: {
 			example: {
+				_id: '_id',
+				accountID: 'string',
+				billItems: [
+					{
+						_id: '_id',
+						brandID: 'string',
+						facilityID: 'string',
+						packageTypeID: 'string',
+						packageID: 'string',
+						ownerFacilityID: 'string',
+						accountID: 'string',
+						facilityInfo: {
+							brandName: 'string',
+							facilityAddress: {},
+							facilityCoordinatesLocation: {
+								coordinates: [10.027851057940572, 105.77291088739058],
+							},
+							facilityPhotos: [],
+						} as BillItemFacility,
+						packageTypeInfo: {
+							name: 'string',
+							description: 'string',
+							price: 1,
+						} as BillItemPackageType,
+						packageInfo: {
+							type: TimeType.ONE_MONTH,
+							price: 1,
+						} as BillItemPackage,
+						promotions: [
+							{
+								targetID: 'string',
+								type: PromotionType.PACKAGE,
+								name: 'string',
+								description: 'string',
+								couponCode: 'string',
+								value: 1,
+								method: PromotionMethod.NUMBER,
+								minPriceApply: 1,
+								maxValue: 1,
+								maxQuantity: 1,
+								startDate: new Date(),
+								endDate: new Date(),
+								customerType: CustomerType.CUSTOMER,
+								status: PromotionStatus.ACTIVE,
+								createdAt: new Date(),
+								updatedAt: new Date(),
+							},
+						] as Promotion[],
+						promotionPrice: 1,
+						totalPrice: 1,
+						status: BillItemStatus.ACTIVE,
+						createdAt: new Date(),
+						updatedAt: new Date(),
+					},
+				] as BillItem[],
+				paymentMethod: PaymentMethod.CREDIT_CARD,
+				taxes: 0,
+				description: 'string',
+				promotions: [
+					{
+						targetID: {},
+						type: PromotionType.FACILITY,
+						name: 'string',
+						description: 'string',
+						couponCode: 'string',
+						value: 1,
+						method: PromotionMethod.NUMBER,
+						minPriceApply: 1,
+						maxValue: 1,
+						maxQuantity: 1,
+						startDate: new Date(),
+						endDate: new Date(),
+						customerType: CustomerType.CUSTOMER,
+						status: PromotionStatus.ACTIVE,
+						createdAt: new Date(),
+						updatedAt: new Date(),
+					},
+					{
+						targetID: {},
+						type: PromotionType.BILL,
+						name: 'string',
+						description: 'string',
+						couponCode: 'string',
+						value: 1,
+						method: PromotionMethod.NUMBER,
+						minPriceApply: 1,
+						maxValue: 1,
+						maxQuantity: 1,
+						startDate: new Date(),
+						endDate: new Date(),
+						customerType: CustomerType.CUSTOMER,
+						status: PromotionStatus.ACTIVE,
+						createdAt: new Date(),
+						updatedAt: new Date(),
+					},
+				],
+				promotionPrice: 0,
+				totalPrice: 0,
+				status: BillStatus.ACTIVE,
+				createdAt: new Date(),
+				updatedAt: new Date(),
+			} as Bill,
+		},
+	})
+	@ApiResponse({
+		status: 400,
+		schema: {
+			example: {
+				code: '400',
+				message: 'Bad request',
+				details: null,
+			} as ErrorResponse<null>,
+		},
+	})
+	@ApiResponse({
+		status: 401,
+		schema: {
+			example: {
+				code: '401',
+				message: 'Unauthorized',
+				details: null,
+			} as ErrorResponse<null>,
+		},
+	})
+	@ApiResponse({
+		status: 403,
+		schema: {
+			example: {
+				code: '403',
+				message: `Forbidden resource`,
+				details: null,
+			} as ErrorResponse<null>,
+		},
+	})
+	@ApiResponse({
+		status: 404,
+		schema: {
+			example: {
+				code: '404',
+				message: 'Not found document with that ID',
+				details: null,
+			} as ErrorResponse<null>,
+		},
+	})
+	@Get(':id')
+	@Roles(UserRole.ADMIN, UserRole.MEMBER)
+	@UseGuards(RolesGuard)
+	findOneBill(
+		@Param('id') billID: string,
+		@GetCurrentUser() user: TokenPayload,
+	): Promise<Bill> {
+		return this.billsService.findOneByID(billID, user);
+	}
+
+	@ApiOperation({
+		summary: 'deleteBill',
+		description: 'Allow admin to delete one bill',
+	})
+	@ApiParam({ name: 'id', type: String, description: 'Bill ID' })
+	@ApiResponse({
+		status: 200,
+		schema: {
+			example: true,
+		},
+	})
+	@ApiResponse({
+		status: 401,
+		schema: {
+			example: {
+				code: '401',
+				message: 'Unauthorized',
+				details: null,
+			} as ErrorResponse<null>,
+		},
+	})
+	@ApiResponse({
+		status: 403,
+		schema: {
+			example: {
+				code: '403',
+				message: `Forbidden resource`,
+				details: null,
+			} as ErrorResponse<null>,
+		},
+	})
+	@ApiResponse({
+		status: 404,
+		schema: {
+			example: {
+				code: '404',
+				message: 'Not found document with that ID',
+				details: null,
+			} as ErrorResponse<null>,
+		},
+	})
+	@Delete(':id')
+	@Roles(UserRole.ADMIN)
+	@UseGuards(RolesGuard)
+	deleteBill(@Param('id') id: string): Promise<boolean> {
+		return this.billsService.deleteOneByID(id);
+	}
+
+	@ApiOperation({
+		summary: 'findOneBillItem',
+		description:
+			'Allow customer to get one of their bill-items\n\nAllow admin to get one of bill-item\n\nAllow facility owner to get one of bill-item',
+	})
+	@ApiParam({ name: 'id', type: String, description: 'Bill-item ID' })
+	@ApiResponse({
+		status: 200,
+		schema: {
+			example: {
 				items: [
 					{
 						_id: '_id',
-						accountID: {},
-						billItems: [
-							{
-								_id: '_id',
-								brandID: {},
-								facilityID: {},
-								packageTypeID: {},
-								packageID: {},
-								facilityInfo: {
-									brandName: 'string',
-									ownerFacilityName: 'string',
-									facilityName: 'string',
-									facilityAddress: {},
-									facilityCoordinatesLocation: [1, 1],
-									facilityPhoto: 'string',
-								} as BillItemFacility,
-								packageTypeInfo: {
-									name: 'string',
-									description: 'string',
-									price: 1,
-								} as BillItemPackageType,
-								packageInfo: {
-									type: TimeType.ONE_MONTH,
-									price: 1,
-								} as BillItemPackage,
-								promotions: [
-									{
-										targetID: {},
-										type: PromotionType.PACKAGE,
-										name: 'string',
-										description: 'string',
-										couponCode: 'string',
-										value: 1,
-										method: PromotionMethod.NUMBER,
-										minPriceApply: 1,
-										maxValue: 1,
-										maxQuantity: 1,
-										startDate: new Date(),
-										endDate: new Date(),
-										customerType: CustomerType.CUSTOMER,
-										status: PromotionStatus.ACTIVE,
-										createdAt: new Date(),
-										updatedAt: new Date(),
-									},
-								] as Promotion[],
-								promotionPrice: 1,
-								totalPrice: 1,
-								status: BillItemStatus.ACTIVE,
-								createdAt: new Date(),
-								updatedAt: new Date(),
+						brandID: 'string',
+						facilityID: 'string',
+						packageTypeID: 'string',
+						packageID: 'string',
+						ownerFacilityID: 'string',
+						accountID: 'string',
+						facilityInfo: {
+							brandName: 'string',
+							facilityName: 'string',
+							facilityAddress: {},
+							facilityCoordinatesLocation: {
+								coordinates: [10.027851057940572, 105.77291088739058],
 							},
-						] as BillItem[],
-						paymentMethod: PaymentMethod.CREDIT_CARD,
-						taxes: 0,
-						description: 'string',
+							facilityPhotos: [],
+						} as BillItemFacility,
+						packageTypeInfo: {
+							name: 'string',
+							description: 'string',
+							price: 1,
+						} as BillItemPackageType,
+						packageInfo: {
+							type: TimeType.ONE_MONTH,
+							price: 1,
+						} as BillItemPackage,
 						promotions: [
 							{
-								targetID: {},
-								type: PromotionType.FACILITY,
+								targetID: 'string',
+								type: PromotionType.PACKAGE,
 								name: 'string',
 								description: 'string',
 								couponCode: 'string',
@@ -282,42 +480,22 @@ export class BillsController {
 								createdAt: new Date(),
 								updatedAt: new Date(),
 							},
-							{
-								targetID: {},
-								type: PromotionType.BILL,
-								name: 'string',
-								description: 'string',
-								couponCode: 'string',
-								value: 1,
-								method: PromotionMethod.NUMBER,
-								minPriceApply: 1,
-								maxValue: 1,
-								maxQuantity: 1,
-								startDate: new Date(),
-								endDate: new Date(),
-								customerType: CustomerType.CUSTOMER,
-								status: PromotionStatus.ACTIVE,
-								createdAt: new Date(),
-								updatedAt: new Date(),
-							},
-						],
-						promotionPrice: 0,
-						totalPrice: 0,
-						status: BillStatus.ACTIVE,
+						] as Promotion[],
+						promotionPrice: 1,
+						totalPrice: 1,
+						status: BillItemStatus.ACTIVE,
 						createdAt: new Date(),
 						updatedAt: new Date(),
 					},
-				] as Bill[],
+				] as BillItem[],
 				total: 1,
-				options: {
-					limit: 1,
-					offset: 0,
-					searchField: {},
-					searchValue: '',
-					sortField: 'createdAt',
-					sortOrder: 'asc',
-				} as ListOptions<Bill>,
-			} as ListResponse<Bill>,
+				queryOptions: {
+					sort: 'string',
+					fields: 'string',
+					limit: 10,
+					page: 0,
+				} as QueryObject,
+			} as ListResponse<BillItem>,
 		},
 	})
 	@ApiResponse({
@@ -360,249 +538,251 @@ export class BillsController {
 			} as ErrorResponse<null>,
 		},
 	})
-	getOneBill(@Param('id') id: string) {
-		return 'getOneBill';
+	@Get('bill-items/:id')
+	@Roles(UserRole.ADMIN, UserRole.FACILITY_OWNER, UserRole.MEMBER)
+	@UseGuards(RolesGuard)
+	findOneBillItem(
+		@Param('id') id: string,
+		@GetCurrentUser() user: TokenPayload,
+	): Promise<BillItem> {
+		return this.billItemsService.findOneByID(id, user);
 	}
 
-	@Get('promotions')
-	@ApiDocsPagination('promotion')
-	@ApiOperation({
-		summary: 'getManyBillPromotions',
-		description: 'Allow user to get many bills promotions',
-	})
-	@ApiResponse({
-		status: 200,
-		schema: {
-			example: {
-				items: [
-					{
-						targetID: 'string',
-						type: PromotionType.BILL,
-						name: 'string',
-						description: 'string',
-						couponCode: 'string',
-						value: 1,
-						method: PromotionMethod.NUMBER,
-						minPriceApply: 0,
-						maxQuantity: 0,
-						startDate: new Date(),
-						endDate: new Date(),
-						customerType: CustomerType.CUSTOMER,
-						status: PromotionStatus.ACTIVE,
-						createdAt: new Date(),
-						updatedAt: new Date(),
-					},
-				] as Promotion[],
-				total: 1,
-				options: {
-					limit: 1,
-					offset: 0,
-					searchField: {},
-					searchValue: '',
-					sortField: 'createdAt',
-					sortOrder: 'asc',
-				} as ListOptions<Promotion>,
-			} as ListResponse<Promotion>,
-		},
-	})
-	@ApiResponse({
-		status: 400,
-		schema: {
-			example: {
-				code: '400',
-				message: 'Bad request',
-				details: null,
-			} as ErrorResponse<null>,
-		},
-	})
-	@ApiResponse({
-		status: 401,
-		schema: {
-			example: {
-				code: '401',
-				message: 'Unauthorized',
-				details: null,
-			} as ErrorResponse<null>,
-		},
-	})
-	@ApiResponse({
-		status: 403,
-		schema: {
-			example: {
-				code: '403',
-				message: `Forbidden resource`,
-				details: null,
-			} as ErrorResponse<null>,
-		},
-	})
-	getManyBillPromotions(@Query() filter: ListOptions<Promotion>) {
-		return 'getManyPromotions';
-	}
+	// 	@ApiDocsPagination('promotion')
+	// 	@ApiOperation({
+	// 		summary: 'findManyBillPromotions',
+	// 		description: 'Allow user to get many bills promotions',
+	// 	})
+	// 	@ApiResponse({
+	// 		status: 200,
+	// 		schema: {
+	// 			example: {
+	// 				items: [
+	// 					{
+	// 						targetID: 'string',
+	// 						type: PromotionType.BILL,
+	// 						name: 'string',
+	// 						description: 'string',
+	// 						couponCode: 'string',
+	// 						value: 1,
+	// 						method: PromotionMethod.NUMBER,
+	// 						minPriceApply: 0,
+	// 						maxQuantity: 0,
+	// 						startDate: new Date(),
+	// 						endDate: new Date(),
+	// 						customerType: CustomerType.CUSTOMER,
+	// 						status: PromotionStatus.ACTIVE,
+	// 						createdAt: new Date(),
+	// 						updatedAt: new Date(),
+	// 					},
+	// 				] as Promotion[],
+	// 				total: 1,
+	// 				queryOptions: {
+	// 					sort: 'string',
+	// 					fields: 'string',
+	// 					limit: 10,
+	// 					page: 0,
+	// 				} as QueryObject,
+	// 			} as ListResponse<Promotion>,
+	// 		},
+	// 	})
+	// 	@ApiResponse({
+	// 		status: 400,
+	// 		schema: {
+	// 			example: {
+	// 				code: '400',
+	// 				message: 'Bad request',
+	// 				details: null,
+	// 			} as ErrorResponse<null>,
+	// 		},
+	// 	})
+	// 	@ApiResponse({
+	// 		status: 401,
+	// 		schema: {
+	// 			example: {
+	// 				code: '401',
+	// 				message: 'Unauthorized',
+	// 				details: null,
+	// 			} as ErrorResponse<null>,
+	// 		},
+	// 	})
+	// 	@ApiResponse({
+	// 		status: 403,
+	// 		schema: {
+	// 			example: {
+	// 				code: '403',
+	// 				message: `Forbidden resource`,
+	// 				details: null,
+	// 			} as ErrorResponse<null>,
+	// 		},
+	// 	})
+	// 	@Get('promotions')
+	// 	findManyBillPromotions(@Query() filter: ListOptions<Promotion>) {
+	// 		return 'findManyPromotions';
+	// 	}
 
-	@Get('promotions/:id')
-	@ApiOperation({
-		summary: 'getOneBillPromotion',
-		description: 'Allow user to get one bill promotion',
-	})
-	@ApiParam({ name: 'id', type: String, description: 'Promotion ID' })
-	@ApiResponse({
-		status: 200,
-		schema: {
-			example: {
-				items: [
-					{
-						targetID: 'string',
-						type: PromotionType.BILL,
-						name: 'string',
-						description: 'string',
-						couponCode: 'string',
-						value: 1,
-						method: PromotionMethod.NUMBER,
-						minPriceApply: 0,
-						maxQuantity: 0,
-						startDate: new Date(),
-						endDate: new Date(),
-						customerType: CustomerType.CUSTOMER,
-						status: PromotionStatus.ACTIVE,
-						createdAt: new Date(),
-						updatedAt: new Date(),
-					},
-				] as Promotion[],
-				total: 1,
-				options: {
-					limit: 1,
-					offset: 0,
-					searchField: {},
-					searchValue: '',
-					sortField: 'createdAt',
-					sortOrder: 'asc',
-				} as ListOptions<Promotion>,
-			} as ListResponse<Promotion>,
-		},
-	})
-	@ApiResponse({
-		status: 400,
-		schema: {
-			example: {
-				code: '400',
-				message: 'Bad request',
-				details: null,
-			} as ErrorResponse<null>,
-		},
-	})
-	@ApiResponse({
-		status: 401,
-		schema: {
-			example: {
-				code: '401',
-				message: 'Unauthorized',
-				details: null,
-			} as ErrorResponse<null>,
-		},
-	})
-	@ApiResponse({
-		status: 403,
-		schema: {
-			example: {
-				code: '403',
-				message: `Forbidden resource`,
-				details: null,
-			} as ErrorResponse<null>,
-		},
-	})
-	@ApiResponse({
-		status: 404,
-		schema: {
-			example: {
-				code: '404',
-				message: 'Not found document with that ID',
-				details: null,
-			} as ErrorResponse<null>,
-		},
-	})
-	getOneBillPromotion(@Param('id') id: string) {
-		return 'getOneBillPromotion';
-	}
+	// 	@ApiOperation({
+	// 		summary: 'findOneBillPromotion',
+	// 		description: 'Allow user to get one bill promotion',
+	// 	})
+	// 	@ApiParam({ name: 'id', type: String, description: 'Promotion ID' })
+	// 	@ApiResponse({
+	// 		status: 200,
+	// 		schema: {
+	// 			example: {
+	// 				items: [
+	// 					{
+	// 						targetID: 'string',
+	// 						type: PromotionType.BILL,
+	// 						name: 'string',
+	// 						description: 'string',
+	// 						couponCode: 'string',
+	// 						value: 1,
+	// 						method: PromotionMethod.NUMBER,
+	// 						minPriceApply: 0,
+	// 						maxQuantity: 0,
+	// 						startDate: new Date(),
+	// 						endDate: new Date(),
+	// 						customerType: CustomerType.CUSTOMER,
+	// 						status: PromotionStatus.ACTIVE,
+	// 						createdAt: new Date(),
+	// 						updatedAt: new Date(),
+	// 					},
+	// 				] as Promotion[],
+	// 				total: 1,
+	// 				queryOptions: {
+	// 					sort: 'string',
+	// 					fields: 'string',
+	// 					limit: 10,
+	// 					page: 0,
+	// 				} as QueryObject,
+	// 			} as ListResponse<Promotion>,
+	// 		},
+	// 	})
+	// 	@ApiResponse({
+	// 		status: 400,
+	// 		schema: {
+	// 			example: {
+	// 				code: '400',
+	// 				message: 'Bad request',
+	// 				details: null,
+	// 			} as ErrorResponse<null>,
+	// 		},
+	// 	})
+	// 	@ApiResponse({
+	// 		status: 401,
+	// 		schema: {
+	// 			example: {
+	// 				code: '401',
+	// 				message: 'Unauthorized',
+	// 				details: null,
+	// 			} as ErrorResponse<null>,
+	// 		},
+	// 	})
+	// 	@ApiResponse({
+	// 		status: 403,
+	// 		schema: {
+	// 			example: {
+	// 				code: '403',
+	// 				message: `Forbidden resource`,
+	// 				details: null,
+	// 			} as ErrorResponse<null>,
+	// 		},
+	// 	})
+	// 	@ApiResponse({
+	// 		status: 404,
+	// 		schema: {
+	// 			example: {
+	// 				code: '404',
+	// 				message: 'Not found document with that ID',
+	// 				details: null,
+	// 			} as ErrorResponse<null>,
+	// 		},
+	// 	})
+	// 	@Get('promotions/:id')
+	// 	findOneBillPromotion(@Param('id') id: string) {
+	// 		return 'getOneBillPromotion';
+	// 	}
 
-	@Post('/promotions')
-	@ApiOperation({
-		summary: 'createBillPromotion',
-		description: 'Allow admin to create one bill promotion',
-	})
-	@ApiBody({
-		type: CreatePromotionDto,
-		examples: {
-			ADMIN: {
-				value: {
-					targetID: 'string',
-					type: PromotionType.BILL,
-					name: 'string',
-					description: 'string',
-					couponCode: 'string',
-					value: 1,
-					method: PromotionMethod.NUMBER,
-					minPriceApply: 0,
-					maxQuantity: 0,
-					startDate: new Date(),
-					endDate: new Date(),
-					customerType: CustomerType.CUSTOMER,
-				},
-			},
-		},
-	})
-	@ApiResponse({
-		status: 201,
-		schema: {
-			example: {
-				targetID: 'string',
-				type: PromotionType.BILL,
-				name: 'string',
-				description: 'string',
-				couponCode: 'string',
-				value: 1,
-				method: PromotionMethod.NUMBER,
-				minPriceApply: 0,
-				maxQuantity: 0,
-				startDate: new Date(),
-				endDate: new Date(),
-				customerType: CustomerType.CUSTOMER,
-				status: PromotionStatus.ACTIVE,
-				createdAt: new Date(),
-				updatedAt: new Date(),
-			} as Promotion,
-		},
-	})
-	@ApiResponse({
-		status: 400,
-		schema: {
-			example: {
-				code: '400',
-				message: 'Bad request',
-				details: null,
-			} as ErrorResponse<null>,
-		},
-	})
-	@ApiResponse({
-		status: 401,
-		schema: {
-			example: {
-				code: '401',
-				message: 'Unauthorized',
-				details: null,
-			} as ErrorResponse<null>,
-		},
-	})
-	@ApiResponse({
-		status: 403,
-		schema: {
-			example: {
-				code: '403',
-				message: `Forbidden resource`,
-				details: null,
-			} as ErrorResponse<null>,
-		},
-	})
-	createBillPromotion() {
-		return 'createBillPromotion';
-	}
+	// 	@Post('/promotions')
+	// 	@ApiOperation({
+	// 		summary: 'createBillPromotion',
+	// 		description: 'Allow admin to create one bill promotion',
+	// 	})
+	// 	@ApiBody({
+	// 		type: CreatePromotionDto,
+	// 		examples: {
+	// 			ADMIN: {
+	// 				value: {
+	// 					targetID: 'string',
+	// 					type: PromotionType.BILL,
+	// 					name: 'string',
+	// 					description: 'string',
+	// 					couponCode: 'string',
+	// 					value: 1,
+	// 					method: PromotionMethod.NUMBER,
+	// 					minPriceApply: 0,
+	// 					maxQuantity: 0,
+	// 					startDate: new Date(),
+	// 					endDate: new Date(),
+	// 					customerType: CustomerType.CUSTOMER,
+	// 				},
+	// 			},
+	// 		},
+	// 	})
+	// 	@ApiResponse({
+	// 		status: 201,
+	// 		schema: {
+	// 			example: {
+	// 				targetID: 'string',
+	// 				type: PromotionType.BILL,
+	// 				name: 'string',
+	// 				description: 'string',
+	// 				couponCode: 'string',
+	// 				value: 1,
+	// 				method: PromotionMethod.NUMBER,
+	// 				minPriceApply: 0,
+	// 				maxQuantity: 0,
+	// 				startDate: new Date(),
+	// 				endDate: new Date(),
+	// 				customerType: CustomerType.CUSTOMER,
+	// 				status: PromotionStatus.ACTIVE,
+	// 				createdAt: new Date(),
+	// 				updatedAt: new Date(),
+	// 			} as Promotion,
+	// 		},
+	// 	})
+	// 	@ApiResponse({
+	// 		status: 400,
+	// 		schema: {
+	// 			example: {
+	// 				code: '400',
+	// 				message: 'Bad request',
+	// 				details: null,
+	// 			} as ErrorResponse<null>,
+	// 		},
+	// 	})
+	// 	@ApiResponse({
+	// 		status: 401,
+	// 		schema: {
+	// 			example: {
+	// 				code: '401',
+	// 				message: 'Unauthorized',
+	// 				details: null,
+	// 			} as ErrorResponse<null>,
+	// 		},
+	// 	})
+	// 	@ApiResponse({
+	// 		status: 403,
+	// 		schema: {
+	// 			example: {
+	// 				code: '403',
+	// 				message: `Forbidden resource`,
+	// 				details: null,
+	// 			} as ErrorResponse<null>,
+	// 		},
+	// 	})
+	// 	createBillPromotion() {
+	// 		return 'createBillPromotion';
+	// 	}
 }

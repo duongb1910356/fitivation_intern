@@ -52,8 +52,6 @@ export class AttendanceService {
 			.sort({ [sortField]: sortOrder === 'asc' ? 1 : -1 })
 			.limit(limit)
 			.skip(offset);
-		if (!attendances.length)
-			throw new NotFoundException('Attendances not found');
 
 		return {
 			items: attendances,
@@ -97,15 +95,10 @@ export class AttendanceService {
 		const now = new Date();
 		const subscription = await this.subscriptionService.findOneByCondition({
 			accountID,
+			facilityID,
 			expires: { $gt: now },
 		});
 		if (!subscription) return false;
-
-		const billItem = await this.billItemService.findOneByCondition({
-			_id: subscription.billItemID,
-			facilityID,
-		});
-		if (!billItem) return false;
 
 		return true;
 	}

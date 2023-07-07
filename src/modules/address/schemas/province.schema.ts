@@ -9,7 +9,7 @@ export class Province extends BaseObject {
 	@Prop({ required: true, unique: true })
 	name: string;
 
-	@Prop({ required: true, unique: true, index: true })
+	@Prop({ required: true })
 	code: string;
 }
 

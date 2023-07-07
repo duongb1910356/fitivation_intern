@@ -26,6 +26,7 @@ import { HolidayDto } from './dto/holiday-dto';
 import { OwnershipHolidayGuard } from 'src/guards/ownership/ownership-holiday.guard';
 import { HolidayService } from './holiday.service';
 import { Public } from '../auth/decorators/public.decorator';
+import { MongoIdValidationPipe } from 'src/pipes/parseMongoId.pipe';
 
 @ApiTags('holidays')
 @Controller('holidays')
@@ -70,7 +71,9 @@ export class HolidayController {
 			} as ErrorResponse<null>,
 		},
 	})
-	async getHoliday(@Param('holidayID') holidayID: string) {
+	async getHoliday(
+		@Param('holidayID', MongoIdValidationPipe) holidayID: string,
+	) {
 		return await this.holidayService.findOneByID(holidayID, 'facilityID');
 	}
 
@@ -91,9 +94,9 @@ export class HolidayController {
 		examples: {
 			test: {
 				value: {
-					startDate: new Date(),
-					endDate: new Date(),
-					content: 'string',
+					startDate: new Date('2024-07-03T11:43:14.752Z'),
+					endDate: new Date('2024-07-05T11:43:14.752Z'),
+					content: 'string2',
 				} as HolidayDto,
 			},
 		},
@@ -148,7 +151,7 @@ export class HolidayController {
 		},
 	})
 	async updateHoliday(
-		@Param('holidayID') holidayID: string,
+		@Param('holidayID', MongoIdValidationPipe) holidayID: string,
 		@Body() data: HolidayDto,
 	) {
 		return await this.holidayService.update(holidayID, data);
@@ -209,7 +212,9 @@ export class HolidayController {
 			} as ErrorResponse<null>,
 		},
 	})
-	async deleteHoliday(@Param('holidayID') holidayID: string) {
+	async deleteHoliday(
+		@Param('holidayID', MongoIdValidationPipe) holidayID: string,
+	) {
 		return await this.holidayService.delete(holidayID);
 	}
 }

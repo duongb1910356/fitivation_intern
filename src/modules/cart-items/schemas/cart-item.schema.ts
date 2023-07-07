@@ -1,8 +1,6 @@
 import { Prop, Schema, SchemaFactory } from '@nestjs/mongoose';
 import mongoose, { HydratedDocument } from 'mongoose';
 import { BaseObject } from 'src/shared/schemas/base-object.schema';
-import { Promotion } from 'src/modules/promotions/schemas/promotion.schema';
-import { Package } from 'src/modules/package/entities/package.entity';
 
 export type CartItemDocument = HydratedDocument<CartItem>;
 
@@ -13,19 +11,20 @@ export class CartItem extends BaseObject {
 		type: mongoose.Schema.Types.ObjectId,
 		ref: 'Package',
 	})
-	packageID: Package;
+	packageID: string;
 
 	@Prop({
-		type: mongoose.Schema.Types.ObjectId,
+		default: [],
+		type: [mongoose.Schema.Types.ObjectId],
 		ref: 'Promotion',
 	})
-	promotionIDs?: Promotion[];
+	promotionIDs?: string[];
 
 	@Prop({ default: 0, type: Number, min: 0 })
-	promotionPrice: number;
+	promotionPrice?: number;
 
-	@Prop({ required: true, type: Number, min: 0 })
-	totalPrice: number;
+	@Prop({ default: 0, type: Number, min: 0 })
+	totalPrice?: number;
 }
 
 export const CartItemSchema = SchemaFactory.createForClass(CartItem);

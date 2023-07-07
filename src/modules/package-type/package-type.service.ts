@@ -3,7 +3,11 @@ import {
 	TargetObject,
 } from './../counter/entities/counter.entity';
 import { CounterService } from './../counter/counter.service';
-import { Injectable, NotFoundException } from '@nestjs/common';
+import {
+	ForbiddenException,
+	Injectable,
+	NotFoundException,
+} from '@nestjs/common';
 import { InjectModel } from '@nestjs/mongoose';
 import {
 	PackageType,
@@ -40,6 +44,15 @@ export class PackageTypeService {
 		return packageType;
 	}
 
+	// async findOne(filter: ListOptions<PackageType>) {
+	// 	const { sortOrder, sortField } = filter;
+	// 	const sortQuery = {};
+	// 	sortQuery[filter.sortField] = filter.sortOrder === 'asc' ? 1 : -1;
+	// 	return await this.packageTypeModel
+	// 		.find(filter)
+	// 		.sort({ sortField: sortOrder == 'asc' ? 1 : -1 });
+	// }
+
 	async findMany(
 		filter: ListOptions<PackageType>,
 	): Promise<ListResponse<PackageType>> {
@@ -47,7 +60,6 @@ export class PackageTypeService {
 			filter;
 
 		let conditions: object;
-		console.log(search);
 		if (search) {
 			conditions = {
 				$or: [
@@ -65,9 +77,6 @@ export class PackageTypeService {
 			.sort({ [sortField]: sortOrder === 'asc' ? -1 : 1 })
 			.limit(limit)
 			.skip(offset);
-
-		if (!packageTypes.length)
-			throw new NotFoundException('PackageTypes not found');
 
 		return {
 			items: packageTypes,
@@ -89,9 +98,6 @@ export class PackageTypeService {
 			.sort({ order: 1 })
 			.limit(limit)
 			.skip(offset);
-
-		if (!packageTypes.length)
-			throw new NotFoundException('PackageTypes not found');
 
 		return {
 			items: packageTypes,
@@ -138,25 +144,28 @@ export class PackageTypeService {
 	}
 
 	async delete(packageTypeID: string): Promise<string> {
-		const packageType = await this.packageTypeModel.findByIdAndDelete(
-			packageTypeID,
-		);
-		if (!packageType) {
-			throw new NotFoundException('PackageType not found');
+		const packageType = await this.findOneByID(packageTypeID);
+
+		const countPackages =
+			await this.packageService.countNumberOfPackageByPackageType(
+				packageTypeID,
+			);
+		if (countPackages !== 0) {
+			throw new ForbiddenException('Please delete all packages before');
 		}
 
-		await this.decreaseAfterDeletion(
-			packageType.facilityID.toString(),
-			packageType.order,
-		);
+		await Promise.all([
+			this.packageTypeModel.findByIdAndDelete(packageTypeID),
+			this.decreaseAfterDeletion(
+				packageType.facilityID.toString(),
+				packageType.order,
+			),
+		]);
 
 		return 'Delete PackageType successfull!!!';
 	}
 
-	private async decreaseAfterDeletion(
-		facilityID: string,
-		deletedOrder: number,
-	) {
+	async decreaseAfterDeletion(facilityID: string, deletedOrder: number) {
 		//decrease Counter by one
 		const counterData = {
 			targetObject: TargetObject.FACILITY,
@@ -212,7 +221,6 @@ export class PackageTypeService {
 		const facilityID = (
 			await this.findOneByID(packageTypeID)
 		).facilityID.toString();
-		console.log(facilityID);
 		return await this.packageService.create(packageTypeID, facilityID, data);
 	}
 }

@@ -14,12 +14,12 @@ export class CounterService {
 		return await this.counterModel.findOne(filter);
 	}
 
-	async create(data: object) {
+	async create(data: object): Promise<Counter> {
 		const input = { ...data, count: 0 };
 		return this.counterModel.create(input);
 	}
 
-	async increase(id: string) {
+	async increase(id: string): Promise<Counter> {
 		const counter = await this.counterModel.findById(id);
 		if (!counter) {
 			throw new NotFoundException('Counter not found');
@@ -29,7 +29,7 @@ export class CounterService {
 		return counter;
 	}
 
-	async decrease(id: string) {
+	async decrease(id: string): Promise<Counter> {
 		const counter = await this.counterModel.findById(id);
 		if (!counter) {
 			throw new NotFoundException('Counter not found');
@@ -39,7 +39,7 @@ export class CounterService {
 		return counter;
 	}
 
-	async delete(id: string) {
+	async delete(id: string): Promise<void> {
 		const counter = await this.counterModel.findByIdAndDelete(id);
 
 		if (!counter) {
