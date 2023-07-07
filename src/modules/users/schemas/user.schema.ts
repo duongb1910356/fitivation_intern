@@ -2,6 +2,7 @@ import { Prop, Schema, SchemaFactory } from '@nestjs/mongoose';
 import { HydratedDocument } from 'mongoose';
 import { BaseObject } from '../../../shared/schemas/base-object.schema';
 import { UserAddress } from './user-address.schema';
+import { Photo, PhotoSchema } from 'src/modules/photo/schemas/photo.schema';
 
 export type UserDocument = HydratedDocument<User>;
 
@@ -77,8 +78,11 @@ export class User extends BaseObject {
 	@Prop({ type: UserAddress })
 	address?: UserAddress;
 
-	@Prop({ type: String })
-	avatar?: string;
+	@Prop({ type: PhotoSchema, required: true, default: {} })
+	avatar: Photo;
+
+	// @Prop({ type: String })
+	// avatar?: string;
 
 	@Prop({ type: Boolean })
 	isMember?: boolean;

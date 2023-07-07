@@ -40,6 +40,7 @@ import {
 import { PromotionsService } from '../promotions/promotions.service';
 import { UpdatePromotionDto } from '../promotions/dto/update-promotion-dto';
 import { PackageService } from '../package/package.service';
+import { BrandService } from '../brand/brand.service';
 
 @Injectable()
 export class FacilityService {
@@ -53,6 +54,8 @@ export class FacilityService {
 		private readonly photoService: PhotoService,
 		private readonly reviewService: ReviewService,
 		private readonly promotionService: PromotionsService,
+		private readonly scheduleService: FacilityScheduleService,
+		private readonly brandService: BrandService,
 	) {}
 
 	async isOwner(id: string, uid: string): Promise<boolean> {
@@ -79,17 +82,23 @@ export class FacilityService {
 		});
 	}
 
-	async getCurrentSchedule(id: string) {
-		const facility = await this.findOneByID(id);
-		const condition = {
-			facilityID: id,
-			type: facility.scheduleType,
-		};
-		return await this.facilityScheduleService.findOneByCondition(condition);
-	}
+	// async getCurrentSchedule(id: string) {
+	// 	const facility = await this.findOneByID(id);
+	// 	const condition = {
+	// 		facilityID: id,
+	// 		type: facility.scheduleType,
+	// 	};
+	// 	return await this.facilityScheduleService.findOneByCondition(condition);
+	// }
 
 	async createSchedule(id: string, data: FacilityScheduleDto) {
-		return await this.facilityScheduleService.create(id, data);
+		const schedule = await this.facilityScheduleService.create(id, data);
+		const facility = await this.facilityModel.findOneAndUpdate(
+			{ _id: id },
+			{ schedule: schedule },
+			{ new: true },
+		);
+		return facility;
 	}
 
 	async createHoliday(id: string, data: HolidayDto) {
@@ -131,8 +140,23 @@ export class FacilityService {
 	): Promise<Facility> {
 		createFacilityDto.ownerID = createFacilityDto.ownerID ?? req.user.sub;
 		createFacilityDto.state = createFacilityDto.state ?? State.ACTIVE;
+		createFacilityDto.schedule = createFacilityDto.schedule ?? null;
+
+		if (createFacilityDto.brandID) {
+			const brand = await this.brandService.findMany({
+				_id: createFacilityDto.brandID,
+				accountID: req.user.sub,
+			});
+			if (brand.total == 0) {
+				throw new ForbiddenException(
+					'You have not permission to register creating Facility with this Brand',
+				);
+			}
+		}
 
 		const facility = await this.facilityModel.create(createFacilityDto);
+		await this.scheduleService.create(facility._id, createFacilityDto.schedule);
+
 		if (files && files.images) {
 			const photos = await this.photoService.uploadManyFile(files, {
 				ownerID: facility._id,
@@ -166,13 +190,36 @@ export class FacilityService {
 	): Promise<ListResponse<Facility>> {
 		const sortQuery = {};
 		sortQuery[filter.sortField] = filter.sortOrder === 'asc' ? 1 : -1;
-		const limit = filter.limit || 0;
+		const limit = filter.limit || 10;
 		const offset = filter.offset || 0;
 		const result = await this.facilityModel
 			.find(filter)
 			.sort(sortQuery)
 			.skip(offset)
 			.limit(limit);
+
+		return {
+			items: result,
+			total: result?.length,
+			options: filter,
+		};
+	}
+
+	async getFacilities(
+		filter: ListOptions<Facility>,
+	): Promise<ListResponse<Facility>> {
+		const sortQuery = {};
+		sortQuery[filter.sortField] = filter.sortOrder === 'asc' ? 1 : -1;
+		const limit = filter.limit || 10;
+		const offset = filter.offset || 0;
+		const result = await this.facilityModel
+			.find({ ...filter, status: 'APPROVED' })
+			.sort(sortQuery)
+			.skip(offset)
+			.limit(limit)
+			.populate('brandID')
+			.populate('facilityCategoryID');
+
 		return {
 			items: result,
 			total: result?.length,
@@ -283,21 +330,58 @@ export class FacilityService {
 
 	async deleteReview(
 		facilityID: string,
-		_req: any,
+		req: any,
 		listID: string[],
 	): Promise<Facility> {
-		const result = await this.facilityModel.findOneAndUpdate(
-			{ _id: facilityID },
-			{ $pull: { reviews: { _id: { $in: listID } } } },
-			{ new: true },
-		);
+		if (req.user.role == 'FACILITY_OWNER' || req.user.role == 'ADMIN') {
+			const result = await this.facilityModel.findOneAndUpdate(
+				{ _id: facilityID },
+				{
+					$pull: {
+						reviews: {
+							$and: [{ _id: { $in: listID } }],
+						},
+					},
+				},
+				{ new: true },
+			);
 
-		listID.forEach(async (element) => {
-			if (isValidObjectId(element)) {
-				await this.reviewService.delete(element);
+			listID.forEach(async (element) => {
+				if (isValidObjectId(element)) {
+					await this.reviewService.delete(element);
+				}
+			});
+			if (!result) {
+				throw new BadRequestException('Fail deleted review');
 			}
-		});
-		return result;
+			return result;
+		}
+		throw new ForbiddenException(
+			'You must be Admin or Facility Owner to use this API',
+		);
+	}
+
+	async deleteReviewByID(req: any, reviewID: string): Promise<Facility> {
+		const review = await this.reviewService.findOneByID(reviewID);
+		if (review.accountID == req.user.sub || req.user.role == 'ADMIN') {
+			const review = await this.reviewService.delete(reviewID);
+			const facility = await this.facilityModel.findOneAndUpdate(
+				{ _id: review.facilityID },
+				{
+					$pull: {
+						reviews: {
+							$and: [{ _id: reviewID }],
+						},
+					},
+				},
+				{ new: true },
+			);
+			if (!facility || !review) {
+				throw new BadRequestException('Fail to deleted review');
+			}
+			return facility;
+		}
+		throw new ForbiddenException('You dont have permission to deleted review');
 	}
 
 	async findManyPhotos(
@@ -313,8 +397,8 @@ export class FacilityService {
 		filter: ListOptions<Review>,
 	): Promise<ListResponse<Review>> {
 		const facility = await this.facilityModel.findById(facilityID);
-		filter.facilityID = facility;
-		return this.reviewService.findMany(filter);
+		filter.facilityID = facility._id;
+		return this.reviewService.getReview(facilityID, filter);
 	}
 
 	async isOwnerFacility(facilityID: string, req: any): Promise<boolean> {
@@ -385,83 +469,107 @@ export class FacilityService {
 	async searchFacilityByAddress(
 		filter: ListOptions<any>,
 	): Promise<ListResponse<any>> {
-		if (!filter.latitude || !filter.longitude) {
-			throw new BadRequestException('You must provide a location');
-		}
-
-		const sortOrder = filter.sortOrder || 'asc';
 		const search = filter.search || '';
-		const latitude = parseFloat(filter.latitude.toString());
-		const longitude = parseFloat(filter.longitude.toString());
+		const sortOrder = filter.sortOrder || 'asc';
 		const limit = filter.limit || 10;
 		const offset = filter.offset || 0;
 		const regex = new RegExp(search.split('').join('.*'), 'i');
+		let longitude = 0.0;
+		let latitude = 0.0;
+		let facilities = [];
 
-		const facilities = await this.facilityModel.aggregate([
-			{
-				$geoNear: {
-					near: {
-						type: 'Point',
-						coordinates: [longitude, latitude],
+		if (filter.sortField == 'distance' && filter.latitude && filter.longitude) {
+			latitude = parseFloat(filter.latitude.toString());
+			longitude = parseFloat(filter.longitude.toString());
+			if (isNaN(latitude) || isNaN(longitude)) {
+				throw new BadRequestException('Longitude and latitude invalid');
+			}
+			facilities = await this.facilityModel.aggregate([
+				{
+					$geoNear: {
+						near: {
+							type: 'Point',
+							coordinates: [longitude, latitude],
+						},
+						distanceField: 'distance',
+						spherical: true,
+						// maxDistance: 5000, // Khoảng cách tối đa (đơn vị mét)
 					},
-					distanceField: 'distance',
-					spherical: true,
-					// maxDistance: 5000, // Khoảng cách tối đa (đơn vị mét)
 				},
-			},
-			{
-				$addFields: {
-					distance: '$distance',
+				{
+					$addFields: {
+						distance: '$distance',
+					},
 				},
-			},
-			{
-				$match: { fullAddress: regex },
-			},
-			{
-				$sort: {
-					distance: 1,
+				{
+					$match: { fullAddress: regex },
 				},
-			},
-			{
-				$skip: offset,
-			},
-			{
-				$limit: limit,
-			},
-		]);
-
-		if (!facilities) {
-			throw new NotFoundException('Not found facilities');
+				{
+					$sort: {
+						distance: 1,
+					},
+				},
+				{
+					$skip: offset,
+				},
+				{
+					$limit: limit,
+				},
+				{
+					$lookup: {
+						from: 'facilitycategories',
+						localField: 'facilityCategoryID',
+						foreignField: '_id',
+						as: 'category',
+					},
+				},
+			]);
+		} else {
+			facilities = await this.facilityModel.aggregate([
+				{ $match: { fullAddress: regex } },
+				{
+					$lookup: {
+						from: 'facilitycategories',
+						localField: 'facilityCategoryID',
+						foreignField: '_id',
+						as: 'category',
+					},
+				},
+				{
+					$skip: offset,
+				},
+				{
+					$limit: limit,
+				},
+			]);
 		}
 
+		// Gán thêm gói package vào từng facility
 		const result = await Promise.all(
 			facilities.map(async (el) => {
 				const foundPackage =
 					await this.packageService.findPackageWithLowestPrice(el._id);
-				return { ...el, package: foundPackage };
+				return { ...el, package: foundPackage || {} };
 			}),
 		);
 
 		result.sort((a, b) => {
-			const priceA = a.package.price;
-			const priceB = b.package.price;
-
-			if (sortOrder === 'asc') {
-				if (priceA < priceB) {
-					return -1;
-				} else if (priceA > priceB) {
-					return 1;
+			const hasPackageA = a.package != null;
+			const hasPackageB = b.package != null;
+			if (hasPackageA && hasPackageB) {
+				const priceA = a.package.price;
+				const priceB = b.package.price;
+				if (sortOrder === 'asc') {
+					return priceA - priceB;
 				} else {
-					return 0;
+					return priceB - priceA;
 				}
-			} else if (sortOrder === 'desc') {
-				if (priceA > priceB) {
-					return -1;
-				} else if (priceA < priceB) {
-					return 1;
-				} else {
-					return 0;
-				}
+			} else if (hasPackageA && !hasPackageB) {
+				return -1; // Đặt phần tử a lên đầu
+			} else if (!hasPackageA && hasPackageB) {
+				return 1; // Đặt phần tử b lên đầu
+			} else {
+				return 0; // Giữ nguyên thứ tự
 			}
 		});
 
@@ -470,5 +578,64 @@ export class FacilityService {
 			total: result.length,
 			options: filter,
 		};
+	}
+
+	async getNearestFacilities(
+		longitude: number,
+		latitude: number,
+	): Promise<ListResponse<any>> {
+		longitude = parseFloat(longitude.toString());
+		latitude = parseFloat(latitude.toString());
+
+		console.log(`lon ${longitude} -- la ${latitude}`);
+
+		try {
+			const facilities = await this.facilityModel.aggregate([
+				{
+					$geoNear: {
+						near: {
+							type: 'Point',
+							coordinates: [longitude, latitude],
+						},
+						distanceField: 'distance',
+						spherical: true,
+						maxDistance: 5000, // Khoảng cách tối đa (đơn vị mét)
+					},
+				},
+				{
+					$addFields: {
+						distance: '$distance',
+					},
+				},
+				{
+					$lookup: {
+						from: 'facilitycategories',
+						localField: 'facilityCategoryID',
+						foreignField: '_id',
+						as: 'category',
+					},
+				},
+			]);
+
+			// Gán thêm gói package vào từng facility
+			const result = await Promise.all(
+				facilities.map(async (el) => {
+					const foundPackage =
+						await this.packageService.findPackageWithLowestPrice(el._id);
+					return { ...el, package: foundPackage || {} };
+				}),
+			);
+
+			return {
+				items: result,
+				total: result.length,
+				options: {
+					longitude: longitude,
+					latitude: latitude,
+				},
+			};
+		} catch (error) {
+			console.log('error >> ', error);
+		}
 	}
 }

@@ -8,6 +8,7 @@ import {
 import { Brand } from '../../brand/schemas/brand.schema';
 import { Photo, PhotoSchema } from 'src/modules/photo/schemas/photo.schema';
 import { appConfig } from 'src/app.config';
+import { FacilitySchedule } from 'src/modules/facility-schedule/entities/facility-schedule.entity';
 
 export enum State {
 	ACTIVE = 'ACTIVE',
@@ -45,14 +46,19 @@ export type FacilityDocument = HydratedDocument<Facility>;
 
 @Schema({ timestamps: true })
 export class Facility extends BaseObject {
-	@Prop({ type: mongoose.Schema.Types.ObjectId, ref: 'Brand', required: true })
+	@Prop({
+		type: mongoose.Schema.Types.ObjectId,
+		ref: 'Brand',
+		required: false,
+		default: '',
+	})
 	brandID: Brand;
 
 	@Prop({
 		type: [{ type: mongoose.Schema.Types.ObjectId, ref: 'FacilityCategory' }],
 		required: true,
 	})
-	facilityCategoryID: string[];
+	facilityCategoryID: mongoose.Schema.Types.ObjectId[];
 
 	@Prop({ type: mongoose.Schema.Types.ObjectId, ref: 'User', required: true })
 	ownerID: string;
@@ -154,8 +160,11 @@ export class Facility extends BaseObject {
 	})
 	reviews: Review[];
 
-	@Prop({ enum: ScheduleType, default: ScheduleType.WEEKLY })
-	scheduleType: ScheduleType;
+	// @Prop({ enum: ScheduleType, default: ScheduleType.WEEKLY })
+	// scheduleType: ScheduleType;
+
+	@Prop({ type: FacilitySchedule, required: false })
+	schedule: FacilitySchedule;
 }
 
 export const FacilitySchema = SchemaFactory.createForClass(Facility);
