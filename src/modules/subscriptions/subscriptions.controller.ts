@@ -95,12 +95,13 @@ export class SubscriptionsController {
 	@Get()
 	@Roles(UserRole.MEMBER, UserRole.ADMIN)
 	@UseGuards(RolesGuard)
-	findManySubscriptions(
+	async findManySubscriptions(
 		@Query() query: QueryObject,
 		@GetCurrentUser() user: TokenPayload,
 	): Promise<ListResponse<Subscription>> {
-		return this.subscriptionService.findMany(query, user);
+		return await this.subscriptionService.findMany(query, user);
 	}
+
 	@ApiOperation({
 		summary: 'FindOneSubscription',
 		description: 'Get one subscription',
@@ -174,11 +175,11 @@ export class SubscriptionsController {
 	@Get(':id')
 	@Roles(UserRole.MEMBER, UserRole.ADMIN)
 	@UseGuards(RolesGuard)
-	findOneSubscription(
+	async findOneSubscription(
 		@Param('id') id: string,
 		@GetCurrentUser() user: TokenPayload,
 	): Promise<Subscription> {
-		return this.subscriptionService.findOneByID(id, user);
+		return await this.subscriptionService.findOneByID(id, user);
 	}
 
 	@ApiOperation({
@@ -253,10 +254,10 @@ export class SubscriptionsController {
 	@Patch('renew/:id')
 	@Roles(UserRole.MEMBER)
 	@UseGuards(RolesGuard)
-	renew(
+	async renew(
 		@GetCurrentUser() user: TokenPayload,
 		@Param('id') id: string,
 	): Promise<Subscription> {
-		return this.subscriptionService.renew(id, user);
+		return await this.subscriptionService.renew(id, user);
 	}
 }
