@@ -47,7 +47,7 @@ export class SubscriptionsService {
 			queryFeatures.queryModel.find({ accountID: user.sub });
 		}
 
-		const subscription = await queryFeatures.queryModel
+		const subscriptions = await queryFeatures.queryModel
 			.populate({
 				path: 'billItemID',
 				select: '-facilityInfo -packageTypeInfo -packageInfo',
@@ -60,17 +60,38 @@ export class SubscriptionsService {
 				select: '-reviews',
 			});
 
-		for (let i = 0; i < subscription.length; i++) {
+		const subscriptionIDs = [];
+
+		for (let i = 0; i < subscriptions.length; i++) {
 			await this.checkDateAndUpdateDateIsExpired(
-				subscription[i]._id.toString(),
+				subscriptions[i]._id.toString(),
 				user,
 			);
+			subscriptionIDs.push(subscriptions[i]._id);
 		}
 
+		const results = await this.subscriptionsModel
+			.find({
+				_id: {
+					$in: subscriptionIDs,
+				},
+			})
+			.populate({
+				path: 'billItemID',
+				select: '-facilityInfo -packageTypeInfo -packageInfo',
+			})
+			.populate({
+				path: 'packageID',
+			})
+			.populate({
+				path: 'facilityID',
+				select: '-reviews',
+			});
+
 		return {
-			total: subscription.length,
+			total: subscriptions.length,
 			queryOptions: queryFeatures.queryOptions,
-			items: subscription,
+			items: results,
 		};
 	}
 	async findOneByID(
@@ -105,7 +126,10 @@ export class SubscriptionsService {
 			user,
 		);
 
-		return subscription;
+		return await this.subscriptionsModel.findById(subscriptionID).populate({
+			path: 'billItemID',
+			select: '-facilityInfo -packageTypeInfo -packageInfo',
+		});
 	}
 
 	async createOne(
@@ -152,6 +176,7 @@ export class SubscriptionsService {
 		if (new Date(subscription.expires) <= new Date(Date.now())) {
 			subscription.renew = true;
 			await subscription.save();
+
 			return {
 				message: 'Subscription was expired',
 				subscription,
@@ -159,10 +184,10 @@ export class SubscriptionsService {
 		} else {
 			subscription.renew = false;
 			await subscription.save();
-
+			console.log(subscription);
 			return {
 				message: 'Subscription has not expired',
-				subscription: await this.subscriptionsModel.findById(subscriptionID),
+				subscription,
 			};
 		}
 	}
