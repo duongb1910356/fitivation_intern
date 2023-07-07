@@ -888,6 +888,7 @@ export class UsersController {
 		writeFileSync(`${dir}/${fileName}`, file.buffer);
 		const url: string = appConfig.fileHost + `/${id}/${fileName}`;
 
-	// 	return this.userService.updateAvatar(id, url);
-	// }
+		// 	return this.userService.updateAvatar(id, url);
+		// }
+	}
 }
