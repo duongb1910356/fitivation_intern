@@ -126,10 +126,19 @@ export class SubscriptionsService {
 			user,
 		);
 
-		return await this.subscriptionsModel.findById(subscriptionID).populate({
-			path: 'billItemID',
-			select: '-facilityInfo -packageTypeInfo -packageInfo',
-		});
+		return await this.subscriptionsModel
+			.findById(subscriptionID)
+			.populate({
+				path: 'billItemID',
+				select: '-facilityInfo -packageTypeInfo -packageInfo',
+			})
+			.populate({
+				path: 'packageID',
+			})
+			.populate({
+				path: 'facilityID',
+				select: '-reviews',
+			});
 	}
 
 	async createOne(
