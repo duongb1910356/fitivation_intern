@@ -382,11 +382,109 @@ export class UsersController {
 		},
 	})
 	@Post()
-	// @Roles(UserRole.ADMIN)
-	// @UseGuards(RolesGuard)
 	@Public()
 	createUser(@Body() createUserDto: CreateUserDto): Promise<User> {
 		return this.userService.createOne(createUserDto);
+	}
+
+	@Patch(':userID/avatar')
+	@ApiConsumes('multipart/form-data')
+	@ApiParam({ name: 'userID', type: String, description: 'User ID' })
+	@ApiBody({
+		schema: {
+			type: 'object',
+			properties: {
+				file: {
+					type: 'string',
+					format: 'binary',
+					description: 'accept: jpeg|png',
+				},
+			},
+		},
+	})
+	@ApiOkResponse({
+		schema: {
+			example: {
+				_id: 'string',
+				role: UserRole.MEMBER,
+				username: 'member',
+				email: 'member@test.com',
+				password: 'string',
+				displayName: 'Admin user',
+				firstName: 'string',
+				lastName: 'string',
+				gender: Gender.MALE,
+				birthDate: new Date(),
+				tel: '0987654321',
+				address: {
+					province: 'Can Tho',
+					district: 'Ninh Kieu',
+					commune: 'Xuan Khanh',
+				} as unknown as UserAddress,
+				isMember: false,
+				status: UserStatus.ACTIVE,
+				createdAt: new Date(),
+				updatedAt: new Date(),
+			} as User,
+		},
+	})
+	@ApiResponse({
+		status: 400,
+		schema: {
+			example: {
+				code: '400',
+				message: 'File size invalid',
+				details: null,
+			} as ErrorResponse<null>,
+		},
+	})
+	@ApiResponse({
+		status: 401,
+		schema: {
+			example: {
+				code: '401',
+				message: 'Unauthorized',
+				details: null,
+			} as ErrorResponse<null>,
+		},
+	})
+	@ApiResponse({
+		status: 403,
+		schema: {
+			example: {
+				code: '403',
+				message: `Forbidden resource`,
+				details: null,
+			} as ErrorResponse<null>,
+		},
+	})
+	@ApiResponse({
+		status: 404,
+		schema: {
+			example: {
+				code: '404',
+				message: 'Not found user with that ID',
+				details: null,
+			} as ErrorResponse<null>,
+		},
+	})
+	@ApiResponse({
+		status: 415,
+		schema: {
+			example: {
+				code: '415',
+				message: 'File invalid',
+				details: null,
+			} as ErrorResponse<null>,
+		},
+	})
+	@UseInterceptors(FileInterceptor('file'))
+	async updateAvatar(
+		@Param('userID') userID: string,
+		@UploadedFile()
+		file: Express.Multer.File,
+	) {
+		return this.userService.updateAvatar(userID, file);
 	}
 
 	@ApiOperation({
@@ -684,112 +782,112 @@ export class UsersController {
 		return this.userService.deleteOne(id);
 	}
 
-	@ApiOperation({
-		summary: 'uploadFile',
-		description: 'Upload user avatar file',
-	})
-	@UseInterceptors(FileInterceptor('avatar'))
-	@ApiConsumes('multipart/form-data')
-	@ApiParam({ name: 'id', type: String, description: 'User ID' })
-	@ApiBody({ type: AvatarUploadDto })
-	@ApiOkResponse({
-		schema: {
-			example: {
-				_id: 'string',
-				role: UserRole.MEMBER,
-				username: 'member',
-				email: 'member@test.com',
-				password: 'string',
-				displayName: 'Admin user',
-				firstName: 'string',
-				lastName: 'string',
-				gender: Gender.MALE,
-				birthDate: new Date(),
-				tel: '0987654321',
-				address: {
-					province: 'Can Tho',
-					district: 'Ninh Kieu',
-					commune: 'Xuan Khanh',
-				} as unknown as UserAddress,
-				isMember: false,
-				status: UserStatus.ACTIVE,
-				createdAt: new Date(),
-				updatedAt: new Date(),
-			} as User,
-		},
-	})
-	@ApiResponse({
-		status: 400,
-		schema: {
-			example: {
-				code: '400',
-				message: 'File size invalid',
-				details: null,
-			} as ErrorResponse<null>,
-		},
-	})
-	@ApiResponse({
-		status: 401,
-		schema: {
-			example: {
-				code: '401',
-				message: 'Unauthorized',
-				details: null,
-			} as ErrorResponse<null>,
-		},
-	})
-	@ApiResponse({
-		status: 403,
-		schema: {
-			example: {
-				code: '403',
-				message: `Forbidden resource`,
-				details: null,
-			} as ErrorResponse<null>,
-		},
-	})
-	@ApiResponse({
-		status: 404,
-		schema: {
-			example: {
-				code: '404',
-				message: 'Not found user with that ID',
-				details: null,
-			} as ErrorResponse<null>,
-		},
-	})
-	@ApiResponse({
-		status: 415,
-		schema: {
-			example: {
-				code: '415',
-				message: 'File invalid',
-				details: null,
-			} as ErrorResponse<null>,
-		},
-	})
-	@Post(':id/avatar')
-	// @Roles(UserRole.ADMIN, UserRole.FACILITY_OWNER, UserRole.MEMBER)
-	// @UseGuards(RolesGuard)
-	uploadFile(
-		@Param('id') id,
-		@UploadedFile(
-			new ParseFilePipe({
-				validators: [
-					new MaxFileSizeValidator({ maxSize: 1000 * 1000 }), // 1MB
-					new FileTypeValidator({ fileType: /(?:jpeg|png)/i }),
-				],
-			}),
-		)
-		file: Express.Multer.File,
-	) {
-		const dir = `${appConfig.fileRoot}/${id}`;
-		const fileName = GenFileName.gen(file.mimetype);
-		console.log('file users avatar >> ', file);
-		mkdirSync(dir, { recursive: true });
-		writeFileSync(`${dir}/${fileName}`, file.buffer);
-		const url: string = appConfig.fileHost + `/${id}/${fileName}`;
+	// @ApiOperation({
+	// 	summary: 'uploadFile',
+	// 	description: 'Upload user avatar file',
+	// })
+	// @UseInterceptors(FileInterceptor('avatar'))
+	// @ApiConsumes('multipart/form-data')
+	// @ApiParam({ name: 'id', type: String, description: 'User ID' })
+	// @ApiBody({ type: AvatarUploadDto })
+	// @ApiOkResponse({
+	// 	schema: {
+	// 		example: {
+	// 			_id: 'string',
+	// 			role: UserRole.MEMBER,
+	// 			username: 'member',
+	// 			email: 'member@test.com',
+	// 			password: 'string',
+	// 			displayName: 'Admin user',
+	// 			firstName: 'string',
+	// 			lastName: 'string',
+	// 			gender: Gender.MALE,
+	// 			birthDate: new Date(),
+	// 			tel: '0987654321',
+	// 			address: {
+	// 				province: 'Can Tho',
+	// 				district: 'Ninh Kieu',
+	// 				commune: 'Xuan Khanh',
+	// 			} as unknown as UserAddress,
+	// 			isMember: false,
+	// 			status: UserStatus.ACTIVE,
+	// 			createdAt: new Date(),
+	// 			updatedAt: new Date(),
+	// 		} as User,
+	// 	},
+	// })
+	// @ApiResponse({
+	// 	status: 400,
+	// 	schema: {
+	// 		example: {
+	// 			code: '400',
+	// 			message: 'File size invalid',
+	// 			details: null,
+	// 		} as ErrorResponse<null>,
+	// 	},
+	// })
+	// @ApiResponse({
+	// 	status: 401,
+	// 	schema: {
+	// 		example: {
+	// 			code: '401',
+	// 			message: 'Unauthorized',
+	// 			details: null,
+	// 		} as ErrorResponse<null>,
+	// 	},
+	// })
+	// @ApiResponse({
+	// 	status: 403,
+	// 	schema: {
+	// 		example: {
+	// 			code: '403',
+	// 			message: `Forbidden resource`,
+	// 			details: null,
+	// 		} as ErrorResponse<null>,
+	// 	},
+	// })
+	// @ApiResponse({
+	// 	status: 404,
+	// 	schema: {
+	// 		example: {
+	// 			code: '404',
+	// 			message: 'Not found user with that ID',
+	// 			details: null,
+	// 		} as ErrorResponse<null>,
+	// 	},
+	// })
+	// @ApiResponse({
+	// 	status: 415,
+	// 	schema: {
+	// 		example: {
+	// 			code: '415',
+	// 			message: 'File invalid',
+	// 			details: null,
+	// 		} as ErrorResponse<null>,
+	// 	},
+	// })
+	// @Post(':id/avatar')
+	// // @Roles(UserRole.ADMIN, UserRole.FACILITY_OWNER, UserRole.MEMBER)
+	// // @UseGuards(RolesGuard)
+	// uploadFile(
+	// 	@Param('id') id,
+	// 	@UploadedFile(
+	// 		new ParseFilePipe({
+	// 			validators: [
+	// 				new MaxFileSizeValidator({ maxSize: 1000 * 1000 }), // 1MB
+	// 				new FileTypeValidator({ fileType: /(?:jpeg|png)/i }),
+	// 			],
+	// 		}),
+	// 	)
+	// 	file: Express.Multer.File,
+	// ) {
+	// 	const dir = `${appConfig.fileRoot}/${id}`;
+	// 	const fileName = GenFileName.gen(file.mimetype);
+	// 	console.log('file users avatar >> ', file);
+	// 	mkdirSync(dir, { recursive: true });
+	// 	writeFileSync(`${dir}/${fileName}`, file.buffer);
+	// 	const url: string = appConfig.fileHost + `/${id}/${fileName}`;
 
-		return this.userService.updateAvatar(id, url);
-	}
+	// 	return this.userService.updateAvatar(id, url);
+	// }
 }
