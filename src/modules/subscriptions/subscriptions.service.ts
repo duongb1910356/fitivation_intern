@@ -47,7 +47,18 @@ export class SubscriptionsService {
 			queryFeatures.queryModel.find({ accountID: user.sub });
 		}
 
-		const subscription = await queryFeatures.queryModel;
+		const subscription = await queryFeatures.queryModel
+			.populate({
+				path: 'billItemID',
+				select: '-facilityInfo -packageTypeInfo -packageInfo',
+			})
+			.populate({
+				path: 'packageID',
+			})
+			.populate({
+				path: 'facilityID',
+				select: '-reviews',
+			});
 
 		for (let i = 0; i < subscription.length; i++) {
 			await this.checkDateAndUpdateDateIsExpired(
@@ -66,7 +77,19 @@ export class SubscriptionsService {
 		subscriptionID: string,
 		user: TokenPayload,
 	): Promise<Subscription> {
-		const subscription = await this.subscriptionsModel.findById(subscriptionID);
+		const subscription = await this.subscriptionsModel
+			.findById(subscriptionID)
+			.populate({
+				path: 'billItemID',
+				select: '-facilityInfo -packageTypeInfo -packageInfo',
+			})
+			.populate({
+				path: 'packageID',
+			})
+			.populate({
+				path: 'facilityID',
+				select: '-reviews',
+			});
 
 		if (!subscription) throw new BadRequestException('Subscription not found');
 
@@ -76,6 +99,12 @@ export class SubscriptionsService {
 		) {
 			throw new ForbiddenException('Forbidden resource');
 		}
+
+		await this.checkDateAndUpdateDateIsExpired(
+			subscription._id.toString(),
+			user,
+		);
+
 		return subscription;
 	}
 
@@ -122,17 +151,18 @@ export class SubscriptionsService {
 
 		if (new Date(subscription.expires) <= new Date(Date.now())) {
 			subscription.renew = true;
-			subscription.save();
+			await subscription.save();
 			return {
 				message: 'Subscription was expired',
 				subscription,
 			};
 		} else {
 			subscription.renew = false;
-			subscription.save();
+			await subscription.save();
+
 			return {
 				message: 'Subscription has not expired',
-				subscription,
+				subscription: await this.subscriptionsModel.findById(subscriptionID),
 			};
 		}
 	}
@@ -172,9 +202,21 @@ export class SubscriptionsService {
 
 		subscription.expires = newExpires;
 		subscription.renew = false;
-		subscription.save();
+		await subscription.save();
 
-		return subscription;
+		return await this.subscriptionsModel
+			.findById(subscriptionID)
+			.populate({
+				path: 'billItemID',
+				select: '-facilityInfo -packageTypeInfo -packageInfo',
+			})
+			.populate({
+				path: 'packageID',
+			})
+			.populate({
+				path: 'facilityID',
+				select: '-reviews',
+			});
 	}
 
 	async deleteOneByBillItemID(billItemID: string): Promise<boolean> {

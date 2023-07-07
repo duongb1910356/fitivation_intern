@@ -11,7 +11,7 @@ import {
 } from '@nestjs/common';
 import { CartsService } from './carts.service';
 import {
-	ApiBody,
+	ApiBearerAuth,
 	ApiOperation,
 	ApiParam,
 	ApiResponse,
@@ -42,10 +42,10 @@ import { BillItemPackage } from '../bill-items/schemas/bill-item-package.schema'
 import { BillItemPackageType } from '../bill-items/schemas/bill-item-package-type.schema';
 import { BillItemFacility } from '../bill-items/schemas/bill-item-facility.schema';
 import { TimeType } from '../package/entities/package.entity';
-import { TokenPayload } from '../auth/types/token-payload.type';
 
 @Controller('carts')
 @ApiTags('carts')
+@ApiBearerAuth()
 export class CartsController {
 	constructor(private readonly cartsService: CartsService) {}
 	@ApiOperation({
@@ -108,15 +108,23 @@ export class CartsController {
 		},
 	})
 	@Get('me')
-	// @Roles(UserRole.MEMBER)
-	// @UseGuards(RolesGuard)
+	@Roles(UserRole.MEMBER)
+	@UseGuards(RolesGuard)
 	getCurrentUserCart(@GetCurrentUser('sub') userID: string): Promise<Cart> {
 		return this.cartsService.getCurrent(userID, {
 			path: 'cartItemIDs',
 			populate: {
 				path: 'packageID',
-				select: 'price type -_id',
 				model: 'Package',
+				populate: {
+					path: 'packageTypeID',
+					model: 'PackageType',
+					populate: {
+						path: 'facilityID',
+						model: 'Facility',
+						select: '-reviews',
+					},
+				},
 			},
 		});
 	}
@@ -183,8 +191,8 @@ export class CartsController {
 		},
 	})
 	@Get()
-	// @Roles(UserRole.ADMIN)
-	// @UseGuards(RolesGuard)
+	@Roles(UserRole.ADMIN)
+	@UseGuards(RolesGuard)
 	findManyCarts(@Query() query: QueryObject): Promise<ListResponse<Cart>> {
 		return this.cartsService.findMany(query);
 	}
@@ -261,8 +269,8 @@ export class CartsController {
 		},
 	})
 	@Get(':id')
-	// @Roles(UserRole.ADMIN)
-	// @UseGuards(RolesGuard)
+	@Roles(UserRole.ADMIN)
+	@UseGuards(RolesGuard)
 	findOneCart(@Param('id') id: string) {
 		return this.cartsService.findOneByID(id);
 	}
@@ -271,20 +279,20 @@ export class CartsController {
 		summary: 'purchaseInCart',
 		description: 'Allow customers to purchase packages in their cart',
 	})
-	@ApiBody({
-		type: PaymentOptDto,
-		examples: {
-			example1: {
-				value: {
-					paymentOpt: {
-						paymentMethod: PaymentMethod.CREDIT_CARD,
-						taxes: 0,
-						description: 'string',
-					},
-				},
-			},
-		},
-	})
+	// @ApiBody({
+	// 	type: PaymentOptDto,
+	// 	examples: {
+	// 		example1: {
+	// 			value: {
+	// 				paymentOpt: {
+	// 					paymentMethod: PaymentMethod.CREDIT_CARD,
+	// 					taxes: 0,
+	// 					description: 'string',
+	// 				},
+	// 			},
+	// 		},
+	// 	},
+	// })
 	@ApiResponse({
 		status: 200,
 		schema: {
@@ -433,8 +441,8 @@ export class CartsController {
 		},
 	})
 	@Post('purchase')
-	// @Roles(UserRole.MEMBER)
-	// @UseGuards(RolesGuard)
+	@Roles(UserRole.MEMBER)
+	@UseGuards(RolesGuard)
 	purchaseInCart(
 		@GetCurrentUser('sub') userID: string,
 		@Body() paymentOpt: PaymentOptDto,
@@ -484,8 +492,8 @@ export class CartsController {
 		},
 	})
 	@Patch('cart-items/:packageID')
-	// @Roles(UserRole.MEMBER)
-	// @UseGuards(RolesGuard)
+	@Roles(UserRole.MEMBER)
+	@UseGuards(RolesGuard)
 	addCartItemToCurrentCart(
 		@GetCurrentUser('sub') userID: string,
 		@Param('packageID') packageID: string,
@@ -535,8 +543,8 @@ export class CartsController {
 		},
 	})
 	@Delete('cart-items/:packageID')
-	// @Roles(UserRole.MEMBER)
-	// @UseGuards(RolesGuard)
+	@Roles(UserRole.MEMBER)
+	@UseGuards(RolesGuard)
 	removeCartItemToCurrentCart(
 		@GetCurrentUser('sub') userID: string,
 		@Param('packageID') cartItemID: string,
@@ -544,29 +552,29 @@ export class CartsController {
 		return this.cartsService.removeCartItemFromCurrentCart(userID, cartItemID);
 	}
 
-	@Patch('cart-items/:cartItemID/promotions/:promotionID')
-	// @Roles(UserRole.ADMIN, UserRole.MEMBER)
-	// @UseGuards(RolesGuard)
-	addPackagePromotionToCartItem(
-		@GetCurrentUser('sub') userID: string,
-		@Param('cartItemID') cartItemID: string,
-		@Param('promotionID') promotionID: string,
-	): Promise<boolean> {
-		return this.cartsService.addPackagePromotionToCartItemInCurrentCart(
-			userID,
-			cartItemID,
-			promotionID,
-		);
-	}
+	// @Patch('cart-items/:cartItemID/promotions/:promotionID')
+	// // @Roles(UserRole.ADMIN, UserRole.MEMBER)
+	// // @UseGuards(RolesGuard)
+	// addPackagePromotionToCartItem(
+	// 	@GetCurrentUser('sub') userID: string,
+	// 	@Param('cartItemID') cartItemID: string,
+	// 	@Param('promotionID') promotionID: string,
+	// ): Promise<boolean> {
+	// 	return this.cartsService.addPackagePromotionToCartItemInCurrentCart(
+	// 		userID,
+	// 		cartItemID,
+	// 		promotionID,
+	// 	);
+	// }
 
-	@Delete('cart-items/:cartItemID/promotions/:promotionID')
-	// @Roles(UserRole.ADMIN, UserRole.MEMBER)
-	// @UseGuards(RolesGuard)
-	removePackagePromotionToCartItem(
-		@GetCurrentUser('sub') userID: string,
-		@Param('cartItemID') cartItemID: string,
-		@Param('promotionID') promotionID: string,
-	) {
-		//
-	}
+	// @Delete('cart-items/:cartItemID/promotions/:promotionID')
+	// // @Roles(UserRole.ADMIN, UserRole.MEMBER)
+	// // @UseGuards(RolesGuard)
+	// removePackagePromotionToCartItem(
+	// 	@GetCurrentUser('sub') userID: string,
+	// 	@Param('cartItemID') cartItemID: string,
+	// 	@Param('promotionID') promotionID: string,
+	// ) {
+	// 	//
+	// }
 }

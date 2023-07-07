@@ -78,9 +78,6 @@ export class PackageTypeService {
 			.limit(limit)
 			.skip(offset);
 
-		if (!packageTypes.length)
-			throw new NotFoundException('PackageTypes not found');
-
 		return {
 			items: packageTypes,
 			total: packageTypes.length,
@@ -101,9 +98,6 @@ export class PackageTypeService {
 			.sort({ order: 1 })
 			.limit(limit)
 			.skip(offset);
-
-		if (!packageTypes.length)
-			throw new NotFoundException('PackageTypes not found');
 
 		return {
 			items: packageTypes,
@@ -151,7 +145,6 @@ export class PackageTypeService {
 
 	async delete(packageTypeID: string): Promise<string> {
 		const packageType = await this.findOneByID(packageTypeID);
-		if (!packageType) throw new NotFoundException('PackageType not found');
 
 		const countPackages =
 			await this.packageService.countNumberOfPackageByPackageType(
@@ -172,10 +165,7 @@ export class PackageTypeService {
 		return 'Delete PackageType successfull!!!';
 	}
 
-	private async decreaseAfterDeletion(
-		facilityID: string,
-		deletedOrder: number,
-	) {
+	async decreaseAfterDeletion(facilityID: string, deletedOrder: number) {
 		//decrease Counter by one
 		const counterData = {
 			targetObject: TargetObject.FACILITY,

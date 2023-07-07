@@ -34,8 +34,6 @@ export class FacilityCategoryService {
 			.limit(limit)
 			.skip(offset);
 
-		if (!categories.length) throw new NotFoundException('Categories not found');
-
 		return {
 			items: categories,
 			total: categories.length,

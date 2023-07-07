@@ -69,7 +69,6 @@ export class FacilityScheduleService {
 			.sort({ [sortField]: sortOrder === 'asc' ? 1 : -1 })
 			.limit(limit)
 			.skip(offset);
-		if (!schedules.length) throw new NotFoundException('Schedules not found');
 
 		return {
 			items: schedules,

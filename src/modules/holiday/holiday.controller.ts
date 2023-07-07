@@ -94,9 +94,9 @@ export class HolidayController {
 		examples: {
 			test: {
 				value: {
-					startDate: new Date(),
-					endDate: new Date(),
-					content: 'string',
+					startDate: new Date('2024-07-03T11:43:14.752Z'),
+					endDate: new Date('2024-07-05T11:43:14.752Z'),
+					content: 'string2',
 				} as HolidayDto,
 			},
 		},
