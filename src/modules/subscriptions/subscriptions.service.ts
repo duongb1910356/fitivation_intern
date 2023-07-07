@@ -193,7 +193,7 @@ export class SubscriptionsService {
 		} else {
 			subscription.renew = false;
 			await subscription.save();
-			console.log(subscription);
+
 			return {
 				message: 'Subscription has not expired',
 				subscription,
