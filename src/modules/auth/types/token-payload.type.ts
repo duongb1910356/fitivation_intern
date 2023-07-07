@@ -7,9 +7,5 @@ export class TokenPayload {
 
 	@IsNotEmpty()
 	@IsString()
-	email: string;
-
-	@IsNotEmpty()
-	@IsString()
 	role: string;
 }

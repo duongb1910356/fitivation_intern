@@ -38,14 +38,9 @@ export class AuthService {
 		});
 	}
 
-	async signTokens(
-		sub: string,
-		email: string,
-		role: string,
-	): Promise<TokenResponse> {
+	async signTokens(sub: string, role: string): Promise<TokenResponse> {
 		const tokenPayload: TokenPayload = {
 			sub,
-			email,
 			role,
 		};
 
@@ -78,11 +73,7 @@ export class AuthService {
 	async signup(signupDto: SignupDto, res: Response): Promise<TokenResponse> {
 		const newUser = await this.userService.createOne(signupDto);
 
-		const tokens = await this.signTokens(
-			newUser._id,
-			newUser.email,
-			newUser.role,
-		);
+		const tokens = await this.signTokens(newUser._id, newUser.role);
 
 		await this.updateRefreshTokenHashed(newUser._id, tokens.refreshToken);
 
@@ -105,7 +96,7 @@ export class AuthService {
 
 		if (!isMatched) throw new BadRequestException('Password not correct');
 
-		const tokens = await this.signTokens(user._id, user.email, user.role);
+		const tokens = await this.signTokens(user._id, user.role);
 
 		await this.updateRefreshTokenHashed(user._id, tokens.refreshToken);
 
@@ -146,7 +137,7 @@ export class AuthService {
 
 		if (!isMatched) throw new UnauthorizedException('Unauthorized');
 
-		const tokens = await this.signTokens(user._id, user.email, user.role);
+		const tokens = await this.signTokens(user._id, user.role);
 
 		await this.updateRefreshTokenHashed(user._id, tokens.refreshToken);
 
