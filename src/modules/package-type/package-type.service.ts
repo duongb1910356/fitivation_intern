@@ -213,9 +213,8 @@ export class PackageTypeService {
 	}
 
 	async createPackage(packageTypeID: string, data: CreatePackageDto) {
-		const facilityID = (
-			await this.findOneByID(packageTypeID)
-		).facilityID.toString();
+		const packageType = await this.findOneByID(packageTypeID);
+		const facilityID = packageType.facilityID._id;
 		return await this.packageService.create(packageTypeID, facilityID, data);
 	}
 }
