@@ -115,6 +115,7 @@ export class CartsController {
 	): Promise<Cart> {
 		return await this.cartsService.getCurrent(userID, {
 			path: 'cartItemIDs',
+			model: 'CartItem',
 			populate: {
 				path: 'packageID',
 				model: 'Package',
