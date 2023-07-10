@@ -10,26 +10,14 @@ export class RefreshTokenStrategy extends PassportStrategy(
 ) {
 	constructor() {
 		super({
-			jwtFromRequest: ExtractJwt.fromExtractors([
-				RefreshTokenStrategy.extractJwtFromCookie,
-			]),
+			jwtFromRequest: ExtractJwt.fromAuthHeaderAsBearerToken(),
 			secretOrKey: `${process.env.JWT_RT_SECRET}`,
 			passReqToCallback: true,
 		});
 	}
-	async validate(
-		req: Request,
-		payload: TokenPayload,
-	): Promise<TokenPayloadWithRefreshToken> {
-		const refreshToken = req.cookies.refreshToken;
+	validate(req: Request, payload: TokenPayload): TokenPayloadWithRefreshToken {
+		const refreshToken = req.headers.authorization.split(' ')[1];
 
 		return { ...payload, refreshToken };
-	}
-
-	private static extractJwtFromCookie(req: Request): string | null {
-		if (req.cookies && req.cookies.refreshToken) {
-			return req.cookies.refreshToken;
-		}
-		return null;
 	}
 }
