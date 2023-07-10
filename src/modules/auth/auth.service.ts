@@ -13,7 +13,6 @@ import { appConfig } from '../../app.config';
 import { Encrypt } from 'src/shared/utils/encrypt';
 import { LoginDto } from './dto/login-dto';
 import { UserStatus } from '../users/schemas/user.schema';
-import { Response } from 'express';
 
 @Injectable()
 export class AuthService {
@@ -21,22 +20,6 @@ export class AuthService {
 		private userService: UsersService,
 		private jwtService: JwtService,
 	) {}
-
-	sendTokensToCookie(tokenResponse: TokenResponse, res: Response) {
-		res.cookie('accessToken', tokenResponse.accessToken, {
-			httpOnly: true,
-			secure: true,
-			sameSite: 'lax',
-			expires: new Date(Date.now() + 7 * 24 * 60 * 60 * 1000),
-		});
-
-		res.cookie('refreshToken', tokenResponse.refreshToken, {
-			httpOnly: true,
-			secure: true,
-			sameSite: 'lax',
-			expires: new Date(Date.now() + 7 * 24 * 60 * 60 * 1000),
-		});
-	}
 
 	async signTokens(sub: string, role: string): Promise<TokenResponse> {
 		const tokenPayload: TokenPayload = {
@@ -70,19 +53,17 @@ export class AuthService {
 		});
 	}
 
-	async signup(signupDto: SignupDto, res: Response): Promise<TokenResponse> {
+	async signup(signupDto: SignupDto): Promise<TokenResponse> {
 		const newUser = await this.userService.createOne(signupDto);
 
 		const tokens = await this.signTokens(newUser._id, newUser.role);
 
 		await this.updateRefreshTokenHashed(newUser._id, tokens.refreshToken);
 
-		this.sendTokensToCookie(tokens, res);
-
 		return tokens;
 	}
 
-	async login(loginDto: LoginDto, res: Response): Promise<TokenResponse> {
+	async login(loginDto: LoginDto): Promise<TokenResponse> {
 		const user = await this.userService.findOneByEmail(loginDto.email);
 
 		if (user.status === UserStatus.INACTIVE) {
@@ -100,12 +81,10 @@ export class AuthService {
 
 		await this.updateRefreshTokenHashed(user._id, tokens.refreshToken);
 
-		this.sendTokensToCookie(tokens, res);
-
 		return tokens;
 	}
 
-	async logout(userID: string, res: Response): Promise<boolean> {
+	async logout(userID: string): Promise<boolean> {
 		const user = await this.userService.findOneByID(userID);
 
 		if (user.refreshToken === null)
@@ -115,16 +94,12 @@ export class AuthService {
 			refreshToken: null,
 		});
 
-		res.clearCookie('accessToken');
-		res.clearCookie('refreshToken');
-
 		return true;
 	}
 
 	async refreshTokens(
 		userID: string,
 		refreshToken: string,
-		res: Response,
 	): Promise<TokenResponse> {
 		const user = await this.userService.findOneByID(userID);
 
@@ -140,8 +115,6 @@ export class AuthService {
 		const tokens = await this.signTokens(user._id, user.role);
 
 		await this.updateRefreshTokenHashed(user._id, tokens.refreshToken);
-
-		this.sendTokensToCookie(tokens, res);
 
 		return tokens;
 	}
