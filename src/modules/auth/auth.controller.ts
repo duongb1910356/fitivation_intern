@@ -5,7 +5,6 @@ import {
 	HttpStatus,
 	Patch,
 	Post,
-	Res,
 	UseGuards,
 } from '@nestjs/common';
 import {
@@ -25,7 +24,6 @@ import { ErrorResponse } from 'src/shared/response/common-response';
 import { Public } from './decorators/public.decorator';
 import { GetCurrentUser } from 'src/decorators/get-current-user.decorator';
 import { RefreshTokenGuard } from './guards/refresh-token.guard';
-import { Response } from 'express';
 
 @Controller('auth')
 @ApiTags('auth')
@@ -70,11 +68,8 @@ export class AuthController {
 	@Post('signup')
 	@Public()
 	@HttpCode(HttpStatus.CREATED)
-	async signup(
-		@Body() signupDto: SignupDto,
-		@Res({ passthrough: true }) res: Response,
-	): Promise<TokenResponse> {
-		return await this.authService.signup(signupDto, res);
+	async signup(@Body() signupDto: SignupDto): Promise<TokenResponse> {
+		return this.authService.signup(signupDto);
 	}
 
 	@ApiOperation({ summary: 'login', description: 'Allow user login' })
@@ -125,11 +120,9 @@ export class AuthController {
 	})
 	@Post('login')
 	@Public()
-	async login(
-		@Body() loginDto: LoginDto,
-		@Res({ passthrough: true }) res: Response,
-	): Promise<TokenResponse> {
-		return await this.authService.login(loginDto, res);
+	@HttpCode(HttpStatus.OK)
+	async login(@Body() loginDto: LoginDto): Promise<TokenResponse> {
+		return this.authService.login(loginDto);
 	}
 
 	@ApiOperation({ summary: 'logout', description: 'Allow user log out' })
@@ -146,11 +139,8 @@ export class AuthController {
 	})
 	@Post('logout')
 	@HttpCode(HttpStatus.NO_CONTENT)
-	async logout(
-		@GetCurrentUser('sub') userID: string,
-		@Res({ passthrough: true }) res: Response,
-	): Promise<boolean> {
-		return await this.authService.logout(userID, res);
+	async logout(@GetCurrentUser('sub') userID: string): Promise<boolean> {
+		return this.authService.logout(userID);
 	}
 
 	@ApiOperation({ summary: 'refreshToken', description: 'Refresh new token' })
@@ -177,12 +167,11 @@ export class AuthController {
 	@Public()
 	@UseGuards(RefreshTokenGuard)
 	@HttpCode(HttpStatus.OK)
-	async refreshTokens(
+	refreshTokens(
 		@GetCurrentUser('sub') userID: string,
 		@GetCurrentUser('refreshToken') refreshToken: string,
-		@Res({ passthrough: true }) res: Response,
 	): Promise<TokenResponse> {
-		return await this.authService.refreshTokens(userID, refreshToken, res);
+		return this.authService.refreshTokens(userID, refreshToken);
 	}
 
 	@ApiOperation({
