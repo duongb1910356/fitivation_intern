@@ -92,7 +92,7 @@ export class SubscriptionsService {
 			total: subscriptions.length,
 			queryOptions: queryFeatures.queryOptions,
 			items: results,
-		};
+		}; // fix not return new
 	}
 	async findOneByID(
 		subscriptionID: string,
@@ -138,7 +138,7 @@ export class SubscriptionsService {
 			.populate({
 				path: 'facilityID',
 				select: '-reviews',
-			});
+			}); // fix not return new
 	}
 
 	async createOne(
@@ -250,7 +250,7 @@ export class SubscriptionsService {
 			.populate({
 				path: 'facilityID',
 				select: '-reviews',
-			});
+			}); // fix not return new
 	}
 
 	async deleteOneByBillItemID(billItemID: string): Promise<boolean> {
