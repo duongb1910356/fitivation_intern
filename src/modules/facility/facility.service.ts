@@ -251,6 +251,8 @@ export class FacilityService {
 			files || null,
 		);
 
+		const averageStar = await this.reviewService.caculateAverageRating(id);
+
 		return this.facilityModel.findOneAndUpdate(
 			{ _id: id },
 			{
@@ -259,6 +261,9 @@ export class FacilityService {
 						$each: [createdReview],
 						$slice: -appConfig.maxElementEmbedd,
 					},
+				},
+				$set: {
+					averageStar: averageStar,
 				},
 			},
 			{ new: true },
@@ -334,6 +339,15 @@ export class FacilityService {
 		listID: string[],
 	): Promise<Facility> {
 		if (req.user.role == 'FACILITY_OWNER' || req.user.role == 'ADMIN') {
+			listID.forEach(async (element) => {
+				if (isValidObjectId(element)) {
+					await this.reviewService.delete(element);
+				}
+			});
+
+			const averageStar = await this.reviewService.caculateAverageRating(
+				facilityID,
+			);
 			const result = await this.facilityModel.findOneAndUpdate(
 				{ _id: facilityID },
 				{
@@ -342,15 +356,13 @@ export class FacilityService {
 							$and: [{ _id: { $in: listID } }],
 						},
 					},
+					$set: {
+						averageStar: averageStar,
+					},
 				},
 				{ new: true },
 			);
 
-			listID.forEach(async (element) => {
-				if (isValidObjectId(element)) {
-					await this.reviewService.delete(element);
-				}
-			});
 			if (!result) {
 				throw new BadRequestException('Fail deleted review');
 			}
@@ -365,6 +377,9 @@ export class FacilityService {
 		const review = await this.reviewService.findOneByID(reviewID);
 		if (review.accountID == req.user.sub || req.user.role == 'ADMIN') {
 			const review = await this.reviewService.delete(reviewID);
+			const averageStar = await this.reviewService.caculateAverageRating(
+				review.facilityID,
+			);
 			const facility = await this.facilityModel.findOneAndUpdate(
 				{ _id: review.facilityID },
 				{
@@ -372,6 +387,9 @@ export class FacilityService {
 						reviews: {
 							$and: [{ _id: reviewID }],
 						},
+					},
+					$set: {
+						averageStar: averageStar,
 					},
 				},
 				{ new: true },

@@ -3,7 +3,7 @@ import { Review, ReviewDocument } from './schemas/reviews.schema';
 import { CreateReviewDto } from './dto/create-review-dto';
 import { PhotoService } from '../photo/photo.service';
 import { InjectModel } from '@nestjs/mongoose';
-import { Model } from 'mongoose';
+import { Model, Types } from 'mongoose';
 import { ListOptions, ListResponse } from 'src/shared/response/common-response';
 
 @Injectable()
@@ -87,6 +87,22 @@ export class ReviewService {
 			});
 		}
 		return deletedReview;
+	}
+
+	async caculateAverageRating(facilityID: string): Promise<number> {
+		const objectId = new Types.ObjectId(facilityID);
+
+		const aggregateResult = await this.reviewModel.aggregate([
+			{ $match: { facilityID: objectId } },
+			{ $group: { _id: null, averageStar: { $avg: '$rating' } } },
+		]);
+
+		console.log('aggregateResult>> ', aggregateResult);
+
+		const averageStar =
+			aggregateResult.length > 0 ? aggregateResult[0].averageStar : 0;
+
+		return parseFloat(averageStar.toFixed(2));
 	}
 
 	// async deleteByID(id: string): Promise<SuccessResponse<Review>> {
