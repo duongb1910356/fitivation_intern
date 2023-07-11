@@ -9,13 +9,7 @@ import { Model } from 'mongoose';
 import { BillItem, BillItemsDocument } from './schemas/bill-item.schema';
 import { PackageService } from '../package/package.service';
 import { BillItemFacility } from './schemas/bill-item-facility.schema';
-import {
-	ListResponse,
-	QueryAPI,
-	QueryObject,
-} from 'src/shared/utils/query-api';
 import { TokenPayload } from '../auth/types/token-payload.type';
-import { Bill } from '../bills/schemas/bill.schema';
 import { UserRole } from '../users/schemas/user.schema';
 import { BrandService } from '../brand/brand.service';
 
