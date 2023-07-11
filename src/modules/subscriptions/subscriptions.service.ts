@@ -24,7 +24,7 @@ export class SubscriptionsService {
 	constructor(
 		@InjectModel(Subscription.name)
 		private subscriptionsModel: Model<SubscriptionDocument>,
-		private packageSerive: PackageService,
+		private packageService: PackageService,
 	) {}
 
 	async findOneByCondition(condition: any): Promise<Subscription> {
@@ -147,7 +147,7 @@ export class SubscriptionsService {
 		packageID: string,
 		facilityID: string,
 	): Promise<Subscription> {
-		const packageItem = await this.packageSerive.findOneByID(packageID);
+		const packageItem = await this.packageService.findOneByID(packageID);
 		const packageTimeType = parseInt(packageItem.type) * 30;
 
 		const date = new Date(Date.now());
@@ -203,6 +203,7 @@ export class SubscriptionsService {
 
 	async renew(
 		subscriptionID: string,
+		billItemID: string,
 		user: TokenPayload,
 	): Promise<Subscription> {
 		// ...check payment
@@ -227,7 +228,7 @@ export class SubscriptionsService {
 			throw new ForbiddenException('Forbidden resource');
 		}
 
-		const packageItem = await this.packageSerive.findOneByID(
+		const packageItem = await this.packageService.findOneByID(
 			subscription.packageID.toString(),
 		);
 
@@ -236,6 +237,7 @@ export class SubscriptionsService {
 
 		subscription.expires = newExpires;
 		subscription.renew = false;
+		subscription.billItemID = billItemID;
 		await subscription.save();
 
 		return await this.subscriptionsModel
