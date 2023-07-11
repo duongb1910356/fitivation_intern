@@ -7,5 +7,6 @@ export const PackageTypeService = jest.fn().mockReturnValue({
 	create: jest.fn().mockResolvedValue(PackageTypeStub()),
 	update: jest.fn().mockResolvedValue(PackageTypeStub()),
 	delete: jest.fn().mockResolvedValue(true),
+	decreaseAfterDeletion: jest.fn().mockResolvedValue(undefined),
 	swapOrder: jest.fn().mockResolvedValue(true),
 });

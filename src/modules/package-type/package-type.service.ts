@@ -156,10 +156,7 @@ export class PackageTypeService {
 
 		await Promise.all([
 			this.packageTypeModel.findByIdAndDelete(packageTypeID),
-			this.decreaseAfterDeletion(
-				packageType.facilityID.toString(),
-				packageType.order,
-			),
+			this.decreaseAfterDeletion(packageType.facilityID._id, packageType.order),
 		]);
 
 		return 'Delete PackageType successfull!!!';
@@ -218,9 +215,8 @@ export class PackageTypeService {
 	}
 
 	async createPackage(packageTypeID: string, data: CreatePackageDto) {
-		const facilityID = (
-			await this.findOneByID(packageTypeID)
-		).facilityID.toString();
+		const packageType = await this.findOneByID(packageTypeID);
+		const facilityID = packageType.facilityID._id;
 		return await this.packageService.create(packageTypeID, facilityID, data);
 	}
 }
