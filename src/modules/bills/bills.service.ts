@@ -15,7 +15,7 @@ import {
 } from 'src/shared/utils/query-api';
 import { UserRole } from '../users/schemas/user.schema';
 import { TokenPayload } from '../auth/types/token-payload.type';
-import { PaymentOptDto } from '../carts/dto/payment-options-dto';
+import { PaymentOptDto } from '../payments/dto/payment-options-dto';
 import { BillItemsService } from '../bill-items/bill-items.service';
 import { SubscriptionsService } from '../subscriptions/subscriptions.service';
 
