@@ -97,8 +97,8 @@ export class UsersController {
 	@Get('me')
 	@Roles(UserRole.ADMIN, UserRole.FACILITY_OWNER, UserRole.MEMBER)
 	@UseGuards(RolesGuard)
-	getProfile(@GetCurrentUser('sub') userID: string) {
-		return this.userService.getCurrentUser(userID);
+	async getProfile(@GetCurrentUser('sub') userID: string) {
+		return await this.userService.getCurrentUser(userID);
 	}
 
 	@ApiDocsPagination('user')
@@ -173,8 +173,10 @@ export class UsersController {
 	@Get()
 	@Roles(UserRole.ADMIN)
 	@UseGuards(RolesGuard)
-	findManyUsers(@Query() query: QueryObject): Promise<ListResponse<User>> {
-		return this.userService.findMany(query);
+	async findManyUsers(
+		@Query() query: QueryObject,
+	): Promise<ListResponse<User>> {
+		return await this.userService.findMany(query);
 	}
 
 	@ApiOperation({ summary: 'findUserByID', description: 'Get one user by ID' })
@@ -248,8 +250,8 @@ export class UsersController {
 	@Get(':id')
 	@Roles(UserRole.ADMIN)
 	@UseGuards(RolesGuard)
-	findUserByID(@Param('id') id: string): Promise<User> {
-		return this.userService.findOneByID(id);
+	async findUserByID(@Param('id') id: string): Promise<User> {
+		return await this.userService.findOneByID(id);
 	}
 
 	@ApiOperation({ summary: 'createUser', description: 'Create new user' })
@@ -383,8 +385,8 @@ export class UsersController {
 	@Post()
 	@Roles(UserRole.ADMIN)
 	@UseGuards(RolesGuard)
-	createUser(@Body() createUserDto: CreateUserDto): Promise<User> {
-		return this.userService.createOne(createUserDto);
+	async createUser(@Body() createUserDto: CreateUserDto): Promise<User> {
+		return await this.userService.createOne(createUserDto);
 	}
 
 	@Patch(':userID/avatar')
@@ -526,11 +528,11 @@ export class UsersController {
 	@Patch('update-me')
 	@Roles(UserRole.ADMIN, UserRole.FACILITY_OWNER, UserRole.MEMBER)
 	@UseGuards(RolesGuard)
-	updateMyData(
+	async updateMyData(
 		@GetCurrentUser('sub') userID: string,
 		@Body() dto: UpdateLoggedUserDataDto,
 	): Promise<User> {
-		return this.userService.updateMyData(userID, dto);
+		return await this.userService.updateMyData(userID, dto);
 	}
 
 	@ApiOperation({
@@ -571,11 +573,11 @@ export class UsersController {
 	@Patch('update-my-password')
 	@Roles(UserRole.ADMIN, UserRole.FACILITY_OWNER, UserRole.MEMBER)
 	@UseGuards(RolesGuard)
-	updateMyPassword(
+	async updateMyPassword(
 		@GetCurrentUser('sub') userID: string,
 		@Body() dto: UpdateLoggedUserPasswordDto,
 	): Promise<boolean> {
-		return this.userService.updateMyPassword(userID, dto);
+		return await this.userService.updateMyPassword(userID, dto);
 	}
 
 	@ApiOperation({
@@ -676,11 +678,11 @@ export class UsersController {
 	@Patch('/:id')
 	@Roles(UserRole.ADMIN)
 	@UseGuards(RolesGuard)
-	updateUser(
+	async updateUser(
 		@Body() dto: UpdateUserDto,
 		@Param('id') id: string,
 	): Promise<User> {
-		return this.userService.findOneByIDAndUpdate(id, dto);
+		return await this.userService.findOneByIDAndUpdate(id, dto);
 	}
 
 	@ApiOperation({
@@ -720,8 +722,8 @@ export class UsersController {
 	@Delete('delete-me')
 	@Roles(UserRole.FACILITY_OWNER, UserRole.MEMBER)
 	@UseGuards(RolesGuard)
-	deleteMe(@GetCurrentUser('sub') userID: string): Promise<boolean> {
-		return this.userService.deleteMe(userID);
+	async deleteMe(@GetCurrentUser('sub') userID: string): Promise<boolean> {
+		return await this.userService.deleteMe(userID);
 	}
 
 	@ApiOperation({ summary: 'deleteUser', description: 'Delete user ' })
@@ -778,8 +780,8 @@ export class UsersController {
 	@Delete(':id')
 	@Roles(UserRole.ADMIN)
 	@UseGuards(RolesGuard)
-	deleteUser(@Param('id') id: string): Promise<boolean> {
-		return this.userService.deleteOne(id);
+	async deleteUser(@Param('id') id: string): Promise<boolean> {
+		return await this.userService.deleteOne(id);
 	}
 
 	@ApiOperation({

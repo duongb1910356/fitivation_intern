@@ -110,9 +110,12 @@ export class CartsController {
 	@Get('me')
 	@Roles(UserRole.MEMBER)
 	@UseGuards(RolesGuard)
-	getCurrentUserCart(@GetCurrentUser('sub') userID: string): Promise<Cart> {
-		return this.cartsService.getCurrent(userID, {
+	async getCurrentUserCart(
+		@GetCurrentUser('sub') userID: string,
+	): Promise<Cart> {
+		return await this.cartsService.getCurrent(userID, {
 			path: 'cartItemIDs',
+			model: 'CartItem',
 			populate: {
 				path: 'packageID',
 				model: 'Package',
@@ -193,8 +196,10 @@ export class CartsController {
 	@Get()
 	@Roles(UserRole.ADMIN)
 	@UseGuards(RolesGuard)
-	findManyCarts(@Query() query: QueryObject): Promise<ListResponse<Cart>> {
-		return this.cartsService.findMany(query);
+	async findManyCarts(
+		@Query() query: QueryObject,
+	): Promise<ListResponse<Cart>> {
+		return await this.cartsService.findMany(query);
 	}
 
 	@ApiOperation({
@@ -271,8 +276,8 @@ export class CartsController {
 	@Get(':id')
 	@Roles(UserRole.ADMIN)
 	@UseGuards(RolesGuard)
-	findOneCart(@Param('id') id: string) {
-		return this.cartsService.findOneByID(id);
+	async findOneCart(@Param('id') id: string) {
+		return await this.cartsService.findOneByID(id);
 	}
 
 	@ApiOperation({
@@ -443,11 +448,11 @@ export class CartsController {
 	@Post('purchase')
 	@Roles(UserRole.MEMBER)
 	@UseGuards(RolesGuard)
-	purchaseInCart(
+	async purchaseInCart(
 		@GetCurrentUser('sub') userID: string,
 		@Body() paymentOpt: PaymentOptDto,
 	): Promise<Bill> {
-		return this.cartsService.purchaseInCart(userID, paymentOpt);
+		return await this.cartsService.purchaseInCart(userID, paymentOpt);
 	}
 
 	@ApiOperation({
@@ -494,11 +499,11 @@ export class CartsController {
 	@Patch('cart-items/:packageID')
 	@Roles(UserRole.MEMBER)
 	@UseGuards(RolesGuard)
-	addCartItemToCurrentCart(
+	async addCartItemToCurrentCart(
 		@GetCurrentUser('sub') userID: string,
 		@Param('packageID') packageID: string,
 	): Promise<boolean> {
-		return this.cartsService.addCartItemToCurrentCart(userID, packageID);
+		return await this.cartsService.addCartItemToCurrentCart(userID, packageID);
 	}
 
 	@ApiOperation({
@@ -545,11 +550,14 @@ export class CartsController {
 	@Delete('cart-items/:packageID')
 	@Roles(UserRole.MEMBER)
 	@UseGuards(RolesGuard)
-	removeCartItemToCurrentCart(
+	async removeCartItemToCurrentCart(
 		@GetCurrentUser('sub') userID: string,
 		@Param('packageID') cartItemID: string,
 	): Promise<boolean> {
-		return this.cartsService.removeCartItemFromCurrentCart(userID, cartItemID);
+		return await this.cartsService.removeCartItemFromCurrentCart(
+			userID,
+			cartItemID,
+		);
 	}
 
 	// @Patch('cart-items/:cartItemID/promotions/:promotionID')
