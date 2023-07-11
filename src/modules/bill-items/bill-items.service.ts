@@ -59,7 +59,7 @@ export class BillItemsService {
 	async createOne(packageID: string, userID: string): Promise<BillItem> {
 		const packageItem = await this.packageService.findOneByID(
 			packageID,
-			'facilityID packageTypeID',
+			'packageTypeID facilityID',
 		);
 
 		const brand = await this.brandService.findOneByID(
