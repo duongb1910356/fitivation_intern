@@ -1,6 +1,7 @@
 import { Prop, Schema, SchemaFactory } from '@nestjs/mongoose';
 import mongoose, { HydratedDocument } from 'mongoose';
-import { Photo } from 'src/modules/photo/schemas/photo.schema';
+import { appConfig } from 'src/app.config';
+import { Photo, PhotoSchema } from 'src/modules/photo/schemas/photo.schema';
 
 export type BillItemFacilityDocument = HydratedDocument<BillItemFacility>;
 
@@ -41,10 +42,11 @@ export class BillItemFacility {
 	};
 
 	@Prop({
-		type: [{ type: mongoose.Schema.Types.ObjectId, ref: 'Photo', defautl: [] }],
+		type: [{ type: PhotoSchema, required: true }],
 		validate: {
-			validator: (photos: any[]) => photos.length <= 5,
-			message: 'Facility have 5 photo latest',
+			validator: (photos: any[]) =>
+				photos.length <= parseInt(appConfig.maxElementEmbedd),
+			message: `Facility have ${appConfig.maxElementEmbedd} photo latest`,
 		},
 		default: [],
 	})
