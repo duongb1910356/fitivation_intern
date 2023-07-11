@@ -17,8 +17,7 @@ import {
 	QueryAPI,
 	QueryObject,
 } from 'src/shared/utils/query-api';
-import { PaymentOptDto } from './dto/payment-options-dto';
-import { CartItem } from '../cart-items/schemas/cart-item.schema';
+import { PaymentOptDto } from '../payments/dto/payment-options-dto';
 
 @Injectable()
 export class CartsService {
@@ -64,10 +63,14 @@ export class CartsService {
 	}
 
 	async getCurrent(userID: string, populateOpt?: any): Promise<Cart> {
+		let cart = await this.cartModel.findOne({ accountID: userID });
+
+		if (!cart) throw new NotFoundException(`Not found current user's cart`);
+
 		await this.updatePrice(userID);
 		await this.updatePrice(userID); // fix not return new
 
-		const cart = await this.cartModel
+		cart = await this.cartModel
 			.findOne({ accountID: userID })
 			.populate(populateOpt);
 
@@ -98,6 +101,8 @@ export class CartsService {
 			.findOne({ accountID: userID })
 			.populate({ path: 'cartItemIDs' });
 
+		if (!cart) throw new NotFoundException(`Not found current user's cart`);
+
 		const isDuplicateProduct = this.checkDuplicateCartItemProduct(
 			cart.cartItemIDs,
 			packageID,
@@ -122,6 +127,9 @@ export class CartsService {
 		cartItemID: string,
 	): Promise<boolean> {
 		const cartItem = await this.cartItemService.findOneByID(cartItemID);
+
+		if (!cartItem)
+			throw new NotFoundException(`Not found current user's cart-item`);
 
 		const cart = await this.cartModel
 			.findOneAndUpdate(
