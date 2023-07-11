@@ -5,9 +5,11 @@ import { Test, TestingModule } from '@nestjs/testing';
 import { getModelToken } from '@nestjs/mongoose';
 import { PhotoStub } from './stub/photo.stub';
 import { GenFileName } from 'src/shared/utils/gen-filename';
-import * as fs from 'fs';
 import { BadRequestException } from '@nestjs/common';
 import { ListOptions } from 'src/shared/response/common-response';
+import * as fs from 'fs';
+
+jest.mock('fs');
 
 describe('PhotoService', function () {
 	let photoService: PhotoService;
@@ -19,6 +21,9 @@ describe('PhotoService', function () {
 		findById: jest.fn(),
 		findOneAndDelete: jest.fn(),
 	};
+
+	const writeFileSyncMock = jest.fn();
+	jest.spyOn(fs, 'writeFileSync').mockImplementation(writeFileSyncMock);
 	jest.spyOn(GenFileName, 'gen').mockReturnValue('mocked-file-name.jpg');
 
 	beforeEach(async () => {
