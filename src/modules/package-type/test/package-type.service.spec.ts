@@ -68,7 +68,7 @@ describe('PackageTypeService', () => {
 		counterService = module.get<CounterService>(CounterService);
 	});
 
-	it('should be defined', () => {
+	it('packageTypeService should be defined', () => {
 		expect(packageTypeService).toBeDefined();
 	});
 	it('packageTypeModel should be defined', () => {
@@ -100,7 +100,7 @@ describe('PackageTypeService', () => {
 	});
 
 	describe('findMany', () => {
-		it('should return a packageType', async () => {
+		it('should return packageType array', async () => {
 			const filter: ListOptions<PackageType> = {
 				limit: 10,
 				offset: 0,
@@ -128,7 +128,7 @@ describe('PackageTypeService', () => {
 	});
 
 	describe('findManyByFacility', () => {
-		it('should return a packageType', async () => {
+		it('should return packageType array', async () => {
 			const filter: ListOptions<PackageType> = {
 				limit: 10,
 				offset: 0,

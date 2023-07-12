@@ -91,7 +91,7 @@ describe('PackageTypeService', () => {
 	});
 
 	describe('findMany', () => {
-		it('should return a package', async () => {
+		it('should return package array', async () => {
 			const filter: ListOptions<Package> = {
 				limit: 10,
 				offset: 0,
@@ -119,7 +119,7 @@ describe('PackageTypeService', () => {
 	});
 
 	describe('findManyByPackageType', () => {
-		it('should return a packageType', async () => {
+		it('should return packageType array', async () => {
 			const filter: ListOptions<Package> = {
 				limit: 10,
 				offset: 0,
