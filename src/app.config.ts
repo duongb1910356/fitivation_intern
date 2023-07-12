@@ -9,4 +9,6 @@ export const appConfig = {
 	jwtRefreshSecret: process.env.JWT_RT_SECRET,
 	jwtRefreshExpiresIn: process.env.JWT_RT_EXPIRES_IN,
 	maxElementEmbedd: process.env.MAX_ELEMENT_EMBEDD,
+	stripeSecretKey: process.env.STRIPE_SECRET_KEY,
+	stripePublicKey: process.env.STRIPE_PUBLIC_KEY,
 };
