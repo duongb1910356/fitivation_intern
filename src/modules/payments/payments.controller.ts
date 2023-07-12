@@ -13,7 +13,14 @@ import { PaymentOptDto } from './dto/payment-options-dto';
 import { GetCurrentUser } from 'src/decorators/get-current-user.decorator';
 import { Bill, BillStatus, PaymentMethod } from '../bills/schemas/bill.schema';
 import { ErrorResponse } from 'src/shared/response/common-response';
-import { ApiOperation, ApiParam, ApiResponse } from '@nestjs/swagger';
+import {
+	ApiBearerAuth,
+	ApiBody,
+	ApiOperation,
+	ApiParam,
+	ApiResponse,
+	ApiTags,
+} from '@nestjs/swagger';
 import {
 	CustomerType,
 	Promotion,
@@ -38,6 +45,8 @@ import {
 import { PaymentOptWithCartItemIDsDto } from './dto/payment-option-with-cartItemID-dto';
 
 @Controller('payments')
+@ApiTags('payments')
+@ApiBearerAuth()
 export class PaymentsController {
 	constructor(private readonly paymentService: PaymentsService) {}
 
@@ -45,20 +54,18 @@ export class PaymentsController {
 		summary: 'purchaseAllInCart',
 		description: 'Allow customers to purchase All cart-item in their cart',
 	})
-	// @ApiBody({
-	// 	type: PaymentOptDto,
-	// 	examples: {
-	// 		example1: {
-	// 			value: {
-	// 				paymentOpt: {
-	// 					paymentMethod: PaymentMethod.CREDIT_CARD,
-	// 					taxes: 0,
-	// 					description: 'string',
-	// 				},
-	// 			},
-	// 		},
-	// 	},
-	// })
+	@ApiBody({
+		type: PaymentOptDto,
+		examples: {
+			example1: {
+				value: {
+					paymentMethod: PaymentMethod.CREDIT_CARD,
+					taxes: 1,
+					description: 'string',
+				},
+			},
+		},
+	})
 	@ApiResponse({
 		status: 200,
 		schema: {
@@ -211,29 +218,28 @@ export class PaymentsController {
 	@UseGuards(RolesGuard)
 	async purchaseAllInCart(
 		@GetCurrentUser('sub') userID: string,
-		@Body() paymentOpt: PaymentOptDto,
+		@Body() paymentOptDto: PaymentOptDto,
 	): Promise<Bill> {
-		return await this.paymentService.purchaseAllInCart(userID, paymentOpt);
+		return await this.paymentService.purchaseAllInCart(userID, paymentOptDto);
 	}
 
 	@ApiOperation({
-		summary: 'purchaseAllInCart',
-		description: 'Allow customers to purchase All cart-item in their cart',
+		summary: 'purchaseSomeInCart',
+		description: 'Allow customers to purchase some cart-items in their cart',
 	})
-	// @ApiBody({
-	// 	type: PaymentOptDto,
-	// 	examples: {
-	// 		example1: {
-	// 			value: {
-	// 				paymentOpt: {
-	// 					paymentMethod: PaymentMethod.CREDIT_CARD,
-	// 					taxes: 0,
-	// 					description: 'string',
-	// 				},
-	// 			},
-	// 		},
-	// 	},
-	// })
+	@ApiBody({
+		type: PaymentOptDto,
+		examples: {
+			example1: {
+				value: {
+					cartItemIDs: ['string', 'string'],
+					paymentMethod: PaymentMethod.CREDIT_CARD,
+					taxes: 0,
+					description: 'string',
+				},
+			},
+		},
+	})
 	@ApiResponse({
 		status: 200,
 		schema: {
@@ -469,11 +475,15 @@ export class PaymentsController {
 	async renew(
 		@GetCurrentUser() user: TokenPayload,
 		@Param('id') id: string,
-		@Body() paymentOpt: PaymentOptDto,
+		@Body() paymentOptDto: PaymentOptDto,
 	): Promise<Subscription> {
-		return await this.paymentService.renew(id, user, paymentOpt);
+		return await this.paymentService.renew(id, user, paymentOptDto);
 	}
 
-	// purchaseAllInCartItem() {}
-	// purchaseSomeInCartItem() {}
+	@Post('confirm/:clientSecret')
+	@Roles(UserRole.MEMBER)
+	@UseGuards(RolesGuard)
+	async confirmPayment() {
+		//
+	}
 }
