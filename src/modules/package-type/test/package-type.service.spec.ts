@@ -90,17 +90,17 @@ describe('PackageTypeService', () => {
 
 		it('should return a packageType if packageType exists', async () => {
 			jest.spyOn(mockModel, 'findById').mockImplementation(() => ({
-				populate: jest.fn().mockResolvedValue(PackageTypeStub()),
+				populate: jest.fn().mockResolvedValue(packageTypeStub),
 			}));
 
 			packageType = await packageTypeService.findOneByID(packageTypeStub._id);
 
-			expect(packageType).toEqual(PackageTypeStub());
+			expect(packageType).toEqual(packageTypeStub);
 		});
 	});
 
 	describe('findMany', () => {
-		it('should return packageType array', async () => {
+		it('should return a packageType', async () => {
 			const filter: ListOptions<PackageType> = {
 				limit: 10,
 				offset: 0,
@@ -112,7 +112,7 @@ describe('PackageTypeService', () => {
 			jest.spyOn(mockModel, 'find').mockImplementation(() => ({
 				sort: () => ({
 					limit: () => ({
-						skip: jest.fn().mockResolvedValue([PackageTypeStub()]),
+						skip: jest.fn().mockResolvedValue([packageTypeStub]),
 					}),
 				}),
 			}));
@@ -120,15 +120,15 @@ describe('PackageTypeService', () => {
 			const result = await packageTypeService.findMany(filter);
 
 			expect(result).toEqual({
-				items: [PackageTypeStub()],
-				total: [PackageTypeStub()].length,
+				items: [packageTypeStub],
+				total: [packageTypeStub].length,
 				options: filter,
 			});
 		});
 	});
 
 	describe('findManyByFacility', () => {
-		it('should return packageType array', async () => {
+		it('should return a packageType', async () => {
 			const filter: ListOptions<PackageType> = {
 				limit: 10,
 				offset: 0,
@@ -140,19 +140,19 @@ describe('PackageTypeService', () => {
 			jest.spyOn(mockModel, 'find').mockImplementation(() => ({
 				sort: () => ({
 					limit: () => ({
-						skip: jest.fn().mockResolvedValue([PackageTypeStub()]),
+						skip: jest.fn().mockResolvedValue([packageTypeStub]),
 					}),
 				}),
 			}));
 
 			const result = await packageTypeService.findManyByFacility(
-				PackageTypeStub().facilityID._id,
+				packageTypeStub.facilityID._id,
 				filter,
 			);
 
 			expect(result).toEqual({
-				items: [PackageTypeStub()],
-				total: [PackageTypeStub()].length,
+				items: [packageTypeStub],
+				total: [packageTypeStub].length,
 				options: filter,
 			});
 		});

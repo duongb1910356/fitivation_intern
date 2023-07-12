@@ -272,13 +272,19 @@ describe('PackageTypeService', () => {
 				customerType: CustomerType.MEMBER,
 			};
 
-			await packageService.createPromotion(packageID, data);
+			jest
+				.spyOn(promotionService, 'create')
+				.mockResolvedValue(PackagePromotionStub());
+
+			const result = await packageService.createPromotion(packageID, data);
 
 			expect(promotionService.create).toHaveBeenCalledWith({
 				targetID: packageID,
 				type: PromotionType.PACKAGE,
 				...data,
 			});
+
+			expect(result).toEqual(PackagePromotionStub());
 		});
 	});
 
@@ -286,10 +292,22 @@ describe('PackageTypeService', () => {
 		it('should return many promotion', async () => {
 			const packageID = packageStub._id;
 
-			await packageService.findManyPromotion(packageID);
+			jest.spyOn(promotionService, 'findMany').mockResolvedValue({
+				items: [PackagePromotionStub()],
+				total: 1,
+				options: {},
+			});
+
+			const result = await packageService.findManyPromotion(packageID);
 
 			expect(promotionService.findMany).toHaveBeenCalledWith({
 				targetID: packageID,
+			});
+
+			expect(result).toEqual({
+				items: [PackagePromotionStub()],
+				total: 1,
+				options: {},
 			});
 		});
 	});
@@ -327,7 +345,11 @@ describe('PackageTypeService', () => {
 
 			jest.spyOn(packageService, 'isOwner').mockResolvedValueOnce(true);
 
-			await packageService.updatePromotion(
+			jest
+				.spyOn(promotionService, 'update')
+				.mockResolvedValue(PackagePromotionStub());
+
+			const result = await packageService.updatePromotion(
 				PackagePromotionStub()._id,
 				data,
 				req,
@@ -346,6 +368,8 @@ describe('PackageTypeService', () => {
 				PackagePromotionStub()._id,
 				data,
 			);
+
+			expect(result).toEqual(PackagePromotionStub());
 		});
 	});
 

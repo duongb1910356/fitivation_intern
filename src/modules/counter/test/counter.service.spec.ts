@@ -55,9 +55,11 @@ describe('CounterService', () => {
 
 			jest.spyOn(mockModel, 'findOne').mockResolvedValue(counterStub);
 
-			await counterService.findOneByCondition(filter);
+			const result = await counterService.findOneByCondition(filter);
 
 			expect(mockModel.findOne).toHaveBeenCalledWith(filter);
+
+			expect(result).toEqual(counterStub);
 		});
 	});
 
@@ -70,9 +72,11 @@ describe('CounterService', () => {
 			};
 			jest.spyOn(mockModel, 'create').mockResolvedValue(counterStub);
 
-			await counterService.create(data);
+			const result = await counterService.create(data);
 
 			expect(mockModel.create).toHaveBeenCalledWith({ ...data, count: 0 });
+
+			expect(result).toEqual(counterStub);
 		});
 	});
 
