@@ -1,5 +1,4 @@
 import { Test, TestingModule } from '@nestjs/testing';
-import { Model } from 'mongoose';
 import { CounterService } from '../counter.service';
 import { CountObject, Counter, TargetObject } from '../entities/counter.entity';
 import { getModelToken } from '@nestjs/mongoose';
@@ -8,10 +7,9 @@ import { NotFoundException } from '@nestjs/common';
 
 describe('CounterService', () => {
 	const counterStub = CounterStub();
-	let counterModel: Model<Counter>;
 	let counterService: CounterService;
 
-	const mockModel = {
+	const counterModel = {
 		findOne: jest.fn(),
 		findById: jest.fn().mockReturnThis(),
 		find: jest.fn().mockReturnThis(),
@@ -32,14 +30,13 @@ describe('CounterService', () => {
 			providers: [
 				{
 					provide: getModelToken(Counter.name),
-					useValue: mockModel,
+					useValue: counterModel,
 				},
 				CounterService,
 			],
 		}).compile();
 
 		counterService = module.get<CounterService>(CounterService);
-		counterModel = module.get<Model<Counter>>(getModelToken(Counter.name));
 	});
 
 	it('counterService should be defined', () => {
@@ -53,11 +50,11 @@ describe('CounterService', () => {
 		it('should return a counter', async () => {
 			const filter: Partial<Counter> = {};
 
-			jest.spyOn(mockModel, 'findOne').mockResolvedValue(counterStub);
+			jest.spyOn(counterModel, 'findOne').mockResolvedValue(counterStub);
 
 			const result = await counterService.findOneByCondition(filter);
 
-			expect(mockModel.findOne).toHaveBeenCalledWith(filter);
+			expect(counterModel.findOne).toHaveBeenCalledWith(filter);
 
 			expect(result).toEqual(counterStub);
 		});
@@ -70,11 +67,11 @@ describe('CounterService', () => {
 				targetID: '64931e19d380fac3cd02a6a0',
 				countObject: CountObject.PACKAGE_TYPE,
 			};
-			jest.spyOn(mockModel, 'create').mockResolvedValue(counterStub);
+			jest.spyOn(counterModel, 'create').mockResolvedValue(counterStub);
 
 			const result = await counterService.create(data);
 
-			expect(mockModel.create).toHaveBeenCalledWith({ ...data, count: 0 });
+			expect(counterModel.create).toHaveBeenCalledWith({ ...data, count: 0 });
 
 			expect(result).toEqual(counterStub);
 		});
@@ -82,7 +79,7 @@ describe('CounterService', () => {
 
 	describe('increase', () => {
 		it('should throw NotFoundException if counter not found', async () => {
-			jest.spyOn(mockModel, 'findById').mockResolvedValue(undefined);
+			jest.spyOn(counterModel, 'findById').mockResolvedValue(undefined);
 
 			expect(counterService.increase(counterStub._id)).rejects.toThrow(
 				NotFoundException,
@@ -97,11 +94,11 @@ describe('CounterService', () => {
 				count: 2,
 				save: jest.fn(),
 			};
-			jest.spyOn(mockModel, 'findById').mockResolvedValue(counterStub);
+			jest.spyOn(counterModel, 'findById').mockResolvedValue(counterStub);
 
 			const result = await counterService.increase(counterStub._id);
 
-			expect(mockModel.findById).toHaveBeenCalledWith(counterStub._id);
+			expect(counterModel.findById).toHaveBeenCalledWith(counterStub._id);
 
 			expect(counterStub.save).toHaveBeenCalledTimes(1);
 
@@ -111,7 +108,7 @@ describe('CounterService', () => {
 
 	describe('decrease', () => {
 		it('should throw NotFoundException if counter not found', async () => {
-			jest.spyOn(mockModel, 'findById').mockResolvedValue(undefined);
+			jest.spyOn(counterModel, 'findById').mockResolvedValue(undefined);
 
 			expect(counterService.decrease(counterStub._id)).rejects.toThrow(
 				NotFoundException,
@@ -126,11 +123,11 @@ describe('CounterService', () => {
 				count: 2,
 				save: jest.fn(),
 			};
-			jest.spyOn(mockModel, 'findById').mockResolvedValue(counterStub);
+			jest.spyOn(counterModel, 'findById').mockResolvedValue(counterStub);
 
 			const result = await counterService.decrease(counterStub._id);
 
-			expect(mockModel.findById).toHaveBeenCalledWith(counterStub._id);
+			expect(counterModel.findById).toHaveBeenCalledWith(counterStub._id);
 
 			expect(counterStub.save).toHaveBeenCalledTimes(1);
 
@@ -140,18 +137,24 @@ describe('CounterService', () => {
 
 	describe('delete', () => {
 		it('should throw NotFoundException if counter not found', async () => {
-			jest.spyOn(mockModel, 'findByIdAndDelete').mockResolvedValue(undefined);
+			jest
+				.spyOn(counterModel, 'findByIdAndDelete')
+				.mockResolvedValue(undefined);
 
 			expect(counterService.delete(counterStub._id)).rejects.toThrow(
 				NotFoundException,
 			);
 		});
 		it('should delete a counter', async () => {
-			jest.spyOn(mockModel, 'findByIdAndDelete').mockResolvedValue(counterStub);
+			jest
+				.spyOn(counterModel, 'findByIdAndDelete')
+				.mockResolvedValue(counterStub);
 
 			await counterService.delete(counterStub._id);
 
-			expect(mockModel.findByIdAndDelete).toHaveBeenCalledWith(counterStub._id);
+			expect(counterModel.findByIdAndDelete).toHaveBeenCalledWith(
+				counterStub._id,
+			);
 		});
 	});
 });

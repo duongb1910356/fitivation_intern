@@ -4,7 +4,6 @@ import { CounterService } from 'src/modules/counter/counter.service';
 import { PackageService } from 'src/modules/package/package.service';
 import { getModelToken } from '@nestjs/mongoose';
 import { PackageType } from '../entities/package-type.entity';
-import { Model } from 'mongoose';
 import { PackageTypeStub } from './stubs/package-type.stub';
 import { ForbiddenException, NotFoundException } from '@nestjs/common';
 import { ListOptions } from 'src/shared/response/common-response';
@@ -27,11 +26,10 @@ describe('PackageTypeService', () => {
 	const packageTypeStub = PackageTypeStub();
 	const packageStub = PackageStub();
 	let packageTypeService: PackageTypeService;
-	let packageTypeModel: Model<PackageType>;
 	let packageService: PackageService;
 	let counterService: CounterService;
 
-	const mockModel = {
+	const packageTypeModel = {
 		findOne: jest.fn(),
 		findById: jest.fn().mockReturnThis(),
 		find: jest.fn().mockReturnThis(),
@@ -53,7 +51,7 @@ describe('PackageTypeService', () => {
 				PackageTypeService,
 				{
 					provide: getModelToken(PackageType.name),
-					useValue: mockModel,
+					useValue: packageTypeModel,
 				},
 				CounterService,
 				PackageService,
@@ -61,9 +59,6 @@ describe('PackageTypeService', () => {
 		}).compile();
 
 		packageTypeService = module.get<PackageTypeService>(PackageTypeService);
-		packageTypeModel = module.get<Model<PackageType>>(
-			getModelToken(PackageType.name),
-		);
 		packageService = module.get<PackageService>(PackageService);
 		counterService = module.get<CounterService>(CounterService);
 	});
@@ -79,7 +74,7 @@ describe('PackageTypeService', () => {
 		let packageType: PackageType;
 
 		it('should throw a NotFoundException if packageType not found', async () => {
-			jest.spyOn(mockModel, 'findById').mockImplementation(() => ({
+			jest.spyOn(packageTypeModel, 'findById').mockImplementation(() => ({
 				populate: jest.fn().mockResolvedValue(undefined),
 			}));
 
@@ -89,7 +84,7 @@ describe('PackageTypeService', () => {
 		});
 
 		it('should return a packageType if packageType exists', async () => {
-			jest.spyOn(mockModel, 'findById').mockImplementation(() => ({
+			jest.spyOn(packageTypeModel, 'findById').mockImplementation(() => ({
 				populate: jest.fn().mockResolvedValue(packageTypeStub),
 			}));
 
@@ -109,7 +104,7 @@ describe('PackageTypeService', () => {
 				sortOrder: 'asc',
 			};
 
-			jest.spyOn(mockModel, 'find').mockImplementation(() => ({
+			jest.spyOn(packageTypeModel, 'find').mockImplementation(() => ({
 				sort: () => ({
 					limit: () => ({
 						skip: jest.fn().mockResolvedValue([packageTypeStub]),
@@ -137,7 +132,7 @@ describe('PackageTypeService', () => {
 				sortOrder: 'asc',
 			};
 
-			jest.spyOn(mockModel, 'find').mockImplementation(() => ({
+			jest.spyOn(packageTypeModel, 'find').mockImplementation(() => ({
 				sort: () => ({
 					limit: () => ({
 						skip: jest.fn().mockResolvedValue([packageTypeStub]),
@@ -175,7 +170,9 @@ describe('PackageTypeService', () => {
 
 				jest.spyOn(counterService, 'increase').mockResolvedValue(counterStub);
 
-				jest.spyOn(mockModel, 'create').mockResolvedValue(packageTypeStub);
+				jest
+					.spyOn(packageTypeModel, 'create')
+					.mockResolvedValue(packageTypeStub);
 
 				const result = await packageTypeService.create(
 					packageTypeStub.facilityID._id,
@@ -214,7 +211,9 @@ describe('PackageTypeService', () => {
 
 				jest.spyOn(counterService, 'increase').mockResolvedValue(counterStub);
 
-				jest.spyOn(mockModel, 'create').mockResolvedValue(packageTypeStub);
+				jest
+					.spyOn(packageTypeModel, 'create')
+					.mockResolvedValue(packageTypeStub);
 
 				const result = await packageTypeService.create(
 					packageTypeStub.facilityID._id,
@@ -242,7 +241,9 @@ describe('PackageTypeService', () => {
 		};
 
 		it('should throw a NotFoundException if packageType not found', async () => {
-			jest.spyOn(mockModel, 'findByIdAndUpdate').mockResolvedValue(undefined);
+			jest
+				.spyOn(packageTypeModel, 'findByIdAndUpdate')
+				.mockResolvedValue(undefined);
 
 			expect(
 				packageTypeService.update(packageTypeStub._id, updateData),
@@ -251,7 +252,7 @@ describe('PackageTypeService', () => {
 
 		it('should return a packageType', async () => {
 			jest
-				.spyOn(mockModel, 'findByIdAndUpdate')
+				.spyOn(packageTypeModel, 'findByIdAndUpdate')
 				.mockResolvedValue(packageTypeStub);
 
 			const result = await packageTypeService.update(
@@ -284,7 +285,7 @@ describe('PackageTypeService', () => {
 				.mockResolvedValue(0);
 
 			jest
-				.spyOn(mockModel, 'findByIdAndDelete')
+				.spyOn(packageTypeModel, 'findByIdAndDelete')
 				.mockResolvedValue(packageTypeStub);
 
 			jest
@@ -301,7 +302,7 @@ describe('PackageTypeService', () => {
 				packageService.countNumberOfPackageByPackageType,
 			).toHaveBeenCalledWith(packageTypeStub._id);
 
-			expect(mockModel.findByIdAndDelete).toHaveBeenCalledWith(
+			expect(packageTypeModel.findByIdAndDelete).toHaveBeenCalledWith(
 				packageTypeStub._id,
 			);
 
@@ -335,7 +336,7 @@ describe('PackageTypeService', () => {
 				},
 			];
 
-			jest.spyOn(mockModel, 'find').mockResolvedValue(packageTypeStubs);
+			jest.spyOn(packageTypeModel, 'find').mockResolvedValue(packageTypeStubs);
 
 			await packageTypeService.decreaseAfterDeletion(
 				packageTypeStub.facilityID._id,
@@ -350,7 +351,7 @@ describe('PackageTypeService', () => {
 
 			expect(counterService.decrease).toHaveBeenCalledWith(counterStub._id);
 
-			expect(mockModel.find).toHaveBeenCalledWith({
+			expect(packageTypeModel.find).toHaveBeenCalledWith({
 				facilityID: packageTypeStub.facilityID._id,
 				order: { $gt: packageTypeStub.order },
 			});
@@ -370,7 +371,7 @@ describe('PackageTypeService', () => {
 			const facilityID = packageTypeStub.facilityID._id;
 			const data: UpdateOrderDto = { order1: 10, order2: 2 };
 			jest
-				.spyOn(mockModel, 'findOne')
+				.spyOn(packageTypeModel, 'findOne')
 				.mockResolvedValueOnce(undefined)
 				.mockResolvedValueOnce(packageTypeStub);
 
@@ -383,7 +384,7 @@ describe('PackageTypeService', () => {
 			const data: UpdateOrderDto = { order1: 2, order2: 10 };
 
 			jest
-				.spyOn(mockModel, 'findOne')
+				.spyOn(packageTypeModel, 'findOne')
 				.mockResolvedValueOnce(packageTypeStub)
 				.mockResolvedValueOnce(undefined);
 
@@ -410,17 +411,17 @@ describe('PackageTypeService', () => {
 			};
 
 			jest
-				.spyOn(mockModel, 'findOne')
+				.spyOn(packageTypeModel, 'findOne')
 				.mockResolvedValueOnce(packageTypeStub1)
 				.mockResolvedValueOnce(packageTypeStub2);
 
 			await packageTypeService.swapOrder(facilityID, data);
 
-			expect(mockModel.findOne).toHaveBeenCalledWith({
+			expect(packageTypeModel.findOne).toHaveBeenCalledWith({
 				facilityID,
 				order: data.order1,
 			});
-			expect(mockModel.findOne).toHaveBeenCalledWith({
+			expect(packageTypeModel.findOne).toHaveBeenCalledWith({
 				facilityID,
 				order: data.order2,
 			});

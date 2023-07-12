@@ -1,4 +1,3 @@
-import { Model } from 'mongoose';
 import { PackageService } from '../package.service';
 import { Package, TimeType } from '../entities/package.entity';
 import { PackageStub } from './stubs/package.stub';
@@ -20,11 +19,10 @@ import { UpdatePromotionDto } from 'src/modules/promotions/dto/update-promotion-
 jest.mock('../../promotions/promotions.service');
 describe('PackageTypeService', () => {
 	const packageStub = PackageStub();
-	let packageModel: Model<Package>;
 	let packageService: PackageService;
 	let promotionService: PromotionsService;
 
-	const mockModel = {
+	const packageModel = {
 		findOne: jest.fn(),
 		findById: jest.fn().mockReturnThis(),
 		find: jest.fn().mockReturnThis(),
@@ -45,7 +43,7 @@ describe('PackageTypeService', () => {
 			providers: [
 				{
 					provide: getModelToken(Package.name),
-					useValue: mockModel,
+					useValue: packageModel,
 				},
 				PackageService,
 				PromotionsService,
@@ -53,7 +51,6 @@ describe('PackageTypeService', () => {
 		}).compile();
 
 		packageService = module.get<PackageService>(PackageService);
-		packageModel = module.get<Model<Package>>(getModelToken(Package.name));
 		promotionService = module.get<PromotionsService>(PromotionsService);
 	});
 
@@ -70,7 +67,7 @@ describe('PackageTypeService', () => {
 	describe('findOneByID', () => {
 		let packageData: Package;
 		it('should throw a NotFoundException if package not found', async () => {
-			jest.spyOn(mockModel, 'findById').mockImplementation(() => ({
+			jest.spyOn(packageModel, 'findById').mockImplementation(() => ({
 				populate: jest.fn().mockResolvedValue(undefined),
 			}));
 
@@ -80,7 +77,7 @@ describe('PackageTypeService', () => {
 		});
 
 		it('should return a package if package exists', async () => {
-			jest.spyOn(mockModel, 'findById').mockImplementation(() => ({
+			jest.spyOn(packageModel, 'findById').mockImplementation(() => ({
 				populate: jest.fn().mockResolvedValue(packageStub),
 			}));
 
@@ -100,7 +97,7 @@ describe('PackageTypeService', () => {
 				sortOrder: 'asc',
 			};
 
-			jest.spyOn(mockModel, 'find').mockImplementation(() => ({
+			jest.spyOn(packageModel, 'find').mockImplementation(() => ({
 				sort: () => ({
 					limit: () => ({
 						skip: jest.fn().mockResolvedValue([packageStub]),
@@ -128,7 +125,7 @@ describe('PackageTypeService', () => {
 				sortOrder: 'asc',
 			};
 
-			jest.spyOn(mockModel, 'find').mockImplementation(() => ({
+			jest.spyOn(packageModel, 'find').mockImplementation(() => ({
 				sort: () => ({
 					limit: () => ({
 						skip: jest.fn().mockResolvedValue([packageStub]),
@@ -152,13 +149,13 @@ describe('PackageTypeService', () => {
 	describe('countNumberOfPackageByPackageType', () => {
 		const packageTypeID = '6493cd02a6a031e19d380fac';
 		it('should return 0 if not fo package', async () => {
-			jest.spyOn(mockModel, 'find').mockReturnValueOnce(undefined);
+			jest.spyOn(packageModel, 'find').mockReturnValueOnce(undefined);
 
 			const result = await packageService.countNumberOfPackageByPackageType(
 				packageTypeID,
 			);
 
-			expect(mockModel.find).toHaveBeenCalledWith({ packageTypeID });
+			expect(packageModel.find).toHaveBeenCalledWith({ packageTypeID });
 
 			expect(result).toBe(0);
 		});
@@ -182,13 +179,13 @@ describe('PackageTypeService', () => {
 				},
 			];
 
-			jest.spyOn(mockModel, 'find').mockReturnValueOnce(packageStubs);
+			jest.spyOn(packageModel, 'find').mockReturnValueOnce(packageStubs);
 
 			const result = await packageService.countNumberOfPackageByPackageType(
 				packageTypeID,
 			);
 
-			expect(mockModel.find).toHaveBeenCalledWith({ packageTypeID });
+			expect(packageModel.find).toHaveBeenCalledWith({ packageTypeID });
 
 			expect(result).toBe(2);
 		});
@@ -204,7 +201,7 @@ describe('PackageTypeService', () => {
 				benefits: ['Use of bathroom', 'Use of massage chair'],
 			};
 
-			jest.spyOn(mockModel, 'create').mockResolvedValueOnce(packageStub);
+			jest.spyOn(packageModel, 'create').mockResolvedValueOnce(packageStub);
 
 			const result = await packageService.create(
 				packageTypeID,
@@ -212,7 +209,7 @@ describe('PackageTypeService', () => {
 				data,
 			);
 
-			expect(mockModel.create).toHaveBeenCalledWith({
+			expect(packageModel.create).toHaveBeenCalledWith({
 				...data,
 				packageTypeID,
 				facilityID,
