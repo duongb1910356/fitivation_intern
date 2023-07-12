@@ -69,9 +69,6 @@ export class PackageTypeService {
 			.limit(limit)
 			.skip(offset);
 
-		if (!packageTypes.length)
-			throw new NotFoundException('PackageTypes not found');
-
 		return {
 			items: packageTypes,
 			total: packageTypes.length,
@@ -85,16 +82,12 @@ export class PackageTypeService {
 	): Promise<ListResponse<PackageType>> {
 		const { limit, offset, ...optionals } = filter;
 		const condition = { ...optionals, facilityID };
-		const projection = '_id name description price order';
 
 		const packageTypes = await this.packageTypeModel
-			.find(condition, projection)
+			.find(condition)
 			.sort({ order: 1 })
 			.limit(limit)
 			.skip(offset);
-
-		if (!packageTypes.length)
-			throw new NotFoundException('PackageTypes not found');
 
 		return {
 			items: packageTypes,

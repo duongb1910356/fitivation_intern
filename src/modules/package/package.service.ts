@@ -44,8 +44,6 @@ export class PackageService {
 			.limit(limit)
 			.skip(offset);
 
-		if (!packages.length) throw new NotFoundException('Packages not found');
-
 		return {
 			items: packages,
 			total: packages.length,
@@ -65,8 +63,6 @@ export class PackageService {
 			.sort({ [sortField]: sortOrder === 'asc' ? -1 : 1, price: -1 })
 			.limit(limit)
 			.skip(offset);
-
-		if (!packages.length) throw new NotFoundException('Packages not found');
 
 		return {
 			items: packages,

@@ -25,16 +25,16 @@ export class FacilityCategoryService {
 	async findMany(
 		filter: ListOptions<FacilityCategory>,
 	): Promise<ListResponse<FacilityCategory>> {
-		const { limit, offset, sortField, sortOrder, ...conditions } = filter;
-		const projection = '_id type name';
+		const sortQuery = {};
+		sortQuery[filter.sortField] = filter.sortOrder === 'asc' ? 1 : -1;
+		const limit = filter.limit || 0;
+		const offset = filter.offset || 0;
 
 		const categories = await this.categoryModel
-			.find(conditions, projection)
-			.sort({ [sortField]: sortOrder === 'asc' ? -1 : 1 })
+			.find(filter)
+			.sort(sortQuery)
 			.limit(limit)
 			.skip(offset);
-
-		if (!categories.length) throw new NotFoundException('Categories not found');
 
 		return {
 			items: categories,

@@ -48,8 +48,6 @@ export class PromotionsService {
 			.limit(limit)
 			.skip(offset);
 
-		if (!promotions.length) throw new NotFoundException('Promotions not found');
-
 		return {
 			items: promotions,
 			total: promotions.length,
