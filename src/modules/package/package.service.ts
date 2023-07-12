@@ -41,8 +41,8 @@ export class PackageService {
 		const packages = await this.packageModel
 			.find(conditions)
 			.sort({ [sortField]: sortOrder === 'asc' ? -1 : 1 })
-			.limit(limit)
-			.skip(offset);
+			.skip(offset)
+			.limit(limit);
 
 		return {
 			items: packages,
@@ -61,8 +61,8 @@ export class PackageService {
 		const packages = await this.packageModel
 			.find(condition)
 			.sort({ [sortField]: sortOrder === 'asc' ? -1 : 1, price: -1 })
-			.skip(offset)
-			.limit(limit);
+			.limit(limit)
+			.skip(offset);
 
 		return {
 			items: packages,
