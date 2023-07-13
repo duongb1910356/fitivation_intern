@@ -163,6 +163,9 @@ describe('PhotoService', function () {
 				],
 			};
 
+			jest
+				.spyOn(photoService, 'uploadOneFile')
+				.mockResolvedValueOnce(PhotoStub());
 			const result = await photoService.uploadManyFile(files, ownerID);
 
 			expect(result).toEqual({
