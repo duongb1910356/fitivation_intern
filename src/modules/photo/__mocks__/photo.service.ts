@@ -1,4 +1,4 @@
-import { PhotoStub } from '../test/stub/photo.stub';
+import { PhotoStub } from '../test/stubs/photo.stub';
 
 export const PhotoService = jest.fn().mockReturnValue({
 	uploadOneFile: jest.fn().mockResolvedValue(PhotoStub()),
