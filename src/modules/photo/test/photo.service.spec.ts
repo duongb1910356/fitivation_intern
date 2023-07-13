@@ -1,4 +1,4 @@
-import { Model, isValidObjectId } from 'mongoose';
+import { Model } from 'mongoose';
 import { PhotoService } from '../photo.service';
 import { Photo } from '../schemas/photo.schema';
 import { Test, TestingModule } from '@nestjs/testing';
