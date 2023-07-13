@@ -3,7 +3,7 @@ import { PhotoService } from '../photo.service';
 import { Photo } from '../schemas/photo.schema';
 import { Test, TestingModule } from '@nestjs/testing';
 import { getModelToken } from '@nestjs/mongoose';
-import { PhotoStub } from './stub/photo.stub';
+import { PhotoStub } from './stubs/photo.stub';
 import { GenFileName } from 'src/shared/utils/gen-filename';
 import { BadRequestException } from '@nestjs/common';
 import { ListOptions } from 'src/shared/response/common-response';
