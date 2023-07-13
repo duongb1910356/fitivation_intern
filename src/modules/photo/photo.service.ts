@@ -67,7 +67,7 @@ export class PhotoService {
 			if (filter.sortField) {
 				sortQuery[filter.sortField] = filter.sortOrder === 'asc' ? 1 : -1;
 			}
-			const limit = filter.limit || 0;
+			const limit = filter.limit || 10;
 			const offset = filter.offset || 0;
 			const result = await this.photoModel
 				.find(filter)

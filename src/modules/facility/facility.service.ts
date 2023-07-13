@@ -252,7 +252,7 @@ export class FacilityService {
 		);
 
 		const averageStar = await this.reviewService.caculateAverageRating(id);
-
+		console.log(`average >> ${averageStar}`);
 		return this.facilityModel.findOneAndUpdate(
 			{ _id: id },
 			{
