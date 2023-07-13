@@ -16,7 +16,6 @@ import {
 } from 'src/modules/counter/entities/counter.entity';
 import { UpdatePackageTypeDto } from '../dto/update-package-type-dto';
 import { PackageStub } from 'src/modules/package/test/stubs/package.stub';
-import { Facility } from 'src/modules/facility/schemas/facility.schema';
 import { UpdateOrderDto } from '../dto/update-order-dto';
 import { CreatePackageDto } from 'src/modules/package/dto/create-package-dto';
 import { Package, TimeType } from 'src/modules/package/entities/package.entity';
@@ -436,19 +435,6 @@ describe('PackageTypeService', () => {
 
 	describe('isOwner', () => {
 		it('should return true if is Owner', async () => {
-			const packageTypeStub = {
-				_id: '6493cd02a6a031e19d380fac',
-				facilityID: {
-					_id: '64931e19d380fac3cd02a6a0',
-					ownerID: '123123123123123123123123',
-				} as unknown as Facility,
-				name: 'GYM GYM 1',
-				description: 'cơ sở tập gym chất lượng',
-				price: 100000,
-				order: 0,
-				createdAt: new Date('2023-06-22T04:24:34.315Z'),
-				updatedAt: new Date('2023-06-22T04:24:34.315Z'),
-			};
 			const uid = '123123123123123123123123';
 
 			jest
@@ -465,19 +451,6 @@ describe('PackageTypeService', () => {
 			expect(result).toBe(true);
 		});
 		it('should return false if is not Owner', async () => {
-			const packageTypeStub = {
-				_id: '6493cd02a6a031e19d380fac',
-				facilityID: {
-					_id: '64931e19d380fac3cd02a6a0',
-					ownerID: '123123123123123123123123',
-				} as unknown as Facility,
-				name: 'GYM GYM 1',
-				description: 'cơ sở tập gym chất lượng',
-				price: 100000,
-				order: 0,
-				createdAt: new Date('2023-06-22T04:24:34.315Z'),
-				updatedAt: new Date('2023-06-22T04:24:34.315Z'),
-			};
 			const uid = '456454645645645645645464';
 
 			jest
