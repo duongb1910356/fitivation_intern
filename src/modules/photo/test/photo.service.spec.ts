@@ -96,6 +96,28 @@ describe('PhotoService', function () {
 			expect(result).toBeNull();
 		});
 
+		it('should not upload a file with a non-allowed file type', async () => {
+			const ownerID = '649d3f7372e91c40d2e7e9dc';
+
+			// Define a test file with a non-allowed file type
+			const file: Express.Multer.File = {
+				fieldname: 'fieldname',
+				originalname: 'example.txt',
+				encoding: '7bit',
+				mimetype: 'text/plain',
+				size: 12345,
+				buffer: Buffer.from('example file buffer'),
+				stream: null,
+				destination: 'path/to/destination',
+				filename: 'example.txt',
+				path: '/path/to/file.txt',
+			};
+
+			await expect(photoService.uploadOneFile(ownerID, file)).rejects.toThrow(
+				BadRequestException,
+			);
+		});
+
 		it('should handle file write failure', async () => {
 			const ownerID = '649d3f7372e91c40d2e7e9dc';
 			const file = {
