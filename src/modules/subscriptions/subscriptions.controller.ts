@@ -6,12 +6,15 @@ import {
 	Query,
 	UseGuards,
 } from '@nestjs/common';
-import { ApiOperation, ApiParam, ApiResponse, ApiTags } from '@nestjs/swagger';
-import { ApiDocsPagination } from 'src/decorators/swagger-form-data.decorator';
 import {
-	ErrorResponse,
-	ListOptions,
-} from 'src/shared/response/common-response';
+	ApiBearerAuth,
+	ApiOperation,
+	ApiParam,
+	ApiResponse,
+	ApiTags,
+} from '@nestjs/swagger';
+import { ApiDocsPagination } from 'src/decorators/swagger-form-data.decorator';
+import { ErrorResponse } from 'src/shared/response/common-response';
 import {
 	Subscription,
 	SubscriptionStatus,
@@ -26,6 +29,7 @@ import { TokenPayload } from '../auth/types/token-payload.type';
 
 @Controller('subscriptions')
 @ApiTags('subscriptions')
+@ApiBearerAuth()
 export class SubscriptionsController {
 	constructor(private readonly subscriptionService: SubscriptionsService) {}
 	@ApiDocsPagination('subscription')
@@ -89,14 +93,15 @@ export class SubscriptionsController {
 		},
 	})
 	@Get()
-	// @Roles(UserRole.MEMBER, UserRole.ADMIN)
-	// @UseGuards(RolesGuard)
-	findManySubscriptions(
+	@Roles(UserRole.MEMBER, UserRole.ADMIN)
+	@UseGuards(RolesGuard)
+	async findManySubscriptions(
 		@Query() query: QueryObject,
 		@GetCurrentUser() user: TokenPayload,
 	): Promise<ListResponse<Subscription>> {
-		return this.subscriptionService.findMany(query, user);
+		return await this.subscriptionService.findMany(query, user);
 	}
+
 	@ApiOperation({
 		summary: 'FindOneSubscription',
 		description: 'Get one subscription',
@@ -168,13 +173,13 @@ export class SubscriptionsController {
 		},
 	})
 	@Get(':id')
-	// @Roles(UserRole.MEMBER, UserRole.ADMIN)
-	// @UseGuards(RolesGuard)
-	findOneSubscription(
+	@Roles(UserRole.MEMBER, UserRole.ADMIN)
+	@UseGuards(RolesGuard)
+	async findOneSubscription(
 		@Param('id') id: string,
 		@GetCurrentUser() user: TokenPayload,
 	): Promise<Subscription> {
-		return this.subscriptionService.findOneByID(id, user);
+		return await this.subscriptionService.findOneByID(id, user);
 	}
 
 	@ApiOperation({
@@ -247,12 +252,12 @@ export class SubscriptionsController {
 		},
 	})
 	@Patch('renew/:id')
-	// @Roles(UserRole.MEMBER)
-	// @UseGuards(RolesGuard)
-	renew(
+	@Roles(UserRole.MEMBER)
+	@UseGuards(RolesGuard)
+	async renew(
 		@GetCurrentUser() user: TokenPayload,
 		@Param('id') id: string,
 	): Promise<Subscription> {
-		return this.subscriptionService.renew(id, user);
+		return await this.subscriptionService.renew(id, user);
 	}
 }

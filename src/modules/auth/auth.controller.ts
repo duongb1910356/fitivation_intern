@@ -8,6 +8,7 @@ import {
 	UseGuards,
 } from '@nestjs/common';
 import {
+	ApiBearerAuth,
 	ApiBody,
 	ApiCreatedResponse,
 	ApiOperation,
@@ -24,8 +25,9 @@ import { Public } from './decorators/public.decorator';
 import { GetCurrentUser } from 'src/decorators/get-current-user.decorator';
 import { RefreshTokenGuard } from './guards/refresh-token.guard';
 
-@ApiTags('auth')
 @Controller('auth')
+@ApiTags('auth')
+@ApiBearerAuth()
 export class AuthController {
 	constructor(private readonly authService: AuthService) {}
 

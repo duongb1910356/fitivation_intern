@@ -18,6 +18,7 @@ import {
 	QueryObject,
 } from 'src/shared/utils/query-api';
 import { PaymentOptDto } from './dto/payment-options-dto';
+import { CartItem } from '../cart-items/schemas/cart-item.schema';
 
 @Injectable()
 export class CartsService {
@@ -63,13 +64,14 @@ export class CartsService {
 	}
 
 	async getCurrent(userID: string, populateOpt?: any): Promise<Cart> {
+		await this.updatePrice(userID);
+		await this.updatePrice(userID); // fix not return new
+
 		const cart = await this.cartModel
 			.findOne({ accountID: userID })
 			.populate(populateOpt);
 
 		if (!cart) throw new NotFoundException(`Not found current user's cart`);
-
-		await this.updatePrice(userID);
 
 		return cart;
 	}
@@ -110,7 +112,7 @@ export class CartsService {
 
 		cart.totalPrice += cartItem.totalPrice;
 
-		cart.save();
+		await cart.save();
 
 		return true;
 	}
@@ -133,7 +135,7 @@ export class CartsService {
 
 		cart.totalPrice -= cartItem.totalPrice;
 
-		cart.save();
+		await cart.save();
 
 		await this.cartItemService.deleteOne(cartItemID);
 
@@ -208,13 +210,11 @@ export class CartsService {
 				cartItemIDs[i]._id.toString(),
 				cartItemIDs[i].promotionIDs[0],
 			);
-		}
-
-		for (let i = 0; i < cartItemIDs.length; i++) {
 			totalPrice += cartItemIDs[i].totalPrice;
 		}
+
 		cart.totalPrice = totalPrice;
-		cart.save();
+		await cart.save();
 
 		return true;
 	}

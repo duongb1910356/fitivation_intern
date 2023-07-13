@@ -28,89 +28,6 @@ export class BillItemsService {
 		private brandService: BrandService,
 	) {}
 
-	async findMany(
-		query: QueryObject,
-		user: TokenPayload,
-	): Promise<ListResponse<Bill>> {
-		const queryFeatures = new QueryAPI(this.billItemsModel, query)
-			.filter()
-			.sort()
-			.limitfields()
-			.paginate();
-
-		if (user.role === UserRole.MEMBER) {
-			queryFeatures.queryModel.find({ accountID: user.sub });
-		}
-		if (user.role === UserRole.FACILITY_OWNER) {
-			queryFeatures.queryModel.find({ ownerID: user.sub });
-		}
-
-		const billItems = await queryFeatures.queryModel;
-
-		return {
-			total: billItems.length,
-			queryOptions: queryFeatures.queryOptions,
-			items: billItems,
-		};
-	}
-
-	async findManyOneOwnFacility(
-		query: QueryObject,
-		facilityID: string,
-	): Promise<ListResponse<BillItem>> {
-		const queryFeatures = new QueryAPI(this.billItemsModel, query)
-			.filter()
-			.sort()
-			.limitfields()
-			.paginate();
-
-		const billItems = await queryFeatures.queryModel.find({ facilityID });
-
-		return {
-			total: billItems.length,
-			queryOptions: queryFeatures.queryOptions,
-			items: billItems,
-		};
-	}
-
-	async findManyOneOwnPackage(
-		query: QueryObject,
-		packageID: string,
-	): Promise<ListResponse<BillItem>> {
-		const queryFeatures = new QueryAPI(this.billItemsModel, query)
-			.filter()
-			.sort()
-			.limitfields()
-			.paginate();
-
-		const billItems = await queryFeatures.queryModel.find({ packageID });
-
-		return {
-			total: billItems.length,
-			queryOptions: queryFeatures.queryOptions,
-			items: billItems,
-		};
-	}
-
-	async findManyOneOwnBrand(
-		query: QueryObject,
-		brandID: string,
-	): Promise<ListResponse<BillItem>> {
-		const queryFeatures = new QueryAPI(this.billItemsModel, query)
-			.filter()
-			.sort()
-			.limitfields()
-			.paginate();
-
-		const billItems = await queryFeatures.queryModel.find({ brandID });
-
-		return {
-			total: billItems.length,
-			queryOptions: queryFeatures.queryOptions,
-			items: billItems,
-		};
-	}
-
 	async findOneByCondition(condition: any): Promise<BillItem> {
 		const billItem = await this.billItemsModel.findOne(condition);
 		if (!billItem) throw new NotFoundException('Not found bill-item');
@@ -120,6 +37,8 @@ export class BillItemsService {
 
 	async findOneByID(billItemId: string, user: TokenPayload): Promise<BillItem> {
 		const billItem = await this.billItemsModel.findById(billItemId);
+
+		if (!billItem) throw new NotFoundException('Not found bill item');
 
 		if (
 			user.role === UserRole.MEMBER &&

@@ -39,7 +39,7 @@ export class CartItemsService {
 
 		cartItem.totalPrice = packageItem.price;
 
-		cartItem.save();
+		await cartItem.save();
 
 		return cartItem;
 	}
@@ -83,10 +83,10 @@ export class CartItemsService {
 				cartItem.totalPrice = finalPrice;
 				cartItem.promotionPrice = promotionPrice;
 			}
-			cartItem.save();
+			await cartItem.save();
 		} else {
 			cartItem.totalPrice = cartItem.packageID.price;
-			cartItem.save();
+			await cartItem.save();
 		}
 
 		return true;
@@ -135,7 +135,7 @@ export class CartItemsService {
 		// update price
 		await this.updatePrice(cartItem, promotion._id.toString());
 		cartItem.promotionIDs.push(promotion._id);
-		cartItem.save();
+		await cartItem.save();
 		return true;
 	}
 }

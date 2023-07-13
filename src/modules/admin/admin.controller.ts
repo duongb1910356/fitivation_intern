@@ -1,4 +1,5 @@
 import {
+	BadRequestException,
 	Body,
 	Controller,
 	Delete,
@@ -7,12 +8,16 @@ import {
 	Patch,
 	Post,
 	Query,
+	UploadedFile,
 	UseGuards,
+	UseInterceptors,
+	Req,
 } from '@nestjs/common';
 import {
 	ApiBadRequestResponse,
 	ApiBearerAuth,
 	ApiBody,
+	ApiConsumes,
 	ApiCreatedResponse,
 	ApiForbiddenResponse,
 	ApiNotFoundResponse,
@@ -23,9 +28,7 @@ import {
 	ApiTags,
 	ApiUnauthorizedResponse,
 } from '@nestjs/swagger';
-import { Roles } from 'src/decorators/role.decorator';
-import { RolesGuard } from 'src/guards/role.guard';
-import { User, UserRole } from '../users/schemas/user.schema';
+import { User } from '../users/schemas/user.schema';
 import { ApiDocsPagination } from 'src/decorators/swagger-form-data.decorator';
 import {
 	ListOptions,
@@ -33,7 +36,7 @@ import {
 	ErrorResponse,
 } from 'src/shared/response/common-response';
 import { Attendance } from '../attendance/entities/attendance.entity';
-import { Facility, State } from '../facility/schemas/facility.schema';
+import { Facility, State, Status } from '../facility/schemas/facility.schema';
 import { CreateCategoryDto } from '../facility-category/dto/create-category-dto';
 import { UpdateCategoryDto } from '../facility-category/dto/update-category-dto';
 import { FacilityCategory } from '../facility-category/entities/facility-category';
@@ -58,6 +61,9 @@ import { ConditionHoliday, HolidayService } from '../holiday/holiday.service';
 import { AttendanceService } from '../attendance/attendance.service';
 import { Public } from '../auth/decorators/public.decorator';
 import { MongoIdValidationPipe } from 'src/pipes/parseMongoId.pipe';
+import { FileInterceptor } from '@nestjs/platform-express';
+import { UpdateStatusFacilityDto } from '../facility/dto/update-status-facility';
+import { FacilityService } from '../facility/facility.service';
 
 @ApiTags('admin')
 // @ApiBearerAuth()
@@ -73,12 +79,14 @@ export class AdminController {
 		private readonly facilityScheduleService: FacilityScheduleService,
 		private readonly holidayService: HolidayService,
 		private readonly attendanceService: AttendanceService,
+		private readonly facilityService: FacilityService,
 	) {}
 
 	//FACILITIES
-	@Patch('facilities/:facilityID/changeState')
+	@Patch('facilities/:facilityID/changeStatus')
+	@ApiBearerAuth()
 	@ApiOperation({
-		summary: 'Update facility state',
+		summary: 'Update facility status',
 		description: `Only admin can use this API`,
 	})
 	@ApiParam({
@@ -92,14 +100,14 @@ export class AdminController {
 			ACTIVE: {
 				summary: 'ACTIVE',
 				value: {
-					state: State.ACTIVE,
-				} as UpdateFacilityStateDto,
+					status: Status.APPROVED,
+				} as UpdateStatusFacilityDto,
 			},
-			INACTIVE: {
-				summary: 'INACTIVE',
+			PENDING: {
+				summary: 'PENDING',
 				value: {
-					state: State.INACTIVE,
-				} as UpdateFacilityStateDto,
+					status: Status.PENDING,
+				} as UpdateStatusFacilityDto,
 			},
 		},
 	})
@@ -132,7 +140,7 @@ export class AdminController {
 		schema: {
 			example: {
 				code: '404',
-				message: 'Not found category to update!',
+				message: 'Not found facility to update!',
 				details: null,
 			} as ErrorResponse<null>,
 		},
@@ -148,9 +156,11 @@ export class AdminController {
 	})
 	updateFacilityState(
 		@Param('facilityID', MongoIdValidationPipe) facilityID: string,
-		@Body() data: UpdateFacilityStateDto,
+		@Body() data: UpdateStatusFacilityDto,
+		@Req() req: any,
 	) {
-		console.log(facilityID, data);
+		console.log('data ', data);
+		return this.facilityService.updateStatus(facilityID, req, data.status);
 	}
 
 	// ATTENDANCES
@@ -344,14 +354,18 @@ export class AdminController {
 		summary: 'Create category',
 		description: `Only admin can use this API`,
 	})
+	@ApiConsumes('multipart/form-data')
 	@ApiBody({
-		type: CreateCategoryDto,
-		examples: {
-			test: {
-				value: {
-					type: 'SPA',
-					name: 'SPA',
-				} as CreateCategoryDto,
+		schema: {
+			type: 'object',
+			properties: {
+				photo: {
+					description: 'Photo not check Send empty value',
+					type: 'string',
+					format: 'binary',
+				},
+				type: { type: 'string' },
+				name: { type: 'string' },
 			},
 		},
 	})
@@ -393,8 +407,13 @@ export class AdminController {
 			} as ErrorResponse<null>,
 		},
 	})
-	async createCategory(@Body() data: CreateCategoryDto) {
-		return await this.facilityCategoryService.create(data);
+	@UseInterceptors(FileInterceptor('photo'))
+	async createCategory(
+		@Body() data: CreateCategoryDto,
+		@UploadedFile() photo: Express.Multer.File,
+	) {
+		if (!photo) throw new BadRequestException('Photo not empty');
+		return await this.facilityCategoryService.create(data, photo);
 	}
 
 	@Patch('categories/:categoryID')
@@ -407,13 +426,17 @@ export class AdminController {
 		type: String,
 		description: 'Category ID',
 	})
+	@ApiConsumes('multipart/form-data')
 	@ApiBody({
-		type: UpdateCategoryDto,
-		examples: {
-			test: {
-				value: {
-					name: 'string',
-				} as UpdateCategoryDto,
+		schema: {
+			type: 'object',
+			properties: {
+				photo: {
+					description: 'Photo not check Send empty value',
+					type: 'string',
+					format: 'binary',
+				},
+				name: { type: 'string' },
 			},
 		},
 	})
@@ -464,11 +487,13 @@ export class AdminController {
 			} as ErrorResponse<null>,
 		},
 	})
+	@UseInterceptors(FileInterceptor('photo'))
 	async updateCategory(
 		@Param('categoryID', MongoIdValidationPipe) categoryID: string,
 		@Body() data: UpdateCategoryDto,
+		@UploadedFile() photo: Express.Multer.File,
 	) {
-		return await this.facilityCategoryService.update(categoryID, data);
+		return await this.facilityCategoryService.update(categoryID, data, photo);
 	}
 
 	@Delete('categories/:categoryID')

@@ -37,7 +37,6 @@ export class PackageService {
 
 	async findMany(filter: ListOptions<Package>): Promise<ListResponse<Package>> {
 		const { limit, offset, sortField, sortOrder, ...conditions } = filter;
-
 		const packages = await this.packageModel
 			.find(conditions)
 			.sort({ [sortField]: sortOrder === 'asc' ? -1 : 1 })
@@ -158,5 +157,32 @@ export class PackageService {
 			);
 		}
 		return await this.promotionService.delete(promotionID);
+	}
+
+	async findPackageWithLowestPrice(facilityID: string): Promise<Package> {
+		// const packages = await this.packageModel
+		// 	.find({ facilityID: facilityID })
+		// 	.sort({ price: 1 })
+		// 	.limit(1);
+		// return packages[0];
+
+		const result = await this.packageModel.aggregate([
+			{ $match: { facilityID: facilityID } },
+			{
+				$lookup: {
+					from: 'packagetypes',
+					localField: 'packageTypeID',
+					foreignField: '_id',
+					as: 'packageType',
+				},
+			},
+			{ $unwind: '$packageType' },
+			{ $match: { 'packageType.order': 1 } },
+			{ $unset: 'packageType' },
+		]);
+
+		console.log('results >> ', result);
+
+		return result[0];
 	}
 }

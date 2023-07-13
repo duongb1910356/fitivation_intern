@@ -10,7 +10,7 @@ export class Commune extends BaseObject {
 	@Prop({ type: String, required: true })
 	name: string;
 
-	@Prop({ required: true, index: true })
+	@Prop({ required: true })
 	code: string;
 
 	@Prop({

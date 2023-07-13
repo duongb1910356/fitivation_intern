@@ -34,7 +34,7 @@ export class ReviewService {
 	async findMany(filter: ListOptions<Review>): Promise<ListResponse<Review>> {
 		const sortQuery = {};
 		sortQuery[filter.sortField] = filter.sortOrder === 'asc' ? 1 : -1;
-		const limit = filter.limit || 0;
+		const limit = filter.limit || 10;
 		const offset = filter.offset || 0;
 
 		const result = await this.reviewModel
@@ -49,18 +49,44 @@ export class ReviewService {
 		};
 	}
 
+	async getReview(
+		facilityID: string,
+		filter: ListOptions<Review>,
+	): Promise<ListResponse<Review>> {
+		const sortQuery = {};
+		sortQuery[filter.sortField] = filter.sortOrder === 'asc' ? 1 : -1;
+		const limit = parseInt(filter.limit.toString()) || 10;
+		const offset = parseInt(filter.offset.toString()) || 0;
+
+		const result = await this.reviewModel
+			.find(filter)
+			.sort(sortQuery)
+			.skip(offset)
+			.limit(limit)
+			.populate({
+				path: 'accountID',
+				select: 'username avatar',
+			});
+
+		return {
+			items: result,
+			total: result?.length,
+			options: filter,
+		};
+	}
+
 	async findOneByID(id: string): Promise<Review> {
 		return await this.reviewModel.findById(id);
 	}
 
-	async delete(id: string): Promise<boolean> {
+	async delete(id: string): Promise<Review> {
 		const deletedReview = await this.reviewModel.findOneAndDelete({ _id: id });
 		if (deletedReview) {
 			deletedReview.photos.forEach(async (el) => {
 				await this.photoService.delete(el._id);
 			});
 		}
-		return null;
+		return deletedReview;
 	}
 
 	// async deleteByID(id: string): Promise<SuccessResponse<Review>> {
