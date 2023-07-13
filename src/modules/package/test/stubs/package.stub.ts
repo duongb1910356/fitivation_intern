@@ -8,7 +8,10 @@ export const PackageStub = (): Package => {
 		packageTypeID: {
 			_id: '6493cd02a6a031e19d380fac',
 		} as unknown as PackageType,
-		facilityID: { _id: '64931e19d380fac3cd02a6a0' } as unknown as Facility,
+		facilityID: {
+			_id: '64931e19d380fac3cd02a6a0',
+			ownerID: '123123123123123123123123',
+		} as unknown as Facility,
 		type: TimeType.ONE_MONTH,
 		price: 100000,
 		benefits: ['Use of bathroom', 'Use of massage chair'],
