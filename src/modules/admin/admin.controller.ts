@@ -437,6 +437,7 @@ export class AdminController {
 					format: 'binary',
 				},
 				name: { type: 'string' },
+				type: { type: 'string' },
 			},
 		},
 	})
@@ -444,8 +445,8 @@ export class AdminController {
 		schema: {
 			example: {
 				_id: '6476ef7d1f0419cd330fe128',
-				type: 'GYM',
-				name: 'GYM',
+				type: 'GYM1',
+				name: 'GYM1',
 				createdAt: new Date(),
 				updatedAt: new Date(),
 			} as FacilityCategory,
