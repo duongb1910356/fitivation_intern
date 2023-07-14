@@ -4,7 +4,6 @@ import { AttendanceService } from './attendance.service';
 import { Attendance, AttendanceSchema } from './entities/attendance.entity';
 import { MongooseModule } from '@nestjs/mongoose';
 import { SubscriptionsModule } from '../subscriptions/subscriptions.module';
-import { BillItemsModule } from '../bill-items/bill-items.module';
 
 @Module({
 	imports: [
@@ -12,7 +11,6 @@ import { BillItemsModule } from '../bill-items/bill-items.module';
 			{ name: Attendance.name, schema: AttendanceSchema },
 		]),
 		SubscriptionsModule,
-		BillItemsModule,
 	],
 	controllers: [AttendanceController],
 	providers: [AttendanceService],
