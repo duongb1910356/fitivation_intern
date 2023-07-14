@@ -70,10 +70,7 @@ export class HolidayService {
 	}
 
 	async update(holidayID: string, data: HolidayDto): Promise<Holiday> {
-		const facilityID = (
-			await this.findOneByID(holidayID)
-		).facilityID.toString();
-		console.log(facilityID, typeof facilityID);
+		const facilityID = (await this.findOneByID(holidayID)).facilityID._id;
 		const [startDate, endDate] = await this.checkOverlapAndTransform(
 			facilityID,
 			data,
