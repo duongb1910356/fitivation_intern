@@ -40,16 +40,14 @@ export class AttendanceService {
 		condition: AttendanceCondition = {},
 		options: ListOptions<Attendance> = {},
 	): Promise<ListResponse<Attendance>> {
-		const {
-			limit = 10,
-			offset = 0,
-			sortField = 'updateAt',
-			sortOrder = 'asc',
-		} = options;
+		const sortQuery = {};
+		sortQuery[options.sortField] = options.sortOrder === 'asc' ? 1 : -1;
+		const limit = options.limit || 0;
+		const offset = options.offset || 0;
 
 		const attendances = await this.attendanceModel
 			.find(condition)
-			.sort({ [sortField]: sortOrder === 'asc' ? 1 : -1 })
+			.sort(sortQuery)
 			.limit(limit)
 			.skip(offset);
 
