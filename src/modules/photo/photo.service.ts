@@ -17,21 +17,27 @@ export class PhotoService {
 	) {}
 
 	async uploadOneFile(ownerID: any, file: Express.Multer.File): Promise<Photo> {
+		const allowedMimeTypes = ['image/jpeg', 'image/png'];
+
 		if (isValidObjectId(ownerID) && file) {
-			const dir = `${appConfig.fileRoot}/${ownerID}`;
-			if (!existsSync(dir)) {
-				mkdirSync(dir, { recursive: true });
-			}
-			const fileName = GenFileName.gen(file.mimetype);
-			try {
-				writeFileSync(`${dir}/${fileName}`, file.buffer);
-				const input: CreatePhotoDto = {
-					ownerID: ownerID,
-					name: fileName,
-				};
-				return this.photoModel.create(input);
-			} catch (error) {
-				throw new BadRequestException('Upload photo failed');
+			if (allowedMimeTypes.includes(file.mimetype)) {
+				const dir = `${appConfig.fileRoot}/${ownerID}`;
+				if (!existsSync(dir)) {
+					mkdirSync(dir, { recursive: true });
+				}
+				const fileName = GenFileName.gen(file.mimetype);
+				try {
+					writeFileSync(`${dir}/${fileName}`, file.buffer);
+					const input: CreatePhotoDto = {
+						ownerID: ownerID,
+						name: fileName,
+					};
+					return this.photoModel.create(input);
+				} catch (error) {
+					throw new BadRequestException('Upload photo failed');
+				}
+			} else {
+				throw new BadRequestException('Invalid file type');
 			}
 		}
 		return null;
