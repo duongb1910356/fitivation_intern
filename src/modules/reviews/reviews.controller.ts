@@ -1,8 +1,27 @@
-import { Controller, Get, Param, Query } from '@nestjs/common';
 import {
+	BadRequestException,
+	Body,
+	Controller,
+	Delete,
+	Get,
+	NotFoundException,
+	Param,
+	Post,
+	Query,
+	Req,
+	UploadedFiles,
+	UseInterceptors,
+} from '@nestjs/common';
+import {
+	ApiBadRequestResponse,
+	ApiBearerAuth,
+	ApiBody,
+	ApiConsumes,
+	ApiNotFoundResponse,
 	ApiOkResponse,
 	ApiOperation,
 	ApiParam,
+	ApiResponse,
 	ApiTags,
 } from '@nestjs/swagger';
 import { ReviewService } from './reviews.service';
@@ -10,13 +29,15 @@ import { Review } from './schemas/reviews.schema';
 import { ListOptions } from 'src/shared/response/common-response';
 import { ApiDocsPagination } from 'src/decorators/swagger-form-data.decorator';
 import { Public } from '../auth/decorators/public.decorator';
+import { FileFieldsInterceptor } from '@nestjs/platform-express';
+import { CreateReviewDto } from './dto/create-review-dto';
 
 @ApiTags('reviews')
 @Controller('reviews')
 export class ReviewsController {
 	constructor(private readonly reviewService: ReviewService) {}
 
-	/* 2 API NÀY TẠM THỜI KHÔNG CẦN THIẾT
+	// 2 API NÀY TẠM THỜI KHÔNG CẦN THIẾT
 	@Post()
 	@ApiBearerAuth()
 	@ApiConsumes('multipart/form-data')
@@ -121,7 +142,6 @@ export class ReviewsController {
 	deleteReviewById(@Param('reviewID') reviewID: any) {
 		return this.reviewService.delete(reviewID);
 	}
-	*/
 
 	@Public()
 	@Get()
