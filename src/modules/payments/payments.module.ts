@@ -7,6 +7,7 @@ import { BillsModule } from '../bills/bills.module';
 import { SubscriptionsModule } from '../subscriptions/subscriptions.module';
 import { CartsModule } from '../carts/carts.module';
 import { CartItemsModule } from '../cart-items/cart-items.module';
+import { UsersModule } from '../users/users.module';
 
 @Module({
 	imports: [
@@ -16,6 +17,7 @@ import { CartItemsModule } from '../cart-items/cart-items.module';
 		SubscriptionsModule,
 		CartsModule,
 		CartItemsModule,
+		UsersModule,
 	],
 	providers: [PaymentsService],
 	controllers: [PaymentsController],
