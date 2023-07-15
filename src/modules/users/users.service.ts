@@ -210,7 +210,7 @@ export class UsersService {
 	// 	}
 	// }
 
-	async getCurrentUser(userID: string) {
+	async getCurrentUser(userID: string): Promise<User> {
 		const user = await this.userModel.findById(userID);
 
 		if (!user) throw new NotFoundException('Logged User no longer exists');
