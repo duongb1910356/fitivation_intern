@@ -9,15 +9,14 @@ import { BillItem } from '../../bill-items/schemas/bill-item.schema';
 
 export type BillDocument = HydratedDocument<Bill>;
 
-export enum PaymentMethod {
-	DEBIT_CARD = 'DEBIT_CARD',
-	CREDIT_CARD = 'CREDIT_CARD',
-	CASH = 'CASH',
-}
-
 export enum BillStatus {
 	ACTIVE = 'ACTIVE',
 	INACTIVE = 'INACTIVE',
+}
+
+export enum PaymentStatus {
+	SUCCEEDED = 'SUCCEEDED',
+	INCOMPLETE = 'INCOMPLETE',
 }
 
 @Schema({ timestamps: true })
@@ -37,8 +36,8 @@ export class Bill extends BaseObject {
 	])
 	billItems: BillItem[];
 
-	@Prop({ required: true, enum: PaymentMethod, type: String })
-	paymentMethod: PaymentMethod;
+	@Prop({ type: String })
+	paymentMethod?: string;
 
 	@Prop({ type: Number, default: 0, min: 0 })
 	taxes?: number;
@@ -57,6 +56,13 @@ export class Bill extends BaseObject {
 
 	@Prop({ default: BillStatus.ACTIVE, enum: BillStatus, type: String })
 	status: BillStatus;
+
+	@Prop({
+		default: PaymentStatus.INCOMPLETE,
+		enum: PaymentStatus,
+		type: String,
+	})
+	paymentStatus: PaymentStatus;
 }
 
 export const BillSchema = SchemaFactory.createForClass(Bill);
