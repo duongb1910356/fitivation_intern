@@ -1,11 +1,9 @@
 import {
 	Controller,
 	Get,
-	Post,
 	Param,
 	Query,
 	UseGuards,
-	Body,
 	Patch,
 	Delete,
 } from '@nestjs/common';
@@ -20,28 +18,11 @@ import {
 import { ErrorResponse } from 'src/shared/response/common-response';
 import { Cart } from './schemas/cart.schema';
 import { ApiDocsPagination } from 'src/decorators/swagger-form-data.decorator';
-import { PaymentOptDto } from '../payments/dto/payment-options-dto';
 import { GetCurrentUser } from 'src/decorators/get-current-user.decorator';
 import { UserRole } from '../users/schemas/user.schema';
 import { RolesGuard } from 'src/guards/role.guard';
 import { Roles } from 'src/decorators/role.decorator';
-import { Bill, BillStatus, PaymentMethod } from '../bills/schemas/bill.schema';
 import { ListResponse, QueryObject } from 'src/shared/utils/query-api';
-import {
-	CustomerType,
-	Promotion,
-	PromotionMethod,
-	PromotionStatus,
-	PromotionType,
-} from '../promotions/schemas/promotion.schema';
-import {
-	BillItem,
-	BillItemStatus,
-} from '../bill-items/schemas/bill-item.schema';
-import { BillItemPackage } from '../bill-items/schemas/bill-item-package.schema';
-import { BillItemPackageType } from '../bill-items/schemas/bill-item-package-type.schema';
-import { BillItemFacility } from '../bill-items/schemas/bill-item-facility.schema';
-import { TimeType } from '../package/entities/package.entity';
 
 @Controller('carts')
 @ApiTags('carts')
