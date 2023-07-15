@@ -11,7 +11,6 @@ import { UsersModule } from '../users/users.module';
 
 @Module({
 	imports: [
-		PackageModule,
 		BillItemsModule,
 		BillsModule,
 		SubscriptionsModule,
