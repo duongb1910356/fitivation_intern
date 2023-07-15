@@ -147,16 +147,10 @@ export class BillsService {
 		billID: string,
 		paymentMethod: PaymentMethodDto,
 	): Promise<boolean> {
-		const bill = await this.billModel.findByIdAndUpdate(
-			billID,
-			{
-				paymentMethod,
-			},
-			{
-				new: true,
-				runValidators: true,
-			},
-		);
+		const bill = await this.billModel.findByIdAndUpdate(billID, paymentMethod, {
+			new: true,
+			runValidators: true,
+		});
 
 		if (!bill) return false;
 
