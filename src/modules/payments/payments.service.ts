@@ -225,7 +225,7 @@ export class PaymentsService {
 			.confirm(paymentIntentID, {
 				payment_method: paymentMethod.paymentMethod,
 			})
-			.then(async (res) => {
+			.then(async (paymentIntent: any) => {
 				if (paymentIntent.metadata.cartItemIDs !== undefined) {
 					const cartItemIDs = JSON.stringify(paymentIntent.metadata.cartItemIDs)
 						.replace(/"/g, '')
@@ -258,8 +258,8 @@ export class PaymentsService {
 
 				response.status(HttpStatus.OK).json({
 					message: 'Payment successful',
-					clientSecret: res.client_secret,
-					paymentIntentID: res.id,
+					clientSecret: paymentIntent.client_secret,
+					paymentIntentID: paymentIntent.id,
 					bill: await this.billService.findOneByID(
 						paymentIntent.metadata.billID,
 						userPayload,
