@@ -10,6 +10,8 @@ import { FacilityService } from './facility.service';
 import { ReviewsModule } from '../reviews/reviews.module';
 import { PhotoModule } from '../photo/photo.module';
 import { PromotionsModule } from '../promotions/promotions.module';
+import { PackageModule } from '../package/package.module';
+import { BrandModule } from '../brand/brand.module';
 
 @Module({
 	// imports: [
@@ -38,6 +40,8 @@ import { PromotionsModule } from '../promotions/promotions.module';
 		FacilityScheduleModule,
 		AttendanceModule,
 		PromotionsModule,
+		PackageModule,
+		BrandModule,
 	],
 	controllers: [FacilityController],
 	providers: [FacilityService],

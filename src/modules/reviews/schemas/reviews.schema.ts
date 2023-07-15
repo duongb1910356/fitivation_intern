@@ -1,8 +1,6 @@
 import { Prop, Schema, SchemaFactory } from '@nestjs/mongoose';
 import mongoose, { HydratedDocument } from 'mongoose';
-import { Facility } from 'src/modules/facility/schemas/facility.schema';
 import { Photo, PhotoSchema } from 'src/modules/photo/schemas/photo.schema';
-import { User } from 'src/modules/users/schemas/user.schema';
 import { BaseObject } from 'src/shared/schemas/base-object.schema';
 
 export type ReviewDocument = HydratedDocument<Review>;
@@ -14,14 +12,14 @@ export class Review extends BaseObject {
 		type: mongoose.Schema.Types.ObjectId,
 		ref: 'User',
 	})
-	accountID: User;
+	accountID: string;
 
 	@Prop({
 		required: true,
 		type: mongoose.Schema.Types.ObjectId,
 		ref: 'Facility',
 	})
-	facilityID: Facility;
+	facilityID: string;
 
 	@Prop({ required: true, min: 1, max: 5 })
 	rating: number;

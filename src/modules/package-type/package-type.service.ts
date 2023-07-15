@@ -44,6 +44,15 @@ export class PackageTypeService {
 		return packageType;
 	}
 
+	// async findOne(filter: ListOptions<PackageType>) {
+	// 	const { sortOrder, sortField } = filter;
+	// 	const sortQuery = {};
+	// 	sortQuery[filter.sortField] = filter.sortOrder === 'asc' ? 1 : -1;
+	// 	return await this.packageTypeModel
+	// 		.find(filter)
+	// 		.sort({ sortField: sortOrder == 'asc' ? 1 : -1 });
+	// }
+
 	async findMany(
 		filter: ListOptions<PackageType>,
 	): Promise<ListResponse<PackageType>> {
@@ -69,9 +78,6 @@ export class PackageTypeService {
 			.limit(limit)
 			.skip(offset);
 
-		if (!packageTypes.length)
-			throw new NotFoundException('PackageTypes not found');
-
 		return {
 			items: packageTypes,
 			total: packageTypes.length,
@@ -85,16 +91,12 @@ export class PackageTypeService {
 	): Promise<ListResponse<PackageType>> {
 		const { limit, offset, ...optionals } = filter;
 		const condition = { ...optionals, facilityID };
-		const projection = '_id name description price order';
 
 		const packageTypes = await this.packageTypeModel
-			.find(condition, projection)
+			.find(condition)
 			.sort({ order: 1 })
 			.limit(limit)
 			.skip(offset);
-
-		if (!packageTypes.length)
-			throw new NotFoundException('PackageTypes not found');
 
 		return {
 			items: packageTypes,
@@ -142,7 +144,6 @@ export class PackageTypeService {
 
 	async delete(packageTypeID: string): Promise<string> {
 		const packageType = await this.findOneByID(packageTypeID);
-		if (!packageType) throw new NotFoundException('PackageType not found');
 
 		const countPackages =
 			await this.packageService.countNumberOfPackageByPackageType(
@@ -154,19 +155,13 @@ export class PackageTypeService {
 
 		await Promise.all([
 			this.packageTypeModel.findByIdAndDelete(packageTypeID),
-			this.decreaseAfterDeletion(
-				packageType.facilityID.toString(),
-				packageType.order,
-			),
+			this.decreaseAfterDeletion(packageType.facilityID._id, packageType.order),
 		]);
 
 		return 'Delete PackageType successfull!!!';
 	}
 
-	private async decreaseAfterDeletion(
-		facilityID: string,
-		deletedOrder: number,
-	) {
+	async decreaseAfterDeletion(facilityID: string, deletedOrder: number) {
 		//decrease Counter by one
 		const counterData = {
 			targetObject: TargetObject.FACILITY,
@@ -206,7 +201,7 @@ export class PackageTypeService {
 
 	async isOwner(packageTypeID: string, uid: string): Promise<boolean> {
 		const packageType = await this.findOneByID(packageTypeID, 'facilityID');
-		const owner = packageType.facilityID.ownerID.toString();
+		const owner = packageType.facilityID.ownerID;
 		return uid === owner;
 	}
 
@@ -219,9 +214,8 @@ export class PackageTypeService {
 	}
 
 	async createPackage(packageTypeID: string, data: CreatePackageDto) {
-		const facilityID = (
-			await this.findOneByID(packageTypeID)
-		).facilityID.toString();
+		const packageType = await this.findOneByID(packageTypeID);
+		const facilityID = packageType.facilityID._id;
 		return await this.packageService.create(packageTypeID, facilityID, data);
 	}
 }

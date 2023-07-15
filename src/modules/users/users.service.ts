@@ -1,7 +1,6 @@
 import {
 	BadRequestException,
 	Injectable,
-	InternalServerErrorException,
 	NotFoundException,
 } from '@nestjs/common';
 import { InjectModel } from '@nestjs/mongoose';
@@ -11,7 +10,7 @@ import {
 	UserRole,
 	UserStatus,
 } from './schemas/user.schema';
-import { Model } from 'mongoose';
+import { Model, isValidObjectId } from 'mongoose';
 import { CreateUserDto } from './dto/create-user-dto';
 import { SignupDto } from '../auth/dto/signup-dto';
 import { UpdateUserDto } from './dto/update-user-dto';
@@ -26,6 +25,7 @@ import { UpdateLoggedUserPasswordDto } from './dto/update-logged-user-password-d
 import { CartsService } from '../carts/carts.service';
 import Stripe from 'stripe';
 import { appConfig } from 'src/app.config';
+import { PhotoService } from '../photo/photo.service';
 
 @Injectable()
 export class UsersService {
@@ -34,10 +34,25 @@ export class UsersService {
 	constructor(
 		@InjectModel(User.name) private userModel: Model<UserDocument>,
 		private cartService: CartsService,
+		private photoService: PhotoService,
 	) {
 		this.stripe = new Stripe(`${appConfig.stripeSecretKey}`, {
 			apiVersion: '2022-11-15',
 		});
+	}
+
+	async updateAvatar(userID: string, file: Express.Multer.File): Promise<User> {
+		if (isValidObjectId(userID) && file) {
+			const user = await this.userModel.findById(userID);
+			await this.photoService.delete(user.avatar._id);
+			const avatar = await this.photoService.uploadOneFile(userID, file);
+			user.avatar = avatar;
+			if (!(await user.save())) {
+				throw new BadRequestException("User's not update ");
+			}
+			return user;
+		}
+		throw new BadRequestException('[Input] invalid');
 	}
 
 	async findMany(query: QueryObject): Promise<ListResponse<User>> {
@@ -179,21 +194,21 @@ export class UsersService {
 		return true;
 	}
 
-	async updateAvatar(userId: string, filePath: string): Promise<User> {
-		try {
-			return await this.userModel.findByIdAndUpdate(
-				userId,
-				{
-					avatar: filePath,
-				},
-				{
-					new: true,
-				},
-			);
-		} catch (err) {
-			throw new InternalServerErrorException(err);
-		}
-	}
+	// async updateAvatar(userId: string, filePath: string): Promise<User> {
+	// 	try {
+	// 		return await this.userModel.findByIdAndUpdate(
+	// 			userId,
+	// 			{
+	// 				avatar: filePath,
+	// 			},
+	// 			{
+	// 				new: true,
+	// 			},
+	// 		);
+	// 	} catch (err) {
+	// 		throw new InternalServerErrorException(err);
+	// 	}
+	// }
 
 	async getCurrentUser(userID: string) {
 		const user = await this.userModel.findById(userID);

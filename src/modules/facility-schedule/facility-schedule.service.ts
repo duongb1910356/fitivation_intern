@@ -57,24 +57,20 @@ export class FacilityScheduleService {
 		condition: ConditionSchedule = {},
 		options: ListOptions<FacilitySchedule> = {},
 	): Promise<ListResponse<FacilitySchedule>> {
-		const {
-			limit = 10,
-			offset = 0,
-			sortField = 'updatedAt',
-			sortOrder = 'asc',
-		} = options;
-
+		const sortQuery = {};
+		sortQuery[options.sortField] = options.sortOrder === 'asc' ? 1 : -1;
+		const limit = options.limit || 0;
+		const offset = options.offset || 0;
 		const schedules = await this.scheduleModel
 			.find(condition)
-			.sort({ [sortField]: sortOrder === 'asc' ? 1 : -1 })
+			.sort(sortQuery)
 			.limit(limit)
 			.skip(offset);
-		if (!schedules.length) throw new NotFoundException('Schedules not found');
 
 		return {
 			items: schedules,
 			total: schedules.length,
-			options: options,
+			options,
 		};
 	}
 
@@ -103,7 +99,7 @@ export class FacilityScheduleService {
 	): Promise<FacilitySchedule> {
 		const scheduleCurrent = await this.findOneByID(scheduleID);
 		const isExist = await this.scheduleModel.findOne({
-			facilityID: scheduleCurrent.facilityID.toString(),
+			facilityID: scheduleCurrent.facilityID._id,
 			type: data.type,
 			_id: { $ne: scheduleID },
 		});
@@ -120,7 +116,6 @@ export class FacilityScheduleService {
 				new: true,
 			},
 		);
-		if (!schedule) throw new NotFoundException('Schedule not found');
 		return schedule;
 	}
 
@@ -136,6 +131,6 @@ export class FacilityScheduleService {
 
 	async isOwner(scheduleID: string, uid: string): Promise<boolean> {
 		const schedule = await this.findOneByID(scheduleID, 'facilityID');
-		return uid === schedule.facilityID.ownerID.toString();
+		return uid === schedule.facilityID.ownerID;
 	}
 }

@@ -7,7 +7,6 @@ import { InjectModel } from '@nestjs/mongoose';
 import { Attendance, AttendanceDocument } from './entities/attendance.entity';
 import { Model } from 'mongoose';
 import { SubscriptionsService } from '../subscriptions/subscriptions.service';
-import { BillItemsService } from '../bill-items/bill-items.service';
 import { ListOptions, ListResponse } from 'src/shared/response/common-response';
 
 export type AttendanceCondition = {
@@ -22,14 +21,15 @@ export class AttendanceService {
 		@InjectModel(Attendance.name)
 		private attendanceModel: Model<AttendanceDocument>,
 		private readonly subscriptionService: SubscriptionsService,
-		private readonly billItemService: BillItemsService,
 	) {}
 
 	async findOneByCondition(
 		condition: AttendanceCondition = {},
 		populate?: string,
 	): Promise<Attendance> {
-		const attendance = await this.attendanceModel.findOne(condition, populate);
+		const attendance = await this.attendanceModel
+			.findOne(condition)
+			.populate(populate);
 		if (!attendance) {
 			throw new NotFoundException('Attendance not found');
 		}
@@ -40,20 +40,16 @@ export class AttendanceService {
 		condition: AttendanceCondition = {},
 		options: ListOptions<Attendance> = {},
 	): Promise<ListResponse<Attendance>> {
-		const {
-			limit = 10,
-			offset = 0,
-			sortField = 'updateAt',
-			sortOrder = 'asc',
-		} = options;
+		const sortQuery = {};
+		sortQuery[options.sortField] = options.sortOrder === 'asc' ? 1 : -1;
+		const limit = options.limit || 0;
+		const offset = options.offset || 0;
 
 		const attendances = await this.attendanceModel
 			.find(condition)
-			.sort({ [sortField]: sortOrder === 'asc' ? 1 : -1 })
+			.sort(sortQuery)
 			.limit(limit)
 			.skip(offset);
-		if (!attendances.length)
-			throw new NotFoundException('Attendances not found');
 
 		return {
 			items: attendances,
@@ -78,6 +74,7 @@ export class AttendanceService {
 			facilityID,
 			accountID,
 		});
+
 		if (!attendance) {
 			attendance = await this.attendanceModel.create({
 				facilityID,
@@ -86,8 +83,7 @@ export class AttendanceService {
 		}
 		const now = new Date();
 		attendance.date.push(now);
-		await attendance.save();
-		return attendance;
+		return await attendance.save();
 	}
 
 	private async checkActiveSubscription(

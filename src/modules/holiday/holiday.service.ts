@@ -37,19 +37,16 @@ export class HolidayService {
 		condition: ConditionHoliday = {},
 		options: ListOptions<Holiday> = {},
 	): Promise<ListResponse<Holiday>> {
-		const {
-			limit = 10,
-			offset = 0,
-			sortField = 'startDate',
-			sortOrder = 'asc',
-		} = options;
+		const sortQuery = {};
+		sortQuery[options.sortField] = options.sortOrder === 'asc' ? 1 : -1;
+		const limit = options.limit || 0;
+		const offset = options.offset || 0;
 
 		const holidays = await this.holidayModel
 			.find(condition)
-			.sort({ [sortField]: sortOrder === 'asc' ? 1 : -1 })
+			.sort(sortQuery)
 			.limit(limit)
 			.skip(offset);
-		if (!holidays.length) throw new NotFoundException('Holidays not found');
 
 		return {
 			items: holidays,
@@ -63,15 +60,17 @@ export class HolidayService {
 			facilityID,
 			data,
 		);
-		const holidayData = { facilityID, startDate, endDate };
+		const holidayData = {
+			facilityID,
+			startDate,
+			endDate,
+			content: data.content,
+		};
 		return await this.holidayModel.create(holidayData);
 	}
 
 	async update(holidayID: string, data: HolidayDto): Promise<Holiday> {
-		const facilityID = (
-			await this.findOneByID(holidayID)
-		).facilityID.toString();
-		console.log(facilityID, typeof facilityID);
+		const facilityID = (await this.findOneByID(holidayID)).facilityID._id;
 		const [startDate, endDate] = await this.checkOverlapAndTransform(
 			facilityID,
 			data,

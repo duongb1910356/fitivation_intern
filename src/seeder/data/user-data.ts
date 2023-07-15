@@ -2,8 +2,8 @@ export const userData = [
 	{
 		_id: '6497c6807a114f5b35a393fd',
 		role: 'FACILITY_OWNER',
-		username: 'owner',
-		email: 'owner@test.com',
+		username: 'owner1',
+		email: 'owner1@test.com',
 		password:
 			'00a4344cc5eb4f9af9ff5fde0c629348aae3ca49e7c8a490e9dcce516742acba1fda143476d90568ad3f31d0ec7bc572df2718fcf1233df153235c4ab5abe4c2.a8ba91b747c915d90946f3b9f9397446',
 		refreshToken: null,
@@ -25,6 +25,12 @@ export const userData = [
 		status: 'ACTIVE',
 		createdAt: '2023-07-01T11:42:43.258Z',
 		updatedAt: '2023-07-01T11:42:43.258Z',
+		avatar: {
+			ownerID: '6497c6807a114f5b35a393fd',
+			name: '1688617419667-297579427.png',
+			imageURL:
+				'https://antimatter.vn/wp-content/uploads/2023/01/hinh-anh-avatar-dep-cute-ngau-601x600.jpg',
+		},
 		__v: 0,
 	},
 	{
@@ -53,13 +59,19 @@ export const userData = [
 		status: 'ACTIVE',
 		createdAt: '2023-07-01T11:27:43.908Z',
 		updatedAt: '2023-07-01T11:27:43.908Z',
+		avatar: {
+			ownerID: '649a8f8ab185ffb672485390',
+			name: '1688617419667-297579427.png',
+			imageURL:
+				'https://i0.wp.com/thatnhucuocsong.com.vn/wp-content/uploads/2022/04/Anh-avatar-dep-anh-dai-dien-FB-Tiktok-Zalo.jpg?ssl=1',
+		},
 		__v: 0,
 	},
 	{
 		_id: '649a8f8ab185ffb672485391',
 		role: 'MEMBER',
-		username: 'member',
-		email: 'member@test.com',
+		username: 'customer1',
+		email: 'customer1@test.com',
 		password:
 			'712cf3bceba7e501647e6d1d056658ecb4019d6bd39e3a183dd7df7bd38308f29afde375a51c5d095fc9fb716939bd09324e9c21650152dc67fc7ba55efa5e6b.a7b6621486f7bfb813750da75f150978',
 		refreshToken:
@@ -82,6 +94,12 @@ export const userData = [
 		status: 'ACTIVE',
 		createdAt: '2023-07-01T11:43:14.752Z',
 		updatedAt: '2023-07-01T11:44:09.175Z',
+		avatar: {
+			ownerID: '649a8f8ab185ffb672485391',
+			name: '1688617419667-297579427.png',
+			imageURL:
+				'https://genk.mediacdn.vn/139269124445442048/2022/6/5/v2-5a6e8ad7267ad465c5bb19a28e4decc2720w-1654418988025141565126.jpg',
+		},
 		__v: 0,
 	},
 ];

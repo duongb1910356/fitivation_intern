@@ -37,14 +37,11 @@ export class PackageService {
 
 	async findMany(filter: ListOptions<Package>): Promise<ListResponse<Package>> {
 		const { limit, offset, sortField, sortOrder, ...conditions } = filter;
-
 		const packages = await this.packageModel
 			.find(conditions)
 			.sort({ [sortField]: sortOrder === 'asc' ? -1 : 1 })
-			.limit(limit)
-			.skip(offset);
-
-		if (!packages.length) throw new NotFoundException('Packages not found');
+			.skip(offset)
+			.limit(limit);
 
 		return {
 			items: packages,
@@ -65,8 +62,6 @@ export class PackageService {
 			.sort({ [sortField]: sortOrder === 'asc' ? -1 : 1, price: -1 })
 			.limit(limit)
 			.skip(offset);
-
-		if (!packages.length) throw new NotFoundException('Packages not found');
 
 		return {
 			items: packages,
@@ -121,7 +116,7 @@ export class PackageService {
 
 	async isOwner(packageID: string, uid: string): Promise<boolean> {
 		const packageData = await this.findOneByID(packageID, 'facilityID');
-		const owner = packageData.facilityID.ownerID.toString();
+		const owner = packageData.facilityID.ownerID;
 		return uid === owner;
 	}
 
@@ -162,5 +157,32 @@ export class PackageService {
 			);
 		}
 		return await this.promotionService.delete(promotionID);
+	}
+
+	async findPackageWithLowestPrice(facilityID: string): Promise<Package> {
+		// const packages = await this.packageModel
+		// 	.find({ facilityID: facilityID })
+		// 	.sort({ price: 1 })
+		// 	.limit(1);
+		// return packages[0];
+
+		const result = await this.packageModel.aggregate([
+			{ $match: { facilityID: facilityID } },
+			{
+				$lookup: {
+					from: 'packagetypes',
+					localField: 'packageTypeID',
+					foreignField: '_id',
+					as: 'packageType',
+				},
+			},
+			{ $unwind: '$packageType' },
+			{ $match: { 'packageType.order': 1 } },
+			{ $unset: 'packageType' },
+		]);
+
+		console.log('results >> ', result);
+
+		return result[0];
 	}
 }
