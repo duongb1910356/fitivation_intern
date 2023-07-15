@@ -1,7 +1,6 @@
 import { Module } from '@nestjs/common';
 import { PaymentsService } from './payments.service';
 import { PaymentsController } from './payments.controller';
-import { PackageModule } from '../package/package.module';
 import { BillItemsModule } from '../bill-items/bill-items.module';
 import { BillsModule } from '../bills/bills.module';
 import { SubscriptionsModule } from '../subscriptions/subscriptions.module';
