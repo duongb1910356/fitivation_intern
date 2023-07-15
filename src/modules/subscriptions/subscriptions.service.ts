@@ -256,11 +256,11 @@ export class SubscriptionsService {
 	}
 
 	async deleteOneByBillItemID(billItemID: string): Promise<boolean> {
-		const subscription = await this.subscriptionsModel.findOne({ billItemID });
+		const subscription = await this.subscriptionsModel.findOneAndRemove({
+			billItemID,
+		});
 
-		if (!subscription) throw new NotFoundException('Subscription not found');
-
-		await this.subscriptionsModel.deleteOne({ billItemID });
+		if (!subscription) return false;
 
 		return true;
 	}
