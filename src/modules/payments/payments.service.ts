@@ -29,7 +29,7 @@ export enum PaymentCurrency {
 
 @Injectable()
 export class PaymentsService {
-	private stripe;
+	private stripe: any;
 
 	constructor(
 		private billItemService: BillItemsService,
