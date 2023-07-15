@@ -8,8 +8,7 @@ import {
 import { BillItemsService } from '../bill-items/bill-items.service';
 import { BillsService } from '../bills/bills.service';
 import { SubscriptionsService } from '../subscriptions/subscriptions.service';
-import { PackageService } from '../package/package.service';
-import { Bill, PaymentStatus } from '../bills/schemas/bill.schema';
+import { PaymentStatus } from '../bills/schemas/bill.schema';
 import { CartPaymentRequestDto } from './dto/cart-payment-request-dto';
 import { CartsService } from '../carts/carts.service';
 import { TokenPayload } from '../auth/types/token-payload.type';
