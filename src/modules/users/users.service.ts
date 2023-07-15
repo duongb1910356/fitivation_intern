@@ -24,13 +24,21 @@ import { Encrypt } from 'src/shared/utils/encrypt';
 import { UpdateLoggedUserDataDto } from './dto/update-logged-user-data-dto';
 import { UpdateLoggedUserPasswordDto } from './dto/update-logged-user-password-dto';
 import { CartsService } from '../carts/carts.service';
+import Stripe from 'stripe';
+import { appConfig } from 'src/app.config';
 
 @Injectable()
 export class UsersService {
+	private stripe: any;
+
 	constructor(
 		@InjectModel(User.name) private userModel: Model<UserDocument>,
 		private cartService: CartsService,
-	) {}
+	) {
+		this.stripe = new Stripe(`${appConfig.stripeSecretKey}`, {
+			apiVersion: '2022-11-15',
+		});
+	}
 
 	async findMany(query: QueryObject): Promise<ListResponse<User>> {
 		const queryFeatures = new QueryAPI(this.userModel, query)
@@ -55,6 +63,28 @@ export class UsersService {
 		});
 
 		if (!user) throw new NotFoundException('User not found');
+
+		const stripeCustomer = await this.stripe.customers.search({
+			query: `email:\'${user.email}\'`,
+		});
+
+		if (stripeCustomer.data.length !== 0) {
+			await this.stripe.customers.update(stripeCustomer.data[0].id, {
+				email: user.email,
+				name: user.username,
+				address: {
+					city: updateUserDto.address?.province,
+					line1: updateUserDto.address?.district,
+					line2: updateUserDto.address?.commune,
+				},
+				phone: updateUserDto?.tel,
+				metadata: {
+					gender: updateUserDto?.gender,
+					firstName: updateUserDto?.firstName,
+					lastName: updateUserDto?.lastName,
+				},
+			});
+		}
 
 		return user;
 	}
@@ -107,8 +137,25 @@ export class UsersService {
 
 		user.refreshToken = undefined;
 
-		if (user.role === UserRole.MEMBER)
+		if (user.role === UserRole.MEMBER) {
 			await this.cartService.createOne(user._id);
+			await this.stripe.customers.create({
+				email: user.email,
+				name: user.username,
+				address: {
+					city: dto.address?.province,
+					line1: dto.address?.district,
+					line2: dto.address?.commune,
+				},
+				phone: dto?.tel,
+				metadata: {
+					gender: dto?.gender,
+					firstName: dto?.firstName,
+					lastName: dto?.lastName,
+					status: UserStatus.ACTIVE,
+				},
+			});
+		}
 
 		return user;
 	}
@@ -117,6 +164,13 @@ export class UsersService {
 		const user = await this.userModel.findById(userID);
 
 		if (!user) throw new NotFoundException('Not found user with that ID');
+
+		const stripeCustomer = await this.stripe.customers.search({
+			query: `email:\'${user.email}\'`,
+		});
+
+		if (stripeCustomer.data.length !== 0)
+			await this.stripe.customers.del(stripeCustomer.data[0].id);
 
 		await this.cartService.deleteOne(userID);
 
@@ -163,6 +217,28 @@ export class UsersService {
 
 		if (!user) throw new NotFoundException('Not found user with that ID');
 
+		const stripeCustomer = await this.stripe.customers.search({
+			query: `email:\'${user.email}\'`,
+		});
+
+		if (stripeCustomer.data.length !== 0) {
+			await this.stripe.customers.update(stripeCustomer.data[0].id, {
+				email: user.email,
+				name: user.username,
+				address: {
+					city: dto.address?.province,
+					line1: dto.address?.district,
+					line2: dto.address?.commune,
+				},
+				phone: dto?.tel,
+				metadata: {
+					gender: dto?.gender,
+					firstName: dto?.firstName,
+					lastName: dto?.lastName,
+				},
+			});
+		}
+
 		user.password = undefined;
 		user.refreshToken = undefined;
 
@@ -199,6 +275,18 @@ export class UsersService {
 		);
 
 		if (!user) throw new NotFoundException('Not found user with that ID');
+
+		const stripeCustomer = await this.stripe.customers.search({
+			query: `email:\'${user.email}\'`,
+		});
+
+		if (stripeCustomer.data.length !== 0) {
+			await this.stripe.customers.update(stripeCustomer.data[0].id, {
+				metadata: {
+					status: UserStatus.INACTIVE,
+				},
+			});
+		}
 
 		return true;
 	}
