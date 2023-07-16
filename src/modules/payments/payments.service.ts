@@ -8,7 +8,7 @@ import {
 import { BillItemsService } from '../bill-items/bill-items.service';
 import { BillsService } from '../bills/bills.service';
 import { SubscriptionsService } from '../subscriptions/subscriptions.service';
-import { PaymentStatus } from '../bills/schemas/bill.schema';
+import { Bill, PaymentStatus } from '../bills/schemas/bill.schema';
 import { CartPaymentRequestDto } from './dto/cart-payment-request-dto';
 import { CartsService } from '../carts/carts.service';
 import { TokenPayload } from '../auth/types/token-payload.type';
@@ -47,7 +47,7 @@ export class PaymentsService {
 	async purchaseSomeInCart(
 		userID: string,
 		cartPaymentRequestDto: CartPaymentRequestDto,
-	) {
+	): Promise<Bill> {
 		const { cartItemIDs } = cartPaymentRequestDto;
 		const cart: any = await this.cartService.getCurrent(userID, 'cartItemIDs');
 
