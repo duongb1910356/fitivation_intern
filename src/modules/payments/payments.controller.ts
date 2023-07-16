@@ -246,7 +246,7 @@ export class PaymentsController {
 		description: 'Allow customers to purchase to renew their subscription',
 	})
 	@ApiBody({
-		type: CartPaymentRequestDto,
+		type: SubscriptionPaymentRequestDto,
 		examples: {
 			example1: {
 				value: {
