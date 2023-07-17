@@ -6,9 +6,9 @@ import {
 	NotFoundException,
 } from '@nestjs/common';
 import { BillItemsService } from '../bill-items/bill-items.service';
-import { BillsService } from '../bills/bills.service';
+import { BillsService, CreateBillOptData } from '../bills/bills.service';
 import { SubscriptionsService } from '../subscriptions/subscriptions.service';
-import { Bill, PaymentStatus } from '../bills/schemas/bill.schema';
+import { Bill } from '../bills/schemas/bill.schema';
 import { CartPaymentRequestDto } from './dto/cart-payment-request-dto';
 import { CartsService } from '../carts/carts.service';
 import { TokenPayload } from '../auth/types/token-payload.type';
@@ -87,13 +87,23 @@ export class PaymentsService {
 			);
 		}
 
-		const bill = await this.billService.createOne(
-			userID,
-			billItems,
-			cartPaymentRequestDto,
-		);
+		const bill = await this.billService.createOne(userID, billItems, {
+			description: cartPaymentRequestDto.description,
+		} as CreateBillOptData);
 
 		return bill;
+	}
+
+	async calcAmountListCartItem(cartItemIDs: string[]) {
+		let amount = 0;
+
+		for (let i = 0; i < cartItemIDs.length; i++) {
+			const cartItem = await this.cartItemService.findOneByID(cartItemIDs[i]);
+
+			amount += cartItem.totalPrice;
+		}
+
+		return amount;
 	}
 
 	async createSubscriptionPayment(
@@ -130,28 +140,14 @@ export class PaymentsService {
 			throw new ForbiddenException('Forbidden resource');
 		}
 
-		const billItem = await this.billItemService.createOne(
-			subscription.packageID._id.toString(),
-			userPayload.sub,
-		);
-
-		const billItems = [];
-
-		billItems.push(billItem);
-
-		const bill = await this.billService.createOne(
-			userPayload.sub,
-			billItems,
-			subscriptionPaymentRequestDto,
-		);
+		const amount = subscription.packageID.price;
 
 		const paymentIntent = await this.stripe.paymentIntents.create({
-			amount: bill.totalPrice,
+			amount,
 			currency: PaymentCurrency.VND,
 			customer: stripeCustomer.data[0].id,
 			metadata: {
 				subscriptionID: subscriptionPaymentRequestDto.subscriptionID,
-				billID: bill._id.toString(),
 			},
 			description:
 				subscriptionPaymentRequestDto.description || 'Subscription payment',
@@ -161,7 +157,6 @@ export class PaymentsService {
 			message: 'Require confirm payment to complete',
 			clientSecret: paymentIntent.client_secret,
 			paymentIntentID: paymentIntent.id,
-			bill,
 		};
 	}
 
@@ -178,14 +173,15 @@ export class PaymentsService {
 		if (stripeCustomer.data.length === 0)
 			throw new NotFoundException('Customer not found');
 
-		const bill = await this.purchaseSomeInCart(userID, paymentRequest);
+		const amount = await this.calcAmountListCartItem(
+			paymentRequest.cartItemIDs,
+		);
 
 		const paymentIntent = await this.stripe.paymentIntents.create({
-			amount: bill.totalPrice,
+			amount,
 			currency: PaymentCurrency.VND,
 			customer: stripeCustomer.data[0].id,
 			metadata: {
-				billID: bill._id.toString(),
 				cartItemIDs: paymentRequest.cartItemIDs.join(', '),
 			},
 			description: paymentRequest.description || 'Cart payment',
@@ -195,7 +191,6 @@ export class PaymentsService {
 			message: 'Require confirm payment to complete',
 			clientSecret: paymentIntent.client_secret,
 			paymentIntentID: paymentIntent.id,
-			bill,
 		};
 	}
 
@@ -231,40 +226,82 @@ export class PaymentsService {
 						.replace(/"/g, '')
 						.split(',');
 
+					const bill = await this.purchaseSomeInCart(userPayload.sub, {
+						cartItemIDs,
+						description: paymentIntent.description,
+					} as CartPaymentRequestDto);
+
+					await this.billService.updatePaymentMethod(
+						bill._id.toString(),
+						paymentMethod,
+					);
+
+					await this.stripe.paymentIntents.update(paymentIntent.id, {
+						metadata: { billID: bill._id.toString(), cartItemIDs: null },
+					});
+
 					for (let i = 0; i < cartItemIDs.length; i++) {
 						await this.cartService.removeCartItemFromCurrentCart(
 							userPayload.sub,
 							cartItemIDs[i],
 						);
 					}
-				}
-				await this.billService.updatePaymentStatus(
-					paymentIntent.metadata.billID,
-					PaymentStatus.SUCCEEDED,
-				);
 
-				await this.billService.updatePaymentMethod(
-					paymentIntent.metadata.billID,
-					paymentMethod,
-				);
-
-				if (paymentIntent.metadata.subscriptionID !== undefined) {
-					await this.subscriptionService.renew(
+					response.status(HttpStatus.OK).json({
+						message: 'Payment successful',
+						clientSecret: paymentIntent.client_secret,
+						paymentIntentID: paymentIntent.id,
+						bill: await this.billService.findOneByID(
+							bill._id.toString(),
+							userPayload,
+						),
+					} as PaymentResponse);
+				} else if (paymentIntent.metadata.subscriptionID !== undefined) {
+					const subscription: any = await this.subscriptionService.findOneByID(
 						paymentIntent.metadata.subscriptionID,
-						paymentIntent.metadata.billID,
 						userPayload,
 					);
-				}
 
-				response.status(HttpStatus.OK).json({
-					message: 'Payment successful',
-					clientSecret: paymentIntent.client_secret,
-					paymentIntentID: paymentIntent.id,
-					bill: await this.billService.findOneByID(
-						paymentIntent.metadata.billID,
+					const billItem = await this.billItemService.createOne(
+						subscription.packageID._id.toString(),
+						userPayload.sub,
+					);
+
+					const billItems = [];
+
+					billItems.push(billItem);
+
+					const bill = await this.billService.createOne(
+						userPayload.sub,
+						billItems,
+						{ description: paymentIntent.description },
+					);
+
+					await this.billService.updatePaymentMethod(
+						bill._id.toString(),
+						paymentMethod,
+					);
+
+					await this.stripe.paymentIntents.update(paymentIntent.id, {
+						metadata: { billID: bill._id.toString() },
+					});
+
+					await this.subscriptionService.renew(
+						paymentIntent.metadata.subscriptionID,
+						bill.billItems[0]._id.toString(),
 						userPayload,
-					),
-				} as PaymentResponse);
+					);
+
+					response.status(HttpStatus.OK).json({
+						message: 'Payment successful',
+						clientSecret: paymentIntent.client_secret,
+						paymentIntentID: paymentIntent.id,
+						bill: await this.billService.findOneByID(
+							bill._id.toString(),
+							userPayload,
+						),
+					} as PaymentResponse);
+				}
 			})
 			.catch(async (err) => {
 				response
