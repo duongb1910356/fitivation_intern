@@ -14,11 +14,6 @@ export enum BillStatus {
 	INACTIVE = 'INACTIVE',
 }
 
-export enum PaymentStatus {
-	SUCCEEDED = 'SUCCEEDED',
-	INCOMPLETE = 'INCOMPLETE',
-}
-
 @Schema({ timestamps: true })
 export class Bill extends BaseObject {
 	@Prop({
@@ -56,13 +51,6 @@ export class Bill extends BaseObject {
 
 	@Prop({ default: BillStatus.ACTIVE, enum: BillStatus, type: String })
 	status: BillStatus;
-
-	@Prop({
-		default: PaymentStatus.INCOMPLETE,
-		enum: PaymentStatus,
-		type: String,
-	})
-	paymentStatus: PaymentStatus;
 }
 
 export const BillSchema = SchemaFactory.createForClass(Bill);

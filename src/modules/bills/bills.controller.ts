@@ -14,7 +14,7 @@ import {
 	ApiBearerAuth,
 } from '@nestjs/swagger';
 import { BillsService } from './bills.service';
-import { Bill, BillStatus, PaymentStatus } from './schemas/bill.schema';
+import { Bill, BillStatus } from './schemas/bill.schema';
 import {
 	BillItem,
 	BillItemStatus,
@@ -159,7 +159,6 @@ export class BillsController {
 						promotionPrice: 0,
 						totalPrice: 0,
 						status: BillStatus.ACTIVE,
-						paymentStatus: PaymentStatus.SUCCEEDED,
 						createdAt: new Date(),
 						updatedAt: new Date(),
 					},
@@ -322,7 +321,6 @@ export class BillsController {
 				promotionPrice: 0,
 				totalPrice: 0,
 				status: BillStatus.ACTIVE,
-				paymentStatus: PaymentStatus.SUCCEEDED,
 				createdAt: new Date(),
 				updatedAt: new Date(),
 			} as Bill,
