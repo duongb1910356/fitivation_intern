@@ -5,5 +5,5 @@ export const CounterService = jest.fn().mockReturnValue({
 	create: jest.fn().mockResolvedValue(CounterStub()),
 	increase: jest.fn().mockResolvedValue(CounterStub()),
 	decrease: jest.fn().mockResolvedValue(CounterStub()),
-	delete: jest.fn().mockResolvedValue(true),
+	delete: jest.fn().mockResolvedValue(''),
 });

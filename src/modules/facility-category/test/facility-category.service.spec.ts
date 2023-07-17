@@ -62,7 +62,7 @@ describe('FacilitySchedule', () => {
 	});
 
 	describe('findOneByID', () => {
-		it('should throw NotFoundException if schedule not found', async () => {
+		it('should throw NotFoundException if category not found', async () => {
 			const categoryID = categoryStub._id;
 
 			jest.spyOn(categoryModel, 'findById').mockResolvedValue(undefined);
@@ -72,7 +72,7 @@ describe('FacilitySchedule', () => {
 			);
 		});
 
-		it('should return a schedule if schedule exists', async () => {
+		it('should return a category if category exists', async () => {
 			const scheduleID = categoryStub._id;
 
 			jest.spyOn(categoryModel, 'findById').mockResolvedValue(categoryStub);
@@ -86,7 +86,7 @@ describe('FacilitySchedule', () => {
 	});
 
 	describe('findMany', () => {
-		it('should return schedule array', async () => {
+		it('should return category array', async () => {
 			const filter: ListOptions<FacilityCategory> = {};
 
 			jest.spyOn(categoryModel, 'find').mockImplementation(() => ({
@@ -204,10 +204,6 @@ describe('FacilitySchedule', () => {
 				.spyOn(categoryModel, 'findByIdAndUpdate')
 				.mockResolvedValue(categoryStub);
 
-			jest.spyOn(photoService, 'delete').mockResolvedValue(true);
-
-			jest.spyOn(photoService, 'uploadOneFile').mockResolvedValue(photoStub);
-
 			const result = await categoryService.update(categoryID, data, file);
 
 			expect(categoryModel.findByIdAndUpdate).toHaveBeenCalledWith(
@@ -241,8 +237,6 @@ describe('FacilitySchedule', () => {
 			jest
 				.spyOn(categoryModel, 'findByIdAndDelete')
 				.mockResolvedValue(categoryStub);
-
-			jest.spyOn(photoService, 'delete').mockResolvedValue(true);
 
 			await categoryService.delete(categotyID);
 
