@@ -99,7 +99,6 @@ describe('PhotoService', function () {
 		it('should not upload a file with a non-allowed file type', async () => {
 			const ownerID = '649d3f7372e91c40d2e7e9dc';
 
-			// Define a test file with a non-allowed file type
 			const file: Express.Multer.File = {
 				fieldname: 'fieldname',
 				originalname: 'example.txt',

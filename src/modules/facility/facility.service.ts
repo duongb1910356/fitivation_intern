@@ -228,8 +228,7 @@ export class FacilityService {
 			.sort(sortQuery)
 			.skip(offset)
 			.limit(limit)
-			.populate('brandID')
-			.populate('facilityCategoryID');
+			.populate('brandID facilityCategoryID schedule');
 
 		return {
 			items: result,
@@ -241,8 +240,7 @@ export class FacilityService {
 	async findOneByID(id: string): Promise<Facility> {
 		const facility = this.facilityModel
 			.findById(id)
-			.populate('brandID')
-			.populate('facilityCategoryID');
+			.populate('brandID facilityCategoryID schedule');
 		if (!facility) {
 			throw new NotFoundException('Facility not found');
 		}
@@ -543,14 +541,34 @@ export class FacilityService {
 			});
 		}
 
-		aggregatePipeline.push({
-			$lookup: {
-				from: 'facilitycategories',
-				localField: 'facilityCategoryID',
-				foreignField: '_id',
-				as: 'category',
+		aggregatePipeline.push(
+			{
+				$lookup: {
+					from: 'facilitycategories',
+					localField: 'facilityCategoryID',
+					foreignField: '_id',
+					as: 'facilityCategoryID',
+				},
 			},
-		});
+			{
+				$lookup: {
+					from: 'facilityschedules',
+					localField: 'schedule',
+					foreignField: '_id',
+					as: 'schedule',
+				},
+			},
+			{ $unwind: '$schedule' },
+			{
+				$lookup: {
+					from: 'brands',
+					localField: 'brandID',
+					foreignField: '_id',
+					as: 'brandID',
+				},
+			},
+			{ $unwind: '$brandID' },
+		);
 
 		const facilities = await this.facilityModel.aggregate(aggregatePipeline);
 		let result = await Promise.all(

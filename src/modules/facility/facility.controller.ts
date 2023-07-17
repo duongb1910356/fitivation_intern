@@ -145,7 +145,7 @@ export class FacilityController {
 								updatedAt: new Date(),
 							},
 						],
-						schedule: {},
+						schedule: '64b0cd9f9fe7ffe0a6c2038f',
 						createdAt: new Date(),
 						updatedAt: new Date(),
 					},
