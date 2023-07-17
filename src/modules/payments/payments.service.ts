@@ -267,8 +267,6 @@ export class PaymentsService {
 				} as PaymentResponse);
 			})
 			.catch(async (err) => {
-				await this.billService.deleteOneByID(paymentIntent.metadata.billID);
-
 				response
 					.status(HttpStatus.BAD_REQUEST)
 					.json({ statusCode: err.statusCode, message: err.message });
