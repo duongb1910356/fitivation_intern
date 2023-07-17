@@ -127,6 +127,26 @@ export const facilitiesData = [
 				__v: 0,
 			},
 		],
+		schedule: {
+			createdAt: '2023-06-29T08:23:34.856Z',
+			updatedAt: '2023-06-29T08:23:34.856Z',
+			facilityID: '649d344f72e91c40d2e7e895',
+			type: 'DAILY',
+			openTime: [
+				{
+					shift: [
+						{
+							startTime: '06:00',
+							endTime: '12:00',
+						},
+						{
+							startTime: '13:00',
+							endTime: '19:00',
+						},
+					],
+				},
+			],
+		},
 		createdAt: '2023-06-29T07:35:43.345Z',
 		updatedAt: '2023-06-29T07:36:49.766Z',
 		__v: 1,
@@ -260,10 +280,85 @@ export const facilitiesData = [
 				__v: 0,
 			},
 		],
+		schedule: {
+			_id: '64b0cd9f9fe7ffe0a6c2038f',
+			createdAt: '2023-06-29T08:23:34.856Z',
+			updatedAt: '2023-06-29T08:23:34.856Z',
+			facilityID: '649d390172e91c40d2e7e8fb',
+			type: 'WEEKLY',
+			openTime: [
+				{
+					shift: [
+						{
+							startTime: '06:00',
+							endTime: '12:00',
+						},
+						{
+							startTime: '13:00',
+							endTime: '19:00',
+						},
+					],
+					dayOfWeek: 'MONDAY',
+				},
+				{
+					shift: [
+						{
+							startTime: '06:00',
+							endTime: '12:00',
+						},
+						{
+							startTime: '13:00',
+							endTime: '19:00',
+						},
+					],
+					dayOfWeek: 'TUESDAY',
+				},
+				{
+					shift: [
+						{
+							startTime: '06:00',
+							endTime: '12:00',
+						},
+						{
+							startTime: '13:00',
+							endTime: '19:00',
+						},
+					],
+					dayOfWeek: 'WEDNESDAY',
+				},
+				{
+					shift: [
+						{
+							startTime: '06:00',
+							endTime: '12:00',
+						},
+						{
+							startTime: '13:00',
+							endTime: '19:00',
+						},
+					],
+					dayOfWeek: 'THURSDAY',
+				},
+				{
+					shift: [
+						{
+							startTime: '06:00',
+							endTime: '12:00',
+						},
+						{
+							startTime: '13:00',
+							endTime: '19:00',
+						},
+					],
+					dayOfWeek: 'FRIDAY',
+				},
+			],
+		},
 		createdAt: '2023-06-29T07:55:45.767Z',
 		updatedAt: '2023-06-29T07:56:22.445Z',
 		__v: 1,
 	},
+
 	{
 		_id: '649d3a0d72e91c40d2e7e946',
 		brandID: '64944c7c2d7cf0ec0dbb4051',
@@ -392,6 +487,80 @@ export const facilitiesData = [
 				__v: 0,
 			},
 		],
+		schedule: {
+			_id: '64b0cd9f9fe7ffe0a6c20390',
+			createdAt: '2023-06-29T08:23:34.856Z',
+			updatedAt: '2023-06-29T08:23:34.856Z',
+			facilityID: '649d3a0d72e91c40d2e7e946',
+			type: 'WEEKLY',
+			openTime: [
+				{
+					shift: [
+						{
+							startTime: '06:00',
+							endTime: '12:00',
+						},
+						{
+							startTime: '13:00',
+							endTime: '19:00',
+						},
+					],
+					dayOfWeek: 'MONDAY',
+				},
+				{
+					shift: [
+						{
+							startTime: '06:00',
+							endTime: '12:00',
+						},
+						{
+							startTime: '13:00',
+							endTime: '19:00',
+						},
+					],
+					dayOfWeek: 'TUESDAY',
+				},
+				{
+					shift: [
+						{
+							startTime: '06:00',
+							endTime: '12:00',
+						},
+						{
+							startTime: '13:00',
+							endTime: '19:00',
+						},
+					],
+					dayOfWeek: 'WEDNESDAY',
+				},
+				{
+					shift: [
+						{
+							startTime: '06:00',
+							endTime: '12:00',
+						},
+						{
+							startTime: '13:00',
+							endTime: '19:00',
+						},
+					],
+					dayOfWeek: 'THURSDAY',
+				},
+				{
+					shift: [
+						{
+							startTime: '06:00',
+							endTime: '12:00',
+						},
+						{
+							startTime: '13:00',
+							endTime: '19:00',
+						},
+					],
+					dayOfWeek: 'FRIDAY',
+				},
+			],
+		},
 		createdAt: '2023-06-29T08:00:13.372Z',
 		updatedAt: '2023-06-29T08:00:45.561Z',
 		__v: 1,

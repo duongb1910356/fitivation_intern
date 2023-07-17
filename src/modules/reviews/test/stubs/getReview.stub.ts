@@ -1,5 +1,3 @@
-import { Review } from '../../schemas/reviews.schema';
-
 export const GetReviewStub = (): any => {
 	return {
 		_id: '649d348d72e91c40d2e7e8b6',

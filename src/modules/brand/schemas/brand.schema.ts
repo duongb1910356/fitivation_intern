@@ -11,7 +11,7 @@ export class Brand extends BaseObject {
 	name: string;
 
 	@Prop({ type: mongoose.Schema.Types.ObjectId, ref: 'User', required: true })
-	accountID: User;
+	accountID: string;
 }
 
 export const BrandSchema = SchemaFactory.createForClass(Brand);

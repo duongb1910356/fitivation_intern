@@ -8,7 +8,10 @@ import {
 import { Brand } from '../../brand/schemas/brand.schema';
 import { Photo, PhotoSchema } from 'src/modules/photo/schemas/photo.schema';
 import { appConfig } from 'src/app.config';
-import { FacilitySchedule } from 'src/modules/facility-schedule/entities/facility-schedule.entity';
+import {
+	FacilitySchedule,
+	FacilityScheduleSchema,
+} from 'src/modules/facility-schedule/entities/facility-schedule.entity';
 
 export enum State {
 	ACTIVE = 'ACTIVE',
@@ -163,7 +166,7 @@ export class Facility extends BaseObject {
 	// @Prop({ enum: ScheduleType, default: ScheduleType.WEEKLY })
 	// scheduleType: ScheduleType;
 
-	@Prop({ type: FacilitySchedule, required: false })
+	@Prop({ type: FacilityScheduleSchema, required: false })
 	schedule: FacilitySchedule;
 }
 

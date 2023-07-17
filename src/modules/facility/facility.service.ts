@@ -42,6 +42,17 @@ import { UpdatePromotionDto } from '../promotions/dto/update-promotion-dto';
 import { PackageService } from '../package/package.service';
 import { BrandService } from '../brand/brand.service';
 
+interface SearchOptions {
+	longitude?: number; // Toạ độ người dùng
+	latitude?: number;
+	sortByDistance?: boolean;
+	sortByPrice?: boolean;
+	sortOrder?: 'asc' | 'desc';
+	search?: string;
+	limit?: number;
+	offset?: number;
+}
+
 @Injectable()
 export class FacilityService {
 	constructor(
@@ -487,22 +498,26 @@ export class FacilityService {
 	async searchFacilityByAddress(
 		filter: ListOptions<any>,
 	): Promise<ListResponse<any>> {
-		const search = filter.search || '';
-		const sortOrder = filter.sortOrder || 'asc';
-		const limit = filter.limit || 10;
-		const offset = filter.offset || 0;
-		const regex = new RegExp(search.split('').join('.*'), 'i');
-		let longitude = 0.0;
-		let latitude = 0.0;
-		let facilities = [];
+		const search = filter?.search;
+		const sortOrder = filter?.sortOrder || 'asc';
+		const latitude = parseFloat(filter?.latitude) || undefined;
+		const longitude = parseFloat(filter?.longitude) || undefined;
+		const limit = filter?.limit || 10;
+		const offset = filter?.offset || 0;
 
-		if (filter.sortField == 'distance' && filter.latitude && filter.longitude) {
-			latitude = parseFloat(filter.latitude.toString());
-			longitude = parseFloat(filter.longitude.toString());
-			if (isNaN(latitude) || isNaN(longitude)) {
-				throw new BadRequestException('Longitude and latitude invalid');
+		const aggregatePipeline: any[] = [];
+
+		if (longitude != undefined && latitude != undefined) {
+			if (
+				longitude < -180 ||
+				longitude > 180 ||
+				latitude < -90 ||
+				latitude > 90
+			) {
+				throw new BadRequestException('Coordinates invalid');
 			}
-			facilities = await this.facilityModel.aggregate([
+
+			aggregatePipeline.push(
 				{
 					$geoNear: {
 						near: {
@@ -511,7 +526,6 @@ export class FacilityService {
 						},
 						distanceField: 'distance',
 						spherical: true,
-						// maxDistance: 5000, // Khoảng cách tối đa (đơn vị mét)
 					},
 				},
 				{
@@ -519,51 +533,27 @@ export class FacilityService {
 						distance: '$distance',
 					},
 				},
-				{
-					$match: { fullAddress: regex },
-				},
-				{
-					$sort: {
-						distance: 1,
-					},
-				},
-				{
-					$skip: offset,
-				},
-				{
-					$limit: limit,
-				},
-				{
-					$lookup: {
-						from: 'facilitycategories',
-						localField: 'facilityCategoryID',
-						foreignField: '_id',
-						as: 'category',
-					},
-				},
-			]);
-		} else {
-			facilities = await this.facilityModel.aggregate([
-				{ $match: { fullAddress: regex } },
-				{
-					$lookup: {
-						from: 'facilitycategories',
-						localField: 'facilityCategoryID',
-						foreignField: '_id',
-						as: 'category',
-					},
-				},
-				{
-					$skip: offset,
-				},
-				{
-					$limit: limit,
-				},
-			]);
+			);
 		}
 
-		// Gán thêm gói package vào từng facility
-		const result = await Promise.all(
+		if (search != undefined) {
+			const regex = new RegExp(search.split('').join('.*'), 'i');
+			aggregatePipeline.push({
+				$match: { fullAddress: regex },
+			});
+		}
+
+		aggregatePipeline.push({
+			$lookup: {
+				from: 'facilitycategories',
+				localField: 'facilityCategoryID',
+				foreignField: '_id',
+				as: 'category',
+			},
+		});
+
+		const facilities = await this.facilityModel.aggregate(aggregatePipeline);
+		let result = await Promise.all(
 			facilities.map(async (el) => {
 				const foundPackage =
 					await this.packageService.findPackageWithLowestPrice(el._id);
@@ -571,25 +561,23 @@ export class FacilityService {
 			}),
 		);
 
-		result.sort((a, b) => {
-			const hasPackageA = a.package != null;
-			const hasPackageB = b.package != null;
-			if (hasPackageA && hasPackageB) {
-				const priceA = a.package.price;
-				const priceB = b.package.price;
+		if (filter.sortField == 'distance') {
+			result.sort((a, b) => a?.distance - b?.distance || 0);
+		} else if (filter.sortField == 'price') {
+			result.sort((a, b) => {
+				const priceA = a.package?.price;
+				const priceB = b.package?.price;
+
 				if (sortOrder === 'asc') {
 					return priceA - priceB;
-				} else {
+				} else if (sortOrder === 'desc') {
 					return priceB - priceA;
+				} else {
+					return 0;
 				}
-			} else if (hasPackageA && !hasPackageB) {
-				return -1; // Đặt phần tử a lên đầu
-			} else if (!hasPackageA && hasPackageB) {
-				return 1; // Đặt phần tử b lên đầu
-			} else {
-				return 0; // Giữ nguyên thứ tự
-			}
-		});
+			});
+		}
+		result = result.slice(offset, offset + limit);
 
 		return {
 			items: result,
@@ -602,58 +590,59 @@ export class FacilityService {
 		longitude: number,
 		latitude: number,
 	): Promise<ListResponse<any>> {
-		longitude = parseFloat(longitude.toString());
-		latitude = parseFloat(latitude.toString());
+		longitude = parseFloat(longitude.toString()) || undefined;
+		latitude = parseFloat(latitude.toString()) || undefined;
 
-		console.log(`lon ${longitude} -- la ${latitude}`);
-
-		try {
-			const facilities = await this.facilityModel.aggregate([
-				{
-					$geoNear: {
-						near: {
-							type: 'Point',
-							coordinates: [longitude, latitude],
-						},
-						distanceField: 'distance',
-						spherical: true,
-						maxDistance: 5000, // Khoảng cách tối đa (đơn vị mét)
-					},
-				},
-				{
-					$addFields: {
-						distance: '$distance',
-					},
-				},
-				{
-					$lookup: {
-						from: 'facilitycategories',
-						localField: 'facilityCategoryID',
-						foreignField: '_id',
-						as: 'category',
-					},
-				},
-			]);
-
-			// Gán thêm gói package vào từng facility
-			const result = await Promise.all(
-				facilities.map(async (el) => {
-					const foundPackage =
-						await this.packageService.findPackageWithLowestPrice(el._id);
-					return { ...el, package: foundPackage || {} };
-				}),
-			);
-
-			return {
-				items: result,
-				total: result.length,
-				options: {
-					longitude: longitude,
-					latitude: latitude,
-				},
-			};
-		} catch (error) {
-			console.log('error >> ', error);
+		if (longitude == undefined || latitude == undefined) {
+			throw new BadRequestException('Coordinates invalid');
 		}
+		const facilities = await this.facilityModel.aggregate([
+			{
+				$geoNear: {
+					near: {
+						type: 'Point',
+						coordinates: [longitude, latitude],
+					},
+					distanceField: 'distance',
+					spherical: true,
+					maxDistance: 5000,
+				},
+			},
+			{
+				$addFields: {
+					distance: '$distance',
+				},
+			},
+			{
+				$sort: {
+					distance: 1,
+				},
+			},
+			{
+				$lookup: {
+					from: 'facilitycategories',
+					localField: 'facilityCategoryID',
+					foreignField: '_id',
+					as: 'category',
+				},
+			},
+		]);
+
+		const result = await Promise.all(
+			facilities.map(async (el) => {
+				const foundPackage =
+					await this.packageService.findPackageWithLowestPrice(el._id);
+				return { ...el, package: foundPackage || {} };
+			}),
+		);
+
+		return {
+			items: result,
+			total: result.length,
+			options: {
+				longitude: longitude,
+				latitude: latitude,
+			},
+		};
 	}
 }

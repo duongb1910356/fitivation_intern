@@ -271,6 +271,7 @@ export class FacilityController {
 		description: 'Not found facilities',
 	})
 	searchFacilityByAddress(@Query() filter: ListOptions<Facility>) {
+		console.log('da vo controller');
 		return this.facilityService.searchFacilityByAddress(filter);
 	}
 
