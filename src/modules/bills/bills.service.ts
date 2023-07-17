@@ -6,7 +6,7 @@ import {
 } from '@nestjs/common';
 import { BillItem } from '../bill-items/schemas/bill-item.schema';
 import { InjectModel } from '@nestjs/mongoose';
-import { Bill, BillDocument, PaymentStatus } from './schemas/bill.schema';
+import { Bill, BillDocument } from './schemas/bill.schema';
 import { Model } from 'mongoose';
 import {
 	ListResponse,
@@ -15,11 +15,13 @@ import {
 } from 'src/shared/utils/query-api';
 import { UserRole } from '../users/schemas/user.schema';
 import { TokenPayload } from '../auth/types/token-payload.type';
-import { CartPaymentRequestDto } from '../payments/dto/cart-payment-request-dto';
 import { BillItemsService } from '../bill-items/bill-items.service';
 import { SubscriptionsService } from '../subscriptions/subscriptions.service';
-import { SubscriptionPaymentRequestDto } from '../payments/dto/subscription-payment-request-dto';
 import { PaymentMethodDto } from '../payments/dto/payment-method-dto';
+
+export type CreateBillOptData = {
+	description?: string;
+};
 
 @Injectable()
 export class BillsService {
@@ -33,7 +35,7 @@ export class BillsService {
 	async createOne(
 		userID: string,
 		billItems: BillItem[],
-		PaymentRequestDto: CartPaymentRequestDto | SubscriptionPaymentRequestDto,
+		optData: CreateBillOptData,
 	): Promise<Bill> {
 		let totalPrice = 0;
 
@@ -45,7 +47,8 @@ export class BillsService {
 			accountID: userID,
 			billItems: billItems,
 			// taxes: PaymentRequestDto.taxes || 0,
-			description: PaymentRequestDto.description || '',
+			PaymentMethod: null,
+			description: optData?.description,
 			promotions: [],
 			promotionPrice: 0,
 			totalPrice: totalPrice,
@@ -119,26 +122,6 @@ export class BillsService {
 		}
 
 		await this.billModel.deleteOne({ _id: billID });
-
-		return true;
-	}
-
-	async updatePaymentStatus(
-		billID: string,
-		status: PaymentStatus,
-	): Promise<boolean> {
-		const bill = await this.billModel.findByIdAndUpdate(
-			billID,
-			{
-				paymentStatus: status,
-			},
-			{
-				new: true,
-				runValidators: true,
-			},
-		);
-
-		if (!bill) return false;
 
 		return true;
 	}
