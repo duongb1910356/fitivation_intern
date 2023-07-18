@@ -28,7 +28,7 @@ import {
 	ApiTags,
 	ApiUnauthorizedResponse,
 } from '@nestjs/swagger';
-import { User } from '../users/schemas/user.schema';
+import { User, UserRole } from '../users/schemas/user.schema';
 import { ApiDocsPagination } from 'src/decorators/swagger-form-data.decorator';
 import {
 	ListOptions,
@@ -36,7 +36,7 @@ import {
 	ErrorResponse,
 } from 'src/shared/response/common-response';
 import { Attendance } from '../attendance/entities/attendance.entity';
-import { Facility, State, Status } from '../facility/schemas/facility.schema';
+import { Facility, Status } from '../facility/schemas/facility.schema';
 import { CreateCategoryDto } from '../facility-category/dto/create-category-dto';
 import { UpdateCategoryDto } from '../facility-category/dto/update-category-dto';
 import { FacilityCategory } from '../facility-category/entities/facility-category';
@@ -59,17 +59,17 @@ import {
 } from '../facility-schedule/facility-schedule.service';
 import { ConditionHoliday, HolidayService } from '../holiday/holiday.service';
 import { AttendanceService } from '../attendance/attendance.service';
-import { Public } from '../auth/decorators/public.decorator';
 import { MongoIdValidationPipe } from 'src/pipes/parseMongoId.pipe';
 import { FileInterceptor } from '@nestjs/platform-express';
 import { UpdateStatusFacilityDto } from '../facility/dto/update-status-facility';
 import { FacilityService } from '../facility/facility.service';
+import { Roles } from 'src/decorators/role.decorator';
+import { RolesGuard } from 'src/guards/role.guard';
 
+@ApiBearerAuth()
+@UseGuards(RolesGuard)
+@Roles(UserRole.ADMIN)
 @ApiTags('admin')
-// @ApiBearerAuth()
-// @UseGuards(RolesGuard)
-// @Roles(UserRole.ADMIN)
-@Public()
 @Controller('admin')
 export class AdminController {
 	constructor(

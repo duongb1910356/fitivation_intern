@@ -95,7 +95,7 @@ describe('PackageTypeService', () => {
 	});
 
 	describe('findMany', () => {
-		it('should return a packageType', async () => {
+		it('should return packageType array', async () => {
 			const filter: ListOptions<PackageType> = {
 				limit: 10,
 				offset: 0,
@@ -123,7 +123,7 @@ describe('PackageTypeService', () => {
 	});
 
 	describe('findManyByFacility', () => {
-		it('should return a packageType', async () => {
+		it('should return packageType array', async () => {
 			const filter: ListOptions<PackageType> = {
 				limit: 10,
 				offset: 0,
@@ -166,10 +166,6 @@ describe('PackageTypeService', () => {
 					.spyOn(counterService, 'findOneByCondition')
 					.mockResolvedValue(undefined);
 
-				jest.spyOn(counterService, 'create').mockResolvedValue(counterStub);
-
-				jest.spyOn(counterService, 'increase').mockResolvedValue(counterStub);
-
 				jest
 					.spyOn(packageTypeModel, 'create')
 					.mockResolvedValue(packageTypeStub);
@@ -208,8 +204,6 @@ describe('PackageTypeService', () => {
 				jest
 					.spyOn(counterService, 'findOneByCondition')
 					.mockResolvedValue(counterStub);
-
-				jest.spyOn(counterService, 'increase').mockResolvedValue(counterStub);
 
 				jest
 					.spyOn(packageTypeModel, 'create')
@@ -250,7 +244,7 @@ describe('PackageTypeService', () => {
 			).rejects.toThrow(NotFoundException);
 		});
 
-		it('should return a packageType', async () => {
+		it('should update and return a packageType', async () => {
 			jest
 				.spyOn(packageTypeModel, 'findByIdAndUpdate')
 				.mockResolvedValue(packageTypeStub);
@@ -470,7 +464,7 @@ describe('PackageTypeService', () => {
 	});
 
 	describe('getAllPackages', () => {
-		it('should get all Package by PackageTypeID', async () => {
+		it('should return all packages by packageTypeID', async () => {
 			const filter: ListOptions<Package> = {};
 			const response = await packageTypeService.getAllPackages(
 				packageTypeStub._id,
@@ -487,7 +481,7 @@ describe('PackageTypeService', () => {
 	});
 
 	describe('createPackage', () => {
-		it('should return all new package of packageType', async () => {
+		it('should return new package of packageType', async () => {
 			const data: CreatePackageDto = {
 				type: TimeType.ONE_MONTH,
 				price: 100000,
@@ -498,8 +492,6 @@ describe('PackageTypeService', () => {
 			jest
 				.spyOn(packageTypeService, 'findOneByID')
 				.mockResolvedValue(packageTypeStub);
-
-			jest.spyOn(packageService, 'create').mockResolvedValue(packageStub);
 
 			const response = await packageTypeService.createPackage(
 				packageTypeStub._id,

@@ -131,6 +131,6 @@ export class FacilityScheduleService {
 
 	async isOwner(scheduleID: string, uid: string): Promise<boolean> {
 		const schedule = await this.findOneByID(scheduleID, 'facilityID');
-		return uid === schedule.facilityID.ownerID;
+		return uid == schedule.facilityID.ownerID;
 	}
 }
