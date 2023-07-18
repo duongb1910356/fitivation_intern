@@ -27,6 +27,7 @@ import { CounterModule } from './modules/counter/counter.module';
 import { AdminModule } from './modules/admin/admin.module';
 import { ReviewsModule } from './modules/reviews/reviews.module';
 import { BrandModule } from './modules/brand/brand.module';
+import { PaymentsModule } from './modules/payments/payments.module';
 
 @Module({
 	imports: [
@@ -59,6 +60,7 @@ import { BrandModule } from './modules/brand/brand.module';
 		HolidayModule,
 		CounterModule,
 		BrandModule,
+		PaymentsModule,
 	],
 	providers: [
 		{

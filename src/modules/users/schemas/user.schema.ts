@@ -79,10 +79,7 @@ export class User extends BaseObject {
 	address?: UserAddress;
 
 	@Prop({ type: PhotoSchema, required: true, default: {} })
-	avatar: Photo;
-
-	// @Prop({ type: String })
-	// avatar?: string;
+	avatar?: Photo;
 
 	@Prop({ type: Boolean })
 	isMember?: boolean;

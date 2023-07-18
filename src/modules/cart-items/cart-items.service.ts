@@ -9,7 +9,6 @@ import { Model } from 'mongoose';
 import { PackageService } from '../package/package.service';
 import { PromotionsService } from '../promotions/promotions.service';
 import {
-	Promotion,
 	PromotionMethod,
 	PromotionType,
 } from '../promotions/schemas/promotion.schema';

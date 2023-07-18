@@ -97,7 +97,7 @@ export class UsersController {
 	@Get('me')
 	@Roles(UserRole.ADMIN, UserRole.FACILITY_OWNER, UserRole.MEMBER)
 	@UseGuards(RolesGuard)
-	async getProfile(@GetCurrentUser('sub') userID: string) {
+	async getProfile(@GetCurrentUser('sub') userID: string): Promise<User> {
 		return await this.userService.getCurrentUser(userID);
 	}
 

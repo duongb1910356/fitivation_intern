@@ -1,11 +1,4 @@
-import {
-	Controller,
-	Get,
-	Param,
-	Patch,
-	Query,
-	UseGuards,
-} from '@nestjs/common';
+import { Controller, Get, Param, Query, UseGuards } from '@nestjs/common';
 import {
 	ApiBearerAuth,
 	ApiOperation,
@@ -180,84 +173,5 @@ export class SubscriptionsController {
 		@GetCurrentUser() user: TokenPayload,
 	): Promise<Subscription> {
 		return await this.subscriptionService.findOneByID(id, user);
-	}
-
-	@ApiOperation({
-		summary: 'renew',
-		description: 'Allow customer to extend package when package was expired',
-	})
-	@ApiParam({ name: 'id', type: String, description: 'Subscription ID' })
-	@ApiResponse({
-		status: 200,
-		schema: {
-			example: {
-				accountID: 'string',
-				billItemID: 'string',
-				packageID: 'string',
-				facilityID: 'string',
-				expires: new Date(),
-				status: SubscriptionStatus.ACTIVE,
-				renew: true,
-			} as Subscription,
-		},
-	})
-	@ApiResponse({
-		status: 400,
-		schema: {
-			example: {
-				code: '400',
-				message: 'Bad request',
-				details: null,
-			} as ErrorResponse<null>,
-		},
-	})
-	@ApiResponse({
-		status: 401,
-		schema: {
-			example: {
-				code: '401',
-				message: 'Unauthorized',
-				details: null,
-			} as ErrorResponse<null>,
-		},
-	})
-	@ApiResponse({
-		status: 402,
-		schema: {
-			example: {
-				code: '402',
-				message: 'Payment Required',
-				details: null,
-			} as ErrorResponse<null>,
-		},
-	})
-	@ApiResponse({
-		status: 403,
-		schema: {
-			example: {
-				code: '403',
-				message: `Forbidden resource`,
-				details: null,
-			} as ErrorResponse<null>,
-		},
-	})
-	@ApiResponse({
-		status: 404,
-		schema: {
-			example: {
-				code: '404',
-				message: 'Not found document with that ID',
-				details: null,
-			} as ErrorResponse<null>,
-		},
-	})
-	@Patch('renew/:id')
-	@Roles(UserRole.MEMBER)
-	@UseGuards(RolesGuard)
-	async renew(
-		@GetCurrentUser() user: TokenPayload,
-		@Param('id') id: string,
-	): Promise<Subscription> {
-		return await this.subscriptionService.renew(id, user);
 	}
 }
