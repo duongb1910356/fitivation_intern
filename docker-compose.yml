@@ -21,6 +21,8 @@ services:
       - FILE_HOST
       - FILE_ROOT
       - MAX_ELEMENT_EMBEDD
+      - STRIPE_SECRET_KEY
+      - STRIPE_PUBLIC_KEY
 
   db:
     image: mongo
