@@ -44,15 +44,6 @@ export class PackageTypeService {
 		return packageType;
 	}
 
-	// async findOne(filter: ListOptions<PackageType>) {
-	// 	const { sortOrder, sortField } = filter;
-	// 	const sortQuery = {};
-	// 	sortQuery[filter.sortField] = filter.sortOrder === 'asc' ? 1 : -1;
-	// 	return await this.packageTypeModel
-	// 		.find(filter)
-	// 		.sort({ sortField: sortOrder == 'asc' ? 1 : -1 });
-	// }
-
 	async findMany(
 		filter: ListOptions<PackageType>,
 	): Promise<ListResponse<PackageType>> {
@@ -202,7 +193,7 @@ export class PackageTypeService {
 	async isOwner(packageTypeID: string, uid: string): Promise<boolean> {
 		const packageType = await this.findOneByID(packageTypeID, 'facilityID');
 		const owner = packageType.facilityID.ownerID;
-		return uid === owner;
+		return uid == owner;
 	}
 
 	//For Package

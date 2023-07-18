@@ -10,7 +10,7 @@ export type AttendanceDocument = HydratedDocument<Attendance>;
 export class Attendance extends BaseObject {
 	@Prop({
 		type: mongoose.Schema.Types.ObjectId,
-		ref: 'Account',
+		ref: 'User',
 		required: true,
 	})
 	accountID: User;

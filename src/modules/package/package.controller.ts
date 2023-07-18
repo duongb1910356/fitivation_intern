@@ -102,7 +102,10 @@ export class PackageController {
 	async getPackage(
 		@Param('packageID', MongoIdValidationPipe) packageID: string,
 	) {
-		return await this.packageService.findOneByID(packageID);
+		return await this.packageService.findOneByID(
+			packageID,
+			'packageTypeID facilityID',
+		);
 	}
 
 	@ApiBearerAuth()

@@ -173,6 +173,22 @@ export class PaymentsService {
 		if (stripeCustomer.data.length === 0)
 			throw new NotFoundException('Customer not found');
 
+		const cart: any = await this.cartService.getCurrent(userID, 'cartItemIDs');
+
+		for (let i = 0; i < paymentRequest.cartItemIDs.length; i++) {
+			let isExistCartItemInCart = false;
+			for (let j = 0; j < cart.cartItemIDs.length; j++) {
+				if (
+					cart.cartItemIDs[j]._id.toString() === paymentRequest.cartItemIDs[i]
+				) {
+					isExistCartItemInCart = true;
+				}
+			}
+			if (!isExistCartItemInCart) {
+				throw new BadRequestException('Cart Item not found in current cart');
+			}
+		}
+
 		const amount = await this.calcAmountListCartItem(
 			paymentRequest.cartItemIDs,
 		);

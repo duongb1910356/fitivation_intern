@@ -689,7 +689,6 @@ export class FacilityController {
 	@ApiBearerAuth()
 	@UseGuards(RolesGuard)
 	@Roles(UserRole.MEMBER)
-	@Public()
 	@Post(':facilityID/attendance')
 	@ApiOperation({
 		summary: 'Create Attendance by facilityId of User',

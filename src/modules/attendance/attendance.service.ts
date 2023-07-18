@@ -59,7 +59,7 @@ export class AttendanceService {
 	}
 
 	async create(facilityID: string, accountID: string): Promise<Attendance> {
-		const isSubscribe = await this.checkActiveSubscription(
+		const isSubscribe = await this.subscriptionService.checkActive(
 			facilityID,
 			accountID,
 		);
@@ -84,21 +84,6 @@ export class AttendanceService {
 		const now = new Date();
 		attendance.date.push(now);
 		return await attendance.save();
-	}
-
-	private async checkActiveSubscription(
-		facilityID: string,
-		accountID: string,
-	): Promise<boolean> {
-		const now = new Date();
-		const subscription = await this.subscriptionService.findOneByCondition({
-			accountID,
-			facilityID,
-			expires: { $gt: now },
-		});
-		if (!subscription) return false;
-
-		return true;
 	}
 
 	async delete(attendanceID: string): Promise<string> {
