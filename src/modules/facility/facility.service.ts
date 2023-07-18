@@ -15,7 +15,7 @@ import { CreateFacilityDto } from './dto/create-facility-dto';
 import { ReviewService } from '../reviews/reviews.service';
 import { CreateReviewDto } from '../reviews/dto/create-review-dto';
 import { InjectModel } from '@nestjs/mongoose';
-import { Model, isValidObjectId } from 'mongoose';
+import mongoose, { Model, isValidObjectId } from 'mongoose';
 import { ListOptions, ListResponse } from 'src/shared/response/common-response';
 import { appConfig } from 'src/app.config';
 import { UpdateFacilityDto } from './dto/update-facility-dto';
@@ -232,19 +232,88 @@ export class FacilityService {
 
 		return {
 			items: result,
-			total: result?.length,
+			total: result?.length || 0,
 			options: filter,
 		};
 	}
 
 	async findOneByID(id: string): Promise<Facility> {
-		const facility = this.facilityModel
-			.findById(id)
-			.populate('brandID facilityCategoryID schedule');
-		if (!facility) {
-			throw new NotFoundException('Facility not found');
-		}
+		const facility = this.facilityModel.findById(id);
 		return facility;
+	}
+
+	async getOneByID(facilityID: string): Promise<Facility> {
+		try {
+			const objectID = new mongoose.Types.ObjectId(facilityID);
+			const facility = await this.facilityModel.aggregate([
+				{ $match: { _id: objectID } },
+				{
+					$lookup: {
+						from: 'facilitycategories',
+						localField: 'facilityCategoryID',
+						foreignField: '_id',
+						as: 'facilityCategoryID',
+					},
+				},
+				{
+					$lookup: {
+						from: 'facilityschedules',
+						localField: 'schedule',
+						foreignField: '_id',
+						as: 'schedule',
+					},
+				},
+				{ $unwind: '$schedule' },
+				{
+					$lookup: {
+						from: 'brands',
+						localField: 'brandID',
+						foreignField: '_id',
+						as: 'brandID',
+					},
+				},
+				{ $unwind: '$brandID' },
+				{
+					$lookup: {
+						from: 'packagetypes',
+						let: { facID: '$_id' },
+						pipeline: [
+							{
+								$match: {
+									$expr: {
+										$eq: ['$facilityID', '$$facID'],
+									},
+								},
+							},
+							{
+								$lookup: {
+									from: 'packages',
+									localField: '_id',
+									foreignField: 'packageTypeID',
+									as: 'packages',
+								},
+							},
+							// {
+							// 	$project: {
+							// 		_id: 1,
+							// 		name: 1,
+							// 		description: 1,
+							// 		price: 1,
+							// 		order: 1,
+							// 		packages: { $arrayElemAt: ['$packages', 0] }, // Lấy một document từ collection packages
+							// 	},
+							// },
+						],
+						as: 'packageTypes',
+					},
+				},
+			]);
+
+			return facility[0];
+		} catch (error) {
+			console.log('err findone ', error);
+			return null;
+		}
 	}
 
 	async addReview(
@@ -493,9 +562,7 @@ export class FacilityService {
 		return await this.promotionService.delete(promotionID);
 	}
 
-	async searchFacilityByAddress(
-		filter: ListOptions<any>,
-	): Promise<ListResponse<any>> {
+	async search(filter: ListOptions<any>): Promise<ListResponse<any>> {
 		const search = filter?.search;
 		const sortOrder = filter?.sortOrder || 'asc';
 		const latitude = parseFloat(filter?.latitude) || undefined;
@@ -534,13 +601,6 @@ export class FacilityService {
 			);
 		}
 
-		if (search != undefined) {
-			const regex = new RegExp(search.split('').join('.*'), 'i');
-			aggregatePipeline.push({
-				$match: { fullAddress: regex },
-			});
-		}
-
 		aggregatePipeline.push(
 			{
 				$lookup: {
@@ -569,6 +629,19 @@ export class FacilityService {
 			},
 			{ $unwind: '$brandID' },
 		);
+
+		if (search != undefined) {
+			const regex = new RegExp(search.split('').join('.*'), 'i');
+			aggregatePipeline.push({
+				$match: {
+					$or: [
+						{ fullAddress: regex },
+						{ name: regex },
+						{ 'brandID.name': { $regex: regex } },
+					],
+				},
+			});
+		}
 
 		const facilities = await this.facilityModel.aggregate(aggregatePipeline);
 		let result = await Promise.all(
