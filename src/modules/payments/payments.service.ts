@@ -224,7 +224,7 @@ export class PaymentsService {
 				if (paymentIntent.metadata.cartItemIDs !== undefined) {
 					const cartItemIDs = JSON.stringify(paymentIntent.metadata.cartItemIDs)
 						.replace(/"/g, '')
-						.split(',');
+						.split(', ');
 
 					const bill = await this.purchaseSomeInCart(userPayload.sub, {
 						cartItemIDs,
