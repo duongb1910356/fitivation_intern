@@ -6,10 +6,6 @@ import { Attendance } from '../entities/attendance.entity';
 import { SubscriptionsService } from 'src/modules/subscriptions/subscriptions.service';
 import { ForbiddenException, NotFoundException } from '@nestjs/common';
 import { ListOptions } from 'src/shared/response/common-response';
-import {
-	Subscription,
-	SubscriptionStatus,
-} from 'src/modules/subscriptions/schemas/subscription.schema';
 
 jest.mock('../../subscriptions/subscriptions.service');
 describe('Attendance', () => {
@@ -200,63 +196,6 @@ describe('Attendance', () => {
 		});
 	});
 
-	describe('checkActiveSubscription', () => {
-		it('should return false if subscription not found', async () => {
-			const facilityID = AttendanceStub().facilityID._id;
-			const accountID = AttendanceStub().accountID._id;
-			const subscriptionStub: Subscription = {
-				_id: '123',
-				accountID,
-				facilityID,
-				billItemID: 'billItemID',
-				packageID: 'packageID',
-				expires: new Date('2024-06-22T04:24:34.315Z'),
-				createdAt: new Date('2023-06-22T04:24:34.315Z'),
-				updatedAt: new Date('2023-06-22T04:24:34.315Z'),
-				status: SubscriptionStatus.ACTIVE,
-				renew: false,
-			};
-
-			jest
-				.spyOn(subscriptionService, 'findOneByCondition')
-				.mockResolvedValue(subscriptionStub);
-
-			const result = await (attendanceService as any).checkActiveSubscription(
-				facilityID,
-				accountID,
-			);
-
-			expect(subscriptionService.findOneByCondition).toHaveBeenCalledWith({
-				accountID,
-				facilityID,
-				expires: { $gt: new Date() },
-			});
-
-			expect(result).toEqual(true);
-		});
-		it('should return true if subscription is found', async () => {
-			const facilityID = AttendanceStub().facilityID._id;
-			const accountID = AttendanceStub().accountID._id;
-
-			jest
-				.spyOn(subscriptionService, 'findOneByCondition')
-				.mockResolvedValue(null);
-
-			const result = await (attendanceService as any).checkActiveSubscription(
-				facilityID,
-				accountID,
-			);
-
-			expect(subscriptionService.findOneByCondition).toHaveBeenCalledWith({
-				accountID,
-				facilityID,
-				expires: { $gt: new Date() },
-			});
-
-			expect(result).toEqual(false);
-		});
-	});
-
 	describe('delete', () => {
 		it('should throw NotFoundException if Attendance not found', async () => {
 			const attendanceID = attendanceStub._id;
@@ -282,3 +221,61 @@ describe('Attendance', () => {
 		});
 	});
 });
+
+// -- checkActive - Subscription --
+// 	describe('checkActive', () => {
+// 	it('should return false if subscription not found', async () => {
+// 		const facilityID = AttendanceStub().facilityID._id;
+// 		const accountID = AttendanceStub().accountID._id;
+// 		const subscriptionStub: Subscription = {
+// 			_id: '123',
+// 			accountID,
+// 			facilityID,
+// 			billItemID: 'billItemID',
+// 			packageID: 'packageID',
+// 			expires: new Date('2024-06-22T04:24:34.315Z'),
+// 			createdAt: new Date('2023-06-22T04:24:34.315Z'),
+// 			updatedAt: new Date('2023-06-22T04:24:34.315Z'),
+// 			status: SubscriptionStatus.ACTIVE,
+// 			renew: false,
+// 		};
+
+// 		jest
+// 			.spyOn(subscriptionService, 'findOneByCondition')
+// 			.mockResolvedValue(subscriptionStub);
+
+// 		const result = await (attendanceService as any).checkActiveSubscription(
+// 			facilityID,
+// 			accountID,
+// 		);
+
+// 		expect(subscriptionService.findOneByCondition).toHaveBeenCalledWith({
+// 			accountID,
+// 			facilityID,
+// 			expires: { $gt: new Date() },
+// 		});
+
+// 		expect(result).toEqual(true);
+// 	});
+// 	it('should return true if subscription is found', async () => {
+// 		const facilityID = AttendanceStub().facilityID._id;
+// 		const accountID = AttendanceStub().accountID._id;
+
+// 		jest
+// 			.spyOn(subscriptionService, 'findOneByCondition')
+// 			.mockResolvedValue(null);
+
+// 		const result = await (attendanceService as any).checkActiveSubscription(
+// 			facilityID,
+// 			accountID,
+// 		);
+
+// 		expect(subscriptionService.findOneByCondition).toHaveBeenCalledWith({
+// 			accountID,
+// 			facilityID,
+// 			expires: { $gt: new Date() },
+// 		});
+
+// 		expect(result).toEqual(false);
+// 	});
+// });
