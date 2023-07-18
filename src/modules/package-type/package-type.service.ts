@@ -44,15 +44,6 @@ export class PackageTypeService {
 		return packageType;
 	}
 
-	// async findOne(filter: ListOptions<PackageType>) {
-	// 	const { sortOrder, sortField } = filter;
-	// 	const sortQuery = {};
-	// 	sortQuery[filter.sortField] = filter.sortOrder === 'asc' ? 1 : -1;
-	// 	return await this.packageTypeModel
-	// 		.find(filter)
-	// 		.sort({ sortField: sortOrder == 'asc' ? 1 : -1 });
-	// }
-
 	async findMany(
 		filter: ListOptions<PackageType>,
 	): Promise<ListResponse<PackageType>> {
@@ -91,10 +82,9 @@ export class PackageTypeService {
 	): Promise<ListResponse<PackageType>> {
 		const { limit, offset, ...optionals } = filter;
 		const condition = { ...optionals, facilityID };
-		const projection = '_id name description price order';
 
 		const packageTypes = await this.packageTypeModel
-			.find(condition, projection)
+			.find(condition)
 			.sort({ order: 1 })
 			.limit(limit)
 			.skip(offset);
@@ -156,10 +146,7 @@ export class PackageTypeService {
 
 		await Promise.all([
 			this.packageTypeModel.findByIdAndDelete(packageTypeID),
-			this.decreaseAfterDeletion(
-				packageType.facilityID.toString(),
-				packageType.order,
-			),
+			this.decreaseAfterDeletion(packageType.facilityID._id, packageType.order),
 		]);
 
 		return 'Delete PackageType successfull!!!';
@@ -205,8 +192,8 @@ export class PackageTypeService {
 
 	async isOwner(packageTypeID: string, uid: string): Promise<boolean> {
 		const packageType = await this.findOneByID(packageTypeID, 'facilityID');
-		const owner = packageType.facilityID.ownerID.toString();
-		return uid === owner;
+		const owner = packageType.facilityID.ownerID;
+		return uid == owner;
 	}
 
 	//For Package
@@ -218,9 +205,8 @@ export class PackageTypeService {
 	}
 
 	async createPackage(packageTypeID: string, data: CreatePackageDto) {
-		const facilityID = (
-			await this.findOneByID(packageTypeID)
-		).facilityID.toString();
+		const packageType = await this.findOneByID(packageTypeID);
+		const facilityID = packageType.facilityID._id;
 		return await this.packageService.create(packageTypeID, facilityID, data);
 	}
 }

@@ -6,7 +6,7 @@ import {
 } from '@nestjs/common';
 import { BillItem } from '../bill-items/schemas/bill-item.schema';
 import { InjectModel } from '@nestjs/mongoose';
-import { Bill, BillDocument, PaymentMethod } from './schemas/bill.schema';
+import { Bill, BillDocument } from './schemas/bill.schema';
 import { Model } from 'mongoose';
 import {
 	ListResponse,
@@ -15,9 +15,13 @@ import {
 } from 'src/shared/utils/query-api';
 import { UserRole } from '../users/schemas/user.schema';
 import { TokenPayload } from '../auth/types/token-payload.type';
-import { PaymentOptDto } from '../carts/dto/payment-options-dto';
 import { BillItemsService } from '../bill-items/bill-items.service';
 import { SubscriptionsService } from '../subscriptions/subscriptions.service';
+import { PaymentMethodDto } from '../payments/dto/payment-method-dto';
+
+export type CreateBillOptData = {
+	description?: string;
+};
 
 @Injectable()
 export class BillsService {
@@ -31,7 +35,7 @@ export class BillsService {
 	async createOne(
 		userID: string,
 		billItems: BillItem[],
-		paymentOpt: PaymentOptDto,
+		optData: CreateBillOptData,
 	): Promise<Bill> {
 		let totalPrice = 0;
 
@@ -42,9 +46,9 @@ export class BillsService {
 		const billObj = {
 			accountID: userID,
 			billItems: billItems,
-			paymentMethod: paymentOpt.paymentMethod || PaymentMethod.CREDIT_CARD,
-			taxes: paymentOpt.taxes || 0,
-			description: paymentOpt.description || '',
+			// taxes: PaymentRequestDto.taxes || 0,
+			PaymentMethod: null,
+			description: optData?.description,
 			promotions: [],
 			promotionPrice: 0,
 			totalPrice: totalPrice,
@@ -83,6 +87,9 @@ export class BillsService {
 
 	async findOneByID(billID: string, user: TokenPayload): Promise<Bill> {
 		const bill = await this.billModel.findById(billID);
+
+		if (!bill) throw new NotFoundException('Bill not found');
+
 		if (
 			user.sub.toString() !== bill.accountID.toString() &&
 			user.role === UserRole.MEMBER
@@ -115,6 +122,20 @@ export class BillsService {
 		}
 
 		await this.billModel.deleteOne({ _id: billID });
+
+		return true;
+	}
+
+	async updatePaymentMethod(
+		billID: string,
+		paymentMethod: PaymentMethodDto,
+	): Promise<boolean> {
+		const bill = await this.billModel.findByIdAndUpdate(billID, paymentMethod, {
+			new: true,
+			runValidators: true,
+		});
+
+		if (!bill) return false;
 
 		return true;
 	}

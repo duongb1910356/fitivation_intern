@@ -94,6 +94,6 @@ export class FacilityCategoryController {
 	async getCategory(
 		@Param('categoryID', MongoIdValidationPipe) categoryID: string,
 	) {
-		return await this.facilityCategoryService.findOneById(categoryID);
+		return await this.facilityCategoryService.findOneByID(categoryID);
 	}
 }

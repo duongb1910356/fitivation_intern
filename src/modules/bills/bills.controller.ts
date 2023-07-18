@@ -14,7 +14,7 @@ import {
 	ApiBearerAuth,
 } from '@nestjs/swagger';
 import { BillsService } from './bills.service';
-import { Bill, BillStatus, PaymentMethod } from './schemas/bill.schema';
+import { Bill, BillStatus } from './schemas/bill.schema';
 import {
 	BillItem,
 	BillItemStatus,
@@ -115,7 +115,7 @@ export class BillsController {
 								updatedAt: new Date(),
 							},
 						] as BillItem[],
-						paymentMethod: PaymentMethod.CREDIT_CARD,
+						paymentMethod: 'string',
 						taxes: 0,
 						description: 'string',
 						promotions: [
@@ -206,11 +206,11 @@ export class BillsController {
 	@Get()
 	@Roles(UserRole.ADMIN, UserRole.MEMBER)
 	@UseGuards(RolesGuard)
-	findManyBills(
+	async findManyBills(
 		@GetCurrentUser() user: TokenPayload,
 		@Query() query: QueryObject,
 	): Promise<ListResponse<Bill>> {
-		return this.billsService.findMany(query, user);
+		return await this.billsService.findMany(query, user);
 	}
 
 	@ApiOperation({
@@ -277,7 +277,7 @@ export class BillsController {
 						updatedAt: new Date(),
 					},
 				] as BillItem[],
-				paymentMethod: PaymentMethod.CREDIT_CARD,
+				paymentMethod: 'string',
 				taxes: 0,
 				description: 'string',
 				promotions: [
@@ -369,11 +369,11 @@ export class BillsController {
 	@Get(':id')
 	@Roles(UserRole.ADMIN, UserRole.MEMBER)
 	@UseGuards(RolesGuard)
-	findOneBill(
+	async findOneBill(
 		@Param('id') billID: string,
 		@GetCurrentUser() user: TokenPayload,
 	): Promise<Bill> {
-		return this.billsService.findOneByID(billID, user);
+		return await this.billsService.findOneByID(billID, user);
 	}
 
 	@ApiOperation({
@@ -420,8 +420,8 @@ export class BillsController {
 	@Delete(':id')
 	@Roles(UserRole.ADMIN)
 	@UseGuards(RolesGuard)
-	deleteBill(@Param('id') id: string): Promise<boolean> {
-		return this.billsService.deleteOneByID(id);
+	async deleteBill(@Param('id') id: string): Promise<boolean> {
+		return await this.billsService.deleteOneByID(id);
 	}
 
 	@ApiOperation({
@@ -541,11 +541,11 @@ export class BillsController {
 	@Get('bill-items/:id')
 	@Roles(UserRole.ADMIN, UserRole.FACILITY_OWNER, UserRole.MEMBER)
 	@UseGuards(RolesGuard)
-	findOneBillItem(
+	async findOneBillItem(
 		@Param('id') id: string,
 		@GetCurrentUser() user: TokenPayload,
 	): Promise<BillItem> {
-		return this.billItemsService.findOneByID(id, user);
+		return await this.billItemsService.findOneByID(id, user);
 	}
 
 	// 	@ApiDocsPagination('promotion')

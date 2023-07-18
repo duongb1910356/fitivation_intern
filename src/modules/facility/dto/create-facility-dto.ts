@@ -5,13 +5,13 @@ import {
 	IsOptional,
 	IsEnum,
 	IsNumber,
-	IsObject,
 	ArrayMinSize,
 	ArrayMaxSize,
 } from 'class-validator';
 import { State, ScheduleType } from '../../../shared/enum/facility.enum';
 import { CreateAddressDto } from 'src/modules/address/dto/create-address-dto';
 import { Photo } from 'src/modules/photo/schemas/photo.schema';
+import { FacilityScheduleDto } from 'src/modules/facility-schedule/dto/facility-schedule-dto';
 
 export class LocationDTO {
 	@IsArray()
@@ -24,6 +24,21 @@ export class LocationDTO {
 	@IsOptional()
 	type?: string = 'Point';
 }
+
+// export class ScheduleObject {
+// 	@IsString()
+// 	@IsNotEmpty()
+// 	facilityID: string;
+
+// 	@IsEnum(ScheduleType)
+// 	type: 'DAILY';
+
+// 	@ArrayNotEmpty()
+// 	@ValidateNested({ each: true })
+// 	@Type(() => OpenTimeDto)
+// 	@ValidateScheduleType()
+// 	openTime: OpenTimeDto[];
+// }
 
 export class CreateFacilityDto {
 	@IsNotEmpty()
@@ -72,4 +87,7 @@ export class CreateFacilityDto {
 
 	@IsString()
 	phone: string;
+
+	@IsOptional()
+	schedule: FacilityScheduleDto;
 }

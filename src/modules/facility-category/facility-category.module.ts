@@ -6,12 +6,14 @@ import {
 	FacilityCategory,
 	FacilityCategorySchema,
 } from './entities/facility-category';
+import { PhotoModule } from '../photo/photo.module';
 
 @Module({
 	imports: [
 		MongooseModule.forFeature([
 			{ name: FacilityCategory.name, schema: FacilityCategorySchema },
 		]),
+		PhotoModule,
 	],
 	controllers: [FacilityCategoryController],
 	providers: [FacilityCategoryService],

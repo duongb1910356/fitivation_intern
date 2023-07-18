@@ -145,7 +145,7 @@ export class FacilityController {
 								updatedAt: new Date(),
 							},
 						],
-						scheduleType: ScheduleType.DAILY,
+						schedule: {},
 						createdAt: new Date(),
 						updatedAt: new Date(),
 					},
@@ -172,7 +172,7 @@ export class FacilityController {
 		description: '[Input] invalid',
 	})
 	async getManyFacility(@Query() filter: ListOptions<Facility>) {
-		return await this.facilityService.findMany(filter);
+		return await this.facilityService.getFacilities(filter);
 	}
 
 	@Public()
@@ -183,13 +183,13 @@ export class FacilityController {
 	@ApiQuery({
 		name: 'longitude',
 		type: Number,
-		required: true,
+		required: false,
 		example: 105.77291088739058,
 	})
 	@ApiQuery({
 		name: 'latitude',
 		type: Number,
-		required: true,
+		required: false,
 		example: 10.027851057940572,
 	})
 	@ApiQuery({
@@ -203,6 +203,24 @@ export class FacilityController {
 		type: String,
 		required: false,
 		example: 'asc',
+	})
+	@ApiQuery({
+		name: 'sortField',
+		type: String,
+		required: false,
+		example: 'distance',
+	})
+	@ApiQuery({
+		name: 'limit',
+		type: Number,
+		required: false,
+		example: 10,
+	})
+	@ApiQuery({
+		name: 'offset',
+		type: Number,
+		required: false,
+		example: 0,
 	})
 	@ApiOkResponse({
 		schema: {
@@ -254,6 +272,85 @@ export class FacilityController {
 	})
 	searchFacilityByAddress(@Query() filter: ListOptions<Facility>) {
 		return this.facilityService.searchFacilityByAddress(filter);
+	}
+
+	@Public()
+	@Get('nearby')
+	@ApiOperation({
+		summary: 'Find the nearest facilites',
+	})
+	@ApiOkResponse({
+		status: 200,
+		schema: {
+			example: {
+				code: 200,
+				message: 'Success',
+				data: {
+					total: 1,
+					items: [
+						{
+							_id: '1233456',
+							brandID: {},
+							facilityCategoryID: {},
+							ownerID: {},
+							name: 'City gym',
+							address: {
+								street: '30/4',
+								commune: 'Phường Xuân Khánh',
+								communeCode: '011',
+								district: 'Quận Ninh Kiều',
+								districtCode: '056',
+								province: 'Thành phố Cần Thơ',
+								provinceCode: '065',
+							},
+							summary: 'Phòng gym thân thiện',
+							description: 'Nhiều dụng cụ tập luyện',
+							location: {
+								coordinates: [10.031966330522316, 105.76892820319247],
+							},
+							state: State.ACTIVE,
+							status: Status.APPROVED,
+							averageStar: 5,
+							photos: [],
+							reviews: [],
+							createdAt: new Date(),
+							updatedAt: new Date(),
+						},
+					],
+					options: {
+						limit: 1,
+						offet: 1,
+						search: 'string',
+						sortBy: 'averageStar',
+						sortOrder: 'asc',
+					} as ListOptions<Facility>,
+				} as ListResponse<Facility>,
+			},
+		},
+	})
+	@ApiBadRequestResponse({
+		type: BadRequestException,
+		status: 400,
+		description: '[Input] invalid',
+	})
+	@ApiQuery({
+		name: 'longitude',
+		type: Number,
+		required: true,
+	})
+	@ApiQuery({
+		name: 'latitude',
+		type: Number,
+		required: true,
+	})
+	getFacilityByLocation(
+		@Query('longitude') longitude: number,
+		@Query('latitude') latitude: number,
+	) {
+		if (longitude === undefined || latitude === undefined) {
+			throw new BadRequestException('Both longitude and latitude are required');
+		}
+		return this.facilityService.getNearestFacilities(longitude, latitude);
 	}
 
 	@Public()
@@ -399,71 +496,6 @@ export class FacilityController {
 	}
 
 	@Public()
-	@Get('nearby/:latitude/:longitude')
-	@ApiParam({ name: 'latitude', type: Number, description: 'latitude' })
-	@ApiParam({ name: 'longitude', type: Number, description: 'longitude' })
-	@ApiOperation({
-		summary: 'Find the nearest facilites',
-	})
-	@ApiOkResponse({
-		status: 200,
-		schema: {
-			example: {
-				code: 200,
-				message: 'Success',
-				data: {
-					total: 1,
-					items: [
-						{
-							_id: '1233456',
-							brandID: {},
-							facilityCategoryID: {},
-							ownerID: {},
-							name: 'City gym',
-							address: {
-								street: '30/4',
-								commune: 'Phường Xuân Khánh',
-								communeCode: '011',
-								district: 'Quận Ninh Kiều',
-								districtCode: '056',
-								province: 'Thành phố Cần Thơ',
-								provinceCode: '065',
-							},
-							summary: 'Phòng gym thân thiện',
-							description: 'Nhiều dụng cụ tập luyện',
-							location: {
-								coordinates: [10.031966330522316, 105.76892820319247],
-							},
-							state: State.ACTIVE,
-							status: Status.APPROVED,
-							averageStar: 5,
-							photos: [],
-							reviews: [],
-							createdAt: new Date(),
-							updatedAt: new Date(),
-						},
-					],
-					options: {
-						limit: 1,
-						offet: 1,
-						search: 'string',
-						sortBy: 'averageStar',
-						sortOrder: 'asc',
-					} as ListOptions<Facility>,
-				} as ListResponse<Facility>,
-			},
-		},
-	})
-	@ApiBadRequestResponse({
-		type: BadRequestException,
-		status: 400,
-		description: '[Input] invalid',
-	})
-	getFacilityByLocation() {
-		//
-	}
-
-	@Public()
 	@Get(':facilityID/photos')
 	@ApiParam({ name: 'facilityID', type: String, description: 'id facility' })
 	@ApiOperation({
@@ -563,7 +595,6 @@ export class FacilityController {
 	@ApiBearerAuth()
 	@UseGuards(RolesGuard)
 	@Roles(UserRole.MEMBER)
-	@Public()
 	@Post(':facilityID/attendance')
 	@ApiOperation({
 		summary: 'Create Attendance by facilityId of User',
@@ -705,59 +736,59 @@ export class FacilityController {
 		return this.facilityService.findAllSchedules(facilityID);
 	}
 
-	@Public()
-	@Get(':facilityID/schedules/current')
-	@ApiOperation({
-		summary: 'Get Current Schedule by facilityID',
-		description: `All role can use this API`,
-	})
-	@ApiParam({ name: 'facilityID', type: String, description: 'Facility ID' })
-	@ApiOkResponse({
-		schema: {
-			example: {
-				_id: '6476ef7d1f0419cd330fe128',
-				facilityID: {} as unknown as Facility,
-				type: ScheduleType.DAILY,
-				openTime: [
-					{
-						shift: [
-							{
-								startTime: '06:00',
-								endTime: '12:00',
-							},
-							{
-								startTime: '13:00',
-								endTime: '19:00',
-							},
-						] as ShiftTime[],
-					},
-				] as OpenTime[],
-				createdAt: new Date(),
-				updatedAt: new Date(),
-			} as FacilitySchedule,
-		},
-	})
-	@ApiNotFoundResponse({
-		schema: {
-			example: {
-				code: '404',
-				message: 'Facility not found!',
-				details: null,
-			} as ErrorResponse<null>,
-		},
-	})
-	@ApiBadRequestResponse({
-		schema: {
-			example: {
-				code: '400',
-				message: '[Input] invalid!',
-				details: null,
-			} as ErrorResponse<null>,
-		},
-	})
-	async getCurrentScheduleByFacility(@Param('facilityID') facilityID: string) {
-		return this.facilityService.getCurrentSchedule(facilityID);
-	}
+	// @Public()
+	// @Get(':facilityID/schedules/current')
+	// @ApiOperation({
+	// 	summary: 'Get Current Schedule by facilityID',
+	// 	description: `All role can use this API`,
+	// })
+	// @ApiParam({ name: 'facilityID', type: String, description: 'Facility ID' })
+	// @ApiOkResponse({
+	// 	schema: {
+	// 		example: {
+	// 			_id: '6476ef7d1f0419cd330fe128',
+	// 			facilityID: {} as unknown as Facility,
+	// 			type: ScheduleType.DAILY,
+	// 			openTime: [
+	// 				{
+	// 					shift: [
+	// 						{
+	// 							startTime: '06:00',
+	// 							endTime: '12:00',
+	// 						},
+	// 						{
+	// 							startTime: '13:00',
+	// 							endTime: '19:00',
+	// 						},
+	// 					] as ShiftTime[],
+	// 				},
+	// 			] as OpenTime[],
+	// 			createdAt: new Date(),
+	// 			updatedAt: new Date(),
+	// 		} as FacilitySchedule,
+	// 	},
+	// })
+	// @ApiNotFoundResponse({
+	// 	schema: {
+	// 		example: {
+	// 			code: '404',
+	// 			message: 'Facility not found!',
+	// 			details: null,
+	// 		} as ErrorResponse<null>,
+	// 	},
+	// })
+	// @ApiBadRequestResponse({
+	// 	schema: {
+	// 		example: {
+	// 			code: '400',
+	// 			message: '[Input] invalid!',
+	// 			details: null,
+	// 		} as ErrorResponse<null>,
+	// 	},
+	// })
+	// async getCurrentScheduleByFacility(@Param('facilityID') facilityID: string) {
+	// 	return this.facilityService.getCurrentSchedule(facilityID);
+	// }
 
 	@ApiBearerAuth()
 	@UseGuards(OwnershipFacilityGuard)
@@ -1203,7 +1234,6 @@ export class FacilityController {
 	@ApiOperation({
 		summary: 'Create a new facility',
 	})
-	@ApiConsumes('multipart/form-data')
 	@ApiBody({
 		type: CreateFacilityDto,
 		examples: {
@@ -1227,7 +1257,7 @@ export class FacilityController {
 					location: { coordinates: [105.778274, 10.04407] },
 					summary: 'Chất lượng là danh dự',
 					description:
-						"Lorem Ipsum is simply dummy text of the printing and typesetting industry. Lorem Ipsum has been the industry's standard dummy text ever since the 1500s, when an unknown printer took a galley of type and scrambled it to make a type specimen book",
+						'Lorem Ipsum is simply dummy text of the printing and typesetting industry. Lorem Ipsum has been the industry standard dummy text ever since the 1500s, when an unknown printer took a galley of type and scrambled it to make a type specimen book',
 					state: 'ACTIVE',
 					scheduleType: 'DAILY',
 					phone: '84906943567',
@@ -1321,7 +1351,6 @@ export class FacilityController {
 			images?: Express.Multer.File[];
 		},
 	) {
-		console.log('dto >> ', createFacilityDto);
 		return this.facilityService.create(
 			createFacilityDto,
 			req,
@@ -1358,6 +1387,61 @@ export class FacilityController {
 	@UseGuards(OwnershipFacilityGuard)
 	deleteFacilityById(@Param('facilityID') facilityID, @Req() req: any) {
 		return this.facilityService.delete(facilityID, req);
+	}
+
+	@Patch('reviews/:reviewID')
+	@ApiBearerAuth()
+	@ApiOperation({
+		summary: 'Delete one review by ID',
+	})
+	@ApiParam({ name: 'reviewID', type: String, description: 'Review ID' })
+	@ApiOkResponse({
+		status: 200,
+		schema: {
+			example: {
+				code: 200,
+				message: 'Success',
+				data: {
+					_id: 'string',
+					brandID: {},
+					facilityCategoryID: {},
+					ownerID: {},
+					name: 'City Gym',
+					address: {
+						street: '30/4',
+						commune: 'Phường Xuân Khánh',
+						communeCode: '011',
+						district: 'Quận Ninh Kiều',
+						districtCode: '056',
+						province: 'Thành phố Cần Thơ',
+						provinceCode: '065',
+					},
+					averageStar: null,
+					summary: 'CHẤT LƯỢNG LÀ DANH DỰ',
+					description: 'ABC',
+					location: { coordinates: [10.031966330522316, 105.76892820319247] },
+					state: State.ACTIVE,
+					status: Status.APPROVED,
+					photos: [],
+					reviews: [],
+					schedule: {},
+					createdAt: new Date(),
+					updatedAt: new Date(),
+				} as Facility,
+			},
+		},
+	})
+	@ApiBadRequestResponse({
+		type: BadRequestException,
+		status: 400,
+		description: '[Input] invalid!',
+	})
+	async deleteReviewByID(
+		@Param('facilityID') facilityID,
+		@Param('reviewID') reviewID,
+		@Req() req: any,
+	) {
+		return await this.facilityService.deleteReviewByID(req, reviewID);
 	}
 
 	@ApiBearerAuth()
@@ -1497,7 +1581,7 @@ export class FacilityController {
 					status: Status.APPROVED,
 					photos: [],
 					reviews: [],
-					scheduleType: ScheduleType.WEEKLY,
+					schedule: {},
 					createdAt: new Date(),
 					updatedAt: new Date(),
 				} as Facility,
@@ -1521,7 +1605,7 @@ export class FacilityController {
 	@Patch(':facilityID/status')
 	@ApiBearerAuth()
 	@ApiOperation({
-		summary: 'Update status facility',
+		summary: 'Update status facility, only for ADMIN ROLE',
 	})
 	@ApiParam({ name: 'facilityID', type: String, description: 'Facility ID' })
 	@ApiBody({
@@ -1563,7 +1647,7 @@ export class FacilityController {
 					status: Status.APPROVED,
 					photos: [],
 					reviews: [],
-					scheduleType: ScheduleType.WEEKLY,
+					schedule: {},
 					createdAt: new Date(),
 					updatedAt: new Date(),
 				} as Facility,
@@ -1691,9 +1775,10 @@ export class FacilityController {
 	}
 
 	@Patch(':facilityID/photos/add')
+	@UseGuards(OwnershipFacilityGuard)
 	@ApiBearerAuth()
 	@ApiOperation({
-		summary: 'Add the newest photos to the facility',
+		summary: 'Add the photos to the facility, use for Owner Facility',
 	})
 	@ApiParam({ name: 'facilityID', type: String, description: 'Facility ID' })
 	@ApiConsumes('multipart/form-data')
@@ -1741,7 +1826,7 @@ export class FacilityController {
 					status: Status.APPROVED,
 					photos: [],
 					reviews: [],
-					scheduleType: ScheduleType.WEEKLY,
+					schedule: {},
 					createdAt: new Date(),
 					updatedAt: new Date(),
 				} as Facility,
@@ -1766,9 +1851,10 @@ export class FacilityController {
 	}
 
 	@Patch(':facilityID/photos/delete')
+	@UseGuards(OwnershipFacilityGuard)
 	@ApiBearerAuth()
 	@ApiOperation({
-		summary: 'Delete photos of facility',
+		summary: 'Delete photos of facility, use for Owner Facility',
 	})
 	@ApiParam({ name: 'facilityID', type: String, description: 'Facility ID' })
 	@ApiBody({
@@ -1815,7 +1901,7 @@ export class FacilityController {
 					status: Status.APPROVED,
 					photos: [],
 					reviews: [],
-					scheduleType: ScheduleType.WEEKLY,
+					schedule: {},
 					createdAt: new Date(),
 					updatedAt: new Date(),
 				} as Facility,
@@ -1890,7 +1976,7 @@ export class FacilityController {
 					status: Status.APPROVED,
 					photos: [],
 					reviews: [],
-					scheduleType: ScheduleType.WEEKLY,
+					schedule: {},
 					createdAt: new Date(),
 					updatedAt: new Date(),
 				} as Facility,

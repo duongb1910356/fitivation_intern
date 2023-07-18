@@ -37,16 +37,14 @@ export class HolidayService {
 		condition: ConditionHoliday = {},
 		options: ListOptions<Holiday> = {},
 	): Promise<ListResponse<Holiday>> {
-		const {
-			limit = 10,
-			offset = 0,
-			sortField = 'startDate',
-			sortOrder = 'asc',
-		} = options;
+		const sortQuery = {};
+		sortQuery[options.sortField] = options.sortOrder === 'asc' ? 1 : -1;
+		const limit = options.limit || 0;
+		const offset = options.offset || 0;
 
 		const holidays = await this.holidayModel
 			.find(condition)
-			.sort({ [sortField]: sortOrder === 'asc' ? 1 : -1 })
+			.sort(sortQuery)
 			.limit(limit)
 			.skip(offset);
 
@@ -72,10 +70,7 @@ export class HolidayService {
 	}
 
 	async update(holidayID: string, data: HolidayDto): Promise<Holiday> {
-		const facilityID = (
-			await this.findOneByID(holidayID)
-		).facilityID.toString();
-		console.log(facilityID, typeof facilityID);
+		const facilityID = (await this.findOneByID(holidayID)).facilityID._id;
 		const [startDate, endDate] = await this.checkOverlapAndTransform(
 			facilityID,
 			data,
@@ -106,7 +101,7 @@ export class HolidayService {
 	async isOwner(holidayID: string, uid: string): Promise<boolean> {
 		const holiday = await this.findOneByID(holidayID, 'facilityID');
 		const owner = holiday.facilityID.ownerID.toString();
-		return uid === owner;
+		return uid == owner;
 	}
 
 	private async checkOverlapAndTransform(

@@ -9,7 +9,6 @@ import { InjectModel } from '@nestjs/mongoose';
 import { CartItemsService } from '../cart-items/cart-items.service';
 import { BillItemsService } from '../bill-items/bill-items.service';
 import { BillsService } from '../bills/bills.service';
-import { Bill } from '../bills/schemas/bill.schema';
 import { SubscriptionsService } from '../subscriptions/subscriptions.service';
 import { PackageService } from '../package/package.service';
 import {
@@ -17,7 +16,6 @@ import {
 	QueryAPI,
 	QueryObject,
 } from 'src/shared/utils/query-api';
-import { PaymentOptDto } from './dto/payment-options-dto';
 
 @Injectable()
 export class CartsService {
@@ -63,10 +61,14 @@ export class CartsService {
 	}
 
 	async getCurrent(userID: string, populateOpt?: any): Promise<Cart> {
-		await this.updatePrice(userID);
-		await this.updatePrice(userID);
+		let cart = await this.cartModel.findOne({ accountID: userID });
 
-		const cart = await this.cartModel
+		if (!cart) throw new NotFoundException(`Not found current user's cart`);
+
+		await this.updatePrice(userID);
+		await this.updatePrice(userID); // fix not return new
+
+		cart = await this.cartModel
 			.findOne({ accountID: userID })
 			.populate(populateOpt);
 
@@ -97,6 +99,8 @@ export class CartsService {
 			.findOne({ accountID: userID })
 			.populate({ path: 'cartItemIDs' });
 
+		if (!cart) throw new NotFoundException(`Not found current user's cart`);
+
 		const isDuplicateProduct = this.checkDuplicateCartItemProduct(
 			cart.cartItemIDs,
 			packageID,
@@ -122,6 +126,9 @@ export class CartsService {
 	): Promise<boolean> {
 		const cartItem = await this.cartItemService.findOneByID(cartItemID);
 
+		if (!cartItem)
+			throw new NotFoundException(`Not found current user's cart-item`);
+
 		const cart = await this.cartModel
 			.findOneAndUpdate(
 				{ accountID: userID },
@@ -139,53 +146,6 @@ export class CartsService {
 		await this.cartItemService.deleteOne(cartItemID);
 
 		return true;
-	}
-
-	async purchaseInCart(
-		userID: string,
-		paymentOpt: PaymentOptDto,
-	): Promise<Bill> {
-		// ...check payment
-
-		const cart = await this.getCurrent(userID, 'cartItemIDs');
-
-		if (cart.cartItemIDs.length === 0)
-			throw new BadRequestException('Have at least one cart-item in cart');
-
-		const cartItemIDs: any = cart.cartItemIDs;
-		const packageIDs = [];
-		const billItems = [];
-
-		for (let i = 0; i < cartItemIDs.length; i++) {
-			packageIDs.push(cartItemIDs[i].packageID.toString());
-		}
-
-		for (let i = 0; i < packageIDs.length; i++) {
-			billItems.push(
-				await this.billItemService.createOne(packageIDs[i], userID),
-			);
-
-			const facilityID = (await this.packageService.findOneByID(packageIDs[i]))
-				.facilityID;
-
-			await this.subscriptionService.createOne(
-				userID,
-				billItems[i]._id.toString(),
-				packageIDs[i].toString(),
-				facilityID.toString(),
-			);
-		}
-
-		const bill = await this.billService.createOne(
-			userID,
-			billItems,
-			paymentOpt,
-		);
-
-		for (let i = 0; i < cartItemIDs.length; i++) {
-			await this.removeCartItemFromCurrentCart(userID, cartItemIDs[i]);
-		}
-		return bill;
 	}
 
 	checkDuplicateCartItemProduct(cartItems: any[], productID: string): boolean {
@@ -209,9 +169,6 @@ export class CartsService {
 				cartItemIDs[i]._id.toString(),
 				cartItemIDs[i].promotionIDs[0],
 			);
-		}
-
-		for (let i = 0; i < cartItemIDs.length; i++) {
 			totalPrice += cartItemIDs[i].totalPrice;
 		}
 
