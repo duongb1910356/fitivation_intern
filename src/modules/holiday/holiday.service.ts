@@ -101,7 +101,7 @@ export class HolidayService {
 	async isOwner(holidayID: string, uid: string): Promise<boolean> {
 		const holiday = await this.findOneByID(holidayID, 'facilityID');
 		const owner = holiday.facilityID.ownerID.toString();
-		return uid === owner;
+		return uid == owner;
 	}
 
 	private async checkOverlapAndTransform(
