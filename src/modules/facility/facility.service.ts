@@ -149,33 +149,43 @@ export class FacilityService {
 		req: any,
 		files?: { images?: Express.Multer.File[] },
 	): Promise<Facility> {
-		createFacilityDto.ownerID = createFacilityDto.ownerID ?? req.user.sub;
-		createFacilityDto.state = createFacilityDto.state ?? State.ACTIVE;
-		createFacilityDto.schedule = createFacilityDto.schedule ?? null;
+		try {
+			createFacilityDto.ownerID = createFacilityDto.ownerID ?? req.user.sub;
+			createFacilityDto.state = createFacilityDto.state ?? State.ACTIVE;
 
-		if (createFacilityDto.brandID) {
-			const brand = await this.brandService.findMany({
-				_id: createFacilityDto.brandID,
-				accountID: req.user.sub,
-			});
-			if (brand.total == 0) {
-				throw new ForbiddenException(
-					'You have not permission to register creating Facility with this Brand',
-				);
+			if (createFacilityDto.brandID) {
+				const brand = await this.brandService.findMany({
+					_id: createFacilityDto.brandID,
+					accountID: req.user.sub,
+				});
+				if (brand.total == 0) {
+					throw new ForbiddenException(
+						'You have not permission to register creating Facility with this Brand',
+					);
+				}
 			}
+
+			const facility = await this.facilityModel.create(createFacilityDto);
+
+			if (createFacilityDto?.scheduleDto) {
+				const scheduleDto = await this.scheduleService.create(
+					facility._id,
+					createFacilityDto.scheduleDto,
+				);
+				facility.schedule = scheduleDto._id;
+			}
+
+			if (files && files.images) {
+				const photos = await this.photoService.uploadManyFile(files, {
+					ownerID: facility._id,
+				});
+				facility.photos = photos.items;
+			}
+
+			return await facility.save();
+		} catch (error) {
+			console.log('error create >> ', error);
 		}
-
-		const facility = await this.facilityModel.create(createFacilityDto);
-		await this.scheduleService.create(facility._id, createFacilityDto.schedule);
-
-		if (files && files.images) {
-			const photos = await this.photoService.uploadManyFile(files, {
-				ownerID: facility._id,
-			});
-			facility.photos = photos.items;
-		}
-
-		return await facility.save();
 	}
 
 	async update(

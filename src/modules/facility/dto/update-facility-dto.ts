@@ -42,7 +42,6 @@ export class UpdateFacilityDto {
 	@IsOptional()
 	location: LocationDTO;
 
-	@IsEnum(ScheduleType)
 	@IsOptional()
-	scheduleType: ScheduleType;
+	schedule: string;
 }

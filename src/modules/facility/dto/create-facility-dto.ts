@@ -78,8 +78,8 @@ export class CreateFacilityDto {
 	// @IsArray()
 	// coordinates?: number[];
 
-	@IsEnum(ScheduleType)
-	scheduleType: ScheduleType;
+	// @IsEnum(ScheduleType)
+	// scheduleType: ScheduleType;
 
 	@IsArray()
 	@IsOptional()
@@ -89,5 +89,5 @@ export class CreateFacilityDto {
 	phone: string;
 
 	@IsOptional()
-	schedule: FacilityScheduleDto;
+	scheduleDto: FacilityScheduleDto;
 }
