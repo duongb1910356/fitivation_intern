@@ -36,6 +36,7 @@ export class SubscriptionsService {
 	async findMany(
 		query: QueryObject,
 		user: TokenPayload,
+		populateOpt?: any,
 	): Promise<ListResponse<Subscription>> {
 		const queryFeatures = new QueryAPI(this.subscriptionsModel, query)
 			.filter()
@@ -47,18 +48,7 @@ export class SubscriptionsService {
 			queryFeatures.queryModel.find({ accountID: user.sub });
 		}
 
-		const subscriptions = await queryFeatures.queryModel
-			.populate({
-				path: 'billItemID',
-				select: '-facilityInfo -packageTypeInfo -packageInfo',
-			})
-			.populate({
-				path: 'packageID',
-			})
-			.populate({
-				path: 'facilityID',
-				select: '-reviews',
-			});
+		const subscriptions = await queryFeatures.queryModel.populate(populateOpt);
 
 		const subscriptionIDs = [];
 
@@ -76,17 +66,7 @@ export class SubscriptionsService {
 					$in: subscriptionIDs,
 				},
 			})
-			.populate({
-				path: 'billItemID',
-				select: '-facilityInfo -packageTypeInfo -packageInfo',
-			})
-			.populate({
-				path: 'packageID',
-			})
-			.populate({
-				path: 'facilityID',
-				select: '-reviews',
-			});
+			.populate(populateOpt);
 
 		return {
 			total: subscriptions.length,
@@ -97,20 +77,11 @@ export class SubscriptionsService {
 	async findOneByID(
 		subscriptionID: string,
 		user: TokenPayload,
+		populateOpt?: any,
 	): Promise<Subscription> {
 		const subscription = await this.subscriptionsModel
 			.findById(subscriptionID)
-			.populate({
-				path: 'billItemID',
-				select: '-facilityInfo -packageTypeInfo -packageInfo',
-			})
-			.populate({
-				path: 'packageID',
-			})
-			.populate({
-				path: 'facilityID',
-				select: '-reviews',
-			});
+			.populate(populateOpt);
 
 		if (!subscription) throw new BadRequestException('Subscription not found');
 
@@ -128,17 +99,7 @@ export class SubscriptionsService {
 
 		return await this.subscriptionsModel
 			.findById(subscriptionID)
-			.populate({
-				path: 'billItemID',
-				select: '-facilityInfo -packageTypeInfo -packageInfo',
-			})
-			.populate({
-				path: 'packageID',
-			})
-			.populate({
-				path: 'facilityID',
-				select: '-reviews',
-			}); // fix not return new
+			.populate(populateOpt); // fix not return new
 	}
 
 	async createOne(
@@ -205,6 +166,7 @@ export class SubscriptionsService {
 		subscriptionID: string,
 		billItemID: string,
 		user: TokenPayload,
+		populateOpt?: any,
 	): Promise<Subscription> {
 		// ...check payment
 
@@ -242,17 +204,7 @@ export class SubscriptionsService {
 
 		return await this.subscriptionsModel
 			.findById(subscriptionID)
-			.populate({
-				path: 'billItemID',
-				select: '-facilityInfo -packageTypeInfo -packageInfo',
-			})
-			.populate({
-				path: 'packageID',
-			})
-			.populate({
-				path: 'facilityID',
-				select: '-reviews',
-			}); // fix not return new
+			.populate(populateOpt); // fix not return new
 	}
 
 	async deleteOneByBillItemID(billItemID: string): Promise<boolean> {

@@ -24,7 +24,22 @@ import { TokenPayload } from '../auth/types/token-payload.type';
 @ApiTags('subscriptions')
 @ApiBearerAuth()
 export class SubscriptionsController {
-	constructor(private readonly subscriptionService: SubscriptionsService) {}
+	private populateOpt: any;
+	constructor(private readonly subscriptionService: SubscriptionsService) {
+		this.populateOpt = {
+			path: 'packageID',
+			model: 'Package',
+			populate: {
+				path: 'packageTypeID',
+				model: 'PackageType',
+				populate: {
+					path: 'facilityID',
+					model: 'Facility',
+					select: '-reviews',
+				},
+			},
+		};
+	}
 	@ApiDocsPagination('subscription')
 	@ApiOperation({
 		summary: 'findManySubscriptions',
@@ -92,7 +107,11 @@ export class SubscriptionsController {
 		@Query() query: QueryObject,
 		@GetCurrentUser() user: TokenPayload,
 	): Promise<ListResponse<Subscription>> {
-		return await this.subscriptionService.findMany(query, user);
+		return await this.subscriptionService.findMany(
+			query,
+			user,
+			this.populateOpt,
+		);
 	}
 
 	@ApiOperation({
@@ -172,6 +191,10 @@ export class SubscriptionsController {
 		@Param('id') id: string,
 		@GetCurrentUser() user: TokenPayload,
 	): Promise<Subscription> {
-		return await this.subscriptionService.findOneByID(id, user);
+		return await this.subscriptionService.findOneByID(
+			id,
+			user,
+			this.populateOpt,
+		);
 	}
 }
