@@ -27,12 +27,63 @@ export class SubscriptionsService {
 		private packageService: PackageService,
 	) {}
 
+	addDays(date: Date, days: number): Date {
+		date.setDate(date.getDate() + days);
+		return date;
+	}
+
+	async checkDateAndUpdateDateIsExpired(
+		subscriptionID: string,
+		user: TokenPayload,
+	): Promise<any> {
+		const subscription = await this.subscriptionsModel.findById(subscriptionID);
+
+		if (!subscription) throw new BadRequestException('Subscription not found');
+
+		if (user.role !== UserRole.ADMIN) {
+			if (user.sub.toString() !== subscription.accountID.toString()) {
+				throw new ForbiddenException('Forbidden resource');
+			}
+		}
+
+		if (new Date(subscription.expires) <= new Date(Date.now())) {
+			subscription.renew = true;
+			await subscription.save();
+
+			return {
+				message: 'Subscription was expired',
+				subscription,
+			};
+		} else {
+			subscription.renew = false;
+			await subscription.save();
+
+			return {
+				message: 'Subscription has not expired',
+				subscription,
+			};
+		}
+	}
+
+	async checkActive(facilityID: string, accountID: string): Promise<boolean> {
+		const now = new Date();
+		const subscription = await this.subscriptionsModel.findOne({
+			accountID,
+			facilityID,
+			expires: { $gt: now },
+		});
+		if (!subscription) return false;
+
+		return true;
+	}
+
 	async findOneByCondition(condition: any): Promise<Subscription> {
 		const subscription = await this.subscriptionsModel.findOne(condition);
 		if (!subscription) throw new NotFoundException('Not found Subscription');
 
 		return subscription;
 	}
+
 	async findMany(
 		query: QueryObject,
 		user: TokenPayload,
@@ -74,6 +125,7 @@ export class SubscriptionsService {
 			items: results,
 		}; // fix not return new
 	}
+
 	async findOneByID(
 		subscriptionID: string,
 		user: TokenPayload,
@@ -123,43 +175,6 @@ export class SubscriptionsService {
 		});
 
 		return subscription;
-	}
-	addDays(date: Date, days: number): Date {
-		date.setDate(date.getDate() + days);
-		return date;
-	}
-
-	async checkDateAndUpdateDateIsExpired(
-		subscriptionID: string,
-		user: TokenPayload,
-	): Promise<any> {
-		const subscription = await this.subscriptionsModel.findById(subscriptionID);
-
-		if (!subscription) throw new BadRequestException('Subscription not found');
-
-		if (user.role !== UserRole.ADMIN) {
-			if (user.sub.toString() !== subscription.accountID.toString()) {
-				throw new ForbiddenException('Forbidden resource');
-			}
-		}
-
-		if (new Date(subscription.expires) <= new Date(Date.now())) {
-			subscription.renew = true;
-			await subscription.save();
-
-			return {
-				message: 'Subscription was expired',
-				subscription,
-			};
-		} else {
-			subscription.renew = false;
-			await subscription.save();
-
-			return {
-				message: 'Subscription has not expired',
-				subscription,
-			};
-		}
 	}
 
 	async renew(
@@ -212,18 +227,6 @@ export class SubscriptionsService {
 			billItemID,
 		});
 
-		if (!subscription) return false;
-
-		return true;
-	}
-
-	async checkActive(facilityID: string, accountID: string): Promise<boolean> {
-		const now = new Date();
-		const subscription = await this.subscriptionsModel.findOne({
-			accountID,
-			facilityID,
-			expires: { $gt: now },
-		});
 		if (!subscription) return false;
 
 		return true;

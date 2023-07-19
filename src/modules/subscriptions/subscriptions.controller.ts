@@ -40,6 +40,7 @@ export class SubscriptionsController {
 			},
 		};
 	}
+
 	@ApiDocsPagination('subscription')
 	@ApiOperation({
 		summary: 'findManySubscriptions',

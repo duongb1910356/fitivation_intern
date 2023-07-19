@@ -46,6 +46,7 @@ export class CartsController {
 			},
 		};
 	}
+
 	@ApiOperation({
 		summary: 'getCurrentUserCart',
 		description: 'Get logged user cart',
