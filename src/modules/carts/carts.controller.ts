@@ -20,6 +20,17 @@ import { GetCurrentUser } from 'src/decorators/get-current-user.decorator';
 import { UserRole } from '../users/schemas/user.schema';
 import { RolesGuard } from 'src/guards/role.guard';
 import { Roles } from 'src/decorators/role.decorator';
+import {
+	CartItemIDs,
+	GetCartSuccessResponse,
+	FacilityID,
+	PackageID,
+	PackageTypeID,
+	Photo,
+} from './types/cart-success-response.type';
+import { TimeType } from '../package/entities/package.entity';
+import { ScheduleType } from '../facility-schedule/entities/facility-schedule.entity';
+import { State, Status } from '../facility/schemas/facility.schema';
 
 @Controller('carts')
 @ApiTags('carts')
@@ -57,13 +68,75 @@ export class CartsController {
 			example: {
 				_id: '_id',
 				accountID: 'string',
-				cartItemIDs: [],
+				cartItemIDs: [
+					{
+						_id: 'string',
+						packageID: {
+							_id: 'string',
+							packageTypeID: {
+								_id: 'string',
+								facilityID: {
+									_id: 'string',
+									brandID: 'string',
+									facilityCategoryID: 'string',
+									ownerID: 'string',
+									name: 'string',
+									location: {
+										coordinates: [1, 1],
+										types: 'point',
+									},
+									address: {
+										street: 'string',
+										commune: 'string',
+										communeCode: 'string',
+										district: 'string',
+										districtCode: 'string',
+										province: 'string',
+										provinceCode: 'string',
+									},
+									fullAddress: 'string',
+									phone: 'string',
+									photos: [
+										{
+											_id: 'string',
+											ownerID: 'string',
+											name: 'string',
+											createdAt: new Date(),
+											updatedAt: new Date(),
+										},
+									] as Photo[],
+									scheduleType: ScheduleType.DAILY,
+									state: State.ACTIVE,
+									status: Status.APPROVED,
+									createdAt: new Date(),
+									updatedAt: new Date(),
+								} as FacilityID,
+								name: 'string',
+								description: 'string',
+								price: 0,
+								order: 1,
+								createdAt: new Date(),
+								updatedAt: new Date(),
+							} as PackageTypeID,
+							type: TimeType.ONE_MONTH,
+							price: 0,
+							benefits: ['string', 'string'],
+							createdAt: new Date(),
+							updatedAt: new Date(),
+						} as PackageID,
+						promotionIDs: [],
+						promotionPrice: 0,
+						totalPrice: 0,
+						createdAt: new Date(),
+						updatedAt: new Date(),
+					},
+				] as CartItemIDs[],
 				promotionIDs: [],
 				promotionPrice: 0,
 				totalPrice: 0,
 				createdAt: new Date(),
 				updatedAt: new Date(),
-			},
+			} as GetCartSuccessResponse,
 		},
 	})
 	@ApiResponse({
