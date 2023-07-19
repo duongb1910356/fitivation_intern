@@ -223,41 +223,70 @@ export class FacilityController {
 		example: 0,
 	})
 	@ApiOkResponse({
+		status: 200,
 		schema: {
 			example: {
 				items: [
 					{
-						_id: '6476ef7d1f0419cd330fe128',
-						facilityID: {} as unknown as Facility,
-						type: ScheduleType.DAILY,
-						openTime: [
+						_id: '1233456',
+						brandID: {},
+						facilityCategoryID: {},
+						ownerID: {},
+						name: 'City gym',
+						address: {
+							street: '30/4',
+							commune: 'Phường Xuân Khánh',
+							communeCode: '011',
+							district: 'Quận Ninh Kiều',
+							districtCode: '056',
+							province: 'Thành phố Cần Thơ',
+							provinceCode: '065',
+						},
+						summary: 'Phòng gym thân thiện',
+						description: 'Nhiều dụng cụ tập luyện',
+						location: { coordinates: [10.031966330522316, 105.76892820319247] },
+						state: State.ACTIVE,
+						status: Status.APPROVED,
+						averageStar: null,
+						photos: [
 							{
-								shift: [
-									{
-										startTime: '06:00',
-										endTime: '12:00',
-									},
-									{
-										startTime: '13:00',
-										endTime: '19:00',
-									},
-								] as ShiftTime[],
+								_id: '123456789',
+								ownerID: 'id-bucket',
+								name: 'name-image',
+								imageURL: 'http://localhost:8080/id-bucket/name-image',
+								createdAt: new Date(),
+								updatedAt: new Date(),
 							},
-						] as OpenTime[],
+						],
+						reviews: [
+							{
+								_id: '123456789',
+								accountID: {},
+								facilityID: {},
+								comment: 'Đáng để trải nghiệm',
+								rating: 5,
+								photos: [
+									{
+										_id: '12345678dsgdgsdxdg4',
+										ownerID: 'bucket1',
+										name: 'image-name',
+										imageURL: 'http://localhost:8080/bucket1/image-name',
+										createdAt: new Date(),
+										updatedAt: new Date(),
+									},
+								] as Photo[],
+								createdAt: new Date(),
+								updatedAt: new Date(),
+							},
+						],
+						schedule: '64b0cd9f9fe7ffe0a6c2038f',
 						createdAt: new Date(),
 						updatedAt: new Date(),
-					} as FacilitySchedule,
+					},
 				],
 				total: 1,
-				options: {
-					limit: 10,
-					offset: 0,
-					searchField: 'facilityID',
-					searchValue: 'string',
-					sortField: 'type',
-					sortOrder: 'asc',
-				} as ListOptions<FacilitySchedule>,
-			} as ListResponse<FacilitySchedule>,
+				options: {} as ListOptions<any>,
+			} as ListResponse<any>,
 		},
 	})
 	@ApiBadRequestResponse({
@@ -1353,8 +1382,24 @@ export class FacilityController {
 					description:
 						'Lorem Ipsum is simply dummy text of the printing and typesetting industry. Lorem Ipsum has been the industry standard dummy text ever since the 1500s, when an unknown printer took a galley of type and scrambled it to make a type specimen book',
 					state: 'ACTIVE',
-					scheduleType: 'DAILY',
 					phone: '84906943567',
+					scheduleDto: {
+						type: 'DAILY',
+						openTime: [
+							{
+								shift: [
+									{
+										startTime: '06:01',
+										endTime: '12:00',
+									},
+									{
+										startTime: '13:00',
+										endTime: '19:00',
+									},
+								],
+							},
+						],
+					},
 				} as CreateFacilityDto,
 			},
 		},
@@ -1445,6 +1490,7 @@ export class FacilityController {
 			images?: Express.Multer.File[];
 		},
 	) {
+		console.log('vo day');
 		return this.facilityService.create(
 			createFacilityDto,
 			req,
@@ -1639,7 +1685,7 @@ export class FacilityController {
 					summary: 'CHẤT LƯỢNG LÀ DANH DỰ',
 					description: 'HIỆN ĐẠI BẬT NHẤT',
 					coordinates: [45, 54],
-					scheduleType: ScheduleType.WEEKLY,
+					schedule: '64b4aff0f4f2b881b96475ea',
 					state: State.ACTIVE,
 					location: { coordinates: [105, 10] } as LocationDTO,
 				} as UpdateFacilityDto,

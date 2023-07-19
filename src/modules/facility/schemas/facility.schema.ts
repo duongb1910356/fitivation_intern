@@ -61,7 +61,7 @@ export class Facility extends BaseObject {
 		type: [{ type: mongoose.Schema.Types.ObjectId, ref: 'FacilityCategory' }],
 		required: true,
 	})
-	facilityCategoryID: mongoose.Schema.Types.ObjectId[];
+	facilityCategoryID: string[];
 
 	@Prop({ type: mongoose.Schema.Types.ObjectId, ref: 'User', required: true })
 	ownerID: string;
