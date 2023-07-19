@@ -58,7 +58,7 @@ export class AttendanceController {
 			{
 				_id: attendanceID,
 			},
-			'facilityID accountID',
+			'accountID facilityID',
 		);
 	}
 }

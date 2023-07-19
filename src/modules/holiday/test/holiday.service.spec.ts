@@ -79,7 +79,7 @@ describe('FacilitySchedule', () => {
 	});
 
 	describe('findMany', () => {
-		it('should return schedule array', async () => {
+		it('should return holiday array', async () => {
 			const condition: ConditionHoliday = {};
 			const options: ListOptions<Holiday> = {};
 

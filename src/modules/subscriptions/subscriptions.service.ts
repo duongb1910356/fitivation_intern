@@ -216,4 +216,16 @@ export class SubscriptionsService {
 
 		return true;
 	}
+
+	async checkActive(facilityID: string, accountID: string): Promise<boolean> {
+		const now = new Date();
+		const subscription = await this.subscriptionsModel.findOne({
+			accountID,
+			facilityID,
+			expires: { $gt: now },
+		});
+		if (!subscription) return false;
+
+		return true;
+	}
 }

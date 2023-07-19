@@ -117,7 +117,7 @@ export class PackageService {
 	async isOwner(packageID: string, uid: string): Promise<boolean> {
 		const packageData = await this.findOneByID(packageID, 'facilityID');
 		const owner = packageData.facilityID.ownerID;
-		return uid === owner;
+		return uid == owner;
 	}
 
 	//PROMOTION
