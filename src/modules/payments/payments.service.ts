@@ -306,6 +306,19 @@ export class PaymentsService {
 						paymentIntent.metadata.subscriptionID,
 						bill.billItems[0]._id.toString(),
 						userPayload,
+						{
+							path: 'packageID',
+							model: 'Package',
+							populate: {
+								path: 'packageTypeID',
+								model: 'PackageType',
+								populate: {
+									path: 'facilityID',
+									model: 'Facility',
+									select: '-reviews',
+								},
+							},
+						},
 					);
 
 					response.status(HttpStatus.OK).json({
