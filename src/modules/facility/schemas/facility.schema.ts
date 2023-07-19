@@ -55,7 +55,7 @@ export class Facility extends BaseObject {
 		required: false,
 		default: '',
 	})
-	brandID: Brand;
+	brandID: string;
 
 	@Prop({
 		type: [{ type: mongoose.Schema.Types.ObjectId, ref: 'FacilityCategory' }],
@@ -168,10 +168,10 @@ export class Facility extends BaseObject {
 
 	@Prop({
 		type: mongoose.Schema.Types.ObjectId,
-		ref: 'Facility',
+		ref: 'FacilitySchedule',
 		required: false,
 	})
-	schedule: FacilitySchedule;
+	schedule: string;
 }
 
 export const FacilitySchema = SchemaFactory.createForClass(Facility);
