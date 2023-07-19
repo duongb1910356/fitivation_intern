@@ -2,7 +2,6 @@ import {
 	Controller,
 	Get,
 	Param,
-	Query,
 	UseGuards,
 	Patch,
 	Delete,
@@ -17,18 +16,36 @@ import {
 } from '@nestjs/swagger';
 import { ErrorResponse } from 'src/shared/response/common-response';
 import { Cart } from './schemas/cart.schema';
-import { ApiDocsPagination } from 'src/decorators/swagger-form-data.decorator';
 import { GetCurrentUser } from 'src/decorators/get-current-user.decorator';
 import { UserRole } from '../users/schemas/user.schema';
 import { RolesGuard } from 'src/guards/role.guard';
 import { Roles } from 'src/decorators/role.decorator';
-import { ListResponse, QueryObject } from 'src/shared/utils/query-api';
 
 @Controller('carts')
 @ApiTags('carts')
 @ApiBearerAuth()
 export class CartsController {
-	constructor(private readonly cartsService: CartsService) {}
+	private populateOpt: any;
+	constructor(private readonly cartsService: CartsService) {
+		this.populateOpt = {
+			path: 'cartItemIDs',
+			model: 'CartItem',
+			populate: {
+				path: 'packageID',
+				model: 'Package',
+				select: '-facilityID',
+				populate: {
+					path: 'packageTypeID',
+					model: 'PackageType',
+					populate: {
+						path: 'facilityID',
+						model: 'Facility',
+						select: '-reviews',
+					},
+				},
+			},
+		};
+	}
 	@ApiOperation({
 		summary: 'getCurrentUserCart',
 		description: 'Get logged user cart',
@@ -94,171 +111,7 @@ export class CartsController {
 	async getCurrentUserCart(
 		@GetCurrentUser('sub') userID: string,
 	): Promise<Cart> {
-		return await this.cartsService.getCurrent(userID, {
-			path: 'cartItemIDs',
-			model: 'CartItem',
-			populate: {
-				path: 'packageID',
-				model: 'Package',
-				populate: {
-					path: 'packageTypeID',
-					model: 'PackageType',
-					populate: {
-						path: 'facilityID',
-						model: 'Facility',
-						select: '-reviews',
-					},
-				},
-			},
-		});
-	}
-
-	@ApiOperation({
-		summary: 'findManyCarts',
-		description: 'Get many carts',
-	})
-	@ApiDocsPagination('cart')
-	@ApiResponse({
-		status: 200,
-		schema: {
-			example: {
-				items: [
-					{
-						_id: '_id',
-						accountID: 'string',
-						cartItemIDs: [],
-						promotionIDs: [],
-						promotionPrice: 0,
-						totalPrice: 0,
-						createdAt: new Date(),
-						updatedAt: new Date(),
-					},
-				] as Cart[],
-				total: 1,
-				queryOptions: {
-					sort: 'string',
-					fields: 'string',
-					limit: 10,
-					page: 0,
-				} as QueryObject,
-			} as ListResponse<Cart>,
-		},
-	})
-	@ApiResponse({
-		status: 400,
-		schema: {
-			example: {
-				code: '400',
-				message: 'Bad request',
-				details: null,
-			} as ErrorResponse<null>,
-		},
-	})
-	@ApiResponse({
-		status: 401,
-		schema: {
-			example: {
-				code: '401',
-				message: 'Unauthorized',
-				details: null,
-			} as ErrorResponse<null>,
-		},
-	})
-	@ApiResponse({
-		status: 403,
-		schema: {
-			example: {
-				code: '403',
-				message: `Forbidden resource`,
-				details: null,
-			} as ErrorResponse<null>,
-		},
-	})
-	@Get()
-	@Roles(UserRole.ADMIN)
-	@UseGuards(RolesGuard)
-	async findManyCarts(
-		@Query() query: QueryObject,
-	): Promise<ListResponse<Cart>> {
-		return await this.cartsService.findMany(query);
-	}
-
-	@ApiOperation({
-		summary: 'findOneCart',
-		description: 'Get one cart',
-	})
-	@ApiParam({ name: 'id', type: String, description: 'Cart ID' })
-	@ApiResponse({
-		status: 200,
-		schema: {
-			example: {
-				items: [
-					{
-						_id: '_id',
-						accountID: 'string',
-						cartItemIDs: [],
-						promotionIDs: [],
-						promotionPrice: 0,
-						totalPrice: 0,
-						createdAt: new Date(),
-						updatedAt: new Date(),
-					},
-				] as Cart[],
-				total: 1,
-				queryOptions: {
-					sort: 'string',
-					fields: 'string',
-					limit: 10,
-					page: 0,
-				} as QueryObject,
-			} as ListResponse<Cart>,
-		},
-	})
-	@ApiResponse({
-		status: 400,
-		schema: {
-			example: {
-				code: '400',
-				message: 'Bad request',
-				details: null,
-			} as ErrorResponse<null>,
-		},
-	})
-	@ApiResponse({
-		status: 401,
-		schema: {
-			example: {
-				code: '401',
-				message: 'Unauthorized',
-				details: null,
-			} as ErrorResponse<null>,
-		},
-	})
-	@ApiResponse({
-		status: 403,
-		schema: {
-			example: {
-				code: '403',
-				message: `Forbidden resource`,
-				details: null,
-			} as ErrorResponse<null>,
-		},
-	})
-	@ApiResponse({
-		status: 404,
-		schema: {
-			example: {
-				code: '404',
-				message: 'Not found document with that ID',
-				details: null,
-			} as ErrorResponse<null>,
-		},
-	})
-	@Get(':id')
-	@Roles(UserRole.ADMIN)
-	@UseGuards(RolesGuard)
-	async findOneCart(@Param('id') id: string) {
-		return await this.cartsService.findOneByID(id);
+		return await this.cartsService.getCurrent(userID, this.populateOpt);
 	}
 
 	@ApiOperation({
