@@ -100,6 +100,7 @@ export class UsersController {
 		description: `Find many users.\n\nRoles: ${UserRole.ADMIN}.`,
 	})
 	@ApiResponse({
+		status: 200,
 		schema: {
 			example: {
 				items: [
