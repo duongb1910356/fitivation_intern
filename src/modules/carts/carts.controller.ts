@@ -59,8 +59,8 @@ export class CartsController {
 	}
 
 	@ApiOperation({
-		summary: 'getCurrentUserCart',
-		description: 'Get logged user cart',
+		summary: 'Get Current User Cart',
+		description: 'Get current login user cart',
 	})
 	@ApiResponse({
 		status: 200,
@@ -189,10 +189,10 @@ export class CartsController {
 	}
 
 	@ApiOperation({
-		summary: 'addCartItemToCurrentCart',
-		description: 'Add Cart-item to current Cart',
+		summary: 'Add Cart Item To Current Cart',
+		description: `Add Cart-item to current login user's cart`,
 	})
-	@ApiParam({ name: 'packageID', type: String, description: 'Pacakge ID' })
+	@ApiParam({ name: 'packageID', type: String, description: 'Package ID' })
 	@ApiResponse({
 		status: 200,
 		schema: {
@@ -240,10 +240,10 @@ export class CartsController {
 	}
 
 	@ApiOperation({
-		summary: 'removeCartItemToCurrentCart',
-		description: 'Remove cart-item to current Cart',
+		summary: 'Remove Cart Item To Current Cart',
+		description: `Remove cart-item to current Cart`,
 	})
-	@ApiParam({ name: 'pacakgeID', type: String, description: 'Pacakge ID' })
+	@ApiParam({ name: 'packageID', type: String, description: 'Package ID' })
 	@ApiResponse({
 		status: 200,
 		schema: {

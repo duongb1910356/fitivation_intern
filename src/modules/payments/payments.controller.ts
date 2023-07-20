@@ -51,8 +51,8 @@ export class PaymentsController {
 	constructor(private readonly paymentService: PaymentsService) {}
 
 	@ApiOperation({
-		summary: 'createCartPayment',
-		description: 'Allow customers to purchase cart-item in their cart',
+		summary: 'Create Cart Payment',
+		description: `Allow customers to purchase cart-item in their cart.\n\nRoles: ${UserRole.MEMBER}`,
 	})
 	@ApiBody({
 		type: CartPaymentRequestDto,
@@ -140,8 +140,8 @@ export class PaymentsController {
 	}
 
 	@ApiOperation({
-		summary: 'createSubscriptionPayment',
-		description: 'Allow customers to purchase to renew their subscription',
+		summary: 'Create Subscription Payment',
+		description: `Allow customers to purchase to renew their subscription.\n\nRoles: ${UserRole.MEMBER}`,
 	})
 	@ApiBody({
 		type: SubscriptionPaymentRequestDto,
@@ -229,8 +229,8 @@ export class PaymentsController {
 	}
 
 	@ApiOperation({
-		summary: 'confirmPayment',
-		description: 'Allow customers to confirm a purchase',
+		summary: 'Confirm Payment',
+		description: `Allow customers to confirm a purchase.\n\nRoles: ${UserRole.MEMBER}.`,
 	})
 	@ApiBody({
 		type: CartPaymentRequestDto,
