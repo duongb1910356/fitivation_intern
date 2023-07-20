@@ -19,7 +19,6 @@ import {
 	BillItem,
 	BillItemStatus,
 } from '../bill-items/schemas/bill-item.schema';
-import { ApiDocsPagination } from 'src/decorators/swagger-form-data.decorator';
 import { ErrorResponse } from 'src/shared/response/common-response';
 import {
 	CustomerType,
@@ -39,6 +38,7 @@ import { UserRole } from '../users/schemas/user.schema';
 import { Roles } from 'src/decorators/role.decorator';
 import { RolesGuard } from 'src/guards/role.guard';
 import { BillItemsService } from '../bill-items/bill-items.service';
+import { ApiDocsPaginationVer2 } from 'src/decorators/swagger-form-data.decorator-v2';
 
 @Controller('bills')
 @ApiTags('bills')
@@ -50,10 +50,10 @@ export class BillsController {
 	) {}
 
 	@ApiOperation({
-		summary: 'findManyBills',
-		description: 'Get many bills',
+		summary: 'Find Many Bills',
+		description: `Find many bills.\n\nRoles: ${UserRole.ADMIN}, ${UserRole.MEMBER}.`,
 	})
-	@ApiDocsPagination('bill')
+	@ApiDocsPaginationVer2('bill')
 	@ApiResponse({
 		status: 200,
 		schema: {
@@ -214,8 +214,8 @@ export class BillsController {
 	}
 
 	@ApiOperation({
-		summary: 'findOneBill',
-		description: 'Get one bill',
+		summary: 'Find One Bill',
+		description: `Find one bill.\n\nRoles: ${UserRole.ADMIN}, ${UserRole.MEMBER}.`,
 	})
 	@ApiParam({ name: 'id', type: String, description: 'Bill ID' })
 	@ApiResponse({
@@ -377,8 +377,8 @@ export class BillsController {
 	}
 
 	@ApiOperation({
-		summary: 'deleteBill',
-		description: 'Allow admin to delete one bill',
+		summary: 'Delete Bill',
+		description: `Allow admin to delete one bill.\n\nRoles: ${UserRole.ADMIN}.`,
 	})
 	@ApiParam({ name: 'id', type: String, description: 'Bill ID' })
 	@ApiResponse({
@@ -425,9 +425,8 @@ export class BillsController {
 	}
 
 	@ApiOperation({
-		summary: 'findOneBillItem',
-		description:
-			'Allow customer to get one of their bill-items\n\nAllow admin to get one of bill-item\n\nAllow facility owner to get one of bill-item',
+		summary: 'Find One Bill Item',
+		description: `Allow customer to get one of their bill-items\n\nAllow admin to get one of bill-item\n\nAllow facility owner to get one of bill-item.\n\nRoles: ${UserRole.ADMIN}, ${UserRole.FACILITY_OWNER}, ${UserRole.MEMBER}`,
 	})
 	@ApiParam({ name: 'id', type: String, description: 'Bill-item ID' })
 	@ApiResponse({
