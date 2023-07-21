@@ -41,6 +41,10 @@ export class UsersService {
 		});
 	}
 
+	async getQuantityUsersStats() {
+		return await this.userModel.find({ role: { $ne: UserRole.ADMIN } }).count();
+	}
+
 	async updateAvatar(
 		userID: string,
 		file: Express.Multer.File,
