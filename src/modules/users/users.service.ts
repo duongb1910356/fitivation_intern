@@ -276,9 +276,6 @@ export class UsersService {
 
 		if (!user) throw new NotFoundException('Not found user with that ID');
 
-		user.password = undefined;
-		user.refreshToken = undefined;
-
 		return true;
 	}
 
