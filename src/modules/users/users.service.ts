@@ -15,7 +15,7 @@ import { CreateUserDto } from './dto/create-user-dto';
 import { SignupDto } from '../auth/dto/signup-dto';
 import { UpdateUserDto } from './dto/update-user-dto';
 import {
-	ListResponse,
+	ListResponseV2,
 	QueryAPI,
 	QueryObject,
 } from 'src/shared/utils/query-api';
@@ -41,7 +41,14 @@ export class UsersService {
 		});
 	}
 
-	async updateAvatar(userID: string, file: Express.Multer.File): Promise<User> {
+	async getQuantityUsersStats() {
+		return await this.userModel.find({ role: { $ne: UserRole.ADMIN } }).count();
+	}
+
+	async updateAvatar(
+		userID: string,
+		file: Express.Multer.File,
+	): Promise<boolean> {
 		if (isValidObjectId(userID) && file) {
 			const user = await this.userModel.findById(userID);
 			await this.photoService.delete(user.avatar._id);
@@ -50,12 +57,12 @@ export class UsersService {
 			if (!(await user.save())) {
 				throw new BadRequestException("User's not update ");
 			}
-			return user;
+			return true;
 		}
 		throw new BadRequestException('[Input] invalid');
 	}
 
-	async findMany(query: QueryObject): Promise<ListResponse<User>> {
+	async findMany(query: QueryObject): Promise<ListResponseV2<User>> {
 		const queryFeatures = new QueryAPI(this.userModel, query)
 			.filter()
 			.sort()
@@ -272,9 +279,6 @@ export class UsersService {
 		});
 
 		if (!user) throw new NotFoundException('Not found user with that ID');
-
-		user.password = undefined;
-		user.refreshToken = undefined;
 
 		return true;
 	}

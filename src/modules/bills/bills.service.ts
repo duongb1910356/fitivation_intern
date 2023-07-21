@@ -9,7 +9,7 @@ import { InjectModel } from '@nestjs/mongoose';
 import { Bill, BillDocument } from './schemas/bill.schema';
 import { Model } from 'mongoose';
 import {
-	ListResponse,
+	ListResponseV2,
 	QueryAPI,
 	QueryObject,
 } from 'src/shared/utils/query-api';
@@ -65,7 +65,7 @@ export class BillsService {
 	async findMany(
 		query: QueryObject,
 		user: TokenPayload,
-	): Promise<ListResponse<Bill>> {
+	): Promise<ListResponseV2<Bill>> {
 		const queryFeatures = new QueryAPI(this.billModel, query)
 			.filter()
 			.sort()
@@ -138,5 +138,73 @@ export class BillsService {
 		if (!bill) return false;
 
 		return true;
+	}
+
+	async getQuantityBillsStats() {
+		return await this.billModel.find().count();
+	}
+
+	async getMonthlyBillStats(year: number) {
+		const stats = await this.billModel.aggregate([
+			{
+				$match: {
+					createdAt: {
+						$gte: new Date(`${year}-01-01T00:00:00.000Z`),
+						$lte: new Date(`${year}-12-31T00:00:00.000Z`),
+					},
+				},
+			},
+			{
+				$group: {
+					_id: { $month: '$createdAt' },
+					numBills: { $sum: 1 },
+					totalPrice: { $sum: '$totalPrice' },
+					avgTotalPrice: { $avg: '$totalPrice' },
+					minPrice: { $min: '$totalPrice' },
+					maxPrice: { $max: '$totalPrice' },
+				},
+			},
+			{
+				$addFields: { month: '$_id' },
+			},
+			{
+				$project: {
+					_id: 0,
+				},
+			},
+			{
+				$sort: { month: -1 },
+			},
+		]);
+
+		return stats;
+	}
+
+	async getYearlyBillStats() {
+		const stats = await this.billModel.aggregate([
+			{
+				$group: {
+					_id: { $year: '$createdAt' },
+					numBills: { $sum: 1 },
+					totalPrice: { $sum: '$totalPrice' },
+					avgTotalPrice: { $avg: '$totalPrice' },
+					minPrice: { $min: '$totalPrice' },
+					maxPrice: { $max: '$totalPrice' },
+				},
+			},
+			{
+				$addFields: { year: '$_id' },
+			},
+			{
+				$project: {
+					_id: 0,
+				},
+			},
+			{
+				$sort: { year: -1 },
+			},
+		]);
+
+		return stats;
 	}
 }
