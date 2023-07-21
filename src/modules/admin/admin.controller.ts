@@ -99,6 +99,45 @@ export class AdminController {
 		private readonly userService: UsersService,
 	) {}
 	//USERS
+	@ApiOperation({
+		summary: 'Get Quantity Users Statistic',
+		description: `Get quantity users of system (exclude admin account).\n\nRoles: ${UserRole.ADMIN}.`,
+	})
+	@ApiResponse({
+		status: 200,
+		schema: {
+			example: {
+				data: 1,
+			},
+		},
+	})
+	@ApiResponse({
+		status: 401,
+		schema: {
+			example: {
+				code: '401',
+				message: 'Unauthorized',
+				details: null,
+			} as ErrorResponse<null>,
+		},
+	})
+	@ApiResponse({
+		status: 403,
+		schema: {
+			example: {
+				code: '403',
+				message: `Forbidden resource`,
+				details: null,
+			} as ErrorResponse<null>,
+		},
+	})
+	@Get('users/statics/quantity')
+	@Roles(UserRole.ADMIN)
+	@UseGuards(RolesGuard)
+	async getQuantityUsersStats() {
+		return await this.userService.getQuantityUsersStats();
+	}
+
 	@ApiDocsPaginationVer2('user')
 	@ApiOperation({
 		summary: 'Find Many Users',
