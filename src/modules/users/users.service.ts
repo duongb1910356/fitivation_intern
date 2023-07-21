@@ -41,7 +41,10 @@ export class UsersService {
 		});
 	}
 
-	async updateAvatar(userID: string, file: Express.Multer.File): Promise<User> {
+	async updateAvatar(
+		userID: string,
+		file: Express.Multer.File,
+	): Promise<boolean> {
 		if (isValidObjectId(userID) && file) {
 			const user = await this.userModel.findById(userID);
 			await this.photoService.delete(user.avatar._id);
@@ -50,7 +53,7 @@ export class UsersService {
 			if (!(await user.save())) {
 				throw new BadRequestException("User's not update ");
 			}
-			return user;
+			return true;
 		}
 		throw new BadRequestException('[Input] invalid');
 	}
