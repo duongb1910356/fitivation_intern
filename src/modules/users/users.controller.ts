@@ -2,11 +2,8 @@ import {
 	Body,
 	Controller,
 	Delete,
-	FileTypeValidator,
 	Get,
-	MaxFileSizeValidator,
 	Param,
-	ParseFilePipe,
 	Patch,
 	Post,
 	Query,
@@ -26,10 +23,6 @@ import {
 	ApiResponse,
 	ApiTags,
 } from '@nestjs/swagger';
-import { mkdirSync, writeFileSync } from 'fs';
-import { appConfig } from '../../app.config';
-import { GenFileName } from '../../shared/utils/gen-filename';
-import { AvatarUploadDto } from './dto/avatar-upload-dto';
 import { CreateUserDto } from './dto/create-user-dto';
 import { UpdateUserDto } from './dto/update-user-dto';
 import { Gender, User, UserRole, UserStatus } from './schemas/user.schema';
@@ -37,7 +30,6 @@ import { UsersService } from './users.service';
 import { UserAddressDto } from './dto/user-address.dto';
 import { UserAddress } from './schemas/user-address.schema';
 import { ErrorResponse } from 'src/shared/response/common-response';
-import { ApiDocsPagination } from 'src/decorators/swagger-form-data.decorator';
 import { TokenResponse } from '../auth/types/token-response.types';
 import { ListResponse, QueryObject } from 'src/shared/utils/query-api';
 import { GetCurrentUser } from 'src/decorators/get-current-user.decorator';
@@ -45,6 +37,7 @@ import { UpdateLoggedUserDataDto } from './dto/update-logged-user-data-dto';
 import { UpdateLoggedUserPasswordDto } from './dto/update-logged-user-password-dto';
 import { RolesGuard } from 'src/guards/role.guard';
 import { Roles } from 'src/decorators/role.decorator';
+import { ApiDocsPaginationVer2 } from 'src/decorators/swagger-form-data.decorator-v2';
 
 @ApiTags('users')
 @ApiBearerAuth()
@@ -53,8 +46,8 @@ export class UsersController {
 	constructor(private userService: UsersService) {}
 
 	@ApiOperation({
-		summary: 'getProfile',
-		description: 'Get loggedIn user info',
+		summary: 'Get Profile',
+		description: `Get current login user info.\n\nRoles:${UserRole.ADMIN}, ${UserRole.FACILITY_OWNER}, ${UserRole.MEMBER}.`,
 	})
 	@ApiResponse({
 		type: User,
@@ -101,9 +94,13 @@ export class UsersController {
 		return await this.userService.getCurrentUser(userID);
 	}
 
-	@ApiDocsPagination('user')
-	@ApiOperation({ summary: 'findManyUsers', description: 'Get many users' })
+	@ApiDocsPaginationVer2('user')
+	@ApiOperation({
+		summary: 'Find Many Users',
+		description: `Find many users.\n\nRoles: ${UserRole.ADMIN}.`,
+	})
 	@ApiResponse({
+		status: 200,
 		schema: {
 			example: {
 				items: [
@@ -179,7 +176,10 @@ export class UsersController {
 		return await this.userService.findMany(query);
 	}
 
-	@ApiOperation({ summary: 'findUserByID', description: 'Get one user by ID' })
+	@ApiOperation({
+		summary: 'Find User By ID',
+		description: `Get one user by ID.\n\nRoles: ${UserRole.ADMIN}.`,
+	})
 	@ApiParam({ name: 'id', type: String, description: 'User ID' })
 	@ApiOkResponse({
 		schema: {
@@ -254,7 +254,10 @@ export class UsersController {
 		return await this.userService.findOneByID(id);
 	}
 
-	@ApiOperation({ summary: 'createUser', description: 'Create new user' })
+	@ApiOperation({
+		summary: 'Create User',
+		description: `Create new user\n\nRoles: ${UserRole.ADMIN}.`,
+	})
 	@ApiBody({
 		type: CreateUserDto,
 		examples: {
@@ -390,6 +393,10 @@ export class UsersController {
 	}
 
 	@Patch(':userID/avatar')
+	@ApiOperation({
+		summary: 'Update Avatar',
+		description: `Update user's avatar.\n\nRoles: ${UserRole.ADMIN}, ${UserRole.FACILITY_OWNER}, ${UserRole.MEMBER}.`,
+	})
 	@ApiConsumes('multipart/form-data')
 	@ApiParam({ name: 'userID', type: String, description: 'User ID' })
 	@ApiBody({
@@ -480,6 +487,8 @@ export class UsersController {
 			} as ErrorResponse<null>,
 		},
 	})
+	@Roles(UserRole.ADMIN, UserRole.FACILITY_OWNER, UserRole.MEMBER)
+	@UseGuards(RolesGuard)
 	@UseInterceptors(FileInterceptor('file'))
 	async updateAvatar(
 		@Param('userID') userID: string,
@@ -490,9 +499,8 @@ export class UsersController {
 	}
 
 	@ApiOperation({
-		summary: 'updateMyData',
-		description:
-			'Allow user update personal account data but (this endpoint does not use to update password)',
+		summary: 'Update My Data (not password)',
+		description: `Allow user update personal account data but (this endpoint does not use to update password).\n\nRoles: ${UserRole.ADMIN}, ${UserRole.FACILITY_OWNER}, ${UserRole.MEMBER}.`,
 	})
 	@ApiCreatedResponse({ type: TokenResponse, status: 200 })
 	@ApiResponse({
@@ -536,8 +544,8 @@ export class UsersController {
 	}
 
 	@ApiOperation({
-		summary: 'updatePassword',
-		description: 'Allow current user update password',
+		summary: 'Update Password',
+		description: `Allow current user update password\n\nRoles: ${UserRole.ADMIN}, ${UserRole.FACILITY_OWNER}, ${UserRole.MEMBER}.`,
 	})
 	@ApiCreatedResponse({ type: TokenResponse, status: 200 })
 	@ApiResponse({
@@ -581,8 +589,8 @@ export class UsersController {
 	}
 
 	@ApiOperation({
-		summary: 'updateUser',
-		description: 'Update user information',
+		summary: 'Update User',
+		description: `Update user information.\n\nRoles: ${UserRole.ADMIN}.`,
 	})
 	@ApiParam({ name: 'id', type: String, description: 'User ID' })
 	@ApiBody({
@@ -686,8 +694,8 @@ export class UsersController {
 	}
 
 	@ApiOperation({
-		summary: 'deleteMe',
-		description: 'Allow user inactive personal account data',
+		summary: 'Delete Me',
+		description: `Allow user inactive personal account data.\n\nRoles: ${UserRole.ADMIN}.`,
 	})
 	@ApiResponse({
 		status: 200,
@@ -726,7 +734,10 @@ export class UsersController {
 		return await this.userService.deleteMe(userID);
 	}
 
-	@ApiOperation({ summary: 'deleteUser', description: 'Delete user ' })
+	@ApiOperation({
+		summary: 'Delete User',
+		description: `Delete user.\n\nRoles: ${UserRole.ADMIN}.`,
+	})
 	@ApiParam({ name: 'id', type: String, description: 'User ID' })
 	@ApiResponse({
 		schema: {
@@ -784,113 +795,113 @@ export class UsersController {
 		return await this.userService.deleteOne(id);
 	}
 
-	@ApiOperation({
-		summary: 'uploadFile',
-		description: 'Upload user avatar file',
-	})
-	@UseInterceptors(FileInterceptor('avatar'))
-	@ApiConsumes('multipart/form-data')
-	@ApiParam({ name: 'id', type: String, description: 'User ID' })
-	@ApiBody({ type: AvatarUploadDto })
-	@ApiOkResponse({
-		schema: {
-			example: {
-				_id: 'string',
-				role: UserRole.MEMBER,
-				username: 'member',
-				email: 'member@test.com',
-				password: 'string',
-				displayName: 'Admin user',
-				firstName: 'string',
-				lastName: 'string',
-				gender: Gender.MALE,
-				birthDate: new Date(),
-				tel: '0987654321',
-				address: {
-					province: 'Can Tho',
-					district: 'Ninh Kieu',
-					commune: 'Xuan Khanh',
-				} as unknown as UserAddress,
-				isMember: false,
-				status: UserStatus.ACTIVE,
-				createdAt: new Date(),
-				updatedAt: new Date(),
-			} as User,
-		},
-	})
-	@ApiResponse({
-		status: 400,
-		schema: {
-			example: {
-				code: '400',
-				message: 'File size invalid',
-				details: null,
-			} as ErrorResponse<null>,
-		},
-	})
-	@ApiResponse({
-		status: 401,
-		schema: {
-			example: {
-				code: '401',
-				message: 'Unauthorized',
-				details: null,
-			} as ErrorResponse<null>,
-		},
-	})
-	@ApiResponse({
-		status: 403,
-		schema: {
-			example: {
-				code: '403',
-				message: `Forbidden resource`,
-				details: null,
-			} as ErrorResponse<null>,
-		},
-	})
-	@ApiResponse({
-		status: 404,
-		schema: {
-			example: {
-				code: '404',
-				message: 'Not found user with that ID',
-				details: null,
-			} as ErrorResponse<null>,
-		},
-	})
-	@ApiResponse({
-		status: 415,
-		schema: {
-			example: {
-				code: '415',
-				message: 'File invalid',
-				details: null,
-			} as ErrorResponse<null>,
-		},
-	})
-	@Post(':id/avatar')
-	// @Roles(UserRole.ADMIN, UserRole.FACILITY_OWNER, UserRole.MEMBER)
-	// @UseGuards(RolesGuard)
-	uploadFile(
-		@Param('id') id,
-		@UploadedFile(
-			new ParseFilePipe({
-				validators: [
-					new MaxFileSizeValidator({ maxSize: 1000 * 1000 }), // 1MB
-					new FileTypeValidator({ fileType: /(?:jpeg|png)/i }),
-				],
-			}),
-		)
-		file: Express.Multer.File,
-	) {
-		const dir = `${appConfig.fileRoot}/${id}`;
-		const fileName = GenFileName.gen(file.mimetype);
-		console.log('file users avatar >> ', file);
-		mkdirSync(dir, { recursive: true });
-		writeFileSync(`${dir}/${fileName}`, file.buffer);
-		const url: string = appConfig.fileHost + `/${id}/${fileName}`;
+	// @ApiOperation({
+	// 	summary: 'uploadFile',
+	// 	description: 'Upload user avatar file',
+	// })
+	// @UseInterceptors(FileInterceptor('avatar'))
+	// @ApiConsumes('multipart/form-data')
+	// @ApiParam({ name: 'id', type: String, description: 'User ID' })
+	// @ApiBody({ type: AvatarUploadDto })
+	// @ApiOkResponse({
+	// 	schema: {
+	// 		example: {
+	// 			_id: 'string',
+	// 			role: UserRole.MEMBER,
+	// 			username: 'member',
+	// 			email: 'member@test.com',
+	// 			password: 'string',
+	// 			displayName: 'Admin user',
+	// 			firstName: 'string',
+	// 			lastName: 'string',
+	// 			gender: Gender.MALE,
+	// 			birthDate: new Date(),
+	// 			tel: '0987654321',
+	// 			address: {
+	// 				province: 'Can Tho',
+	// 				district: 'Ninh Kieu',
+	// 				commune: 'Xuan Khanh',
+	// 			} as unknown as UserAddress,
+	// 			isMember: false,
+	// 			status: UserStatus.ACTIVE,
+	// 			createdAt: new Date(),
+	// 			updatedAt: new Date(),
+	// 		} as User,
+	// 	},
+	// })
+	// @ApiResponse({
+	// 	status: 400,
+	// 	schema: {
+	// 		example: {
+	// 			code: '400',
+	// 			message: 'File size invalid',
+	// 			details: null,
+	// 		} as ErrorResponse<null>,
+	// 	},
+	// })
+	// @ApiResponse({
+	// 	status: 401,
+	// 	schema: {
+	// 		example: {
+	// 			code: '401',
+	// 			message: 'Unauthorized',
+	// 			details: null,
+	// 		} as ErrorResponse<null>,
+	// 	},
+	// })
+	// @ApiResponse({
+	// 	status: 403,
+	// 	schema: {
+	// 		example: {
+	// 			code: '403',
+	// 			message: `Forbidden resource`,
+	// 			details: null,
+	// 		} as ErrorResponse<null>,
+	// 	},
+	// })
+	// @ApiResponse({
+	// 	status: 404,
+	// 	schema: {
+	// 		example: {
+	// 			code: '404',
+	// 			message: 'Not found user with that ID',
+	// 			details: null,
+	// 		} as ErrorResponse<null>,
+	// 	},
+	// })
+	// @ApiResponse({
+	// 	status: 415,
+	// 	schema: {
+	// 		example: {
+	// 			code: '415',
+	// 			message: 'File invalid',
+	// 			details: null,
+	// 		} as ErrorResponse<null>,
+	// 	},
+	// })
+	// @Post(':id/avatar')
+	// // @Roles(UserRole.ADMIN, UserRole.FACILITY_OWNER, UserRole.MEMBER)
+	// // @UseGuards(RolesGuard)
+	// uploadFile(
+	// 	@Param('id') id,
+	// 	@UploadedFile(
+	// 		new ParseFilePipe({
+	// 			validators: [
+	// 				new MaxFileSizeValidator({ maxSize: 1000 * 1000 }), // 1MB
+	// 				new FileTypeValidator({ fileType: /(?:jpeg|png)/i }),
+	// 			],
+	// 		}),
+	// 	)
+	// 	file: Express.Multer.File,
+	// ) {
+	// 	const dir = `${appConfig.fileRoot}/${id}`;
+	// 	const fileName = GenFileName.gen(file.mimetype);
+	// 	console.log('file users avatar >> ', file);
+	// 	mkdirSync(dir, { recursive: true });
+	// 	writeFileSync(`${dir}/${fileName}`, file.buffer);
+	// 	const url: string = appConfig.fileHost + `/${id}/${fileName}`;
 
-		// 	return this.userService.updateAvatar(id, url);
-		// }
-	}
+	// 	// 	return this.userService.updateAvatar(id, url);
+	// 	// }
+	// }
 }

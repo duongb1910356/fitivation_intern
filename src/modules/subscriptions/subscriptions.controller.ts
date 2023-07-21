@@ -6,7 +6,6 @@ import {
 	ApiResponse,
 	ApiTags,
 } from '@nestjs/swagger';
-import { ApiDocsPagination } from 'src/decorators/swagger-form-data.decorator';
 import { ErrorResponse } from 'src/shared/response/common-response';
 import {
 	Subscription,
@@ -29,6 +28,7 @@ import {
 import { ScheduleType } from '../facility-schedule/entities/facility-schedule.entity';
 import { State, Status } from '../facility/schemas/facility.schema';
 import { TimeType } from '../package/entities/package.entity';
+import { ApiDocsPaginationVer2 } from 'src/decorators/swagger-form-data.decorator-v2';
 
 @Controller('subscriptions')
 @ApiTags('subscriptions')
@@ -52,10 +52,10 @@ export class SubscriptionsController {
 		};
 	}
 
-	@ApiDocsPagination('subscription')
+	@ApiDocsPaginationVer2('subscription')
 	@ApiOperation({
-		summary: 'findManySubscriptions',
-		description: 'Get many subscriptions',
+		summary: 'Find Many Subscriptions',
+		description: `Find many subscriptions.\n\nRoles: ${UserRole.ADMIN}, ${UserRole.MEMBER}.`,
 	})
 	@ApiResponse({
 		status: 200,
@@ -182,8 +182,8 @@ export class SubscriptionsController {
 	}
 
 	@ApiOperation({
-		summary: 'FindOneSubscription',
-		description: 'Get one subscription',
+		summary: 'Find One Subscription',
+		description: `Find one subscription.\n\nRoles: ${UserRole.ADMIN}, ${UserRole.MEMBER}`,
 	})
 	@ApiParam({ name: 'id', type: String, description: 'Subscription ID' })
 	@ApiResponse({
