@@ -15,7 +15,7 @@ import { Roles } from 'src/decorators/role.decorator';
 import { UserRole } from '../users/schemas/user.schema';
 import { RolesGuard } from 'src/guards/role.guard';
 import { SubscriptionsService } from './subscriptions.service';
-import { ListResponse, QueryObject } from 'src/shared/utils/query-api';
+import { ListResponseV2, QueryObject } from 'src/shared/utils/query-api';
 import { GetCurrentUser } from 'src/decorators/get-current-user.decorator';
 import { TokenPayload } from '../auth/types/token-payload.type';
 import { GetSubscriptionSuccessResponse } from './types/subscription-success-response.type';
@@ -61,80 +61,82 @@ export class SubscriptionsController {
 		status: 200,
 		schema: {
 			example: {
-				items: [
-					{
-						_id: 'string',
-						accountID: 'string',
-						billItemID: 'string',
-						packageID: {
+				data: {
+					items: [
+						{
 							_id: 'string',
-							packageTypeID: {
+							accountID: 'string',
+							billItemID: 'string',
+							packageID: {
 								_id: 'string',
-								facilityID: {
+								packageTypeID: {
 									_id: 'string',
-									brandID: 'string',
-									facilityCategoryID: 'string',
-									ownerID: 'string',
-									name: 'string',
-									location: {
-										coordinates: [1, 1],
-										types: 'point',
-									},
-									address: {
-										street: 'string',
-										commune: 'string',
-										communeCode: 'string',
-										district: 'string',
-										districtCode: 'string',
-										province: 'string',
-										provinceCode: 'string',
-									},
-									fullAddress: 'string',
-									phone: 'string',
-									photos: [
-										{
-											_id: 'string',
-											ownerID: 'string',
-											name: 'string',
-											createdAt: new Date(),
-											updatedAt: new Date(),
+									facilityID: {
+										_id: 'string',
+										brandID: 'string',
+										facilityCategoryID: 'string',
+										ownerID: 'string',
+										name: 'string',
+										location: {
+											coordinates: [1, 1],
+											types: 'point',
 										},
-									] as Photo[],
-									scheduleType: ScheduleType.DAILY,
-									state: State.ACTIVE,
-									status: Status.APPROVED,
+										address: {
+											street: 'string',
+											commune: 'string',
+											communeCode: 'string',
+											district: 'string',
+											districtCode: 'string',
+											province: 'string',
+											provinceCode: 'string',
+										},
+										fullAddress: 'string',
+										phone: 'string',
+										photos: [
+											{
+												_id: 'string',
+												ownerID: 'string',
+												name: 'string',
+												createdAt: new Date(),
+												updatedAt: new Date(),
+											},
+										] as Photo[],
+										scheduleType: ScheduleType.DAILY,
+										state: State.ACTIVE,
+										status: Status.APPROVED,
+										createdAt: new Date(),
+										updatedAt: new Date(),
+									} as FacilityID,
+									name: 'string',
+									description: 'string',
+									price: 0,
+									order: 1,
 									createdAt: new Date(),
 									updatedAt: new Date(),
-								} as FacilityID,
-								name: 'string',
-								description: 'string',
+								} as PackageTypeID,
+								type: TimeType.ONE_MONTH,
 								price: 0,
-								order: 1,
+								benefits: ['string', 'string'],
 								createdAt: new Date(),
 								updatedAt: new Date(),
-							} as PackageTypeID,
-							type: TimeType.ONE_MONTH,
-							price: 0,
-							benefits: ['string', 'string'],
+							} as PackageID,
+							facilityID: 'string',
+							expires: new Date(),
+							status: SubscriptionStatus.ACTIVE,
+							renew: false,
 							createdAt: new Date(),
 							updatedAt: new Date(),
-						} as PackageID,
-						facilityID: 'string',
-						expires: new Date(),
-						status: SubscriptionStatus.ACTIVE,
-						renew: false,
-						createdAt: new Date(),
-						updatedAt: new Date(),
-					},
-				] as GetSubscriptionSuccessResponse[],
-				total: 1,
-				queryOptions: {
-					sort: 'string',
-					fields: 'string',
-					limit: 10,
-					page: 0,
-				} as QueryObject,
-			} as ListResponse<GetSubscriptionSuccessResponse>,
+						},
+					] as GetSubscriptionSuccessResponse[],
+					total: 1,
+					queryOptions: {
+						sort: 'string',
+						fields: 'string',
+						limit: 10,
+						page: 0,
+					} as QueryObject,
+				} as ListResponseV2<GetSubscriptionSuccessResponse>,
+			},
 		},
 	})
 	@ApiResponse({
@@ -173,7 +175,7 @@ export class SubscriptionsController {
 	async findManySubscriptions(
 		@Query() query: QueryObject,
 		@GetCurrentUser() user: TokenPayload,
-	): Promise<ListResponse<Subscription>> {
+	): Promise<ListResponseV2<Subscription>> {
 		return await this.subscriptionService.findMany(
 			query,
 			user,
@@ -190,69 +192,71 @@ export class SubscriptionsController {
 		status: 200,
 		schema: {
 			example: {
-				_id: 'string',
-				accountID: 'string',
-				billItemID: 'string',
-				facilityID: 'string',
-				packageID: {
+				data: {
 					_id: 'string',
-					packageTypeID: {
+					accountID: 'string',
+					billItemID: 'string',
+					facilityID: 'string',
+					packageID: {
 						_id: 'string',
-						facilityID: {
+						packageTypeID: {
 							_id: 'string',
-							brandID: 'string',
-							facilityCategoryID: 'string',
-							ownerID: 'string',
-							name: 'string',
-							location: {
-								coordinates: [1, 1],
-								types: 'point',
-							},
-							address: {
-								street: 'string',
-								commune: 'string',
-								communeCode: 'string',
-								district: 'string',
-								districtCode: 'string',
-								province: 'string',
-								provinceCode: 'string',
-							},
-							fullAddress: 'string',
-							phone: 'string',
-							photos: [
-								{
-									_id: 'string',
-									ownerID: 'string',
-									name: 'string',
-									createdAt: new Date(),
-									updatedAt: new Date(),
+							facilityID: {
+								_id: 'string',
+								brandID: 'string',
+								facilityCategoryID: 'string',
+								ownerID: 'string',
+								name: 'string',
+								location: {
+									coordinates: [1, 1],
+									types: 'point',
 								},
-							] as Photo[],
-							scheduleType: ScheduleType.DAILY,
-							state: State.ACTIVE,
-							status: Status.APPROVED,
+								address: {
+									street: 'string',
+									commune: 'string',
+									communeCode: 'string',
+									district: 'string',
+									districtCode: 'string',
+									province: 'string',
+									provinceCode: 'string',
+								},
+								fullAddress: 'string',
+								phone: 'string',
+								photos: [
+									{
+										_id: 'string',
+										ownerID: 'string',
+										name: 'string',
+										createdAt: new Date(),
+										updatedAt: new Date(),
+									},
+								] as Photo[],
+								scheduleType: ScheduleType.DAILY,
+								state: State.ACTIVE,
+								status: Status.APPROVED,
+								createdAt: new Date(),
+								updatedAt: new Date(),
+							} as FacilityID,
+							name: 'string',
+							description: 'string',
+							price: 0,
+							order: 1,
 							createdAt: new Date(),
 							updatedAt: new Date(),
-						} as FacilityID,
-						name: 'string',
-						description: 'string',
+						} as PackageTypeID,
+						type: TimeType.ONE_MONTH,
 						price: 0,
-						order: 1,
+						benefits: ['string', 'string'],
 						createdAt: new Date(),
 						updatedAt: new Date(),
-					} as PackageTypeID,
-					type: TimeType.ONE_MONTH,
-					price: 0,
-					benefits: ['string', 'string'],
+					} as PackageID,
+					expires: new Date(),
+					renew: false,
+					status: SubscriptionStatus.ACTIVE,
 					createdAt: new Date(),
 					updatedAt: new Date(),
-				} as PackageID,
-				expires: new Date(),
-				renew: false,
-				status: SubscriptionStatus.ACTIVE,
-				createdAt: new Date(),
-				updatedAt: new Date(),
-			} as GetSubscriptionSuccessResponse,
+				} as GetSubscriptionSuccessResponse,
+			},
 		},
 	})
 	@ApiResponse({

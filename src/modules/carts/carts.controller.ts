@@ -66,77 +66,79 @@ export class CartsController {
 		status: 200,
 		schema: {
 			example: {
-				_id: '_id',
-				accountID: 'string',
-				cartItemIDs: [
-					{
-						_id: 'string',
-						packageID: {
+				data: {
+					_id: '_id',
+					accountID: 'string',
+					cartItemIDs: [
+						{
 							_id: 'string',
-							packageTypeID: {
+							packageID: {
 								_id: 'string',
-								facilityID: {
+								packageTypeID: {
 									_id: 'string',
-									brandID: 'string',
-									facilityCategoryID: 'string',
-									ownerID: 'string',
-									name: 'string',
-									location: {
-										coordinates: [1, 1],
-										types: 'point',
-									},
-									address: {
-										street: 'string',
-										commune: 'string',
-										communeCode: 'string',
-										district: 'string',
-										districtCode: 'string',
-										province: 'string',
-										provinceCode: 'string',
-									},
-									fullAddress: 'string',
-									phone: 'string',
-									photos: [
-										{
-											_id: 'string',
-											ownerID: 'string',
-											name: 'string',
-											createdAt: new Date(),
-											updatedAt: new Date(),
+									facilityID: {
+										_id: 'string',
+										brandID: 'string',
+										facilityCategoryID: 'string',
+										ownerID: 'string',
+										name: 'string',
+										location: {
+											coordinates: [1, 1],
+											types: 'point',
 										},
-									] as Photo[],
-									scheduleType: ScheduleType.DAILY,
-									state: State.ACTIVE,
-									status: Status.APPROVED,
+										address: {
+											street: 'string',
+											commune: 'string',
+											communeCode: 'string',
+											district: 'string',
+											districtCode: 'string',
+											province: 'string',
+											provinceCode: 'string',
+										},
+										fullAddress: 'string',
+										phone: 'string',
+										photos: [
+											{
+												_id: 'string',
+												ownerID: 'string',
+												name: 'string',
+												createdAt: new Date(),
+												updatedAt: new Date(),
+											},
+										] as Photo[],
+										scheduleType: ScheduleType.DAILY,
+										state: State.ACTIVE,
+										status: Status.APPROVED,
+										createdAt: new Date(),
+										updatedAt: new Date(),
+									} as FacilityID,
+									name: 'string',
+									description: 'string',
+									price: 0,
+									order: 1,
 									createdAt: new Date(),
 									updatedAt: new Date(),
-								} as FacilityID,
-								name: 'string',
-								description: 'string',
+								} as PackageTypeID,
+								type: TimeType.ONE_MONTH,
 								price: 0,
-								order: 1,
+								benefits: ['string', 'string'],
 								createdAt: new Date(),
 								updatedAt: new Date(),
-							} as PackageTypeID,
-							type: TimeType.ONE_MONTH,
-							price: 0,
-							benefits: ['string', 'string'],
+							} as PackageID,
+							promotionIDs: [],
+							promotionPrice: 0,
+							totalPrice: 0,
 							createdAt: new Date(),
 							updatedAt: new Date(),
-						} as PackageID,
-						promotionIDs: [],
-						promotionPrice: 0,
-						totalPrice: 0,
-						createdAt: new Date(),
-						updatedAt: new Date(),
-					},
-				] as CartItemIDs[],
-				promotionIDs: [],
-				promotionPrice: 0,
-				totalPrice: 0,
-				createdAt: new Date(),
-				updatedAt: new Date(),
-			} as GetCartSuccessResponse,
+						},
+					] as CartItemIDs[],
+					promotionIDs: [],
+					promotionPrice: 0,
+					totalPrice: 0,
+					createdAt: new Date(),
+					updatedAt: new Date(),
+				} as GetCartSuccessResponse,
+			},
 		},
 	})
 	@ApiResponse({
@@ -196,7 +198,7 @@ export class CartsController {
 	@ApiResponse({
 		status: 200,
 		schema: {
-			example: true,
+			example: { data: true },
 		},
 	})
 	@ApiResponse({
@@ -247,7 +249,7 @@ export class CartsController {
 	@ApiResponse({
 		status: 200,
 		schema: {
-			example: true,
+			example: { data: true },
 		},
 	})
 	@ApiResponse({

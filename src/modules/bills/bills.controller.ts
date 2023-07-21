@@ -1,11 +1,4 @@
-import {
-	Controller,
-	Delete,
-	Get,
-	Param,
-	Query,
-	UseGuards,
-} from '@nestjs/common';
+import { Controller, Get, Param, Query, UseGuards } from '@nestjs/common';
 import {
 	ApiOperation,
 	ApiResponse,
@@ -32,7 +25,7 @@ import { BillItemPackage } from '../bill-items/schemas/bill-item-package.schema'
 import { BillItemPackageType } from '../bill-items/schemas/bill-item-package-type.schema';
 import { BillItemFacility } from '../bill-items/schemas/bill-item-facility.schema';
 import { GetCurrentUser } from 'src/decorators/get-current-user.decorator';
-import { ListResponse, QueryObject } from 'src/shared/utils/query-api';
+import { ListResponseV2, QueryObject } from 'src/shared/utils/query-api';
 import { TokenPayload } from '../auth/types/token-payload.type';
 import { UserRole } from '../users/schemas/user.schema';
 import { Roles } from 'src/decorators/role.decorator';
@@ -45,7 +38,7 @@ import { ApiDocsPaginationVer2 } from 'src/decorators/swagger-form-data.decorato
 @ApiBearerAuth()
 export class BillsController {
 	constructor(
-		private readonly billsService: BillsService,
+		private readonly billService: BillsService,
 		private readonly billItemsService: BillItemsService,
 	) {}
 
@@ -58,119 +51,121 @@ export class BillsController {
 		status: 200,
 		schema: {
 			example: {
-				items: [
-					{
-						_id: '_id',
-						accountID: 'string',
-						billItems: [
-							{
-								_id: '_id',
-								brandID: 'string',
-								facilityID: 'string',
-								packageTypeID: 'string',
-								packageID: 'string',
-								ownerFacilityID: 'string',
-								accountID: 'string',
-								facilityInfo: {
-									brandName: 'string',
-									facilityAddress: {},
-									facilityCoordinatesLocation: {
-										coordinates: [10.027851057940572, 105.77291088739058],
-									},
-									facilityPhotos: [],
-								} as BillItemFacility,
-								packageTypeInfo: {
-									name: 'string',
-									description: 'string',
-									price: 1,
-								} as BillItemPackageType,
-								packageInfo: {
-									type: TimeType.ONE_MONTH,
-									price: 1,
-								} as BillItemPackage,
-								promotions: [
-									{
-										targetID: 'string',
-										type: PromotionType.PACKAGE,
+				data: {
+					items: [
+						{
+							_id: '_id',
+							accountID: 'string',
+							billItems: [
+								{
+									_id: '_id',
+									brandID: 'string',
+									facilityID: 'string',
+									packageTypeID: 'string',
+									packageID: 'string',
+									ownerFacilityID: 'string',
+									accountID: 'string',
+									facilityInfo: {
+										brandName: 'string',
+										facilityAddress: {},
+										facilityCoordinatesLocation: {
+											coordinates: [10.027851057940572, 105.77291088739058],
+										},
+										facilityPhotos: [],
+									} as BillItemFacility,
+									packageTypeInfo: {
 										name: 'string',
 										description: 'string',
-										couponCode: 'string',
-										value: 1,
-										method: PromotionMethod.NUMBER,
-										minPriceApply: 1,
-										maxValue: 1,
-										maxQuantity: 1,
-										startDate: new Date(),
-										endDate: new Date(),
-										customerType: CustomerType.CUSTOMER,
-										status: PromotionStatus.ACTIVE,
-										createdAt: new Date(),
-										updatedAt: new Date(),
-									},
-								] as Promotion[],
-								promotionPrice: 1,
-								totalPrice: 1,
-								status: BillItemStatus.ACTIVE,
-								createdAt: new Date(),
-								updatedAt: new Date(),
-							},
-						] as BillItem[],
-						paymentMethod: 'string',
-						taxes: 0,
-						description: 'string',
-						promotions: [
-							{
-								targetID: {},
-								type: PromotionType.FACILITY,
-								name: 'string',
-								description: 'string',
-								couponCode: 'string',
-								value: 1,
-								method: PromotionMethod.NUMBER,
-								minPriceApply: 1,
-								maxValue: 1,
-								maxQuantity: 1,
-								startDate: new Date(),
-								endDate: new Date(),
-								customerType: CustomerType.CUSTOMER,
-								status: PromotionStatus.ACTIVE,
-								createdAt: new Date(),
-								updatedAt: new Date(),
-							},
-							{
-								targetID: {},
-								type: PromotionType.BILL,
-								name: 'string',
-								description: 'string',
-								couponCode: 'string',
-								value: 1,
-								method: PromotionMethod.NUMBER,
-								minPriceApply: 1,
-								maxValue: 1,
-								maxQuantity: 1,
-								startDate: new Date(),
-								endDate: new Date(),
-								customerType: CustomerType.CUSTOMER,
-								status: PromotionStatus.ACTIVE,
-								createdAt: new Date(),
-								updatedAt: new Date(),
-							},
-						],
-						promotionPrice: 0,
-						totalPrice: 0,
-						status: BillStatus.ACTIVE,
-						createdAt: new Date(),
-						updatedAt: new Date(),
-					},
-				] as Bill[],
-				total: 1,
-				queryOptions: {
-					sort: 'string',
-					fields: 'string',
-					limit: 10,
-					page: 0,
-				} as QueryObject,
-			} as ListResponse<Bill>,
+										price: 1,
+									} as BillItemPackageType,
+									packageInfo: {
+										type: TimeType.ONE_MONTH,
+										price: 1,
+									} as BillItemPackage,
+									promotions: [
+										{
+											targetID: 'string',
+											type: PromotionType.PACKAGE,
+											name: 'string',
+											description: 'string',
+											couponCode: 'string',
+											value: 1,
+											method: PromotionMethod.NUMBER,
+											minPriceApply: 1,
+											maxValue: 1,
+											maxQuantity: 1,
+											startDate: new Date(),
+											endDate: new Date(),
+											customerType: CustomerType.CUSTOMER,
+											status: PromotionStatus.ACTIVE,
+											createdAt: new Date(),
+											updatedAt: new Date(),
+										},
+									] as Promotion[],
+									promotionPrice: 1,
+									totalPrice: 1,
+									status: BillItemStatus.ACTIVE,
+									createdAt: new Date(),
+									updatedAt: new Date(),
+								},
+							] as BillItem[],
+							paymentMethod: 'string',
+							taxes: 0,
+							description: 'string',
+							promotions: [
+								{
+									targetID: {},
+									type: PromotionType.FACILITY,
+									name: 'string',
+									description: 'string',
+									couponCode: 'string',
+									value: 1,
+									method: PromotionMethod.NUMBER,
+									minPriceApply: 1,
+									maxValue: 1,
+									maxQuantity: 1,
+									startDate: new Date(),
+									endDate: new Date(),
+									customerType: CustomerType.CUSTOMER,
+									status: PromotionStatus.ACTIVE,
+									createdAt: new Date(),
+									updatedAt: new Date(),
+								},
+								{
+									targetID: {},
+									type: PromotionType.BILL,
+									name: 'string',
+									description: 'string',
+									couponCode: 'string',
+									value: 1,
+									method: PromotionMethod.NUMBER,
+									minPriceApply: 1,
+									maxValue: 1,
+									maxQuantity: 1,
+									startDate: new Date(),
+									endDate: new Date(),
+									customerType: CustomerType.CUSTOMER,
+									status: PromotionStatus.ACTIVE,
+									createdAt: new Date(),
+									updatedAt: new Date(),
+								},
+							],
+							promotionPrice: 0,
+							totalPrice: 0,
+							status: BillStatus.ACTIVE,
+							createdAt: new Date(),
+							updatedAt: new Date(),
+						},
+					] as Bill[],
+					total: 1,
+					queryOptions: {
+						sort: 'string',
+						fields: 'string',
+						limit: 10,
+						page: 0,
+					} as QueryObject,
+				} as ListResponseV2<Bill>,
+			},
 		},
 	})
 	@ApiResponse({
@@ -209,8 +204,8 @@ export class BillsController {
 	async findManyBills(
 		@GetCurrentUser() user: TokenPayload,
 		@Query() query: QueryObject,
-	): Promise<ListResponse<Bill>> {
-		return await this.billsService.findMany(query, user);
+	): Promise<ListResponseV2<Bill>> {
+		return await this.billService.findMany(query, user);
 	}
 
 	@ApiOperation({
@@ -222,108 +217,110 @@ export class BillsController {
 		status: 200,
 		schema: {
 			example: {
-				_id: '_id',
-				accountID: 'string',
-				billItems: [
-					{
-						_id: '_id',
-						brandID: 'string',
-						facilityID: 'string',
-						packageTypeID: 'string',
-						packageID: 'string',
-						ownerFacilityID: 'string',
-						accountID: 'string',
-						facilityInfo: {
-							brandName: 'string',
-							facilityAddress: {},
-							facilityCoordinatesLocation: {
-								coordinates: [10.027851057940572, 105.77291088739058],
-							},
-							facilityPhotos: [],
-						} as BillItemFacility,
-						packageTypeInfo: {
-							name: 'string',
-							description: 'string',
-							price: 1,
-						} as BillItemPackageType,
-						packageInfo: {
-							type: TimeType.ONE_MONTH,
-							price: 1,
-						} as BillItemPackage,
-						promotions: [
-							{
-								targetID: 'string',
-								type: PromotionType.PACKAGE,
+				data: {
+					_id: '_id',
+					accountID: 'string',
+					billItems: [
+						{
+							_id: '_id',
+							brandID: 'string',
+							facilityID: 'string',
+							packageTypeID: 'string',
+							packageID: 'string',
+							ownerFacilityID: 'string',
+							accountID: 'string',
+							facilityInfo: {
+								brandName: 'string',
+								facilityAddress: {},
+								facilityCoordinatesLocation: {
+									coordinates: [10.027851057940572, 105.77291088739058],
+								},
+								facilityPhotos: [],
+							} as BillItemFacility,
+							packageTypeInfo: {
 								name: 'string',
 								description: 'string',
-								couponCode: 'string',
-								value: 1,
-								method: PromotionMethod.NUMBER,
-								minPriceApply: 1,
-								maxValue: 1,
-								maxQuantity: 1,
-								startDate: new Date(),
-								endDate: new Date(),
-								customerType: CustomerType.CUSTOMER,
-								status: PromotionStatus.ACTIVE,
-								createdAt: new Date(),
-								updatedAt: new Date(),
-							},
-						] as Promotion[],
-						promotionPrice: 1,
-						totalPrice: 1,
-						status: BillItemStatus.ACTIVE,
-						createdAt: new Date(),
-						updatedAt: new Date(),
-					},
-				] as BillItem[],
-				paymentMethod: 'string',
-				taxes: 0,
-				description: 'string',
-				promotions: [
-					{
-						targetID: {},
-						type: PromotionType.FACILITY,
-						name: 'string',
-						description: 'string',
-						couponCode: 'string',
-						value: 1,
-						method: PromotionMethod.NUMBER,
-						minPriceApply: 1,
-						maxValue: 1,
-						maxQuantity: 1,
-						startDate: new Date(),
-						endDate: new Date(),
-						customerType: CustomerType.CUSTOMER,
-						status: PromotionStatus.ACTIVE,
-						createdAt: new Date(),
-						updatedAt: new Date(),
-					},
-					{
-						targetID: {},
-						type: PromotionType.BILL,
-						name: 'string',
-						description: 'string',
-						couponCode: 'string',
-						value: 1,
-						method: PromotionMethod.NUMBER,
-						minPriceApply: 1,
-						maxValue: 1,
-						maxQuantity: 1,
-						startDate: new Date(),
-						endDate: new Date(),
-						customerType: CustomerType.CUSTOMER,
-						status: PromotionStatus.ACTIVE,
-						createdAt: new Date(),
-						updatedAt: new Date(),
-					},
-				],
-				promotionPrice: 0,
-				totalPrice: 0,
-				status: BillStatus.ACTIVE,
-				createdAt: new Date(),
-				updatedAt: new Date(),
-			} as Bill,
+								price: 1,
+							} as BillItemPackageType,
+							packageInfo: {
+								type: TimeType.ONE_MONTH,
+								price: 1,
+							} as BillItemPackage,
+							promotions: [
+								{
+									targetID: 'string',
+									type: PromotionType.PACKAGE,
+									name: 'string',
+									description: 'string',
+									couponCode: 'string',
+									value: 1,
+									method: PromotionMethod.NUMBER,
+									minPriceApply: 1,
+									maxValue: 1,
+									maxQuantity: 1,
+									startDate: new Date(),
+									endDate: new Date(),
+									customerType: CustomerType.CUSTOMER,
+									status: PromotionStatus.ACTIVE,
+									createdAt: new Date(),
+									updatedAt: new Date(),
+								},
+							] as Promotion[],
+							promotionPrice: 1,
+							totalPrice: 1,
+							status: BillItemStatus.ACTIVE,
+							createdAt: new Date(),
+							updatedAt: new Date(),
+						},
+					] as BillItem[],
+					paymentMethod: 'string',
+					taxes: 0,
+					description: 'string',
+					promotions: [
+						{
+							targetID: {},
+							type: PromotionType.FACILITY,
+							name: 'string',
+							description: 'string',
+							couponCode: 'string',
+							value: 1,
+							method: PromotionMethod.NUMBER,
+							minPriceApply: 1,
+							maxValue: 1,
+							maxQuantity: 1,
+							startDate: new Date(),
+							endDate: new Date(),
+							customerType: CustomerType.CUSTOMER,
+							status: PromotionStatus.ACTIVE,
+							createdAt: new Date(),
+							updatedAt: new Date(),
+						},
+						{
+							targetID: {},
+							type: PromotionType.BILL,
+							name: 'string',
+							description: 'string',
+							couponCode: 'string',
+							value: 1,
+							method: PromotionMethod.NUMBER,
+							minPriceApply: 1,
+							maxValue: 1,
+							maxQuantity: 1,
+							startDate: new Date(),
+							endDate: new Date(),
+							customerType: CustomerType.CUSTOMER,
+							status: PromotionStatus.ACTIVE,
+							createdAt: new Date(),
+							updatedAt: new Date(),
+						},
+					],
+					promotionPrice: 0,
+					totalPrice: 0,
+					status: BillStatus.ACTIVE,
+					createdAt: new Date(),
+					updatedAt: new Date(),
+				} as Bill,
+			},
 		},
 	})
 	@ApiResponse({
@@ -373,55 +370,7 @@ export class BillsController {
 		@Param('id') billID: string,
 		@GetCurrentUser() user: TokenPayload,
 	): Promise<Bill> {
-		return await this.billsService.findOneByID(billID, user);
-	}
-
-	@ApiOperation({
-		summary: 'Delete Bill',
-		description: `Allow admin to delete one bill.\n\nRoles: ${UserRole.ADMIN}.`,
-	})
-	@ApiParam({ name: 'id', type: String, description: 'Bill ID' })
-	@ApiResponse({
-		status: 200,
-		schema: {
-			example: true,
-		},
-	})
-	@ApiResponse({
-		status: 401,
-		schema: {
-			example: {
-				code: '401',
-				message: 'Unauthorized',
-				details: null,
-			} as ErrorResponse<null>,
-		},
-	})
-	@ApiResponse({
-		status: 403,
-		schema: {
-			example: {
-				code: '403',
-				message: `Forbidden resource`,
-				details: null,
-			} as ErrorResponse<null>,
-		},
-	})
-	@ApiResponse({
-		status: 404,
-		schema: {
-			example: {
-				code: '404',
-				message: 'Not found document with that ID',
-				details: null,
-			} as ErrorResponse<null>,
-		},
-	})
-	@Delete(':id')
-	@Roles(UserRole.ADMIN)
-	@UseGuards(RolesGuard)
-	async deleteBill(@Param('id') id: string): Promise<boolean> {
-		return await this.billsService.deleteOneByID(id);
+		return await this.billService.findOneByID(billID, user);
 	}
 
 	@ApiOperation({
@@ -494,7 +443,7 @@ export class BillsController {
 					limit: 10,
 					page: 0,
 				} as QueryObject,
-			} as ListResponse<BillItem>,
+			} as ListResponseV2<BillItem>,
 		},
 	})
 	@ApiResponse({

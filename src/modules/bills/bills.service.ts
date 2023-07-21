@@ -9,7 +9,7 @@ import { InjectModel } from '@nestjs/mongoose';
 import { Bill, BillDocument } from './schemas/bill.schema';
 import { Model } from 'mongoose';
 import {
-	ListResponse,
+	ListResponseV2,
 	QueryAPI,
 	QueryObject,
 } from 'src/shared/utils/query-api';
@@ -65,7 +65,7 @@ export class BillsService {
 	async findMany(
 		query: QueryObject,
 		user: TokenPayload,
-	): Promise<ListResponse<Bill>> {
+	): Promise<ListResponseV2<Bill>> {
 		const queryFeatures = new QueryAPI(this.billModel, query)
 			.filter()
 			.sort()
