@@ -32,7 +32,7 @@ import { BillItemPackage } from '../bill-items/schemas/bill-item-package.schema'
 import { BillItemPackageType } from '../bill-items/schemas/bill-item-package-type.schema';
 import { BillItemFacility } from '../bill-items/schemas/bill-item-facility.schema';
 import { GetCurrentUser } from 'src/decorators/get-current-user.decorator';
-import { ListResponse, QueryObject } from 'src/shared/utils/query-api';
+import { ListResponseV2, QueryObject } from 'src/shared/utils/query-api';
 import { TokenPayload } from '../auth/types/token-payload.type';
 import { UserRole } from '../users/schemas/user.schema';
 import { Roles } from 'src/decorators/role.decorator';
@@ -45,7 +45,7 @@ import { ApiDocsPaginationVer2 } from 'src/decorators/swagger-form-data.decorato
 @ApiBearerAuth()
 export class BillsController {
 	constructor(
-		private readonly billsService: BillsService,
+		private readonly billService: BillsService,
 		private readonly billItemsService: BillItemsService,
 	) {}
 
@@ -170,7 +170,7 @@ export class BillsController {
 					limit: 10,
 					page: 0,
 				} as QueryObject,
-			} as ListResponse<Bill>,
+				} as ListResponseV2<Bill>,
 		},
 	})
 	@ApiResponse({
@@ -209,8 +209,8 @@ export class BillsController {
 	async findManyBills(
 		@GetCurrentUser() user: TokenPayload,
 		@Query() query: QueryObject,
-	): Promise<ListResponse<Bill>> {
-		return await this.billsService.findMany(query, user);
+	): Promise<ListResponseV2<Bill>> {
+		return await this.billService.findMany(query, user);
 	}
 
 	@ApiOperation({
@@ -373,55 +373,7 @@ export class BillsController {
 		@Param('id') billID: string,
 		@GetCurrentUser() user: TokenPayload,
 	): Promise<Bill> {
-		return await this.billsService.findOneByID(billID, user);
-	}
-
-	@ApiOperation({
-		summary: 'Delete Bill',
-		description: `Allow admin to delete one bill.\n\nRoles: ${UserRole.ADMIN}.`,
-	})
-	@ApiParam({ name: 'id', type: String, description: 'Bill ID' })
-	@ApiResponse({
-		status: 200,
-		schema: {
-			example: true,
-		},
-	})
-	@ApiResponse({
-		status: 401,
-		schema: {
-			example: {
-				code: '401',
-				message: 'Unauthorized',
-				details: null,
-			} as ErrorResponse<null>,
-		},
-	})
-	@ApiResponse({
-		status: 403,
-		schema: {
-			example: {
-				code: '403',
-				message: `Forbidden resource`,
-				details: null,
-			} as ErrorResponse<null>,
-		},
-	})
-	@ApiResponse({
-		status: 404,
-		schema: {
-			example: {
-				code: '404',
-				message: 'Not found document with that ID',
-				details: null,
-			} as ErrorResponse<null>,
-		},
-	})
-	@Delete(':id')
-	@Roles(UserRole.ADMIN)
-	@UseGuards(RolesGuard)
-	async deleteBill(@Param('id') id: string): Promise<boolean> {
-		return await this.billsService.deleteOneByID(id);
+		return await this.billService.findOneByID(billID, user);
 	}
 
 	@ApiOperation({
@@ -494,7 +446,7 @@ export class BillsController {
 					limit: 10,
 					page: 0,
 				} as QueryObject,
-			} as ListResponse<BillItem>,
+			} as ListResponseV2<BillItem>,
 		},
 	})
 	@ApiResponse({

@@ -15,7 +15,7 @@ import { CreateUserDto } from './dto/create-user-dto';
 import { SignupDto } from '../auth/dto/signup-dto';
 import { UpdateUserDto } from './dto/update-user-dto';
 import {
-	ListResponse,
+	ListResponseV2,
 	QueryAPI,
 	QueryObject,
 } from 'src/shared/utils/query-api';
@@ -55,7 +55,7 @@ export class UsersService {
 		throw new BadRequestException('[Input] invalid');
 	}
 
-	async findMany(query: QueryObject): Promise<ListResponse<User>> {
+	async findMany(query: QueryObject): Promise<ListResponseV2<User>> {
 		const queryFeatures = new QueryAPI(this.userModel, query)
 			.filter()
 			.sort()

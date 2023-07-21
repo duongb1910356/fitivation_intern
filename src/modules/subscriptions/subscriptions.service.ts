@@ -9,7 +9,7 @@ import { Model } from 'mongoose';
 import { UserRole } from '../users/schemas/user.schema';
 import { TokenPayload } from '../auth/types/token-payload.type';
 import {
-	ListResponse,
+	ListResponseV2,
 	QueryAPI,
 	QueryObject,
 } from 'src/shared/utils/query-api';
@@ -88,7 +88,7 @@ export class SubscriptionsService {
 		query: QueryObject,
 		user: TokenPayload,
 		populateOpt?: any,
-	): Promise<ListResponse<Subscription>> {
+	): Promise<ListResponseV2<Subscription>> {
 		const queryFeatures = new QueryAPI(this.subscriptionsModel, query)
 			.filter()
 			.sort()
