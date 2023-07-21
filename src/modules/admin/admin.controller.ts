@@ -564,6 +564,55 @@ export class AdminController {
 		return await this.userService.deleteOne(id);
 	}
 
+	//BILLS
+	@ApiOperation({
+		summary: 'Delete Bill',
+		description: `Allow admin to delete one bill.\n\nRoles: ${UserRole.ADMIN}.`,
+	})
+	@ApiParam({ name: 'id', type: String, description: 'Bill ID' })
+	@ApiResponse({
+		status: 200,
+		schema: {
+			example: { data: true },
+		},
+	})
+	@ApiResponse({
+		status: 401,
+		schema: {
+			example: {
+				code: '401',
+				message: 'Unauthorized',
+				details: null,
+			} as ErrorResponse<null>,
+		},
+	})
+	@ApiResponse({
+		status: 403,
+		schema: {
+			example: {
+				code: '403',
+				message: `Forbidden resource`,
+				details: null,
+			} as ErrorResponse<null>,
+		},
+	})
+	@ApiResponse({
+		status: 404,
+		schema: {
+			example: {
+				code: '404',
+				message: 'Not found document with that ID',
+				details: null,
+			} as ErrorResponse<null>,
+		},
+	})
+	@Delete('bills/:id')
+	@Roles(UserRole.ADMIN)
+	@UseGuards(RolesGuard)
+	async deleteBill(@Param('id') id: string): Promise<boolean> {
+		return await this.billService.deleteOneByID(id);
+	}
+
 	//FACILITIES
 	@Patch('facilities/:facilityID/changeStatus')
 	@ApiBearerAuth()
