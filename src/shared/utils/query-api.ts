@@ -6,7 +6,7 @@ export interface QueryObject {
 	[key: string]: any; // key[gte|gt|lte|lt|regex|search]=value
 }
 
-export interface ListResponseV2<T> {
+export interface ListResponse<T> {
 	total: number;
 	queryOptions: QueryObject;
 	items: T[];
