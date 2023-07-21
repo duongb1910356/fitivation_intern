@@ -12,6 +12,7 @@ import {
 	UseGuards,
 	UseInterceptors,
 	Req,
+	ParseIntPipe,
 } from '@nestjs/common';
 import {
 	ApiBadRequestResponse,
@@ -25,10 +26,16 @@ import {
 	ApiOperation,
 	ApiParam,
 	ApiQuery,
+	ApiResponse,
 	ApiTags,
 	ApiUnauthorizedResponse,
 } from '@nestjs/swagger';
-import { User, UserRole } from '../users/schemas/user.schema';
+import {
+	Gender,
+	User,
+	UserRole,
+	UserStatus,
+} from '../users/schemas/user.schema';
 import { ApiDocsPagination } from 'src/decorators/swagger-form-data.decorator';
 import {
 	ListOptions,
@@ -92,6 +99,45 @@ export class AdminController {
 		private readonly userService: UsersService,
 	) {}
 	//USERS
+	@ApiOperation({
+		summary: 'Get Quantity Users Statistic',
+		description: `Get quantity users of system.\n\nRoles: ${UserRole.ADMIN}.`,
+	})
+	@ApiResponse({
+		status: 200,
+		schema: {
+			example: {
+				data: 1,
+			},
+		},
+	})
+	@ApiResponse({
+		status: 401,
+		schema: {
+			example: {
+				code: '401',
+				message: 'Unauthorized',
+				details: null,
+			} as ErrorResponse<null>,
+		},
+	})
+	@ApiResponse({
+		status: 403,
+		schema: {
+			example: {
+				code: '403',
+				message: `Forbidden resource`,
+				details: null,
+			} as ErrorResponse<null>,
+		},
+	})
+	@Get('users/statics/quantity')
+	@Roles(UserRole.ADMIN)
+	@UseGuards(RolesGuard)
+	async getQuantityUsersStats() {
+		return await this.userService.getQuantityUsersStats();
+	}
+
 	@ApiDocsPaginationVer2('user')
 	@ApiOperation({
 		summary: 'Find Many Users',
@@ -558,6 +604,173 @@ export class AdminController {
 	}
 
 	//BILLS
+	@ApiOperation({
+		summary: 'Get Quantity Bills Statistic',
+		description: `Get quantity bills statistic of system.\n\nRoles: ${UserRole.ADMIN}.`,
+	})
+	@ApiResponse({
+		status: 200,
+		schema: {
+			example: {
+				data: 1,
+			},
+		},
+	})
+	@ApiResponse({
+		status: 401,
+		schema: {
+			example: {
+				code: '401',
+				message: 'Unauthorized',
+				details: null,
+			} as ErrorResponse<null>,
+		},
+	})
+	@ApiResponse({
+		status: 403,
+		schema: {
+			example: {
+				code: '403',
+				message: `Forbidden resource`,
+				details: null,
+			} as ErrorResponse<null>,
+		},
+	})
+	@Get('bills/statics/quantity')
+	@Roles(UserRole.ADMIN)
+	@UseGuards(RolesGuard)
+	async getQuantityBillsStats() {
+		return await this.billService.getQuantityBillsStats();
+	}
+
+	@ApiOperation({
+		summary: 'Get Yearly Bills Statistic',
+		description: `Get yearly bills statistic of system.\n\nRoles: ${UserRole.ADMIN}.`,
+	})
+	@ApiResponse({
+		status: 200,
+		schema: {
+			example: {
+				data: [
+					{
+						numBills: 7,
+						totalPrice: 3940000,
+						avgTotalPrice: 562857.1428571428,
+						minPrice: 140000,
+						maxPrice: 1830000,
+						year: 2023,
+					},
+					{
+						numBills: 1,
+						totalPrice: 1680000,
+						avgTotalPrice: 1680000,
+						minPrice: 1680000,
+						maxPrice: 1680000,
+						year: 2022,
+					},
+					{
+						numBills: 1,
+						totalPrice: 300000,
+						avgTotalPrice: 300000,
+						minPrice: 300000,
+						maxPrice: 300000,
+						year: 2021,
+					},
+				],
+			},
+		},
+	})
+	@ApiResponse({
+		status: 401,
+		schema: {
+			example: {
+				code: '401',
+				message: 'Unauthorized',
+				details: null,
+			} as ErrorResponse<null>,
+		},
+	})
+	@ApiResponse({
+		status: 403,
+		schema: {
+			example: {
+				code: '403',
+				message: `Forbidden resource`,
+				details: null,
+			} as ErrorResponse<null>,
+		},
+	})
+	@Get('bills/statics/yearly')
+	@Roles(UserRole.ADMIN)
+	@UseGuards(RolesGuard)
+	async getYearlyBillStats() {
+		return await this.billService.getYearlyBillStats();
+	}
+
+	@ApiOperation({
+		summary: 'Get Monthly Bills Statistic',
+		description: `Get monthly bills statistic of system.\n\nRoles: ${UserRole.ADMIN}.`,
+	})
+	@ApiResponse({
+		status: 200,
+		schema: {
+			example: {
+				data: [
+					{
+						numBills: 3,
+						totalPrice: 2820000,
+						avgTotalPrice: 940000,
+						minPrice: 150000,
+						maxPrice: 1830000,
+						month: 3,
+					},
+					{
+						numBills: 1,
+						totalPrice: 420000,
+						avgTotalPrice: 420000,
+						minPrice: 420000,
+						maxPrice: 420000,
+						month: 2,
+					},
+					{
+						numBills: 3,
+						totalPrice: 700000,
+						avgTotalPrice: 233333.33333333334,
+						minPrice: 140000,
+						maxPrice: 420000,
+						month: 1,
+					},
+				],
+			},
+		},
+	})
+	@ApiResponse({
+		status: 401,
+		schema: {
+			example: {
+				code: '401',
+				message: 'Unauthorized',
+				details: null,
+			} as ErrorResponse<null>,
+		},
+	})
+	@ApiResponse({
+		status: 403,
+		schema: {
+			example: {
+				code: '403',
+				message: `Forbidden resource`,
+				details: null,
+			} as ErrorResponse<null>,
+		},
+	})
+	@Get('bills/statics/monthly/:year')
+	@Roles(UserRole.ADMIN)
+	@UseGuards(RolesGuard)
+	async getMonthlyBillStats(@Param('year', ParseIntPipe) year: number) {
+		return await this.billService.getMonthlyBillStats(year);
+	}
+
 	@ApiOperation({
 		summary: 'Delete Bill',
 		description: `Allow admin to delete one bill.\n\nRoles: ${UserRole.ADMIN}.`,
