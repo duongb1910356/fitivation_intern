@@ -6,7 +6,13 @@ import {
 	Post,
 	UseGuards,
 } from '@nestjs/common';
-import { ApiBody, ApiOperation, ApiResponse, ApiTags } from '@nestjs/swagger';
+import {
+	ApiBearerAuth,
+	ApiBody,
+	ApiOperation,
+	ApiResponse,
+	ApiTags,
+} from '@nestjs/swagger';
 import { AuthService } from './auth.service';
 import { LoginDto } from './dto/login-dto';
 import { SignupDto } from './dto/signup-dto';
@@ -127,6 +133,7 @@ export class AuthController {
 			} as ErrorResponse<null>,
 		},
 	})
+	@ApiBearerAuth()
 	@Post('logout')
 	@HttpCode(HttpStatus.NO_CONTENT)
 	async logout(@GetCurrentUser('sub') userID: string): Promise<boolean> {
