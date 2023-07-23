@@ -3,19 +3,10 @@ import {
 	Controller,
 	HttpCode,
 	HttpStatus,
-	Patch,
 	Post,
 	UseGuards,
 } from '@nestjs/common';
-import {
-	ApiBearerAuth,
-	ApiBody,
-	ApiCreatedResponse,
-	ApiOperation,
-	ApiParam,
-	ApiResponse,
-	ApiTags,
-} from '@nestjs/swagger';
+import { ApiBody, ApiOperation, ApiResponse, ApiTags } from '@nestjs/swagger';
 import { AuthService } from './auth.service';
 import { LoginDto } from './dto/login-dto';
 import { SignupDto } from './dto/signup-dto';
@@ -27,7 +18,6 @@ import { RefreshTokenGuard } from './guards/refresh-token.guard';
 
 @Controller('auth')
 @ApiTags('auth')
-@ApiBearerAuth()
 export class AuthController {
 	constructor(private readonly authService: AuthService) {}
 
@@ -174,56 +164,56 @@ export class AuthController {
 		return this.authService.refreshTokens(userID, refreshToken);
 	}
 
-	@ApiOperation({
-		summary: 'forgotPassword',
-		description: 'Allow user send forgot password request to reset password',
-	})
-	@ApiResponse({
-		status: 200,
-		schema: {
-			example: {
-				code: '200',
-				message: 'Token sent to email',
-			},
-		},
-	})
-	@ApiResponse({
-		status: 400,
-		schema: {
-			example: {
-				code: '400',
-				message: 'Input invalid',
-				details: null,
-			} as ErrorResponse<null>,
-		},
-	})
-	@Post('forgot-password')
-	forgotPassword() {
-		return 'forgotPassword';
-	}
+	// @ApiOperation({
+	// 	summary: 'forgotPassword',
+	// 	description: 'Allow user send forgot password request to reset password',
+	// })
+	// @ApiResponse({
+	// 	status: 200,
+	// 	schema: {
+	// 		example: {
+	// 			code: '200',
+	// 			message: 'Token sent to email',
+	// 		},
+	// 	},
+	// })
+	// @ApiResponse({
+	// 	status: 400,
+	// 	schema: {
+	// 		example: {
+	// 			code: '400',
+	// 			message: 'Input invalid',
+	// 			details: null,
+	// 		} as ErrorResponse<null>,
+	// 	},
+	// })
+	// @Post('forgot-password')
+	// forgotPassword() {
+	// 	return 'forgotPassword';
+	// }
 
-	@ApiOperation({
-		summary: 'resetPassword',
-		description: 'Allow user reset password',
-	})
-	@ApiParam({
-		name: 'resetPasswordToken',
-		type: String,
-		description: 'Reset Password Token',
-	})
-	@ApiCreatedResponse({ type: TokenResponse, status: 200 })
-	@ApiResponse({
-		status: 400,
-		schema: {
-			example: {
-				code: '400',
-				message: 'Reset Password token invalid  or has expired',
-				details: null,
-			} as ErrorResponse<null>,
-		},
-	})
-	@Patch('reset-password/:resetPasswordToken')
-	resetPassword() {
-		return 'resetPassword';
-	}
+	// @ApiOperation({
+	// 	summary: 'resetPassword',
+	// 	description: 'Allow user reset password',
+	// })
+	// @ApiParam({
+	// 	name: 'resetPasswordToken',
+	// 	type: String,
+	// 	description: 'Reset Password Token',
+	// })
+	// @ApiCreatedResponse({ type: TokenResponse, status: 200 })
+	// @ApiResponse({
+	// 	status: 400,
+	// 	schema: {
+	// 		example: {
+	// 			code: '400',
+	// 			message: 'Reset Password token invalid  or has expired',
+	// 			details: null,
+	// 		} as ErrorResponse<null>,
+	// 	},
+	// })
+	// @Patch('reset-password/:resetPasswordToken')
+	// resetPassword() {
+	// 	return 'resetPassword';
+	// }
 }
