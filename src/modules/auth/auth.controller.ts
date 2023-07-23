@@ -21,13 +21,17 @@ import { ErrorResponse } from 'src/shared/response/common-response';
 import { Public } from './decorators/public.decorator';
 import { GetCurrentUser } from 'src/decorators/get-current-user.decorator';
 import { RefreshTokenGuard } from './guards/refresh-token.guard';
+import { UserRole } from '../users/schemas/user.schema';
 
 @Controller('auth')
 @ApiTags('auth')
 export class AuthController {
 	constructor(private readonly authService: AuthService) {}
 
-	@ApiOperation({ summary: 'signup', description: 'Allow user sign up' })
+	@ApiOperation({
+		summary: 'signup',
+		description: 'Allow user sign up.\n\nRoles: none.',
+	})
 	@ApiBody({
 		type: SignupDto,
 		examples: {
@@ -68,7 +72,10 @@ export class AuthController {
 		return this.authService.signup(signupDto);
 	}
 
-	@ApiOperation({ summary: 'login', description: 'Allow user login' })
+	@ApiOperation({
+		summary: 'login',
+		description: 'Allow user login.\n\nRoles: none.',
+	})
 	@ApiBody({
 		type: LoginDto,
 		examples: {
@@ -121,7 +128,10 @@ export class AuthController {
 		return this.authService.login(loginDto);
 	}
 
-	@ApiOperation({ summary: 'logout', description: 'Allow user log out' })
+	@ApiOperation({
+		summary: 'logout',
+		description: `Allow user log out.\n\nRoles: ${UserRole.ADMIN}, ${UserRole.FACILITY_OWNER}, ${UserRole.MEMBER}.`,
+	})
 	@ApiResponse({ status: 204 })
 	@ApiResponse({
 		status: 401,
@@ -140,7 +150,10 @@ export class AuthController {
 		return this.authService.logout(userID);
 	}
 
-	@ApiOperation({ summary: 'refreshToken', description: 'Refresh new token' })
+	@ApiOperation({
+		summary: 'refreshToken',
+		description: `Refresh new token.\n\nRoles: ${UserRole.ADMIN}, ${UserRole.FACILITY_OWNER}, ${UserRole.MEMBER}.`,
+	})
 	@ApiResponse({
 		status: 201,
 		schema: {
