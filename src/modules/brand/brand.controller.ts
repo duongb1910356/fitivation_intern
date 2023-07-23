@@ -121,7 +121,7 @@ export class BrandController {
 				items: [
 					{
 						_id: '123456',
-						accountID: {} as unknown as User,
+						accountID: '64944c7c2d7cf0ec0dbb4051',
 						name: 'City Gym',
 						createdAt: new Date(),
 						updatedAt: new Date(),

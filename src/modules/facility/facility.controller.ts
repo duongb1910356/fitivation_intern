@@ -145,7 +145,7 @@ export class FacilityController {
 								updatedAt: new Date(),
 							},
 						],
-						schedule: {},
+						schedule: '64b0cd9f9fe7ffe0a6c2038f',
 						createdAt: new Date(),
 						updatedAt: new Date(),
 					},
@@ -223,41 +223,70 @@ export class FacilityController {
 		example: 0,
 	})
 	@ApiOkResponse({
+		status: 200,
 		schema: {
 			example: {
 				items: [
 					{
-						_id: '6476ef7d1f0419cd330fe128',
-						facilityID: {} as unknown as Facility,
-						type: ScheduleType.DAILY,
-						openTime: [
+						_id: '1233456',
+						brandID: {},
+						facilityCategoryID: {},
+						ownerID: {},
+						name: 'City gym',
+						address: {
+							street: '30/4',
+							commune: 'Phường Xuân Khánh',
+							communeCode: '011',
+							district: 'Quận Ninh Kiều',
+							districtCode: '056',
+							province: 'Thành phố Cần Thơ',
+							provinceCode: '065',
+						},
+						summary: 'Phòng gym thân thiện',
+						description: 'Nhiều dụng cụ tập luyện',
+						location: { coordinates: [10.031966330522316, 105.76892820319247] },
+						state: State.ACTIVE,
+						status: Status.APPROVED,
+						averageStar: null,
+						photos: [
 							{
-								shift: [
-									{
-										startTime: '06:00',
-										endTime: '12:00',
-									},
-									{
-										startTime: '13:00',
-										endTime: '19:00',
-									},
-								] as ShiftTime[],
+								_id: '123456789',
+								ownerID: 'id-bucket',
+								name: 'name-image',
+								imageURL: 'http://localhost:8080/id-bucket/name-image',
+								createdAt: new Date(),
+								updatedAt: new Date(),
 							},
-						] as OpenTime[],
+						],
+						reviews: [
+							{
+								_id: '123456789',
+								accountID: {},
+								facilityID: {},
+								comment: 'Đáng để trải nghiệm',
+								rating: 5,
+								photos: [
+									{
+										_id: '12345678dsgdgsdxdg4',
+										ownerID: 'bucket1',
+										name: 'image-name',
+										imageURL: 'http://localhost:8080/bucket1/image-name',
+										createdAt: new Date(),
+										updatedAt: new Date(),
+									},
+								] as Photo[],
+								createdAt: new Date(),
+								updatedAt: new Date(),
+							},
+						],
+						schedule: '64b0cd9f9fe7ffe0a6c2038f',
 						createdAt: new Date(),
 						updatedAt: new Date(),
-					} as FacilitySchedule,
+					},
 				],
 				total: 1,
-				options: {
-					limit: 10,
-					offset: 0,
-					searchField: 'facilityID',
-					searchValue: 'string',
-					sortField: 'type',
-					sortOrder: 'asc',
-				} as ListOptions<FacilitySchedule>,
-			} as ListResponse<FacilitySchedule>,
+				options: {} as ListOptions<any>,
+			} as ListResponse<any>,
 		},
 	})
 	@ApiBadRequestResponse({
@@ -270,8 +299,8 @@ export class FacilityController {
 		status: 404,
 		description: 'Not found facilities',
 	})
-	searchFacilityByAddress(@Query() filter: ListOptions<Facility>) {
-		return this.facilityService.searchFacilityByAddress(filter);
+	search(@Query() filter: ListOptions<Facility>) {
+		return this.facilityService.search(filter);
 	}
 
 	@Public()
@@ -362,60 +391,153 @@ export class FacilityController {
 	@ApiOkResponse({
 		status: 200,
 		schema: {
-			_id: '1233456',
-			brandID: {},
-			facilityCategoryID: {},
-			ownerID: {},
-			name: 'City gym',
-			address: {
-				street: '30/4',
-				commune: 'Phường Xuân Khánh',
-				communeCode: '011',
-				district: 'Quận Ninh Kiều',
-				districtCode: '056',
-				province: 'Thành phố Cần Thơ',
-				provinceCode: '065',
-			},
-			summary: 'Phòng gym thân thiện',
-			description: 'Nhiều dụng cụ tập luyện',
-			location: { coordinates: [10.031966330522316, 105.76892820319247] },
-			state: State.ACTIVE,
-			status: Status.APPROVED,
-			averageStar: null,
-			photos: [
-				{
-					_id: '123456789',
-					ownerID: 'id-bucket',
-					name: 'name-image',
-					imageURL: 'http://localhost:8080/id-bucket/name-image',
-					createdAt: new Date(),
-					updatedAt: new Date(),
-				},
-			],
-			reviews: [
-				{
-					_id: '123456789',
-					accountID: {},
-					facilityID: {},
-					comment: 'Đáng để trải nghiệm',
-					rating: 5,
+			example: {
+				data: {
+					_id: '649d344f72e91c40d2e7e895',
+					brandID: {
+						_id: '64944c7c2d7cf0ec0dbb4051',
+						createdAt: '2023-07-17T08:02:38.272Z',
+						updatedAt: '2023-07-17T08:02:38.272Z',
+						name: 'TheHinhOnline 1',
+						accountID: '649a9a4e631a79b49393bd7a',
+						__v: 0,
+					},
+					ownerID: '6497c6807a114f5b35a393fd',
+					name: 'Gym Thái Sơn',
+					address: {
+						street: '54 Hùng Vương',
+						commune: 'An Hội',
+						communeCode: '066',
+						district: 'Ninh Kiều',
+						districtCode: '067',
+						province: 'Cần Thơ',
+						provinceCode: '065',
+					},
+					fullAddress: 'An Hội, Ninh Kiều, Cần Thơ',
+					summary: 'Chất lượng là danh dự',
+					description:
+						"Lorem Ipsum is simply dummy text of the printing and typesetting industry. Lorem Ipsum has been the industry's standard dummy text ever since the 1500s, when an unknown printer took a galley of type and scrambled it to make a type specimen book",
+					coordinates: [],
+					location: {
+						coordinates: [105.77827419395031, 10.044071865857335],
+						type: 'Point',
+					},
+					state: 'ACTIVE',
+					status: 'APPROVED',
+					phone: '84906943567',
 					photos: [
 						{
-							_id: '12345678dsgdgsdxdg4',
-							ownerID: 'bucket1',
-							name: 'image-name',
-							imageURL: 'http://localhost:8080/bucket1/image-name',
-							createdAt: new Date(),
-							updatedAt: new Date(),
+							createdAt: '2023-06-29T07:36:22.758Z',
+							updatedAt: '2023-06-29T07:36:22.758Z',
+							ownerID: '649d344f72e91c40d2e7e895',
+							name: '1688024182737-366333986.jpeg',
+							imageURL:
+								'https://hdfitness.vn/wp-content/uploads/2022/02/tap-gym-la-gi-5-min-scaled.jpg',
+							_id: '649d347672e91c40d2e7e89c',
+							__v: 0,
 						},
-					] as Photo[],
+					],
+					reviews: [
+						{
+							accountID: '649a8f8ab185ffb672485391',
+							facilityID: '649d344f72e91c40d2e7e895',
+							rating: 2,
+							comment: 'ct7gxfhw8p8',
+							photos: [],
+							_id: '649d348d72e91c40d2e7e8b6',
+							__v: 0,
+						},
+					],
+					schedule: {
+						_id: '64b4aff0f4f2b881b96475ea',
+						createdAt: '2023-06-29T08:23:34.856Z',
+						updatedAt: '2023-06-29T08:23:34.856Z',
+						facilityID: '649d344f72e91c40d2e7e895',
+						type: 'DAILY',
+						openTime: [
+							{
+								shift: [
+									{
+										startTime: '06:00',
+										endTime: '12:00',
+									},
+									{
+										startTime: '13:00',
+										endTime: '19:00',
+									},
+								],
+							},
+						],
+						__v: 0,
+					},
+					__v: 0,
+					facilityCategoryID: [
+						{
+							_id: '649d3f8672e91c40d2e7e9e0',
+							createdAt: '2023-06-29T08:23:34.856Z',
+							updatedAt: '2023-06-29T08:23:34.856Z',
+							type: 'CYCLING',
+							name: 'CYCLING',
+							photo: {
+								ownerID: '64a51c26ecf458661fbbff78',
+								name: '1688542246151-209197963.png',
+								imageURL:
+									'https://cdn.discordapp.com/attachments/830416545594998844/1126074373095305296/cycling1_1.jpg',
+								_id: '64b4f59e2ceb3395beee7e5b',
+								createdAt: '2023-07-17T08:02:38.324Z',
+								updatedAt: '2023-07-17T08:02:38.324Z',
+							},
+							__v: 0,
+						},
+						{
+							_id: '649d3f7b72e91c40d2e7e9de',
+							createdAt: '2023-06-29T08:23:23.661Z',
+							updatedAt: '2023-06-29T08:23:23.661Z',
+							type: 'GYM',
+							name: 'GYM',
+							photo: {
+								ownerID: '64a51c26ecf458661fbbff78',
+								name: '1688542246151-209197963.png',
+								imageURL:
+									'https://cdn.discordapp.com/attachments/830416545594998844/1126074372461961227/gym1_1.jpg',
+								_id: '64b4f59e2ceb3395beee7e5d',
+								createdAt: '2023-07-17T08:02:38.324Z',
+								updatedAt: '2023-07-17T08:02:38.324Z',
+							},
+							__v: 0,
+						},
+					],
+					packageTypes: [
+						{
+							_id: '6476ef7d1f0419cd330fe681',
+							facilityID: '649d344f72e91c40d2e7e895',
+							name: 'GYM GYM',
+							description: 'Các bài tập Gym có PT',
+							price: 140000,
+							order: 2,
+							__v: 0,
+							createdAt: '2023-07-17T08:02:38.379Z',
+							updatedAt: '2023-07-17T08:02:38.379Z',
+							packages: [
+								{
+									_id: '649dd2e7e895344f72e91c41',
+									packageTypeID: '6476ef7d1f0419cd330fe681',
+									facilityID: '649d344f72e91c40d2e7e895',
+									type: '1',
+									price: 140000,
+									benefits: ['Use of bathroom'],
+									__v: 0,
+									createdAt: '2023-07-17T08:02:38.369Z',
+									updatedAt: '2023-07-17T08:02:38.369Z',
+								},
+							],
+						},
+					],
 					createdAt: new Date(),
 					updatedAt: new Date(),
 				},
-			],
-			createdAt: new Date(),
-			updatedAt: new Date(),
-		} as Facility,
+			},
+		} as unknown as Facility,
 	})
 	@ApiNotFoundResponse({
 		type: NotFoundException,
@@ -428,7 +550,8 @@ export class FacilityController {
 		description: '[Input] invalid',
 	})
 	async getFacilityById(@Param('facilityID') facilityID) {
-		return await this.facilityService.findOneByID(facilityID);
+		console.log('da vo controller');
+		return await this.facilityService.getOneByID(facilityID);
 	}
 
 	@Public()
@@ -1259,8 +1382,24 @@ export class FacilityController {
 					description:
 						'Lorem Ipsum is simply dummy text of the printing and typesetting industry. Lorem Ipsum has been the industry standard dummy text ever since the 1500s, when an unknown printer took a galley of type and scrambled it to make a type specimen book',
 					state: 'ACTIVE',
-					scheduleType: 'DAILY',
 					phone: '84906943567',
+					scheduleDto: {
+						type: 'DAILY',
+						openTime: [
+							{
+								shift: [
+									{
+										startTime: '06:01',
+										endTime: '12:00',
+									},
+									{
+										startTime: '13:00',
+										endTime: '19:00',
+									},
+								],
+							},
+						],
+					},
 				} as CreateFacilityDto,
 			},
 		},
@@ -1351,6 +1490,7 @@ export class FacilityController {
 			images?: Express.Multer.File[];
 		},
 	) {
+		console.log('vo day');
 		return this.facilityService.create(
 			createFacilityDto,
 			req,
@@ -1545,7 +1685,7 @@ export class FacilityController {
 					summary: 'CHẤT LƯỢNG LÀ DANH DỰ',
 					description: 'HIỆN ĐẠI BẬT NHẤT',
 					coordinates: [45, 54],
-					scheduleType: ScheduleType.WEEKLY,
+					schedule: '64b4aff0f4f2b881b96475ea',
 					state: State.ACTIVE,
 					location: { coordinates: [105, 10] } as LocationDTO,
 				} as UpdateFacilityDto,
