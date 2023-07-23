@@ -173,8 +173,8 @@ export class AuthController {
 			} as ErrorResponse<null>,
 		},
 	})
+	@ApiBearerAuth()
 	@Post('refresh-token')
-	@Public()
 	@UseGuards(RefreshTokenGuard)
 	@HttpCode(HttpStatus.OK)
 	refreshTokens(
