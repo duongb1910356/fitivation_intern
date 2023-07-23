@@ -696,7 +696,9 @@ export class AdminController {
 		status: 200,
 		schema: {
 			example: {
-				data: 1,
+				data: {
+					numBills: 1,
+				},
 			},
 		},
 	})
@@ -723,7 +725,7 @@ export class AdminController {
 	@Get('bills/statics/quantity')
 	@Roles(UserRole.ADMIN)
 	@UseGuards(RolesGuard)
-	async getQuantityBillsStats() {
+	async getQuantityBillsStats(): Promise<object> {
 		return await this.billService.getQuantityBillsStats();
 	}
 
@@ -787,7 +789,7 @@ export class AdminController {
 	@Get('bills/statics/yearly')
 	@Roles(UserRole.ADMIN)
 	@UseGuards(RolesGuard)
-	async getYearlyBillStats() {
+	async getYearlyBillStats(): Promise<Array<object>> {
 		return await this.billService.getYearlyBillStats();
 	}
 
@@ -851,7 +853,9 @@ export class AdminController {
 	@Get('bills/statics/monthly/:year')
 	@Roles(UserRole.ADMIN)
 	@UseGuards(RolesGuard)
-	async getMonthlyBillStats(@Param('year', ParseIntPipe) year: number) {
+	async getMonthlyBillStats(
+		@Param('year', ParseIntPipe) year: number,
+	): Promise<Array<object>> {
 		return await this.billService.getMonthlyBillStats(year);
 	}
 
