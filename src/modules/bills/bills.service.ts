@@ -140,11 +140,12 @@ export class BillsService {
 		return true;
 	}
 
-	async getQuantityBillsStats() {
-		return await this.billModel.find().count();
+	async getQuantityBillsStats(): Promise<object> {
+		const numBills = await this.billModel.find().count();
+		return { numBills };
 	}
 
-	async getMonthlyBillStats(year: number) {
+	async getMonthlyBillStats(year: number): Promise<Array<object>> {
 		const stats = await this.billModel.aggregate([
 			{
 				$match: {
@@ -180,7 +181,7 @@ export class BillsService {
 		return stats;
 	}
 
-	async getYearlyBillStats() {
+	async getYearlyBillStats(): Promise<Array<object>> {
 		const stats = await this.billModel.aggregate([
 			{
 				$group: {
