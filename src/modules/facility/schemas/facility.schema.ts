@@ -5,13 +5,8 @@ import {
 	Review,
 	ReviewSchema,
 } from 'src/modules/reviews/schemas/reviews.schema';
-import { Brand } from '../../brand/schemas/brand.schema';
 import { Photo, PhotoSchema } from 'src/modules/photo/schemas/photo.schema';
 import { appConfig } from 'src/app.config';
-import {
-	FacilitySchedule,
-	FacilityScheduleSchema,
-} from 'src/modules/facility-schedule/entities/facility-schedule.entity';
 
 export enum State {
 	ACTIVE = 'ACTIVE',

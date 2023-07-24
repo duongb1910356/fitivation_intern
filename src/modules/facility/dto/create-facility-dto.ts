@@ -8,10 +8,10 @@ import {
 	ArrayMinSize,
 	ArrayMaxSize,
 } from 'class-validator';
-import { State, ScheduleType } from '../../../shared/enum/facility.enum';
 import { CreateAddressDto } from 'src/modules/address/dto/create-address-dto';
 import { Photo } from 'src/modules/photo/schemas/photo.schema';
 import { FacilityScheduleDto } from 'src/modules/facility-schedule/dto/facility-schedule-dto';
+import { State } from '../schemas/facility.schema';
 
 export class LocationDTO {
 	@IsArray()

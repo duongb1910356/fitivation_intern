@@ -78,7 +78,7 @@ export class User extends BaseObject {
 	@Prop({ type: UserAddress })
 	address?: UserAddress;
 
-	@Prop({ type: PhotoSchema, required: true, default: {} })
+	@Prop({ type: PhotoSchema, required: false })
 	avatar?: Photo;
 
 	@Prop({ type: Boolean })

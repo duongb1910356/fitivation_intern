@@ -32,7 +32,12 @@ import {
 } from '@nestjs/swagger';
 import { FileFieldsInterceptor } from '@nestjs/platform-express';
 import { CreateFacilityDto, LocationDTO } from './dto/create-facility-dto';
-import { Facility } from './schemas/facility.schema';
+import {
+	Facility,
+	ScheduleType,
+	State,
+	Status,
+} from './schemas/facility.schema';
 import {
 	ErrorResponse,
 	ListOptions,
@@ -42,7 +47,6 @@ import { Review } from '../reviews/schemas/reviews.schema';
 import { UpdateFacilityDto } from './dto/update-facility-dto';
 import { ApiDocsPagination } from 'src/decorators/swagger-form-data.decorator';
 import { Photo } from '../photo/schemas/photo.schema';
-import { State, Status, ScheduleType } from '../../shared/enum/facility.enum';
 import { ShiftTime } from '../facility-schedule/entities/shift-time.entity';
 import { OpenTime } from '../facility-schedule/entities/open-time.entity';
 import { FacilitySchedule } from '../facility-schedule/entities/facility-schedule.entity';

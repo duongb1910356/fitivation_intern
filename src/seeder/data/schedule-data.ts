@@ -1,5 +1,5 @@
 import { dayOfWeek } from 'src/modules/facility-schedule/entities/open-time.entity';
-import { ScheduleType } from 'src/shared/enum/facility.enum';
+import { ScheduleType } from 'src/modules/facility/schemas/facility.schema';
 
 export const scheduleData = [
 	{

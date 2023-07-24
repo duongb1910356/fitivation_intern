@@ -5,7 +5,7 @@ export const userData = [
 		username: 'owner1',
 		email: 'owner1@test.com',
 		password:
-			'00a4344cc5eb4f9af9ff5fde0c629348aae3ca49e7c8a490e9dcce516742acba1fda143476d90568ad3f31d0ec7bc572df2718fcf1233df153235c4ab5abe4c2.a8ba91b747c915d90946f3b9f9397446',
+			'cdeef6a358bb199479bb43de82fde1fc6c1588cf5efc2b6d45a438c40717b85f7afb2f59d137dafb9887221ec8b359f3d0643e20a23647db9fb7cfb4e5213e7e.52975bfe26f935963887714dc709df7e',
 		refreshToken: null,
 		displayName: 'Owner user',
 		firstName: 'string',
@@ -39,7 +39,7 @@ export const userData = [
 		username: 'admin',
 		email: 'admin@test.com',
 		password:
-			'3c6d2706c000a7627d0b264d81033b4dee58b2d8c2cc7883d5497a62958e72c40b98f8f398dee2bfce67fbaad958c668f41cd5db9de15a2f32b1af73441da31b.373ccceba770a009c21018b852572994',
+			'cdeef6a358bb199479bb43de82fde1fc6c1588cf5efc2b6d45a438c40717b85f7afb2f59d137dafb9887221ec8b359f3d0643e20a23647db9fb7cfb4e5213e7e.52975bfe26f935963887714dc709df7e',
 		refreshToken: null,
 		displayName: 'Admin user',
 		firstName: 'string',
@@ -73,7 +73,7 @@ export const userData = [
 		username: 'customer1',
 		email: 'customer1@test.com',
 		password:
-			'712cf3bceba7e501647e6d1d056658ecb4019d6bd39e3a183dd7df7bd38308f29afde375a51c5d095fc9fb716939bd09324e9c21650152dc67fc7ba55efa5e6b.a7b6621486f7bfb813750da75f150978',
+			'cdeef6a358bb199479bb43de82fde1fc6c1588cf5efc2b6d45a438c40717b85f7afb2f59d137dafb9887221ec8b359f3d0643e20a23647db9fb7cfb4e5213e7e.52975bfe26f935963887714dc709df7e',
 		refreshToken:
 			'd32ec3cea9686deed0200707b0c6390c2b50f0e5173681f26f105afdf04f1861f64533b8639cce4f850c5a548a826aec7fd73577c82404d020f6bfdc0c9a6267.c101eb08b3cce50cd2c253f56ea29bbd',
 		displayName: 'Member user',

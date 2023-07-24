@@ -27,7 +27,6 @@ import { RefreshTokenGuard } from './guards/refresh-token.guard';
 
 @Controller('auth')
 @ApiTags('auth')
-@ApiBearerAuth()
 export class AuthController {
 	constructor(private readonly authService: AuthService) {}
 
@@ -143,6 +142,7 @@ export class AuthController {
 		return this.authService.logout(userID);
 	}
 
+	@ApiBearerAuth()
 	@ApiOperation({ summary: 'refreshToken', description: 'Refresh new token' })
 	@ApiResponse({
 		status: 201,
@@ -174,6 +174,7 @@ export class AuthController {
 		return this.authService.refreshTokens(userID, refreshToken);
 	}
 
+	@ApiBearerAuth()
 	@ApiOperation({
 		summary: 'forgotPassword',
 		description: 'Allow user send forgot password request to reset password',
@@ -202,6 +203,7 @@ export class AuthController {
 		return 'forgotPassword';
 	}
 
+	@ApiBearerAuth()
 	@ApiOperation({
 		summary: 'resetPassword',
 		description: 'Allow user reset password',
