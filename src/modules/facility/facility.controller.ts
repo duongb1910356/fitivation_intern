@@ -1491,7 +1491,6 @@ export class FacilityController {
 			images?: Express.Multer.File[];
 		},
 	) {
-		console.log('vo day');
 		return this.facilityService.create(
 			createFacilityDto,
 			req,
