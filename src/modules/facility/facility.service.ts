@@ -2,7 +2,6 @@ import {
 	BadRequestException,
 	ForbiddenException,
 	Injectable,
-	NotFoundException,
 } from '@nestjs/common';
 import {
 	Facility,
@@ -41,17 +40,6 @@ import { PromotionsService } from '../promotions/promotions.service';
 import { UpdatePromotionDto } from '../promotions/dto/update-promotion-dto';
 import { PackageService } from '../package/package.service';
 import { BrandService } from '../brand/brand.service';
-
-interface SearchOptions {
-	longitude?: number; // Toạ độ người dùng
-	latitude?: number;
-	sortByDistance?: boolean;
-	sortByPrice?: boolean;
-	sortOrder?: 'asc' | 'desc';
-	search?: string;
-	limit?: number;
-	offset?: number;
-}
 
 @Injectable()
 export class FacilityService {
@@ -149,43 +137,39 @@ export class FacilityService {
 		req: any,
 		files?: { images?: Express.Multer.File[] },
 	): Promise<Facility> {
-		try {
-			createFacilityDto.ownerID = createFacilityDto.ownerID ?? req.user.sub;
-			createFacilityDto.state = createFacilityDto.state ?? State.ACTIVE;
+		createFacilityDto.ownerID = createFacilityDto.ownerID ?? req.user.sub;
+		createFacilityDto.state = createFacilityDto.state ?? State.ACTIVE;
 
-			if (createFacilityDto.brandID) {
-				const brand = await this.brandService.findMany({
-					_id: createFacilityDto.brandID,
-					accountID: req.user.sub,
-				});
-				if (brand.total == 0) {
-					throw new ForbiddenException(
-						'You have not permission to register creating Facility with this Brand',
-					);
-				}
-			}
-
-			const facility = await this.facilityModel.create(createFacilityDto);
-
-			if (createFacilityDto?.scheduleDto) {
-				const scheduleDto = await this.scheduleService.create(
-					facility._id,
-					createFacilityDto.scheduleDto,
+		if (createFacilityDto.brandID) {
+			const brand = await this.brandService.findMany({
+				_id: createFacilityDto.brandID,
+				accountID: req.user.sub,
+			});
+			if (brand.total == 0) {
+				throw new ForbiddenException(
+					'You have not permission to register creating Facility with this Brand',
 				);
-				facility.schedule = scheduleDto._id;
 			}
-
-			if (files && files.images) {
-				const photos = await this.photoService.uploadManyFile(files, {
-					ownerID: facility._id,
-				});
-				facility.photos = photos.items;
-			}
-
-			return await facility.save();
-		} catch (error) {
-			console.log('error create >> ', error);
 		}
+
+		const facility = await this.facilityModel.create(createFacilityDto);
+
+		if (createFacilityDto?.scheduleDto) {
+			const scheduleDto = await this.scheduleService.create(
+				facility._id,
+				createFacilityDto.scheduleDto,
+			);
+			facility.schedule = scheduleDto._id;
+		}
+
+		if (files && files.images) {
+			const photos = await this.photoService.uploadManyFile(files, {
+				ownerID: facility._id,
+			});
+			facility.photos = photos.items;
+		}
+
+		return await facility.save();
 	}
 
 	async update(
@@ -195,7 +179,7 @@ export class FacilityService {
 	): Promise<Facility> {
 		const checkOk = await this.isOwnerFacility(id, req);
 		if (!checkOk) {
-			throw new BadRequestException(
+			throw new ForbiddenException(
 				'You do not have permission to access this document',
 			);
 		}
@@ -209,42 +193,54 @@ export class FacilityService {
 	async findMany(
 		filter: ListOptions<Facility>,
 	): Promise<ListResponse<Facility>> {
-		const sortQuery = {};
-		sortQuery[filter.sortField] = filter.sortOrder === 'asc' ? 1 : -1;
-		const limit = filter.limit || 10;
-		const offset = filter.offset || 0;
-		const result = await this.facilityModel
-			.find(filter)
-			.sort(sortQuery)
-			.skip(offset)
-			.limit(limit);
+		try {
+			const sortQuery = {};
+			sortQuery[filter.sortField] = filter.sortOrder === 'asc' ? 1 : -1;
+			const limit = filter.limit || 10;
+			const offset = filter.offset || 0;
+			const result = await this.facilityModel
+				.find(filter)
+				.sort(sortQuery)
+				.skip(offset)
+				.limit(limit);
 
-		return {
-			items: result,
-			total: result?.length,
-			options: filter,
-		};
+			return {
+				items: result,
+				total: result?.length,
+				options: filter,
+			};
+		} catch (error) {
+			throw new BadRequestException(
+				'An error occurred while retrieving facilities',
+			);
+		}
 	}
 
 	async getFacilities(
 		filter: ListOptions<Facility>,
 	): Promise<ListResponse<Facility>> {
-		const sortQuery = {};
-		sortQuery[filter.sortField] = filter.sortOrder === 'asc' ? 1 : -1;
-		const limit = filter.limit || 10;
-		const offset = filter.offset || 0;
-		const result = await this.facilityModel
-			.find({ ...filter, status: 'APPROVED' })
-			.sort(sortQuery)
-			.skip(offset)
-			.limit(limit)
-			.populate('brandID facilityCategoryID schedule');
+		try {
+			const sortQuery = {};
+			sortQuery[filter.sortField] = filter.sortOrder === 'asc' ? 1 : -1;
+			const limit = filter.limit || 10;
+			const offset = filter.offset || 0;
+			const result = await this.facilityModel
+				.find({ ...filter, status: 'APPROVED' })
+				.sort(sortQuery)
+				.skip(offset)
+				.limit(limit)
+				.populate('brandID facilityCategoryID schedule');
 
-		return {
-			items: result,
-			total: result?.length || 0,
-			options: filter,
-		};
+			return {
+				items: result,
+				total: result?.length || 0,
+				options: filter,
+			};
+		} catch (error) {
+			throw new BadRequestException(
+				'An error occurred while retrieving facilities',
+			);
+		}
 	}
 
 	async findOneByID(id: string): Promise<Facility> {
@@ -319,10 +315,11 @@ export class FacilityService {
 				},
 			]);
 
-			return facility[0];
+			return facility[0] || null;
 		} catch (error) {
-			console.log('err findone ', error);
-			return null;
+			throw new BadRequestException(
+				'An error occurred while retrieving facility',
+			);
 		}
 	}
 
@@ -340,7 +337,6 @@ export class FacilityService {
 		);
 
 		const averageStar = await this.reviewService.caculateAverageRating(id);
-		console.log(`average >> ${averageStar}`);
 		return this.facilityModel.findOneAndUpdate(
 			{ _id: id },
 			{
@@ -369,7 +365,7 @@ export class FacilityService {
 				'You do not have permission to access this document',
 			);
 		}
-		await this.photoService.uploadManyFile(files || null, id);
+		await this.photoService.uploadManyFile(files, id);
 		const sortPhoto = await this.photoService.findMany({
 			ownerID: id,
 			sortField: 'createdAt',
@@ -401,16 +397,18 @@ export class FacilityService {
 		return false;
 	}
 
-	async deletePhoto(
-		id: string,
-		_req: any,
-		listID: string[],
-	): Promise<Facility> {
+	async deletePhoto(id: string, req: any, listID: string[]): Promise<Facility> {
 		const result = await this.facilityModel.findOneAndUpdate(
-			{ _id: id },
+			{ _id: id, ownerID: req.user.sub },
 			{ $pull: { photos: { _id: { $in: listID } } } },
 			{ new: true },
 		);
+
+		if (!result) {
+			throw new ForbiddenException(
+				'Facility is not exist or you is not owner of Facility',
+			);
+		}
 
 		listID.forEach(async (element) => {
 			if (isValidObjectId(element)) {
@@ -418,7 +416,7 @@ export class FacilityService {
 			}
 		});
 
-		return result;
+		return result || null;
 	}
 
 	async deleteReview(
@@ -463,7 +461,11 @@ export class FacilityService {
 
 	async deleteReviewByID(req: any, reviewID: string): Promise<Facility> {
 		const review = await this.reviewService.findOneByID(reviewID);
-		if (review.accountID == req.user.sub || req.user.role == 'ADMIN') {
+		if (
+			review.accountID == req.user.sub ||
+			req.user.role == 'ADMIN' ||
+			req.user.role == 'FACILITY_OWNER'
+		) {
 			const review = await this.reviewService.delete(reviewID);
 			const averageStar = await this.reviewService.caculateAverageRating(
 				review.facilityID,
@@ -482,12 +484,11 @@ export class FacilityService {
 				},
 				{ new: true },
 			);
-			if (!facility || !review) {
-				throw new BadRequestException('Fail to deleted review');
-			}
 			return facility;
 		}
-		throw new ForbiddenException('You dont have permission to deleted review');
+		throw new ForbiddenException(
+			'You do not have permission to deleted review',
+		);
 	}
 
 	async findManyPhotos(
@@ -504,7 +505,7 @@ export class FacilityService {
 	): Promise<ListResponse<Review>> {
 		const facility = await this.facilityModel.findById(facilityID);
 		filter.facilityID = facility._id;
-		return this.reviewService.getReview(facilityID, filter);
+		return this.reviewService.getReview(filter);
 	}
 
 	async isOwnerFacility(facilityID: string, req: any): Promise<boolean> {
@@ -525,6 +526,10 @@ export class FacilityService {
 				{ _id: facilityID },
 				{ status: status },
 				{ new: true },
+			);
+		} else {
+			throw new ForbiddenException(
+				'You must be admin to update the facility status',
 			);
 		}
 	}

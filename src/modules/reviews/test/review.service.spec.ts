@@ -406,12 +406,12 @@ describe('ReviewService', function () {
 
 	describe('getReview', () => {
 		it('should return a list of reviews with pagination and sorting', async () => {
-			const facilityID = '649d348d72e91c40d2e7e8b6';
 			const filter: ListOptions<Review> = {
 				sortField: 'createdAt',
 				sortOrder: 'desc',
 				limit: 10,
 				offset: 0,
+				_id: '649d348d72e91c40d2e7e8b6',
 			};
 
 			const mockResult = [
@@ -445,7 +445,7 @@ describe('ReviewService', function () {
 				populate: jest.fn().mockResolvedValue(mockResult),
 			} as any);
 
-			const result = await reviewService.getReview(facilityID, filter);
+			const result = await reviewService.getReview(filter);
 
 			expect(result.items).toEqual(mockResult);
 			expect(result.total).toBe(mockResult.length);
@@ -454,19 +454,19 @@ describe('ReviewService', function () {
 		});
 
 		it('should handle errors and throw BadRequestException', async () => {
-			const facilityID = '649d348d72e91c40d2e7e8b6';
 			const filter: ListOptions<Review> = {
 				sortField: 'createdAt',
 				sortOrder: 'desc',
 				limit: 10,
-				offset: -10,
+				offset: 0,
+				_id: '649d348d72e91c40d2e7e8b6',
 			};
 
 			jest.spyOn(mockModel, 'find').mockImplementation(() => {
 				throw new Error('An error occurred while retrieving reviews');
 			});
 
-			await expect(reviewService.getReview(facilityID, filter)).rejects.toThrow(
+			await expect(reviewService.getReview(filter)).rejects.toThrow(
 				BadRequestException,
 			);
 		});
