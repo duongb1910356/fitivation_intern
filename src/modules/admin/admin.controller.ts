@@ -99,6 +99,129 @@ export class AdminController {
 		private readonly userService: UsersService,
 	) {}
 	//USERS
+	@ApiOperation({
+		summary: 'Get Quantity Users Statistic',
+		description: `Get quantity users of system (exclude admin account).\n\nRoles: ${UserRole.ADMIN}.`,
+	})
+	@ApiResponse({
+		status: 200,
+		schema: {
+			example: {
+				data: {
+					numUsers: 1,
+				},
+			},
+		},
+	})
+	@ApiResponse({
+		status: 401,
+		schema: {
+			example: {
+				code: '401',
+				message: 'Unauthorized',
+				details: null,
+			} as ErrorResponse<null>,
+		},
+	})
+	@ApiResponse({
+		status: 403,
+		schema: {
+			example: {
+				code: '403',
+				message: `Forbidden resource`,
+				details: null,
+			} as ErrorResponse<null>,
+		},
+	})
+	@Get('users/statics/quantity-users')
+	@Roles(UserRole.ADMIN)
+	@UseGuards(RolesGuard)
+	async getQuantityUsersStats(): Promise<object> {
+		return await this.userService.getQuantityUsersStats();
+	}
+
+	@ApiOperation({
+		summary: 'Get Quantity Customers Statistic',
+		description: `Get quantity customers of system).\n\nRoles: ${UserRole.ADMIN}.`,
+	})
+	@ApiResponse({
+		status: 200,
+		schema: {
+			example: {
+				data: {
+					numberCustomers: 1,
+				},
+			},
+		},
+	})
+	@ApiResponse({
+		status: 401,
+		schema: {
+			example: {
+				code: '401',
+				message: 'Unauthorized',
+				details: null,
+			} as ErrorResponse<null>,
+		},
+	})
+	@ApiResponse({
+		status: 403,
+		schema: {
+			example: {
+				code: '403',
+				message: `Forbidden resource`,
+				details: null,
+			} as ErrorResponse<null>,
+		},
+	})
+	@Get('users/statics/quantity-customers')
+	@Roles(UserRole.ADMIN)
+	@UseGuards(RolesGuard)
+	async getQuantityCustomersStats(): Promise<object> {
+		return await this.userService.getQuantityCustomersStats();
+	}
+
+	@ApiOperation({
+		summary: 'Get Quantity Facility Owners Statistic',
+		description: `Get quantity facility owners of system).\n\nRoles: ${UserRole.ADMIN}.`,
+	})
+	@ApiResponse({
+		status: 200,
+		schema: {
+			example: {
+				data: {
+					numFacilityOwners: 1,
+				},
+			},
+		},
+	})
+	@ApiResponse({
+		status: 401,
+		schema: {
+			example: {
+				code: '401',
+				message: 'Unauthorized',
+				details: null,
+			} as ErrorResponse<null>,
+		},
+	})
+	@ApiResponse({
+		status: 403,
+		schema: {
+			example: {
+				code: '403',
+				message: `Forbidden resource`,
+				details: null,
+			} as ErrorResponse<null>,
+		},
+	})
+	@Get('users/statics/quantity-owners')
+	@Roles(UserRole.ADMIN)
+	@UseGuards(RolesGuard)
+	async getQuantityFacilityOwnersStats(): Promise<object> {
+		return await this.userService.getQuantityFacilityOwnersStats();
+	}
+
 	@ApiDocsPaginationVer2('user')
 	@ApiOperation({
 		summary: 'Find Many Users',
@@ -573,7 +696,9 @@ export class AdminController {
 		status: 200,
 		schema: {
 			example: {
-				data: 1,
+				data: {
+					numBills: 1,
+				},
 			},
 		},
 	})
@@ -600,7 +725,7 @@ export class AdminController {
 	@Get('bills/statics/quantity')
 	@Roles(UserRole.ADMIN)
 	@UseGuards(RolesGuard)
-	async getQuantityBillsStats() {
+	async getQuantityBillsStats(): Promise<object> {
 		return await this.billService.getQuantityBillsStats();
 	}
 
@@ -664,7 +789,7 @@ export class AdminController {
 	@Get('bills/statics/yearly')
 	@Roles(UserRole.ADMIN)
 	@UseGuards(RolesGuard)
-	async getYearlyBillStats() {
+	async getYearlyBillStats(): Promise<Array<object>> {
 		return await this.billService.getYearlyBillStats();
 	}
 
@@ -728,7 +853,9 @@ export class AdminController {
 	@Get('bills/statics/monthly/:year')
 	@Roles(UserRole.ADMIN)
 	@UseGuards(RolesGuard)
-	async getMonthlyBillStats(@Param('year', ParseIntPipe) year: number) {
+	async getMonthlyBillStats(
+		@Param('year', ParseIntPipe) year: number,
+	): Promise<Array<object>> {
 		return await this.billService.getMonthlyBillStats(year);
 	}
 
