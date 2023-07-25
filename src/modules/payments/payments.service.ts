@@ -122,6 +122,19 @@ export class PaymentsService {
 		const subscription: any = await this.subscriptionService.findOneByID(
 			subscriptionPaymentRequestDto.subscriptionID,
 			userPayload,
+			{
+				path: 'packageID',
+				model: 'Package',
+				populate: {
+					path: 'packageTypeID',
+					model: 'PackageType',
+					populate: {
+						path: 'facilityID',
+						model: 'Facility',
+						select: '-reviews',
+					},
+				},
+			},
 		);
 		const isExpires =
 			await this.subscriptionService.checkDateAndUpdateDateIsExpired(
@@ -276,6 +289,19 @@ export class PaymentsService {
 					const subscription: any = await this.subscriptionService.findOneByID(
 						paymentIntent.metadata.subscriptionID,
 						userPayload,
+						{
+							path: 'packageID',
+							model: 'Package',
+							populate: {
+								path: 'packageTypeID',
+								model: 'PackageType',
+								populate: {
+									path: 'facilityID',
+									model: 'Facility',
+									select: '-reviews',
+								},
+							},
+						},
 					);
 
 					const billItem = await this.billItemService.createOne(
@@ -306,6 +332,19 @@ export class PaymentsService {
 						paymentIntent.metadata.subscriptionID,
 						bill.billItems[0]._id.toString(),
 						userPayload,
+						{
+							path: 'packageID',
+							model: 'Package',
+							populate: {
+								path: 'packageTypeID',
+								model: 'PackageType',
+								populate: {
+									path: 'facilityID',
+									model: 'Facility',
+									select: '-reviews',
+								},
+							},
+						},
 					);
 
 					response.status(HttpStatus.OK).json({

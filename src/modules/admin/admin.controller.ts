@@ -12,6 +12,7 @@ import {
 	UseGuards,
 	UseInterceptors,
 	Req,
+	ParseIntPipe,
 } from '@nestjs/common';
 import {
 	ApiBadRequestResponse,
@@ -25,10 +26,16 @@ import {
 	ApiOperation,
 	ApiParam,
 	ApiQuery,
+	ApiResponse,
 	ApiTags,
 	ApiUnauthorizedResponse,
 } from '@nestjs/swagger';
-import { User, UserRole } from '../users/schemas/user.schema';
+import {
+	Gender,
+	User,
+	UserRole,
+	UserStatus,
+} from '../users/schemas/user.schema';
 import { ApiDocsPagination } from 'src/decorators/swagger-form-data.decorator';
 import {
 	ListOptions,
@@ -65,6 +72,14 @@ import { UpdateStatusFacilityDto } from '../facility/dto/update-status-facility'
 import { FacilityService } from '../facility/facility.service';
 import { Roles } from 'src/decorators/role.decorator';
 import { RolesGuard } from 'src/guards/role.guard';
+import { BillsService } from '../bills/bills.service';
+import { UsersService } from '../users/users.service';
+import { ListResponseV2, QueryObject } from 'src/shared/utils/query-api';
+import { ApiDocsPaginationVer2 } from 'src/decorators/swagger-form-data.decorator-v2';
+import { UserAddress } from '../users/schemas/user-address.schema';
+import { CreateUserDto } from '../users/dto/create-user-dto';
+import { UserAddressDto } from '../users/dto/user-address.dto';
+import { UpdateUserDto } from '../users/dto/update-user-dto';
 
 @ApiBearerAuth()
 @UseGuards(RolesGuard)
@@ -80,7 +95,817 @@ export class AdminController {
 		private readonly holidayService: HolidayService,
 		private readonly attendanceService: AttendanceService,
 		private readonly facilityService: FacilityService,
+		private readonly billService: BillsService,
+		private readonly userService: UsersService,
 	) {}
+	//USERS
+	@ApiOperation({
+		summary: 'Get Quantity Users Statistic',
+		description: `Get quantity users of system (exclude admin account).\n\nRoles: ${UserRole.ADMIN}.`,
+	})
+	@ApiResponse({
+		status: 200,
+		schema: {
+			example: {
+				data: {
+					numUsers: 1,
+				},
+			},
+		},
+	})
+	@ApiResponse({
+		status: 401,
+		schema: {
+			example: {
+				code: '401',
+				message: 'Unauthorized',
+				details: null,
+			} as ErrorResponse<null>,
+		},
+	})
+	@ApiResponse({
+		status: 403,
+		schema: {
+			example: {
+				code: '403',
+				message: `Forbidden resource`,
+				details: null,
+			} as ErrorResponse<null>,
+		},
+	})
+	@Get('users/statics/quantity-users')
+	@Roles(UserRole.ADMIN)
+	@UseGuards(RolesGuard)
+	async getQuantityUsersStats(): Promise<object> {
+		return await this.userService.getQuantityUsersStats();
+	}
+
+	@ApiOperation({
+		summary: 'Get Quantity Customers Statistic',
+		description: `Get quantity customers of system).\n\nRoles: ${UserRole.ADMIN}.`,
+	})
+	@ApiResponse({
+		status: 200,
+		schema: {
+			example: {
+				data: {
+					numberCustomers: 1,
+				},
+			},
+		},
+	})
+	@ApiResponse({
+		status: 401,
+		schema: {
+			example: {
+				code: '401',
+				message: 'Unauthorized',
+				details: null,
+			} as ErrorResponse<null>,
+		},
+	})
+	@ApiResponse({
+		status: 403,
+		schema: {
+			example: {
+				code: '403',
+				message: `Forbidden resource`,
+				details: null,
+			} as ErrorResponse<null>,
+		},
+	})
+	@Get('users/statics/quantity-customers')
+	@Roles(UserRole.ADMIN)
+	@UseGuards(RolesGuard)
+	async getQuantityCustomersStats(): Promise<object> {
+		return await this.userService.getQuantityCustomersStats();
+	}
+
+	@ApiOperation({
+		summary: 'Get Quantity Facility Owners Statistic',
+		description: `Get quantity facility owners of system).\n\nRoles: ${UserRole.ADMIN}.`,
+	})
+	@ApiResponse({
+		status: 200,
+		schema: {
+			example: {
+				data: {
+					numFacilityOwners: 1,
+				},
+			},
+		},
+	})
+	@ApiResponse({
+		status: 401,
+		schema: {
+			example: {
+				code: '401',
+				message: 'Unauthorized',
+				details: null,
+			} as ErrorResponse<null>,
+		},
+	})
+	@ApiResponse({
+		status: 403,
+		schema: {
+			example: {
+				code: '403',
+				message: `Forbidden resource`,
+				details: null,
+			} as ErrorResponse<null>,
+		},
+	})
+	@Get('users/statics/quantity-owners')
+	@Roles(UserRole.ADMIN)
+	@UseGuards(RolesGuard)
+	async getQuantityFacilityOwnersStats(): Promise<object> {
+		return await this.userService.getQuantityFacilityOwnersStats();
+	}
+
+	@ApiDocsPaginationVer2('user')
+	@ApiOperation({
+		summary: 'Find Many Users',
+		description: `Find many users.\n\nRoles: ${UserRole.ADMIN}.`,
+	})
+	@ApiResponse({
+		status: 200,
+		schema: {
+			example: {
+				data: {
+					items: [
+						{
+							_id: 'string',
+							role: UserRole.MEMBER,
+							username: 'member',
+							email: 'member@test.com',
+							password: 'string',
+							displayName: 'Admin user',
+							firstName: 'string',
+							lastName: 'string',
+							gender: Gender.MALE,
+							birthDate: new Date(),
+							tel: '0987654321',
+							address: {
+								province: 'Can Tho',
+								district: 'Ninh Kieu',
+								commune: 'Xuan Khanh',
+							} as unknown as UserAddress,
+							isMember: false,
+							status: UserStatus.ACTIVE,
+							createdAt: new Date(),
+							updatedAt: new Date(),
+						} as User,
+					],
+					total: 1,
+					queryOptions: {
+						sort: 'string',
+						fields: 'string',
+						limit: 10,
+						page: 0,
+					} as QueryObject,
+				} as ListResponseV2<User>,
+			},
+		},
+	})
+	@ApiResponse({
+		status: 400,
+		schema: {
+			example: {
+				code: '400',
+				message: 'Input invalid',
+				details: null,
+			} as ErrorResponse<null>,
+		},
+	})
+	@ApiResponse({
+		status: 401,
+		schema: {
+			example: {
+				code: '401',
+				message: 'Unauthorized',
+				details: null,
+			} as ErrorResponse<null>,
+		},
+	})
+	@ApiResponse({
+		status: 403,
+		schema: {
+			example: {
+				code: '403',
+				message: `Forbidden resource`,
+				details: null,
+			} as ErrorResponse<null>,
+		},
+	})
+	@Get('users')
+	@Roles(UserRole.ADMIN)
+	@UseGuards(RolesGuard)
+	async findManyUsers(
+		@Query() query: QueryObject,
+	): Promise<ListResponseV2<User>> {
+		return await this.userService.findMany(query);
+	}
+
+	@ApiOperation({
+		summary: 'Find User By ID',
+		description: `Get one user by ID.\n\nRoles: ${UserRole.ADMIN}.`,
+	})
+	@ApiParam({ name: 'id', type: String, description: 'User ID' })
+	@ApiOkResponse({
+		schema: {
+			example: {
+				data: {
+					_id: 'string',
+					role: UserRole.MEMBER,
+					username: 'member',
+					email: 'member@test.com',
+					password: 'string',
+					displayName: 'Admin user',
+					firstName: 'string',
+					lastName: 'string',
+					gender: Gender.MALE,
+					birthDate: new Date(),
+					tel: '0987654321',
+					address: {
+						province: 'Can Tho',
+						district: 'Ninh Kieu',
+						commune: 'Xuan Khanh',
+					} as unknown as UserAddress,
+					isMember: false,
+					status: UserStatus.ACTIVE,
+					createdAt: new Date(),
+					updatedAt: new Date(),
+				} as User,
+			},
+		},
+	})
+	@ApiResponse({
+		status: 400,
+		schema: {
+			example: {
+				code: '400',
+				message: 'User not found',
+				details: null,
+			} as ErrorResponse<null>,
+		},
+	})
+	@ApiResponse({
+		status: 401,
+		schema: {
+			example: {
+				code: '401',
+				message: 'Unauthorized',
+				details: null,
+			} as ErrorResponse<null>,
+		},
+	})
+	@ApiResponse({
+		status: 403,
+		schema: {
+			example: {
+				code: '403',
+				message: `Forbidden resource`,
+				details: null,
+			} as ErrorResponse<null>,
+		},
+	})
+	@ApiResponse({
+		status: 404,
+		schema: {
+			example: {
+				code: '404',
+				message: 'Not found document with that ID',
+				details: null,
+			} as ErrorResponse<null>,
+		},
+	})
+	@Get('users/:id')
+	@Roles(UserRole.ADMIN)
+	@UseGuards(RolesGuard)
+	async findUserByID(@Param('id') id: string): Promise<User> {
+		return await this.userService.findOneByID(id);
+	}
+
+	@ApiOperation({
+		summary: 'Create User',
+		description: `Create new user\n\nRoles: ${UserRole.ADMIN}.`,
+	})
+	@ApiBody({
+		type: CreateUserDto,
+		examples: {
+			ADMIN: {
+				summary: 'Admin account',
+				value: {
+					role: UserRole.ADMIN,
+					username: 'admin',
+					email: 'admin@test.com',
+					password: '123123123',
+					displayName: 'Admin User',
+					firstName: 'string',
+					lastName: 'string',
+					gender: Gender.MALE,
+					birthDate: new Date(),
+					tel: '0987654321',
+					address: {
+						province: 'Can Tho',
+						district: 'Ninh Kieu',
+						commune: 'Xuan Khanh',
+					} as UserAddressDto,
+					isMember: false,
+				} as CreateUserDto,
+			},
+			CUSTOMER: {
+				summary: 'Customer account',
+				value: {
+					role: UserRole.MEMBER,
+					username: 'customer1',
+					email: 'customer1@test.com',
+					password: '123123123',
+					displayName: 'Customer User',
+					firstName: 'string',
+					lastName: 'string',
+					gender: Gender.MALE,
+					birthDate: new Date(),
+					tel: '0987654321',
+					address: {
+						province: 'Can Tho',
+						district: 'Ninh Kieu',
+						commune: 'Xuan Khanh',
+					} as UserAddressDto,
+					isMember: false,
+				} as CreateUserDto,
+			},
+			FACILITY_OWNER: {
+				summary: 'Facility owner account',
+				value: {
+					role: UserRole.FACILITY_OWNER,
+					username: 'facility-owner1',
+					email: 'owner1@test.com',
+					password: '123123123',
+					displayName: 'Facility Owner User',
+					firstName: 'string',
+					lastName: 'string',
+					gender: Gender.MALE,
+					birthDate: new Date(),
+					tel: '0987654321',
+					address: {
+						province: 'Can Tho',
+						district: 'Ninh Kieu',
+						commune: 'Xuan Khanh',
+					} as UserAddressDto,
+					isMember: false,
+				} as CreateUserDto,
+			},
+		},
+	})
+	@ApiCreatedResponse({
+		schema: {
+			example: {
+				data: {
+					_id: 'string',
+					role: UserRole.MEMBER,
+					username: 'member',
+					email: 'member@test.com',
+					password: 'string',
+					displayName: 'Admin user',
+					firstName: 'string',
+					lastName: 'string',
+					gender: Gender.MALE,
+					birthDate: new Date(),
+					tel: '0987654321',
+					address: {
+						province: 'Can Tho',
+						district: 'Ninh Kieu',
+						commune: 'Xuan Khanh',
+					} as unknown as UserAddress,
+					status: UserStatus.ACTIVE,
+					createdAt: new Date(),
+					updatedAt: new Date(),
+				} as User,
+			},
+		},
+	})
+	@ApiResponse({
+		status: 400,
+		schema: {
+			example: {
+				code: '400',
+				message: 'Input invalid',
+				details: null,
+			} as ErrorResponse<null>,
+		},
+	})
+	@ApiResponse({
+		status: 401,
+		schema: {
+			example: {
+				code: '401',
+				message: 'Unauthorized',
+				details: null,
+			} as ErrorResponse<null>,
+		},
+	})
+	@ApiResponse({
+		status: 403,
+		schema: {
+			example: {
+				code: '403',
+				message: `Forbidden resource`,
+				details: null,
+			} as ErrorResponse<null>,
+		},
+	})
+	@Post('users')
+	@Roles(UserRole.ADMIN)
+	@UseGuards(RolesGuard)
+	async createUser(@Body() createUserDto: CreateUserDto): Promise<User> {
+		return await this.userService.createOne(createUserDto);
+	}
+
+	@ApiOperation({
+		summary: 'Update User',
+		description: `Update user information.\n\nRoles: ${UserRole.ADMIN}.`,
+	})
+	@ApiParam({ name: 'id', type: String, description: 'User ID' })
+	@ApiBody({
+		type: UpdateUserDto,
+		examples: {
+			example1: {
+				value: {
+					role: UserRole.MEMBER,
+					username: 'member',
+					email: 'member@test.com',
+					displayName: 'Admin user',
+					firstName: 'string',
+					lastName: 'string',
+					gender: Gender.MALE,
+					birthDate: new Date(),
+					tel: '0987654321',
+					address: {
+						province: 'Can Tho',
+						district: 'Ninh Kieu',
+						commune: 'Xuan Khanh',
+					} as unknown as UserAddress,
+					isMember: false,
+					status: UserStatus.ACTIVE,
+				},
+			},
+		},
+	})
+	@ApiOkResponse({
+		schema: {
+			example: {
+				_id: 'string',
+				role: UserRole.MEMBER,
+				username: 'member',
+				email: 'member@test.com',
+				password: 'string',
+				displayName: 'Admin user',
+				firstName: 'string',
+				lastName: 'string',
+				gender: Gender.MALE,
+				birthDate: new Date(),
+				tel: '0987654321',
+				address: {
+					province: 'Can Tho',
+					district: 'Ninh Kieu',
+					commune: 'Xuan Khanh',
+				} as unknown as UserAddress,
+				status: UserStatus.ACTIVE,
+				createdAt: new Date(),
+				updatedAt: new Date(),
+			} as User,
+		},
+	})
+	@ApiResponse({
+		status: 400,
+		schema: {
+			example: {
+				code: '400',
+				message: 'Input invalid',
+				details: null,
+			} as ErrorResponse<null>,
+		},
+	})
+	@ApiResponse({
+		status: 401,
+		schema: {
+			example: {
+				code: '401',
+				message: 'Unauthorized',
+				details: null,
+			} as ErrorResponse<null>,
+		},
+	})
+	@ApiResponse({
+		status: 403,
+		schema: {
+			example: {
+				code: '403',
+				message: `Forbidden resource`,
+				details: null,
+			} as ErrorResponse<null>,
+		},
+	})
+	@ApiResponse({
+		status: 404,
+		schema: {
+			example: {
+				code: '404',
+				message: 'Not found document with that ID',
+				details: null,
+			} as ErrorResponse<null>,
+		},
+	})
+	@Patch('users/:id')
+	@Roles(UserRole.ADMIN)
+	@UseGuards(RolesGuard)
+	async updateUser(
+		@Body() dto: UpdateUserDto,
+		@Param('id') id: string,
+	): Promise<User> {
+		return await this.userService.findOneByIDAndUpdate(id, dto);
+	}
+
+	@ApiOperation({
+		summary: 'Delete User',
+		description: `Delete user by ID.\n\nRoles: ${UserRole.ADMIN}.`,
+	})
+	@ApiParam({ name: 'id', type: String, description: 'User ID' })
+	@ApiResponse({
+		status: 200,
+		schema: {
+			example: {
+				data: true,
+			},
+		},
+	})
+	@ApiResponse({
+		status: 400,
+		schema: {
+			example: {
+				code: '400',
+				message: 'Input invalid',
+				details: null,
+			} as ErrorResponse<null>,
+		},
+	})
+	@ApiResponse({
+		status: 401,
+		schema: {
+			example: {
+				code: '401',
+				message: 'Unauthorized',
+				details: null,
+			} as ErrorResponse<null>,
+		},
+	})
+	@ApiResponse({
+		status: 403,
+		schema: {
+			example: {
+				code: '403',
+				message: `Forbidden resource`,
+				details: null,
+			} as ErrorResponse<null>,
+		},
+	})
+	@ApiResponse({
+		status: 404,
+		schema: {
+			example: {
+				code: '404',
+				message: 'Not found user with that ID',
+				details: null,
+			} as ErrorResponse<null>,
+		},
+	})
+	@Delete('users/:id')
+	@Roles(UserRole.ADMIN)
+	@UseGuards(RolesGuard)
+	async deleteUser(@Param('id') id: string): Promise<boolean> {
+		return await this.userService.deleteOne(id);
+	}
+
+	//BILLS
+	@ApiOperation({
+		summary: 'Get Quantity Bills Statistic',
+		description: `Get quantity bills statistic of system.\n\nRoles: ${UserRole.ADMIN}.`,
+	})
+	@ApiResponse({
+		status: 200,
+		schema: {
+			example: {
+				data: {
+					numBills: 1,
+				},
+			},
+		},
+	})
+	@ApiResponse({
+		status: 401,
+		schema: {
+			example: {
+				code: '401',
+				message: 'Unauthorized',
+				details: null,
+			} as ErrorResponse<null>,
+		},
+	})
+	@ApiResponse({
+		status: 403,
+		schema: {
+			example: {
+				code: '403',
+				message: `Forbidden resource`,
+				details: null,
+			} as ErrorResponse<null>,
+		},
+	})
+	@Get('bills/statics/quantity')
+	@Roles(UserRole.ADMIN)
+	@UseGuards(RolesGuard)
+	async getQuantityBillsStats(): Promise<object> {
+		return await this.billService.getQuantityBillsStats();
+	}
+
+	@ApiOperation({
+		summary: 'Get Yearly Bills Statistic',
+		description: `Get yearly bills statistic of system.\n\nRoles: ${UserRole.ADMIN}.`,
+	})
+	@ApiResponse({
+		status: 200,
+		schema: {
+			example: {
+				data: [
+					{
+						numBills: 7,
+						totalPrice: 3940000,
+						avgTotalPrice: 562857.1428571428,
+						minPrice: 140000,
+						maxPrice: 1830000,
+						year: 2023,
+					},
+					{
+						numBills: 1,
+						totalPrice: 1680000,
+						avgTotalPrice: 1680000,
+						minPrice: 1680000,
+						maxPrice: 1680000,
+						year: 2022,
+					},
+					{
+						numBills: 1,
+						totalPrice: 300000,
+						avgTotalPrice: 300000,
+						minPrice: 300000,
+						maxPrice: 300000,
+						year: 2021,
+					},
+				],
+			},
+		},
+	})
+	@ApiResponse({
+		status: 401,
+		schema: {
+			example: {
+				code: '401',
+				message: 'Unauthorized',
+				details: null,
+			} as ErrorResponse<null>,
+		},
+	})
+	@ApiResponse({
+		status: 403,
+		schema: {
+			example: {
+				code: '403',
+				message: `Forbidden resource`,
+				details: null,
+			} as ErrorResponse<null>,
+		},
+	})
+	@Get('bills/statics/yearly')
+	@Roles(UserRole.ADMIN)
+	@UseGuards(RolesGuard)
+	async getYearlyBillStats(): Promise<Array<object>> {
+		return await this.billService.getYearlyBillStats();
+	}
+
+	@ApiOperation({
+		summary: 'Get Monthly Bills Statistic',
+		description: `Get monthly bills statistic of system.\n\nRoles: ${UserRole.ADMIN}.`,
+	})
+	@ApiResponse({
+		status: 200,
+		schema: {
+			example: {
+				data: [
+					{
+						numBills: 3,
+						totalPrice: 2820000,
+						avgTotalPrice: 940000,
+						minPrice: 150000,
+						maxPrice: 1830000,
+						month: 3,
+					},
+					{
+						numBills: 1,
+						totalPrice: 420000,
+						avgTotalPrice: 420000,
+						minPrice: 420000,
+						maxPrice: 420000,
+						month: 2,
+					},
+					{
+						numBills: 3,
+						totalPrice: 700000,
+						avgTotalPrice: 233333.33333333334,
+						minPrice: 140000,
+						maxPrice: 420000,
+						month: 1,
+					},
+				],
+			},
+		},
+	})
+	@ApiResponse({
+		status: 401,
+		schema: {
+			example: {
+				code: '401',
+				message: 'Unauthorized',
+				details: null,
+			} as ErrorResponse<null>,
+		},
+	})
+	@ApiResponse({
+		status: 403,
+		schema: {
+			example: {
+				code: '403',
+				message: `Forbidden resource`,
+				details: null,
+			} as ErrorResponse<null>,
+		},
+	})
+	@Get('bills/statics/monthly/:year')
+	@Roles(UserRole.ADMIN)
+	@UseGuards(RolesGuard)
+	async getMonthlyBillStats(
+		@Param('year', ParseIntPipe) year: number,
+	): Promise<Array<object>> {
+		return await this.billService.getMonthlyBillStats(year);
+	}
+
+	@ApiOperation({
+		summary: 'Delete Bill',
+		description: `Allow admin to delete one bill.\n\nRoles: ${UserRole.ADMIN}.`,
+	})
+	@ApiParam({ name: 'id', type: String, description: 'Bill ID' })
+	@ApiResponse({
+		status: 200,
+		schema: {
+			example: { data: true },
+		},
+	})
+	@ApiResponse({
+		status: 401,
+		schema: {
+			example: {
+				code: '401',
+				message: 'Unauthorized',
+				details: null,
+			} as ErrorResponse<null>,
+		},
+	})
+	@ApiResponse({
+		status: 403,
+		schema: {
+			example: {
+				code: '403',
+				message: `Forbidden resource`,
+				details: null,
+			} as ErrorResponse<null>,
+		},
+	})
+	@ApiResponse({
+		status: 404,
+		schema: {
+			example: {
+				code: '404',
+				message: 'Not found document with that ID',
+				details: null,
+			} as ErrorResponse<null>,
+		},
+	})
+	@Delete('bills/:id')
+	@Roles(UserRole.ADMIN)
+	@UseGuards(RolesGuard)
+	async deleteBill(@Param('id') id: string): Promise<boolean> {
+		return await this.billService.deleteOneByID(id);
+	}
 
 	//FACILITIES
 	@Patch('facilities/:facilityID/changeStatus')

@@ -160,12 +160,6 @@ export class PackageService {
 	}
 
 	async findPackageWithLowestPrice(facilityID: string): Promise<Package> {
-		// const packages = await this.packageModel
-		// 	.find({ facilityID: facilityID })
-		// 	.sort({ price: 1 })
-		// 	.limit(1);
-		// return packages[0];
-
 		const result = await this.packageModel.aggregate([
 			{ $match: { facilityID: facilityID } },
 			{
@@ -180,8 +174,6 @@ export class PackageService {
 			{ $match: { 'packageType.order': 1 } },
 			{ $unset: 'packageType' },
 		]);
-
-		console.log('results >> ', result);
 
 		return result[0];
 	}
