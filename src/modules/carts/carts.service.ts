@@ -100,7 +100,6 @@ export class CartsService {
 			.populate({ path: 'cartItemIDs' });
 
 		if (!cart) throw new NotFoundException(`Not found current user's cart`);
-		console.log(cart.totalPrice, cartItem.totalPrice);
 
 		cart.totalPrice -= cartItem.totalPrice;
 
@@ -164,7 +163,7 @@ export class CartsService {
 		return true;
 	}
 
-	checkValidCartItemInCurrentCart(cart: Cart, cartItemID: string) {
+	checkValidCartItemInCurrentCart(cart: Cart, cartItemID: string): boolean {
 		let valid = false;
 
 		for (let i = 0; i < cart.cartItemIDs.length; i++) {

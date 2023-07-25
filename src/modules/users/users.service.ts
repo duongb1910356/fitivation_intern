@@ -41,6 +41,30 @@ export class UsersService {
 		});
 	}
 
+	async getQuantityUsersStats(): Promise<object> {
+		const numberUsers = await this.userModel
+			.find({ role: { $ne: UserRole.ADMIN } })
+			.count();
+
+		return { numberUsers };
+	}
+
+	async getQuantityCustomersStats(): Promise<object> {
+		const numberCustomers = await this.userModel
+			.find({ role: UserRole.MEMBER })
+			.count();
+
+		return { numberCustomers };
+	}
+
+	async getQuantityFacilityOwnersStats(): Promise<object> {
+		const numFacilityOwners = await this.userModel
+			.find({ role: UserRole.FACILITY_OWNER })
+			.count();
+
+		return { numFacilityOwners };
+	}
+
 	async updateAvatar(
 		userID: string,
 		file: Express.Multer.File,
