@@ -102,4 +102,54 @@ export const userData = [
 		},
 		__v: 0,
 	},
+	{
+		_id: '64bf407f727a2b58ec30b297',
+		role: 'MEMBER',
+		username: 'customer2',
+		email: 'customer2@test.com',
+		password:
+			'0cc035a08b130b8a5427dc70caa08cc7bab0771ea514baf5ece4814b8f745f8d432b246d9237327e72d64ff49ce2bceb005bc4df114b02ce1d232f7431abfee3.57c3d24af88149b37bd2617e1617f3e5',
+		refreshToken:
+			'957d844df999e49182cda66e4a9e8e33a05f4d48341016dff383b2cbe0292f49073cd2e8155b1f9c2dc6bb2b72d61d06c0477310e8d81de8e7cf284e908b7baf.db443d08d4fd1737c6307adb146a4159',
+		displayName: 'Customer User',
+		status: 'ACTIVE',
+		createdAt: '2023-07-25T03:24:48.006Z',
+		updatedAt: '2023-07-25T03:40:49.295Z',
+		__v: 0,
+		avatar: {
+			createdAt: '2023-07-25T03:40:49.286Z',
+			updatedAt: '2023-07-25T03:40:49.294Z',
+			ownerID: '64bf407f727a2b58ec30b297',
+			name: '1690256448909-298904171.png',
+			imageURL:
+				'https://www.cgv.vn/media/catalog/product/cache/1/image/1800x/71252117777b696995f01934522c402d/a/v/avatar-1615695904-2089-1615696022.jpg',
+			_id: '64bf444162fedba3c375a4cf',
+			__v: 0,
+		},
+	},
+	{
+		_id: '64bf4594f163da5e00c477fd',
+		role: 'MEMBER',
+		username: 'customer3',
+		email: 'customer3@test.com',
+		password:
+			'406898b3e4649543b1791f7d97055c5b03c8926a1493200a7547ece290764d11066d0026f8ac82ec522061341e846cb5e7e24079c6a42e3f2b8c10ec6b514c48.c18fea99de53d9c7834a36dfef41a43a',
+		refreshToken:
+			'b6dd4fabaca82d196a364afa92acbbf833a9d9d8efed870c3b55335408afe928bb3ad37203e9e85a8fb50d82042b4788166895caa22821e7bdcf6846755fa23b.92f005b150020e50ea745a0e671c2417',
+		displayName: 'Customer User',
+		status: 'ACTIVE',
+		createdAt: '2023-07-25T03:46:28.350Z',
+		updatedAt: '2023-07-25T03:46:57.640Z',
+		__v: 0,
+		avatar: {
+			createdAt: '2023-07-25T03:46:57.630Z',
+			updatedAt: '2023-07-25T03:46:57.640Z',
+			ownerID: '64bf4594f163da5e00c477fd',
+			name: '1690256817621-437525057.png',
+			imageURL:
+				'https://assets-prd.ignimgs.com/2022/11/22/avatar-blogroll2-1669090391194.jpg',
+			_id: '64bf45b1f163da5e00c4780a',
+			__v: 0,
+		},
+	},
 ];

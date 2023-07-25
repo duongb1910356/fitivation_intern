@@ -71,6 +71,7 @@ export class AuthController {
 		return this.authService.signup(signupDto);
 	}
 
+	@ApiBearerAuth()
 	@ApiOperation({ summary: 'login', description: 'Allow user login' })
 	@ApiBody({
 		type: LoginDto,
