@@ -1,15 +1,18 @@
 import { Prop, Schema, SchemaFactory } from '@nestjs/mongoose';
-import mongoose from 'mongoose';
+import mongoose, { HydratedDocument } from 'mongoose';
+import { Facility } from 'src/modules/facility/schemas/facility.schema';
 import { BaseObject } from 'src/shared/schemas/base-object.schema';
 
-@Schema()
+export type PackageTypeDocument = HydratedDocument<PackageType>;
+
+@Schema({ timestamps: true })
 export class PackageType extends BaseObject {
 	@Prop({
 		type: mongoose.Schema.Types.ObjectId,
 		ref: 'Facility',
 		required: true,
 	})
-	facilityID: string; //Facility
+	facilityID: Facility;
 
 	@Prop({ type: String, required: true, minlength: 2, maxlength: 50 })
 	name: string;

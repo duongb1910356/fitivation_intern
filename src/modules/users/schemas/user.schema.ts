@@ -2,6 +2,7 @@ import { Prop, Schema, SchemaFactory } from '@nestjs/mongoose';
 import { HydratedDocument } from 'mongoose';
 import { BaseObject } from '../../../shared/schemas/base-object.schema';
 import { UserAddress } from './user-address.schema';
+import { Photo, PhotoSchema } from 'src/modules/photo/schemas/photo.schema';
 
 export type UserDocument = HydratedDocument<User>;
 
@@ -48,35 +49,37 @@ export class User extends BaseObject {
 	@Prop({ required: true, minlength: 6 })
 	password: string;
 
+	@Prop({ default: null, type: String })
+	refreshToken: string;
+
 	@Prop({ required: true, type: String, minlength: 2, maxlength: 20 })
 	displayName: string;
 
-	@Prop({ required: true, type: String, minlength: 2, maxlength: 20 })
-	firstName: string;
+	@Prop({ type: String, minlength: 2, maxlength: 20 })
+	firstName?: string;
 
-	@Prop({ required: true, type: String, minlength: 2, maxlength: 40 })
-	lastName: string;
+	@Prop({ type: String, minlength: 2, maxlength: 40 })
+	lastName?: string;
 
-	@Prop({ required: true, enum: Gender, type: String })
-	gender: Gender;
+	@Prop({ enum: Gender, type: String })
+	gender?: Gender;
 
-	@Prop({ required: true, type: Date })
-	birthDate: Date;
+	@Prop({ type: Date })
+	birthDate?: Date;
 
 	@Prop({
-		required: true,
 		type: String,
 		maxlength: 10,
 		minlength: 8,
 		match: /^\d+$/,
 	})
-	tel: string;
+	tel?: string;
 
 	@Prop({ type: UserAddress })
-	address: UserAddress;
+	address?: UserAddress;
 
-	@Prop({ default: '', type: String })
-	avatar?: string;
+	@Prop({ type: PhotoSchema, required: true, default: {} })
+	avatar?: Photo;
 
 	@Prop({ type: Boolean })
 	isMember?: boolean;

@@ -27,8 +27,8 @@ export enum PromotionStatus {
 
 @Schema({ timestamps: true })
 export class Promotion extends BaseObject {
-	@Prop({ required: true, type: String, maxlength: 12 })
-	targetId: string;
+	@Prop({ type: String })
+	targetID?: string;
 
 	@Prop({ required: true, enum: PromotionType, type: String })
 	type: PromotionType;
@@ -42,14 +42,14 @@ export class Promotion extends BaseObject {
 	@Prop({ type: String, minlength: 2, maxlength: 10 })
 	couponCode?: string;
 
-	@Prop({ required: true, type: Number })
+	@Prop({ required: true, type: Number, min: 0 })
 	value: number;
 
 	@Prop({ required: true, enum: PromotionMethod, type: String })
 	method: PromotionMethod;
 
-	@Prop({ default: 0, type: String })
-	minPriceApply: PromotionMethod;
+	@Prop({ default: 0, type: Number, min: 0 })
+	minPriceApply: number;
 
 	@Prop({ required: true, type: Number, min: 0 })
 	maxValue: number;

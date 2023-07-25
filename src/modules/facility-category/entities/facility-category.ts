@@ -1,21 +1,22 @@
+import { Photo } from './../../photo/schemas/photo.schema';
 import { Prop, Schema, SchemaFactory } from '@nestjs/mongoose';
-import { PackageType } from 'src/modules/package-type/entities/package-type.entity';
+import { HydratedDocument } from 'mongoose';
+import { PhotoSchema } from 'src/modules/photo/schemas/photo.schema';
 import { BaseObject } from 'src/shared/schemas/base-object.schema';
 
-export enum CategoryType {
-	YOGA = 'YOGA',
-	GYM = 'GYM',
-	AEROPIC = 'AEROPIC',
-	SPA = 'SPA',
-}
+export type FacilityCategoryDocument = HydratedDocument<FacilityCategory>;
 
-@Schema()
-export class Package extends BaseObject {
-	@Prop({ type: String, enum: CategoryType, required: true })
-	type: PackageType;
+@Schema({ timestamps: true })
+export class FacilityCategory extends BaseObject {
+	@Prop({ type: String, required: true })
+	type: string;
 
 	@Prop({ type: String, required: true })
 	name: string;
+
+	@Prop({ type: PhotoSchema })
+	photo: Photo;
 }
 
-export const PackageSchema = SchemaFactory.createForClass(Package);
+export const FacilityCategorySchema =
+	SchemaFactory.createForClass(FacilityCategory);

@@ -7,7 +7,7 @@ import { appConfig } from '../../app.config';
 import { User, UserSchema } from '../users/schemas/user.schema';
 import { UsersModule } from '../users/users.module';
 import { AuthService } from './auth.service';
-import { RegisterDto } from './dto/register-dto';
+import { SignupDto } from './dto/signup-dto';
 import { JwtStrategy } from './jwt.strategy';
 
 describe('AuthService', () => {
@@ -38,13 +38,13 @@ describe('AuthService', () => {
 	});
 
 	it('should be register a new account', async () => {
-		const input: RegisterDto = {
+		const input: SignupDto = {
 			email: 'test1@test.com',
 			password: '123123123',
 			displayName: 'Test user',
 		};
 
-		const res = await service.register(input);
+		const res = await service.signup(input);
 
 		expect(res.statusCode).toEqual(HttpStatus.CREATED);
 	});

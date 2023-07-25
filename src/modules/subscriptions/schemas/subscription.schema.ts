@@ -2,8 +2,9 @@ import { Prop, Schema, SchemaFactory } from '@nestjs/mongoose';
 import mongoose, { HydratedDocument } from 'mongoose';
 import { BaseObject } from 'src/shared/schemas/base-object.schema';
 import { User } from 'src/modules/users/schemas/user.schema';
-import { BillItem } from 'src/modules/bills/schemas/bill-item.schema';
+import { BillItem } from 'src/modules/bill-items/schemas/bill-item.schema';
 import { Package } from 'src/modules/package/entities/package.entity';
+import { Facility } from 'src/modules/facility/schemas/facility.schema';
 
 export type SubscriptionDocument = HydratedDocument<Subscription>;
 
@@ -15,17 +16,28 @@ export enum SubscriptionStatus {
 @Schema({ timestamps: true })
 export class Subscription extends BaseObject {
 	@Prop({ required: true, type: mongoose.Schema.Types.ObjectId, ref: 'User' })
-	accountID: User;
+	accountID: string;
 
 	@Prop({
 		required: true,
 		type: mongoose.Schema.Types.ObjectId,
 		ref: 'BillItem',
 	})
-	billItemID: BillItem;
+	billItemID: string;
 
-	@Prop({ type: mongoose.Schema.Types.ObjectId, ref: 'Package' })
-	packageID: Package;
+	@Prop({
+		required: true,
+		type: mongoose.Schema.Types.ObjectId,
+		ref: 'Package',
+	})
+	packageID: string;
+
+	@Prop({
+		required: true,
+		type: mongoose.Schema.Types.ObjectId,
+		ref: 'Facility',
+	})
+	facilityID: string | Facility;
 
 	@Prop({ required: true, type: Date })
 	expires: Date;

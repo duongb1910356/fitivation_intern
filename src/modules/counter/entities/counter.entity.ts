@@ -1,15 +1,17 @@
 import { Prop, Schema, SchemaFactory } from '@nestjs/mongoose';
-import mongoose from 'mongoose';
+import mongoose, { HydratedDocument } from 'mongoose';
 import { BaseObject } from 'src/shared/schemas/base-object.schema';
 
-enum TargetObject {
+export enum TargetObject {
 	FACILITY = 'FACILITY',
 }
-enum CountObject {
+export enum CountObject {
 	PACKAGE_TYPE = 'PACKAGE_TYPE',
 }
 
-@Schema()
+export type CounterDocument = HydratedDocument<Counter>;
+
+@Schema({ timestamps: true })
 export class Counter extends BaseObject {
 	@Prop({ type: String, enum: TargetObject, required: true })
 	targetObject: TargetObject;

@@ -1,6 +1,5 @@
-import { ApiProperty } from '@nestjs/swagger';
 import {
-	IsMongoId,
+	IsNotEmpty,
 	IsNumber,
 	MaxLength,
 	Min,
@@ -8,16 +7,16 @@ import {
 } from 'class-validator';
 
 export class CreatePackageTypeDto {
-	@IsMongoId()
-	facilityID: string;
-
+	@IsNotEmpty()
 	@MinLength(2)
 	@MaxLength(50)
 	name: string;
 
+	@IsNotEmpty()
 	@MinLength(6)
 	description: string;
 
+	@IsNotEmpty()
 	@IsNumber()
 	@Min(0)
 	price: number;

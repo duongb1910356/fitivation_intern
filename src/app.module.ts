@@ -3,7 +3,7 @@ import { APP_FILTER, APP_GUARD, APP_INTERCEPTOR } from '@nestjs/core';
 import { MongooseModule } from '@nestjs/mongoose';
 import { appConfig } from './app.config';
 import { AuthModule } from './modules/auth/auth.module';
-import { JwtAuthGuard } from './modules/auth/jwt-auth.guard';
+import { AccessTokenGuard } from './modules/auth/guards/access-token.guard';
 import { UsersModule } from './modules/users/users.module';
 import { ResponseInterceptor } from './interceptors/response.interceptor';
 import { AppLoggerMiddleware } from './middleware/logging.middleware';
@@ -14,14 +14,26 @@ import { SubscriptionsModule } from './modules/subscriptions/subscriptions.modul
 import { CartsModule } from './modules/carts/carts.module';
 import { FacilityModule } from './modules/facility/facility.module';
 import { AddressModule } from './modules/address/address.module';
-import { Review } from './modules/reviews/schemas/reviews.schema';
 import { PhotoModule } from './modules/photo/photo.module';
 import { PackageTypeModule } from './modules/package-type/package-type.module';
+import { BillItemsModule } from './modules/bill-items/bill-items.module';
+import { CartItemsModule } from './modules/cart-items/cart-items.module';
+import { PackageModule } from './modules/package/package.module';
+import { FacilityCategoryModule } from './modules/facility-category/facility-category.module';
+import { FacilityScheduleModule } from './modules/facility-schedule/facility-schedule.module';
+import { HolidayModule } from './modules/holiday/holiday.module';
+import { AttendanceModule } from './modules/attendance/attendance.module';
+import { CounterModule } from './modules/counter/counter.module';
+import { AdminModule } from './modules/admin/admin.module';
+import { ReviewsModule } from './modules/reviews/reviews.module';
+import { BrandModule } from './modules/brand/brand.module';
+import { PaymentsModule } from './modules/payments/payments.module';
 
 @Module({
 	imports: [
 		// Make it look good and work well
 		MongooseModule.forRoot(appConfig.mongoURI),
+		AdminModule,
 		AuthModule,
 		UsersModule,
 		PromotionsModule,
@@ -31,13 +43,29 @@ import { PackageTypeModule } from './modules/package-type/package-type.module';
 		FacilityModule,
 		AddressModule,
 		PhotoModule,
-		Review,
+		ReviewsModule,
+		BrandModule,
 		PackageTypeModule,
+		BillItemsModule,
+		CartItemsModule,
+		PackageModule,
+		FacilityCategoryModule,
+		FacilityScheduleModule,
+		HolidayModule,
+		AttendanceModule,
+		CounterModule,
+		FacilityScheduleModule,
+		PackageModule,
+		FacilityCategoryModule,
+		HolidayModule,
+		CounterModule,
+		BrandModule,
+		PaymentsModule,
 	],
 	providers: [
 		{
 			provide: APP_GUARD,
-			useClass: JwtAuthGuard,
+			useClass: AccessTokenGuard,
 		},
 		{
 			provide: APP_FILTER,

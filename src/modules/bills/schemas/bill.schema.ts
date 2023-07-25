@@ -1,20 +1,13 @@
 import { Prop, Schema, SchemaFactory } from '@nestjs/mongoose';
 import mongoose, { HydratedDocument } from 'mongoose';
 import { BaseObject } from 'src/shared/schemas/base-object.schema';
-import { User } from 'src/modules/users/schemas/user.schema';
 import {
 	Promotion,
 	PromotionSchema,
 } from 'src/modules/promotions/schemas/promotion.schema';
-import { BillItem } from './bill-item.schema';
+import { BillItem } from '../../bill-items/schemas/bill-item.schema';
 
 export type BillDocument = HydratedDocument<Bill>;
-
-export enum PaymentMethod {
-	DEBIT_CARD = 'DEBIT_CARD',
-	CREDIT_CARD = 'CREDIT_CARD',
-	CASH = 'CASH',
-}
 
 export enum BillStatus {
 	ACTIVE = 'ACTIVE',
@@ -28,17 +21,18 @@ export class Bill extends BaseObject {
 		type: mongoose.Schema.Types.ObjectId,
 		ref: 'User',
 	})
-	accountID: User;
+	accountID: string;
 
-	@Prop({
-		required: true,
-		type: mongoose.Schema.Types.ObjectId,
-		ref: 'BillItem',
-	})
+	@Prop([
+		{
+			required: true,
+			type: BillItem,
+		},
+	])
 	billItems: BillItem[];
 
-	@Prop({ required: true, enum: PaymentMethod, type: String })
-	paymentMethod: PaymentMethod;
+	@Prop({ type: String })
+	paymentMethod?: string;
 
 	@Prop({ type: Number, default: 0, min: 0 })
 	taxes?: number;
@@ -52,7 +46,7 @@ export class Bill extends BaseObject {
 	@Prop({ default: 0, type: Number, min: 0 })
 	promotionPrice: number;
 
-	@Prop({ required: true, type: Number, min: 0 })
+	@Prop({ default: 0, type: Number, min: 0 })
 	totalPrice: number;
 
 	@Prop({ default: BillStatus.ACTIVE, enum: BillStatus, type: String })

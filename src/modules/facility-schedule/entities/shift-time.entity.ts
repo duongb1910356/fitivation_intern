@@ -1,12 +1,12 @@
 import { Prop, Schema, SchemaFactory } from '@nestjs/mongoose';
 
-@Schema()
+@Schema({ _id: false })
 export class ShiftTime {
-	@Prop({ type: Date })
-	startTime: Date;
+	@Prop({ type: String })
+	startTime: string;
 
-	@Prop({ type: Date })
-	endTime: Date;
+	@Prop({ type: String })
+	endTime: string;
 }
 
 export const ShiftTimeSchema = SchemaFactory.createForClass(ShiftTime);

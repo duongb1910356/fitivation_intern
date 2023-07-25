@@ -1,30 +1,32 @@
 import { Prop, Schema, SchemaFactory } from '@nestjs/mongoose';
-import mongoose from 'mongoose';
+import mongoose, { HydratedDocument } from 'mongoose';
 import {
 	OpenTime,
 	OpenTimeSchema,
 } from 'src/modules/facility-schedule/entities/open-time.entity';
+import { Facility } from 'src/modules/facility/schemas/facility.schema';
 import { BaseObject } from 'src/shared/schemas/base-object.schema';
 
-enum ScheduleType {
+export enum ScheduleType {
 	DAILY = 'DAILY',
 	WEEKLY = 'WEEKLY',
 	MONTHLY = 'MONTHLY',
 }
+export type FacilityScheduleDocument = HydratedDocument<FacilitySchedule>;
 
-@Schema()
+@Schema({ timestamps: true })
 export class FacilitySchedule extends BaseObject {
 	@Prop({
 		type: mongoose.Schema.Types.ObjectId,
 		ref: 'Facility',
 		required: true,
 	})
-	facilityID: string; //Faccility
+	facilityID: Facility;
 
 	@Prop({ type: String, enum: ScheduleType, required: true })
 	type: ScheduleType;
 
-	@Prop({ type: [OpenTimeSchema], default: [] })
+	@Prop({ type: [OpenTimeSchema] })
 	openTime: OpenTime[];
 }
 
