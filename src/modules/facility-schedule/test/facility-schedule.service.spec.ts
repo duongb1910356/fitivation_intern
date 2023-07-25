@@ -230,7 +230,7 @@ describe('FacilitySchedule', () => {
 	});
 
 	describe('delete', () => {
-		it('should throw NotFoundException if schedule already exists', async () => {
+		it('should throw NotFoundException if schedule not found', async () => {
 			const scheduleID = scheduleStub._id;
 
 			jest

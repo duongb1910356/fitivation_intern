@@ -122,6 +122,19 @@ export class PaymentsService {
 		const subscription: any = await this.subscriptionService.findOneByID(
 			subscriptionPaymentRequestDto.subscriptionID,
 			userPayload,
+			{
+				path: 'packageID',
+				model: 'Package',
+				populate: {
+					path: 'packageTypeID',
+					model: 'PackageType',
+					populate: {
+						path: 'facilityID',
+						model: 'Facility',
+						select: '-reviews',
+					},
+				},
+			},
 		);
 		const isExpires =
 			await this.subscriptionService.checkDateAndUpdateDateIsExpired(
@@ -172,6 +185,22 @@ export class PaymentsService {
 
 		if (stripeCustomer.data.length === 0)
 			throw new NotFoundException('Customer not found');
+
+		const cart: any = await this.cartService.getCurrent(userID, 'cartItemIDs');
+
+		for (let i = 0; i < paymentRequest.cartItemIDs.length; i++) {
+			let isExistCartItemInCart = false;
+			for (let j = 0; j < cart.cartItemIDs.length; j++) {
+				if (
+					cart.cartItemIDs[j]._id.toString() === paymentRequest.cartItemIDs[i]
+				) {
+					isExistCartItemInCart = true;
+				}
+			}
+			if (!isExistCartItemInCart) {
+				throw new BadRequestException('Cart Item not found in current cart');
+			}
+		}
 
 		const amount = await this.calcAmountListCartItem(
 			paymentRequest.cartItemIDs,
@@ -260,6 +289,19 @@ export class PaymentsService {
 					const subscription: any = await this.subscriptionService.findOneByID(
 						paymentIntent.metadata.subscriptionID,
 						userPayload,
+						{
+							path: 'packageID',
+							model: 'Package',
+							populate: {
+								path: 'packageTypeID',
+								model: 'PackageType',
+								populate: {
+									path: 'facilityID',
+									model: 'Facility',
+									select: '-reviews',
+								},
+							},
+						},
 					);
 
 					const billItem = await this.billItemService.createOne(
@@ -290,6 +332,19 @@ export class PaymentsService {
 						paymentIntent.metadata.subscriptionID,
 						bill.billItems[0]._id.toString(),
 						userPayload,
+						{
+							path: 'packageID',
+							model: 'Package',
+							populate: {
+								path: 'packageTypeID',
+								model: 'PackageType',
+								populate: {
+									path: 'facilityID',
+									model: 'Facility',
+									select: '-reviews',
+								},
+							},
+						},
 					);
 
 					response.status(HttpStatus.OK).json({

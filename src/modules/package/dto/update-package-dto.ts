@@ -1,6 +1,21 @@
-import { PartialType, PickType } from '@nestjs/swagger';
-import { CreatePackageDto } from './create-package-dto';
+import {
+	ArrayMinSize,
+	IsArray,
+	IsNumber,
+	IsOptional,
+	IsString,
+	Min,
+} from 'class-validator';
 
-export class UpdatePackageDto extends PartialType(
-	PickType(CreatePackageDto, ['price', 'benefits']),
-) {}
+export class UpdatePackageDto {
+	@IsOptional()
+	@IsNumber()
+	@Min(0)
+	price?: number;
+
+	@IsOptional()
+	@IsArray()
+	@IsString({ each: true })
+	@ArrayMinSize(1)
+	benefits?: string[];
+}

@@ -7,50 +7,13 @@ import { Cart, CartDocument } from './schemas/cart.schema';
 import { Model } from 'mongoose';
 import { InjectModel } from '@nestjs/mongoose';
 import { CartItemsService } from '../cart-items/cart-items.service';
-import { BillItemsService } from '../bill-items/bill-items.service';
-import { BillsService } from '../bills/bills.service';
-import { SubscriptionsService } from '../subscriptions/subscriptions.service';
-import { PackageService } from '../package/package.service';
-import {
-	ListResponse,
-	QueryAPI,
-	QueryObject,
-} from 'src/shared/utils/query-api';
 
 @Injectable()
 export class CartsService {
 	constructor(
 		@InjectModel(Cart.name) private cartModel: Model<CartDocument>,
 		private cartItemService: CartItemsService,
-		private billItemService: BillItemsService,
-		private billService: BillsService,
-		private subscriptionService: SubscriptionsService,
-		private packageService: PackageService,
 	) {}
-
-	async findMany(query: QueryObject): Promise<ListResponse<Cart>> {
-		const queryFeatures = new QueryAPI(this.cartModel, query)
-			.filter()
-			.sort()
-			.limitfields()
-			.paginate();
-
-		const carts = await queryFeatures.queryModel;
-
-		return {
-			total: carts.length,
-			queryOptions: queryFeatures.queryOptions,
-			items: carts,
-		};
-	}
-
-	async findOneByID(cartID: string): Promise<Cart> {
-		const cart = await this.cartModel.findById(cartID);
-
-		if (!cart) throw new NotFoundException('Not found user with that ID');
-
-		return cart;
-	}
 
 	async createOne(userID: string): Promise<Cart> {
 		const cart = await this.cartModel.create({ accountID: userID });

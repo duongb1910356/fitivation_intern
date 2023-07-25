@@ -99,8 +99,8 @@ describe('PackageTypeService', () => {
 
 			jest.spyOn(packageModel, 'find').mockImplementation(() => ({
 				sort: () => ({
-					limit: () => ({
-						skip: jest.fn().mockResolvedValue([packageStub]),
+					skip: () => ({
+						limit: jest.fn().mockResolvedValue([packageStub]),
 					}),
 				}),
 			}));
@@ -116,7 +116,7 @@ describe('PackageTypeService', () => {
 	});
 
 	describe('findManyByPackageType', () => {
-		it('should return packageType array', async () => {
+		it('should return package array', async () => {
 			const filter: ListOptions<Package> = {
 				limit: 10,
 				offset: 0,
@@ -192,7 +192,7 @@ describe('PackageTypeService', () => {
 	});
 
 	describe('create package', () => {
-		it('should return package', async () => {
+		it('should create and return a package', async () => {
 			const packageTypeID = '6493cd02a6a031e19d380fac';
 			const facilityID = '64931e19d380fac3cd02a6a0';
 			const data: CreatePackageDto = {
@@ -386,7 +386,7 @@ describe('PackageTypeService', () => {
 				packageService.deletePromotion(PackagePromotionStub()._id, req),
 			).rejects.toThrow(ForbiddenException);
 		});
-		it('should return a promotion after updated', async () => {
+		it('should return a promotion after deleted', async () => {
 			const req = {
 				user: { sub: '456456456456456456456456' },
 			};

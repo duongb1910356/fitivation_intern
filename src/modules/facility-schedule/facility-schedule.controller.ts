@@ -96,9 +96,8 @@ export class FacilityScheduleController {
 		return await this.scheduleService.findOneByID(scheduleID, 'facilityID');
 	}
 
-	// @ApiBearerAuth()
-	// @UseGuards(OwnershipScheduleGuard)
-	@Public()
+	@ApiBearerAuth()
+	@UseGuards(OwnershipScheduleGuard)
 	@Patch(':scheduleID')
 	@ApiOperation({
 		summary: 'Update Schedule by scheduleID',
