@@ -7,6 +7,8 @@ import { SubscriptionsModule } from '../subscriptions/subscriptions.module';
 import { CartsModule } from '../carts/carts.module';
 import { CartItemsModule } from '../cart-items/cart-items.module';
 import { UsersModule } from '../users/users.module';
+import { StripeModule } from 'nestjs-stripe';
+import { appConfig } from 'src/app.config';
 
 @Module({
 	imports: [
@@ -16,6 +18,10 @@ import { UsersModule } from '../users/users.module';
 		CartsModule,
 		CartItemsModule,
 		UsersModule,
+		StripeModule.forRoot({
+			apiKey: `${appConfig.stripeSecretKey}`,
+			apiVersion: '2022-11-15',
+		}),
 	],
 	providers: [PaymentsService],
 	controllers: [PaymentsController],
