@@ -23,23 +23,18 @@ import { Encrypt } from 'src/shared/utils/encrypt';
 import { UpdateLoggedUserDataDto } from './dto/update-logged-user-data-dto';
 import { UpdateLoggedUserPasswordDto } from './dto/update-logged-user-password-dto';
 import { CartsService } from '../carts/carts.service';
-import Stripe from 'stripe';
-import { appConfig } from 'src/app.config';
 import { PhotoService } from '../photo/photo.service';
+import Stripe from 'stripe';
+import { InjectStripe } from 'nestjs-stripe';
 
 @Injectable()
 export class UsersService {
-	private stripe: any;
-
 	constructor(
 		@InjectModel(User.name) private userModel: Model<UserDocument>,
+		@InjectStripe() private readonly stripe: Stripe,
 		private cartService: CartsService,
 		private photoService: PhotoService,
-	) {
-		this.stripe = new Stripe(`${appConfig.stripeSecretKey}`, {
-			apiVersion: '2022-11-15',
-		});
-	}
+	) {}
 
 	async getQuantityUsersStats(): Promise<object> {
 		const numberUsers = await this.userModel
