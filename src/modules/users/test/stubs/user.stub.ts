@@ -11,7 +11,7 @@ export const userStub = (): User => {
 		password:
 			'712cf3bceba7e501647e6d1d056658ecb4019d6bd39e3a183dd7df7bd38308f29afde375a51c5d095fc9fb716939bd09324e9c21650152dc67fc7ba55efa5e6b.a7b6621486f7bfb813750da75f150978',
 		refreshToken:
-			'd32ec3cea9686deed0200707b0c6390c2b50f0e5173681f26f105afdf04f1861f64533b8639cce4f850c5a548a826aec7fd73577c82404d020f6bfdc0c9a6267.c101eb08b3cce50cd2c253f56ea29bbd',
+			'15aed3c1397db000512e4b3c8f2283e0beb12635e88cdd39fa34dcc7db576d3984e80c678ec433f69a832b04f0fb86c64ef0adf2cef7fab6b6167bfe99f35a24.7fa13f2369152348ac8012ae17656785',
 		displayName: 'Member user',
 		firstName: 'string',
 		lastName: 'string',
