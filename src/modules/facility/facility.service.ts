@@ -255,6 +255,23 @@ export class FacilityService {
 				{ $match: { _id: objectID } },
 				{
 					$lookup: {
+						from: 'users', // The name of the collection storing users
+						localField: 'reviews.accountID',
+						foreignField: '_id',
+						as: 'userReview',
+						pipeline: [{ $project: { displayName: 1, avatar: 1, role: 1 } }],
+					},
+				},
+				{
+					$lookup: {
+						from: 'users', // The name of the collection storing accounts
+						localField: 'reviews.accountID',
+						foreignField: '_id',
+						as: 'userReviews',
+					},
+				},
+				{
+					$lookup: {
 						from: 'facilitycategories',
 						localField: 'facilityCategoryID',
 						foreignField: '_id',
@@ -269,7 +286,7 @@ export class FacilityService {
 						as: 'schedule',
 					},
 				},
-				{ $unwind: '$schedule' },
+				{ $unwind: { path: '$schedule', preserveNullAndEmptyArrays: true } },
 				{
 					$lookup: {
 						from: 'brands',
@@ -278,45 +295,65 @@ export class FacilityService {
 						as: 'brandID',
 					},
 				},
-				{ $unwind: '$brandID' },
+				{ $unwind: { path: '$brandID', preserveNullAndEmptyArrays: true } },
 				{
 					$lookup: {
-						from: 'packagetypes',
-						let: { facID: '$_id' },
-						pipeline: [
-							{
-								$match: {
-									$expr: {
-										$eq: ['$facilityID', '$$facID'],
-									},
+						from: 'packages',
+						localField: '_id',
+						foreignField: 'facilityID',
+						as: 'packages',
+					},
+				},
+				{
+					$project: {
+						_id: 1,
+						brandID: 1,
+						name: 1,
+						address: 1,
+						fullAddress: 1,
+						summary: 1,
+						description: 1,
+						location: 1,
+						state: 1,
+						photos: 1,
+						schedule: 1,
+						facilityCategoryID: 1,
+						packageTypes: 1,
+						updatedAt: 1,
+						createdAt: 1,
+						packages: 1,
+						averageStar: 1,
+						reviews: {
+							$map: {
+								input: '$reviews',
+								as: 'review',
+								in: {
+									$mergeObjects: [
+										'$$review',
+										{
+											accountID: {
+												$arrayElemAt: [
+													'$userReview',
+													{
+														$indexOfArray: [
+															'$userReview._id',
+															'$$review.accountID',
+														],
+													},
+												],
+											},
+										},
+									],
 								},
 							},
-							{
-								$lookup: {
-									from: 'packages',
-									localField: '_id',
-									foreignField: 'packageTypeID',
-									as: 'packages',
-								},
-							},
-							// {
-							// 	$project: {
-							// 		_id: 1,
-							// 		name: 1,
-							// 		description: 1,
-							// 		price: 1,
-							// 		order: 1,
-							// 		packages: { $arrayElemAt: ['$packages', 0] }, // Lấy một document từ collection packages
-							// 	},
-							// },
-						],
-						as: 'packageTypes',
+						},
 					},
 				},
 			]);
 
 			return facility[0] || null;
 		} catch (error) {
+			console.log('Error: ', error);
 			throw new BadRequestException(
 				'An error occurred while retrieving facility',
 			);
@@ -633,7 +670,7 @@ export class FacilityService {
 					as: 'schedule',
 				},
 			},
-			{ $unwind: '$schedule' },
+			{ $unwind: { path: '$schedule', preserveNullAndEmptyArrays: true } },
 			{
 				$lookup: {
 					from: 'brands',
@@ -642,11 +679,11 @@ export class FacilityService {
 					as: 'brandID',
 				},
 			},
-			{ $unwind: '$brandID' },
+			{ $unwind: { path: '$brandID', preserveNullAndEmptyArrays: true } },
 		);
 
 		if (search != undefined) {
-			const regex = new RegExp(search.split('').join('.*'), 'i');
+			const regex = new RegExp(search.split(' ').join('.*'), 'i');
 			aggregatePipeline.push({
 				$match: {
 					$or: [
@@ -663,7 +700,7 @@ export class FacilityService {
 			facilities.map(async (el) => {
 				const foundPackage =
 					await this.packageService.findPackageWithLowestPrice(el._id);
-				return { ...el, package: foundPackage || {} };
+				return { ...el, package: [foundPackage] || [] };
 			}),
 		);
 
@@ -702,6 +739,16 @@ export class FacilityService {
 		if (longitude == undefined || latitude == undefined) {
 			throw new BadRequestException('Coordinates invalid');
 		}
+
+		if (
+			longitude < -180 ||
+			longitude > 180 ||
+			latitude < -90 ||
+			latitude > 90
+		) {
+			throw new BadRequestException('Coordinates invalid');
+		}
+
 		const facilities = await this.facilityModel.aggregate([
 			{
 				$geoNear: {
@@ -729,9 +776,26 @@ export class FacilityService {
 					from: 'facilitycategories',
 					localField: 'facilityCategoryID',
 					foreignField: '_id',
-					as: 'category',
+					as: 'facilityCategoryID',
 				},
 			},
+			{
+				$lookup: {
+					from: 'brands',
+					localField: 'brandID',
+					foreignField: '_id',
+					as: 'brandID',
+				},
+			},
+			{
+				$lookup: {
+					from: 'facilityschedules',
+					localField: 'schedule',
+					foreignField: '_id',
+					as: 'schedule',
+				},
+			},
+			{ $unwind: '$schedule' },
 		]);
 
 		const result = await Promise.all(

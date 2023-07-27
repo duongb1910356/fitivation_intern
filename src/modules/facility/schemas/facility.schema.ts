@@ -25,20 +25,20 @@ export enum ScheduleType {
 	MONTHLY = 'MONTHLY',
 }
 
-export interface Address {
-	province: {
-		name: string;
-		code: number;
-	};
-	district: {
-		name: string;
-		code: number;
-	};
-	commune: {
-		name: string;
-		code: number;
-	};
-}
+// export interface Address {
+// 	province: {
+// 		name: string;
+// 		code: number;
+// 	};
+// 	district: {
+// 		name: string;
+// 		code: number;
+// 	};
+// 	commune: {
+// 		name: string;
+// 		code: number;
+// 	};
+// }
 
 export type FacilityDocument = HydratedDocument<Facility>;
 

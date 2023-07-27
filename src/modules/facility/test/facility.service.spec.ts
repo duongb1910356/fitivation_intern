@@ -2277,6 +2277,30 @@ describe('FacilityService', function () {
 			expect(result.total).toEqual(1);
 			expect(result.options).toEqual(filter);
 		});
+
+		it('should return empty list facilities based on the provided search filter and sort by price', async () => {
+			const filter = {
+				search: 'none name', // Search keyword
+				sortField: 'price', // Sorting based on distance
+				limit: 10,
+				offset: 0,
+				sortOrder: 'asc' as const,
+			};
+
+			const mockFacility = [];
+
+			const mockPackages = {};
+
+			jest.spyOn(mockModel, 'aggregate').mockResolvedValue([...mockFacility]);
+			jest
+				.spyOn(mockPackageService, 'findPackageWithLowestPrice')
+				.mockResolvedValue(mockPackages);
+
+			const result = await facilityService.search(filter);
+
+			//Lưu ý thứ tự equal vì hiện tại đang test kết quả trả về sắp theo giá
+			expect(result.items).toEqual([]);
+		});
 	});
 
 	describe('getNearestFacilities', () => {
