@@ -255,19 +255,11 @@ export class FacilityService {
 				{ $match: { _id: objectID } },
 				{
 					$lookup: {
-						from: 'users', // The name of the collection storing users
+						from: 'users',
 						localField: 'reviews.accountID',
 						foreignField: '_id',
 						as: 'userReview',
 						pipeline: [{ $project: { displayName: 1, avatar: 1, role: 1 } }],
-					},
-				},
-				{
-					$lookup: {
-						from: 'users', // The name of the collection storing accounts
-						localField: 'reviews.accountID',
-						foreignField: '_id',
-						as: 'userReviews',
 					},
 				},
 				{
@@ -781,28 +773,29 @@ export class FacilityService {
 			},
 			{
 				$lookup: {
-					from: 'brands',
-					localField: 'brandID',
-					foreignField: '_id',
-					as: 'brandID',
-				},
-			},
-			{
-				$lookup: {
 					from: 'facilityschedules',
 					localField: 'schedule',
 					foreignField: '_id',
 					as: 'schedule',
 				},
 			},
-			{ $unwind: '$schedule' },
+			{ $unwind: { path: '$schedule', preserveNullAndEmptyArrays: true } },
+			{
+				$lookup: {
+					from: 'brands',
+					localField: 'brandID',
+					foreignField: '_id',
+					as: 'brandID',
+				},
+			},
+			{ $unwind: { path: '$brandID', preserveNullAndEmptyArrays: true } },
 		]);
 
 		const result = await Promise.all(
 			facilities.map(async (el) => {
 				const foundPackage =
 					await this.packageService.findPackageWithLowestPrice(el._id);
-				return { ...el, package: foundPackage || {} };
+				return { ...el, package: [foundPackage] || null };
 			}),
 		);
 

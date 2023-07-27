@@ -748,6 +748,19 @@ describe('FacilityService', function () {
 						},
 					],
 				},
+				packages: [
+					{
+						_id: '649dd2e7e895344f72e91c41',
+						packageTypeID: '6476ef7d1f0419cd330fe681',
+						facilityID: '649d344f72e91c40d2e7e895',
+						type: '1',
+						price: 140000,
+						benefits: ['Use of bathroom'],
+						__v: 0,
+						createdAt: '2023-07-27T03:33:46.089Z',
+						updatedAt: '2023-07-27T03:33:46.089Z',
+					},
+				],
 			} as unknown as Facility;
 
 			jest.spyOn(mockModel, 'aggregate').mockResolvedValue([mockFacility]);
@@ -757,6 +770,15 @@ describe('FacilityService', function () {
 			expect(mockModel.aggregate).toHaveBeenCalledWith([
 				{
 					$match: { _id: objectID },
+				},
+				{
+					$lookup: {
+						from: 'users',
+						localField: 'reviews.accountID',
+						foreignField: '_id',
+						as: 'userReview',
+						pipeline: [{ $project: { displayName: 1, avatar: 1, role: 1 } }],
+					},
 				},
 				{
 					$lookup: {
@@ -774,7 +796,7 @@ describe('FacilityService', function () {
 						as: 'schedule',
 					},
 				},
-				{ $unwind: '$schedule' },
+				{ $unwind: { path: '$schedule', preserveNullAndEmptyArrays: true } },
 				{
 					$lookup: {
 						from: 'brands',
@@ -783,30 +805,58 @@ describe('FacilityService', function () {
 						as: 'brandID',
 					},
 				},
-				{ $unwind: '$brandID' },
+				{ $unwind: { path: '$brandID', preserveNullAndEmptyArrays: true } },
 				{
 					$lookup: {
-						from: 'packagetypes',
-						let: { facID: '$_id' },
-						pipeline: [
-							{
-								$match: {
-									$expr: {
-										$eq: ['$facilityID', '$$facID'],
-									},
+						from: 'packages',
+						localField: '_id',
+						foreignField: 'facilityID',
+						as: 'packages',
+					},
+				},
+				{
+					$project: {
+						_id: 1,
+						brandID: 1,
+						name: 1,
+						address: 1,
+						fullAddress: 1,
+						summary: 1,
+						description: 1,
+						location: 1,
+						state: 1,
+						photos: 1,
+						schedule: 1,
+						facilityCategoryID: 1,
+						packageTypes: 1,
+						updatedAt: 1,
+						createdAt: 1,
+						packages: 1,
+						averageStar: 1,
+						reviews: {
+							$map: {
+								input: '$reviews',
+								as: 'review',
+								in: {
+									$mergeObjects: [
+										'$$review',
+										{
+											accountID: {
+												$arrayElemAt: [
+													'$userReview',
+													{
+														$indexOfArray: [
+															'$userReview._id',
+															'$$review.accountID',
+														],
+													},
+												],
+											},
+										},
+									],
 								},
 							},
-							{
-								$lookup: {
-									from: 'packages',
-									localField: '_id',
-									foreignField: 'packageTypeID',
-									as: 'packages',
-								},
-							},
-							// Add additional pipeline stages here if needed...
-						],
-						as: 'packageTypes',
+						},
 					},
 				},
 			]);
@@ -826,6 +876,15 @@ describe('FacilityService', function () {
 				},
 				{
 					$lookup: {
+						from: 'users',
+						localField: 'reviews.accountID',
+						foreignField: '_id',
+						as: 'userReview',
+						pipeline: [{ $project: { displayName: 1, avatar: 1, role: 1 } }],
+					},
+				},
+				{
+					$lookup: {
 						from: 'facilitycategories',
 						localField: 'facilityCategoryID',
 						foreignField: '_id',
@@ -840,7 +899,7 @@ describe('FacilityService', function () {
 						as: 'schedule',
 					},
 				},
-				{ $unwind: '$schedule' },
+				{ $unwind: { path: '$schedule', preserveNullAndEmptyArrays: true } },
 				{
 					$lookup: {
 						from: 'brands',
@@ -849,29 +908,58 @@ describe('FacilityService', function () {
 						as: 'brandID',
 					},
 				},
-				{ $unwind: '$brandID' },
+				{ $unwind: { path: '$brandID', preserveNullAndEmptyArrays: true } },
 				{
 					$lookup: {
-						from: 'packagetypes',
-						let: { facID: '$_id' },
-						pipeline: [
-							{
-								$match: {
-									$expr: {
-										$eq: ['$facilityID', '$$facID'],
-									},
+						from: 'packages',
+						localField: '_id',
+						foreignField: 'facilityID',
+						as: 'packages',
+					},
+				},
+				{
+					$project: {
+						_id: 1,
+						brandID: 1,
+						name: 1,
+						address: 1,
+						fullAddress: 1,
+						summary: 1,
+						description: 1,
+						location: 1,
+						state: 1,
+						photos: 1,
+						schedule: 1,
+						facilityCategoryID: 1,
+						packageTypes: 1,
+						updatedAt: 1,
+						createdAt: 1,
+						packages: 1,
+						averageStar: 1,
+						reviews: {
+							$map: {
+								input: '$reviews',
+								as: 'review',
+								in: {
+									$mergeObjects: [
+										'$$review',
+										{
+											accountID: {
+												$arrayElemAt: [
+													'$userReview',
+													{
+														$indexOfArray: [
+															'$userReview._id',
+															'$$review.accountID',
+														],
+													},
+												],
+											},
+										},
+									],
 								},
 							},
-							{
-								$lookup: {
-									from: 'packages',
-									localField: '_id',
-									foreignField: 'packageTypeID',
-									as: 'packages',
-								},
-							},
-						],
-						as: 'packageTypes',
+						},
 					},
 				},
 			]);
@@ -1552,12 +1640,12 @@ describe('FacilityService', function () {
 			const mockFacility = [
 				{
 					_id: '649d3a0d72e91c40d2e7e941',
-					createdAt: '2023-06-29T08:00:13.372Z',
-					updatedAt: '2023-06-29T08:00:45.561Z',
+					createdAt: '2023-06-29T07:35:43.345Z',
+					updatedAt: '2023-06-29T07:36:49.766Z',
 					brandID: {
 						_id: '64944c7c2d7cf0ec0dbb4051',
-						createdAt: '2023-07-21T03:03:13.891Z',
-						updatedAt: '2023-07-21T03:03:13.891Z',
+						createdAt: '2023-07-27T03:33:45.966Z',
+						updatedAt: '2023-07-27T03:33:45.966Z',
 						name: 'TheHinhOnline 1',
 						accountID: '649a9a4e631a79b49393bd7a',
 						__v: 0,
@@ -1574,65 +1662,82 @@ describe('FacilityService', function () {
 								name: '1688542246151-209197963.png',
 								imageURL:
 									'https://cdn.discordapp.com/attachments/830416545594998844/1126074372831072266/yoga1_1.jpg',
-								_id: '64b9f571abc1193dd5635ed3',
-								createdAt: '2023-07-21T03:03:13.941Z',
-								updatedAt: '2023-07-21T03:03:13.941Z',
+								_id: '64c1e59ac7ca1ad7510583a5',
+								createdAt: '2023-07-27T03:33:46.038Z',
+								updatedAt: '2023-07-27T03:33:46.038Z',
+							},
+							__v: 0,
+						},
+						{
+							_id: '649d3f7372e91c40d2e7e9dc',
+							createdAt: '2023-06-29T08:23:15.993Z',
+							updatedAt: '2023-06-29T08:23:15.993Z',
+							type: 'BOXING',
+							name: 'BOXING',
+							photo: {
+								ownerID: '64a51c26ecf458661fbbff78',
+								name: '1688542246151-209197963.png',
+								imageURL:
+									'https://cdn.discordapp.com/attachments/830416545594998844/1126074373636378734/boxing1_1.jpg',
+								_id: '64c1e59ac7ca1ad7510583ab',
+								createdAt: '2023-07-27T03:33:46.039Z',
+								updatedAt: '2023-07-27T03:33:46.039Z',
 							},
 							__v: 0,
 						},
 					],
 					ownerID: '6497c6807a114f5b35a393fd',
-					name: 'California Fitness & Yoga Cần Thơ',
+					name: 'Gym Thái Sơn',
 					address: {
-						street: 'Vincom 209 đường 30/4',
-						commune: 'Xuân Khánh',
+						street: '54 Hùng Vương',
+						commune: 'An Hội',
 						communeCode: '066',
 						district: 'Ninh Kiều',
 						districtCode: '067',
 						province: 'Cần Thơ',
 						provinceCode: '065',
 					},
-					fullAddress: 'Xuân Khánh, Ninh Kiều, Cần Thơ',
+					fullAddress: 'An Hội, Ninh Kiều, Cần Thơ',
 					summary: 'Chất lượng là danh dự',
 					description:
 						"Lorem Ipsum is simply dummy text of the printing and typesetting industry. Lorem Ipsum has been the industry's standard dummy text ever since the 1500s, when an unknown printer took a galley of type and scrambled it to make a type specimen book",
 					coordinates: [],
 					location: {
-						coordinates: [105.77291088739058, 10.027851057940572],
+						coordinates: [105.77827419395031, 10.044071865857335],
 						type: 'Point',
 					},
 					state: 'ACTIVE',
 					status: 'APPROVED',
-					phone: '842927302999',
+					phone: '84906943567',
 					photos: [
 						{
-							createdAt: '2023-06-29T08:00:27.699Z',
-							updatedAt: '2023-06-29T08:00:27.699Z',
-							ownerID: '649d3a0d72e91c40d2e7e946',
-							name: '1688025627677-173643808.jpeg',
+							createdAt: '2023-06-29T07:36:22.758Z',
+							updatedAt: '2023-06-29T07:36:22.758Z',
+							ownerID: '649d344f72e91c40d2e7e895',
+							name: '1688024182737-366333986.jpeg',
 							imageURL:
-								'https://hdfitness.vn/wp-content/uploads/2023/04/an-khuya-khi-tap-gym-1-min-1-scaled.jpg',
-							_id: '649d3a1b72e91c40d2e7e94d',
+								'https://hdfitness.vn/wp-content/uploads/2022/02/tap-gym-la-gi-5-min-scaled.jpg',
+							_id: '649d347672e91c40d2e7e89c',
 							__v: 0,
 						},
 					],
 					reviews: [
 						{
 							accountID: '649a8f8ab185ffb672485391',
-							facilityID: '649d3a0d72e91c40d2e7e946',
-							rating: 4,
-							comment: '807upxdg7pm',
+							facilityID: '649d344f72e91c40d2e7e895',
+							rating: 2,
+							comment: 'ct7gxfhw8p8',
 							photos: [],
-							_id: '649d3a2a72e91c40d2e7e95c',
+							_id: '649d348d72e91c40d2e7e8b6',
 							__v: 0,
 						},
 					],
 					schedule: {
-						_id: '64b0cd9f9fe7ffe0a6c20390',
+						_id: '64b4aff0f4f2b881b96475ea',
 						createdAt: '2023-06-29T08:23:34.856Z',
 						updatedAt: '2023-06-29T08:23:34.856Z',
-						facilityID: '649d3a0d72e91c40d2e7e946',
-						type: 'WEEKLY',
+						facilityID: '649d344f72e91c40d2e7e895',
+						type: 'DAILY',
 						openTime: [
 							{
 								shift: [
@@ -1645,74 +1750,34 @@ describe('FacilityService', function () {
 										endTime: '19:00',
 									},
 								],
-								dayOfWeek: 'MONDAY',
-							},
-							{
-								shift: [
-									{
-										startTime: '06:00',
-										endTime: '12:00',
-									},
-									{
-										startTime: '13:00',
-										endTime: '19:00',
-									},
-								],
-								dayOfWeek: 'TUESDAY',
-							},
-							{
-								shift: [
-									{
-										startTime: '06:00',
-										endTime: '12:00',
-									},
-									{
-										startTime: '13:00',
-										endTime: '19:00',
-									},
-								],
-								dayOfWeek: 'WEDNESDAY',
-							},
-							{
-								shift: [
-									{
-										startTime: '06:00',
-										endTime: '12:00',
-									},
-									{
-										startTime: '13:00',
-										endTime: '19:00',
-									},
-								],
-								dayOfWeek: 'THURSDAY',
-							},
-							{
-								shift: [
-									{
-										startTime: '06:00',
-										endTime: '12:00',
-									},
-									{
-										startTime: '13:00',
-										endTime: '19:00',
-									},
-								],
-								dayOfWeek: 'FRIDAY',
 							},
 						],
 						__v: 0,
 					},
 					__v: 0,
-					distance: 0,
+					distance: 1898.977173018055,
+					// package: [
+					// 	{
+					// 		_id: '649dd2e7e895344f72e91c46',
+					// 		packageTypeID: '6476ef7d1f0419cd330fe682',
+					// 		facilityID: '649d344f72e91c40d2e7e895',
+					// 		type: '1',
+					// 		price: 150000,
+					// 		benefits: ['Use of bathroom'],
+					// 		__v: 0,
+					// 		createdAt: '2023-07-27T03:33:46.089Z',
+					// 		updatedAt: '2023-07-27T03:33:46.089Z',
+					// 	},
+					// ],
 				},
 				{
 					_id: '649d3a0d72e91c40d2e7e942',
-					createdAt: '2023-06-29T08:00:13.372Z',
-					updatedAt: '2023-06-29T08:00:45.561Z',
+					createdAt: '2023-06-29T07:35:43.345Z',
+					updatedAt: '2023-06-29T07:36:49.766Z',
 					brandID: {
 						_id: '64944c7c2d7cf0ec0dbb4051',
-						createdAt: '2023-07-21T03:03:13.891Z',
-						updatedAt: '2023-07-21T03:03:13.891Z',
+						createdAt: '2023-07-27T03:33:45.966Z',
+						updatedAt: '2023-07-27T03:33:45.966Z',
 						name: 'TheHinhOnline 1',
 						accountID: '649a9a4e631a79b49393bd7a',
 						__v: 0,
@@ -1729,65 +1794,82 @@ describe('FacilityService', function () {
 								name: '1688542246151-209197963.png',
 								imageURL:
 									'https://cdn.discordapp.com/attachments/830416545594998844/1126074372831072266/yoga1_1.jpg',
-								_id: '64b9f571abc1193dd5635ed3',
-								createdAt: '2023-07-21T03:03:13.941Z',
-								updatedAt: '2023-07-21T03:03:13.941Z',
+								_id: '64c1e59ac7ca1ad7510583a5',
+								createdAt: '2023-07-27T03:33:46.038Z',
+								updatedAt: '2023-07-27T03:33:46.038Z',
+							},
+							__v: 0,
+						},
+						{
+							_id: '649d3f7372e91c40d2e7e9dc',
+							createdAt: '2023-06-29T08:23:15.993Z',
+							updatedAt: '2023-06-29T08:23:15.993Z',
+							type: 'BOXING',
+							name: 'BOXING',
+							photo: {
+								ownerID: '64a51c26ecf458661fbbff78',
+								name: '1688542246151-209197963.png',
+								imageURL:
+									'https://cdn.discordapp.com/attachments/830416545594998844/1126074373636378734/boxing1_1.jpg',
+								_id: '64c1e59ac7ca1ad7510583ab',
+								createdAt: '2023-07-27T03:33:46.039Z',
+								updatedAt: '2023-07-27T03:33:46.039Z',
 							},
 							__v: 0,
 						},
 					],
 					ownerID: '6497c6807a114f5b35a393fd',
-					name: 'California Fitness & Yoga Cần Thơ',
+					name: 'Gym Thái Sơn',
 					address: {
-						street: 'Vincom 209 đường 30/4',
-						commune: 'Xuân Khánh',
+						street: '54 Hùng Vương',
+						commune: 'An Hội',
 						communeCode: '066',
 						district: 'Ninh Kiều',
 						districtCode: '067',
 						province: 'Cần Thơ',
 						provinceCode: '065',
 					},
-					fullAddress: 'Xuân Khánh, Ninh Kiều, Cần Thơ',
+					fullAddress: 'An Hội, Ninh Kiều, Cần Thơ',
 					summary: 'Chất lượng là danh dự',
 					description:
 						"Lorem Ipsum is simply dummy text of the printing and typesetting industry. Lorem Ipsum has been the industry's standard dummy text ever since the 1500s, when an unknown printer took a galley of type and scrambled it to make a type specimen book",
 					coordinates: [],
 					location: {
-						coordinates: [105.77291088739058, 10.027851057940572],
+						coordinates: [105.77827419395031, 10.044071865857335],
 						type: 'Point',
 					},
 					state: 'ACTIVE',
 					status: 'APPROVED',
-					phone: '842927302999',
+					phone: '84906943567',
 					photos: [
 						{
-							createdAt: '2023-06-29T08:00:27.699Z',
-							updatedAt: '2023-06-29T08:00:27.699Z',
-							ownerID: '649d3a0d72e91c40d2e7e946',
-							name: '1688025627677-173643808.jpeg',
+							createdAt: '2023-06-29T07:36:22.758Z',
+							updatedAt: '2023-06-29T07:36:22.758Z',
+							ownerID: '649d344f72e91c40d2e7e895',
+							name: '1688024182737-366333986.jpeg',
 							imageURL:
-								'https://hdfitness.vn/wp-content/uploads/2023/04/an-khuya-khi-tap-gym-1-min-1-scaled.jpg',
-							_id: '649d3a1b72e91c40d2e7e94d',
+								'https://hdfitness.vn/wp-content/uploads/2022/02/tap-gym-la-gi-5-min-scaled.jpg',
+							_id: '649d347672e91c40d2e7e89c',
 							__v: 0,
 						},
 					],
 					reviews: [
 						{
 							accountID: '649a8f8ab185ffb672485391',
-							facilityID: '649d3a0d72e91c40d2e7e946',
-							rating: 4,
-							comment: '807upxdg7pm',
+							facilityID: '649d344f72e91c40d2e7e895',
+							rating: 2,
+							comment: 'ct7gxfhw8p8',
 							photos: [],
-							_id: '649d3a2a72e91c40d2e7e95c',
+							_id: '649d348d72e91c40d2e7e8b6',
 							__v: 0,
 						},
 					],
 					schedule: {
-						_id: '64b0cd9f9fe7ffe0a6c20390',
+						_id: '64b4aff0f4f2b881b96475ea',
 						createdAt: '2023-06-29T08:23:34.856Z',
 						updatedAt: '2023-06-29T08:23:34.856Z',
-						facilityID: '649d3a0d72e91c40d2e7e946',
-						type: 'WEEKLY',
+						facilityID: '649d344f72e91c40d2e7e895',
+						type: 'DAILY',
 						openTime: [
 							{
 								shift: [
@@ -1800,65 +1882,25 @@ describe('FacilityService', function () {
 										endTime: '19:00',
 									},
 								],
-								dayOfWeek: 'MONDAY',
-							},
-							{
-								shift: [
-									{
-										startTime: '06:00',
-										endTime: '12:00',
-									},
-									{
-										startTime: '13:00',
-										endTime: '19:00',
-									},
-								],
-								dayOfWeek: 'TUESDAY',
-							},
-							{
-								shift: [
-									{
-										startTime: '06:00',
-										endTime: '12:00',
-									},
-									{
-										startTime: '13:00',
-										endTime: '19:00',
-									},
-								],
-								dayOfWeek: 'WEDNESDAY',
-							},
-							{
-								shift: [
-									{
-										startTime: '06:00',
-										endTime: '12:00',
-									},
-									{
-										startTime: '13:00',
-										endTime: '19:00',
-									},
-								],
-								dayOfWeek: 'THURSDAY',
-							},
-							{
-								shift: [
-									{
-										startTime: '06:00',
-										endTime: '12:00',
-									},
-									{
-										startTime: '13:00',
-										endTime: '19:00',
-									},
-								],
-								dayOfWeek: 'FRIDAY',
 							},
 						],
 						__v: 0,
 					},
 					__v: 0,
-					distance: 0,
+					distance: 1898.977173018055,
+					// package: [
+					// 	{
+					// 		_id: '649dd2e7e895344f72e91c46',
+					// 		packageTypeID: '6476ef7d1f0419cd330fe682',
+					// 		facilityID: '649d344f72e91c40d2e7e895',
+					// 		type: '1',
+					// 		price: 150000,
+					// 		benefits: ['Use of bathroom'],
+					// 		__v: 0,
+					// 		createdAt: '2023-07-27T03:33:46.089Z',
+					// 		updatedAt: '2023-07-27T03:33:46.089Z',
+					// 	},
+					// ],
 				},
 			];
 
@@ -1902,8 +1944,8 @@ describe('FacilityService', function () {
 
 			//Lưu ý thứ tự equal vì hiện tại đang test kết quả trả về sắp theo giá
 			expect(result.items).toEqual([
-				{ ...mockFacility[1], package: { ...mockPackages[1] } },
-				{ ...mockFacility[0], package: { ...mockPackages[0] } },
+				{ ...mockFacility[0], package: [mockPackages[0]] },
+				{ ...mockFacility[1], package: [mockPackages[1]] },
 			]);
 		});
 
@@ -1921,12 +1963,12 @@ describe('FacilityService', function () {
 			const mockFacility = [
 				{
 					_id: '649d3a0d72e91c40d2e7e941',
-					createdAt: '2023-06-29T08:00:13.372Z',
-					updatedAt: '2023-06-29T08:00:45.561Z',
+					createdAt: '2023-06-29T07:35:43.345Z',
+					updatedAt: '2023-06-29T07:36:49.766Z',
 					brandID: {
 						_id: '64944c7c2d7cf0ec0dbb4051',
-						createdAt: '2023-07-21T03:03:13.891Z',
-						updatedAt: '2023-07-21T03:03:13.891Z',
+						createdAt: '2023-07-27T03:33:45.966Z',
+						updatedAt: '2023-07-27T03:33:45.966Z',
 						name: 'TheHinhOnline 1',
 						accountID: '649a9a4e631a79b49393bd7a',
 						__v: 0,
@@ -1943,65 +1985,82 @@ describe('FacilityService', function () {
 								name: '1688542246151-209197963.png',
 								imageURL:
 									'https://cdn.discordapp.com/attachments/830416545594998844/1126074372831072266/yoga1_1.jpg',
-								_id: '64b9f571abc1193dd5635ed3',
-								createdAt: '2023-07-21T03:03:13.941Z',
-								updatedAt: '2023-07-21T03:03:13.941Z',
+								_id: '64c1e59ac7ca1ad7510583a5',
+								createdAt: '2023-07-27T03:33:46.038Z',
+								updatedAt: '2023-07-27T03:33:46.038Z',
+							},
+							__v: 0,
+						},
+						{
+							_id: '649d3f7372e91c40d2e7e9dc',
+							createdAt: '2023-06-29T08:23:15.993Z',
+							updatedAt: '2023-06-29T08:23:15.993Z',
+							type: 'BOXING',
+							name: 'BOXING',
+							photo: {
+								ownerID: '64a51c26ecf458661fbbff78',
+								name: '1688542246151-209197963.png',
+								imageURL:
+									'https://cdn.discordapp.com/attachments/830416545594998844/1126074373636378734/boxing1_1.jpg',
+								_id: '64c1e59ac7ca1ad7510583ab',
+								createdAt: '2023-07-27T03:33:46.039Z',
+								updatedAt: '2023-07-27T03:33:46.039Z',
 							},
 							__v: 0,
 						},
 					],
 					ownerID: '6497c6807a114f5b35a393fd',
-					name: 'California Fitness & Yoga Cần Thơ',
+					name: 'Gym Thái Sơn',
 					address: {
-						street: 'Vincom 209 đường 30/4',
-						commune: 'Xuân Khánh',
+						street: '54 Hùng Vương',
+						commune: 'An Hội',
 						communeCode: '066',
 						district: 'Ninh Kiều',
 						districtCode: '067',
 						province: 'Cần Thơ',
 						provinceCode: '065',
 					},
-					fullAddress: 'Xuân Khánh, Ninh Kiều, Cần Thơ',
+					fullAddress: 'An Hội, Ninh Kiều, Cần Thơ',
 					summary: 'Chất lượng là danh dự',
 					description:
 						"Lorem Ipsum is simply dummy text of the printing and typesetting industry. Lorem Ipsum has been the industry's standard dummy text ever since the 1500s, when an unknown printer took a galley of type and scrambled it to make a type specimen book",
 					coordinates: [],
 					location: {
-						coordinates: [105.77291088739058, 10.027851057940572],
+						coordinates: [105.77827419395031, 10.044071865857335],
 						type: 'Point',
 					},
 					state: 'ACTIVE',
 					status: 'APPROVED',
-					phone: '842927302999',
+					phone: '84906943567',
 					photos: [
 						{
-							createdAt: '2023-06-29T08:00:27.699Z',
-							updatedAt: '2023-06-29T08:00:27.699Z',
-							ownerID: '649d3a0d72e91c40d2e7e946',
-							name: '1688025627677-173643808.jpeg',
+							createdAt: '2023-06-29T07:36:22.758Z',
+							updatedAt: '2023-06-29T07:36:22.758Z',
+							ownerID: '649d344f72e91c40d2e7e895',
+							name: '1688024182737-366333986.jpeg',
 							imageURL:
-								'https://hdfitness.vn/wp-content/uploads/2023/04/an-khuya-khi-tap-gym-1-min-1-scaled.jpg',
-							_id: '649d3a1b72e91c40d2e7e94d',
+								'https://hdfitness.vn/wp-content/uploads/2022/02/tap-gym-la-gi-5-min-scaled.jpg',
+							_id: '649d347672e91c40d2e7e89c',
 							__v: 0,
 						},
 					],
 					reviews: [
 						{
 							accountID: '649a8f8ab185ffb672485391',
-							facilityID: '649d3a0d72e91c40d2e7e946',
-							rating: 4,
-							comment: '807upxdg7pm',
+							facilityID: '649d344f72e91c40d2e7e895',
+							rating: 2,
+							comment: 'ct7gxfhw8p8',
 							photos: [],
-							_id: '649d3a2a72e91c40d2e7e95c',
+							_id: '649d348d72e91c40d2e7e8b6',
 							__v: 0,
 						},
 					],
 					schedule: {
-						_id: '64b0cd9f9fe7ffe0a6c20390',
+						_id: '64b4aff0f4f2b881b96475ea',
 						createdAt: '2023-06-29T08:23:34.856Z',
 						updatedAt: '2023-06-29T08:23:34.856Z',
-						facilityID: '649d3a0d72e91c40d2e7e946',
-						type: 'WEEKLY',
+						facilityID: '649d344f72e91c40d2e7e895',
+						type: 'DAILY',
 						openTime: [
 							{
 								shift: [
@@ -2014,74 +2073,34 @@ describe('FacilityService', function () {
 										endTime: '19:00',
 									},
 								],
-								dayOfWeek: 'MONDAY',
-							},
-							{
-								shift: [
-									{
-										startTime: '06:00',
-										endTime: '12:00',
-									},
-									{
-										startTime: '13:00',
-										endTime: '19:00',
-									},
-								],
-								dayOfWeek: 'TUESDAY',
-							},
-							{
-								shift: [
-									{
-										startTime: '06:00',
-										endTime: '12:00',
-									},
-									{
-										startTime: '13:00',
-										endTime: '19:00',
-									},
-								],
-								dayOfWeek: 'WEDNESDAY',
-							},
-							{
-								shift: [
-									{
-										startTime: '06:00',
-										endTime: '12:00',
-									},
-									{
-										startTime: '13:00',
-										endTime: '19:00',
-									},
-								],
-								dayOfWeek: 'THURSDAY',
-							},
-							{
-								shift: [
-									{
-										startTime: '06:00',
-										endTime: '12:00',
-									},
-									{
-										startTime: '13:00',
-										endTime: '19:00',
-									},
-								],
-								dayOfWeek: 'FRIDAY',
 							},
 						],
 						__v: 0,
 					},
 					__v: 0,
-					distance: 10,
+					distance: 1898.977173018055,
+					// package: [
+					// 	{
+					// 		_id: '649dd2e7e895344f72e91c46',
+					// 		packageTypeID: '6476ef7d1f0419cd330fe682',
+					// 		facilityID: '649d344f72e91c40d2e7e895',
+					// 		type: '1',
+					// 		price: 150000,
+					// 		benefits: ['Use of bathroom'],
+					// 		__v: 0,
+					// 		createdAt: '2023-07-27T03:33:46.089Z',
+					// 		updatedAt: '2023-07-27T03:33:46.089Z',
+					// 	},
+					// ],
 				},
 				{
 					_id: '649d3a0d72e91c40d2e7e942',
-					createdAt: '2023-06-29T08:00:13.372Z',
-					updatedAt: '2023-06-29T08:00:45.561Z',
+					createdAt: '2023-06-29T07:35:43.345Z',
+					updatedAt: '2023-06-29T07:36:49.766Z',
 					brandID: {
 						_id: '64944c7c2d7cf0ec0dbb4051',
-						createdAt: '2023-07-21T03:03:13.891Z',
-						updatedAt: '2023-07-21T03:03:13.891Z',
+						createdAt: '2023-07-27T03:33:45.966Z',
+						updatedAt: '2023-07-27T03:33:45.966Z',
 						name: 'TheHinhOnline 1',
 						accountID: '649a9a4e631a79b49393bd7a',
 						__v: 0,
@@ -2098,65 +2117,82 @@ describe('FacilityService', function () {
 								name: '1688542246151-209197963.png',
 								imageURL:
 									'https://cdn.discordapp.com/attachments/830416545594998844/1126074372831072266/yoga1_1.jpg',
-								_id: '64b9f571abc1193dd5635ed3',
-								createdAt: '2023-07-21T03:03:13.941Z',
-								updatedAt: '2023-07-21T03:03:13.941Z',
+								_id: '64c1e59ac7ca1ad7510583a5',
+								createdAt: '2023-07-27T03:33:46.038Z',
+								updatedAt: '2023-07-27T03:33:46.038Z',
+							},
+							__v: 0,
+						},
+						{
+							_id: '649d3f7372e91c40d2e7e9dc',
+							createdAt: '2023-06-29T08:23:15.993Z',
+							updatedAt: '2023-06-29T08:23:15.993Z',
+							type: 'BOXING',
+							name: 'BOXING',
+							photo: {
+								ownerID: '64a51c26ecf458661fbbff78',
+								name: '1688542246151-209197963.png',
+								imageURL:
+									'https://cdn.discordapp.com/attachments/830416545594998844/1126074373636378734/boxing1_1.jpg',
+								_id: '64c1e59ac7ca1ad7510583ab',
+								createdAt: '2023-07-27T03:33:46.039Z',
+								updatedAt: '2023-07-27T03:33:46.039Z',
 							},
 							__v: 0,
 						},
 					],
 					ownerID: '6497c6807a114f5b35a393fd',
-					name: 'California Fitness & Yoga Cần Thơ',
+					name: 'Gym Thái Sơn',
 					address: {
-						street: 'Vincom 209 đường 30/4',
-						commune: 'Xuân Khánh',
+						street: '54 Hùng Vương',
+						commune: 'An Hội',
 						communeCode: '066',
 						district: 'Ninh Kiều',
 						districtCode: '067',
 						province: 'Cần Thơ',
 						provinceCode: '065',
 					},
-					fullAddress: 'Xuân Khánh, Ninh Kiều, Cần Thơ',
+					fullAddress: 'An Hội, Ninh Kiều, Cần Thơ',
 					summary: 'Chất lượng là danh dự',
 					description:
 						"Lorem Ipsum is simply dummy text of the printing and typesetting industry. Lorem Ipsum has been the industry's standard dummy text ever since the 1500s, when an unknown printer took a galley of type and scrambled it to make a type specimen book",
 					coordinates: [],
 					location: {
-						coordinates: [105.77291088739058, 10.027851057940572],
+						coordinates: [105.77827419395031, 10.044071865857335],
 						type: 'Point',
 					},
 					state: 'ACTIVE',
 					status: 'APPROVED',
-					phone: '842927302999',
+					phone: '84906943567',
 					photos: [
 						{
-							createdAt: '2023-06-29T08:00:27.699Z',
-							updatedAt: '2023-06-29T08:00:27.699Z',
-							ownerID: '649d3a0d72e91c40d2e7e946',
-							name: '1688025627677-173643808.jpeg',
+							createdAt: '2023-06-29T07:36:22.758Z',
+							updatedAt: '2023-06-29T07:36:22.758Z',
+							ownerID: '649d344f72e91c40d2e7e895',
+							name: '1688024182737-366333986.jpeg',
 							imageURL:
-								'https://hdfitness.vn/wp-content/uploads/2023/04/an-khuya-khi-tap-gym-1-min-1-scaled.jpg',
-							_id: '649d3a1b72e91c40d2e7e94d',
+								'https://hdfitness.vn/wp-content/uploads/2022/02/tap-gym-la-gi-5-min-scaled.jpg',
+							_id: '649d347672e91c40d2e7e89c',
 							__v: 0,
 						},
 					],
 					reviews: [
 						{
 							accountID: '649a8f8ab185ffb672485391',
-							facilityID: '649d3a0d72e91c40d2e7e946',
-							rating: 4,
-							comment: '807upxdg7pm',
+							facilityID: '649d344f72e91c40d2e7e895',
+							rating: 2,
+							comment: 'ct7gxfhw8p8',
 							photos: [],
-							_id: '649d3a2a72e91c40d2e7e95c',
+							_id: '649d348d72e91c40d2e7e8b6',
 							__v: 0,
 						},
 					],
 					schedule: {
-						_id: '64b0cd9f9fe7ffe0a6c20390',
+						_id: '64b4aff0f4f2b881b96475ea',
 						createdAt: '2023-06-29T08:23:34.856Z',
 						updatedAt: '2023-06-29T08:23:34.856Z',
-						facilityID: '649d3a0d72e91c40d2e7e946',
-						type: 'WEEKLY',
+						facilityID: '649d344f72e91c40d2e7e895',
+						type: 'DAILY',
 						openTime: [
 							{
 								shift: [
@@ -2169,65 +2205,25 @@ describe('FacilityService', function () {
 										endTime: '19:00',
 									},
 								],
-								dayOfWeek: 'MONDAY',
-							},
-							{
-								shift: [
-									{
-										startTime: '06:00',
-										endTime: '12:00',
-									},
-									{
-										startTime: '13:00',
-										endTime: '19:00',
-									},
-								],
-								dayOfWeek: 'TUESDAY',
-							},
-							{
-								shift: [
-									{
-										startTime: '06:00',
-										endTime: '12:00',
-									},
-									{
-										startTime: '13:00',
-										endTime: '19:00',
-									},
-								],
-								dayOfWeek: 'WEDNESDAY',
-							},
-							{
-								shift: [
-									{
-										startTime: '06:00',
-										endTime: '12:00',
-									},
-									{
-										startTime: '13:00',
-										endTime: '19:00',
-									},
-								],
-								dayOfWeek: 'THURSDAY',
-							},
-							{
-								shift: [
-									{
-										startTime: '06:00',
-										endTime: '12:00',
-									},
-									{
-										startTime: '13:00',
-										endTime: '19:00',
-									},
-								],
-								dayOfWeek: 'FRIDAY',
 							},
 						],
 						__v: 0,
 					},
 					__v: 0,
-					distance: 5,
+					distance: 1898.977173018055,
+					// package: [
+					// 	{
+					// 		_id: '649dd2e7e895344f72e91c46',
+					// 		packageTypeID: '6476ef7d1f0419cd330fe682',
+					// 		facilityID: '649d344f72e91c40d2e7e895',
+					// 		type: '1',
+					// 		price: 150000,
+					// 		benefits: ['Use of bathroom'],
+					// 		__v: 0,
+					// 		createdAt: '2023-07-27T03:33:46.089Z',
+					// 		updatedAt: '2023-07-27T03:33:46.089Z',
+					// 	},
+					// ],
 				},
 			];
 
@@ -2272,13 +2268,13 @@ describe('FacilityService', function () {
 			//Lưu ý thứ tự equal vì hiện tại đang test kết quả trả về sắp theo distance
 			//offset là 1 nên chỉ có 1 pt trả về
 			expect(result.items).toEqual([
-				{ ...mockFacility[0], package: { ...mockPackages[0] } },
+				{ ...mockFacility[1], package: [mockPackages[1]] },
 			]);
 			expect(result.total).toEqual(1);
 			expect(result.options).toEqual(filter);
 		});
 
-		it('should return empty list facilities based on the provided search filter and sort by price', async () => {
+		it('should return empty list facilities based on the provided search filter', async () => {
 			const filter = {
 				search: 'none name', // Search keyword
 				sortField: 'price', // Sorting based on distance
@@ -2489,7 +2485,7 @@ describe('FacilityService', function () {
 			);
 
 			expect(result.items).toEqual([
-				{ ...mockFacilities[0], package: mockPackages[0] },
+				{ ...mockFacilities[0], package: [mockPackages[0]] },
 			]);
 			expect(result.total).toBe(mockFacilities.length);
 			expect(
