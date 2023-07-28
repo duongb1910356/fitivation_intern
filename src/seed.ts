@@ -53,6 +53,18 @@ import {
 } from './modules/package/entities/package.entity';
 import { UserSeeder } from './seeder/user-seeder';
 import { User, UserSchema } from './modules/users/schemas/user.schema';
+import { Bill, BillSchema } from './modules/bills/schemas/bill.schema';
+import {
+	SubcriptionSchema,
+	Subscription,
+} from './modules/subscriptions/schemas/subscription.schema';
+import {
+	BillItem,
+	BillItemSchema,
+} from './modules/bill-items/schemas/bill-item.schema';
+import { BillItemSeeder } from './seeder/billItems-seeder';
+import { BillSeeder } from './seeder/bill-seeder';
+import { SubscriptionSeeder } from './seeder/subscription-seeder';
 
 seeder({
 	imports: [
@@ -82,6 +94,13 @@ seeder({
 		]),
 		MongooseModule.forFeature([{ name: Package.name, schema: PackageSchema }]),
 		MongooseModule.forFeature([{ name: User.name, schema: UserSchema }]),
+		MongooseModule.forFeature([{ name: Bill.name, schema: BillSchema }]),
+		MongooseModule.forFeature([
+			{ name: Subscription.name, schema: SubcriptionSchema },
+		]),
+		MongooseModule.forFeature([
+			{ name: BillItem.name, schema: BillItemSchema },
+		]),
 	],
 }).run([
 	AdministrativeUnitSeeder,
@@ -95,4 +114,7 @@ seeder({
 	PackageSeeder,
 	PackageTypeSeeder,
 	UserSeeder,
+	BillItemSeeder,
+	BillSeeder,
+	SubscriptionSeeder,
 ]);

@@ -61,10 +61,7 @@ export class ReviewService {
 		}
 	}
 
-	async getReview(
-		facilityID: string,
-		filter: ListOptions<Review>,
-	): Promise<ListResponse<Review>> {
+	async getReview(filter: ListOptions<Review>): Promise<ListResponse<Review>> {
 		try {
 			const sortQuery = {};
 			sortQuery[filter.sortField] = filter.sortOrder === 'asc' ? 1 : -1;

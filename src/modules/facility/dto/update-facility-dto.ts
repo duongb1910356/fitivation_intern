@@ -1,6 +1,6 @@
-import { IsOptional, IsString, IsEnum, IsArray } from 'class-validator';
+import { IsOptional, IsString, IsEnum } from 'class-validator';
 import { CreateAddressDto } from 'src/modules/address/dto/create-address-dto';
-import { State, ScheduleType } from '../schemas/facility.schema';
+import { State } from '../schemas/facility.schema';
 import { LocationDTO } from './create-facility-dto';
 
 export class UpdateFacilityDto {
