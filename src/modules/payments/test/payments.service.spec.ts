@@ -213,6 +213,10 @@ describe('PaymentsService', () => {
 				cartItemStub()._id,
 			]);
 
+			expect(cartItemsService.findOneByID).toHaveBeenCalledWith(
+				cartItemStub()._id,
+			);
+
 			expect(result).toEqual(cartItemStub().totalPrice);
 		});
 	});
