@@ -35,11 +35,11 @@ export class CreateUserDto {
 	@MinLength(6)
 	password: string;
 
-	@IsNotEmpty()
+	@IsOptional()
 	@IsString()
 	@MinLength(2)
 	@MaxLength(20)
-	displayName: string;
+	displayName?: string;
 
 	@IsOptional()
 	@IsString()
