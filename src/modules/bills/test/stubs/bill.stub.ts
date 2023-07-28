@@ -105,7 +105,7 @@ export const billStub = (): any => {
 		description: 'Cart payment',
 		promotions: [],
 		promotionPrice: 0,
-		totalPrice: 420000,
+		totalPrice: 280000,
 		status: 'ACTIVE',
 		createdAt: new Date('2023-01-18T02:39:48.064Z'),
 		updatedAt: new Date('2023-01-18T02:39:48.073Z'),
