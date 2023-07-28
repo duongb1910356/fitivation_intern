@@ -32,7 +32,12 @@ import {
 } from '@nestjs/swagger';
 import { FileFieldsInterceptor } from '@nestjs/platform-express';
 import { CreateFacilityDto, LocationDTO } from './dto/create-facility-dto';
-import { Facility } from './schemas/facility.schema';
+import {
+	Facility,
+	ScheduleType,
+	State,
+	Status,
+} from './schemas/facility.schema';
 import {
 	ErrorResponse,
 	ListOptions,
@@ -42,7 +47,6 @@ import { Review } from '../reviews/schemas/reviews.schema';
 import { UpdateFacilityDto } from './dto/update-facility-dto';
 import { ApiDocsPagination } from 'src/decorators/swagger-form-data.decorator';
 import { Photo } from '../photo/schemas/photo.schema';
-import { State, Status, ScheduleType } from '../../shared/enum/facility.enum';
 import { ShiftTime } from '../facility-schedule/entities/shift-time.entity';
 import { OpenTime } from '../facility-schedule/entities/open-time.entity';
 import { FacilitySchedule } from '../facility-schedule/entities/facility-schedule.entity';
@@ -228,60 +232,246 @@ export class FacilityController {
 			example: {
 				items: [
 					{
-						_id: '1233456',
-						brandID: {},
-						facilityCategoryID: {},
-						ownerID: {},
-						name: 'City gym',
+						_id: '649d344f72e91c40d2e7e895',
+						createdAt: '2023-06-29T07:35:43.345Z',
+						updatedAt: '2023-06-29T07:36:49.766Z',
+						brandID: {
+							_id: '64944c7c2d7cf0ec0dbb4051',
+							createdAt: '2023-07-27T02:48:05.999Z',
+							updatedAt: '2023-07-27T02:48:05.999Z',
+							name: 'TheHinhOnline 1',
+							accountID: '649a9a4e631a79b49393bd7a',
+							__v: 0,
+						},
+						facilityCategoryID: [
+							{
+								_id: '649d3f6972e91c40d2e7e9da',
+								createdAt: '2023-06-29T08:23:05.455Z',
+								updatedAt: '2023-06-29T08:23:05.455Z',
+								type: 'YOGA',
+								name: 'YOGA',
+								photo: {
+									ownerID: '64a51c26ecf458661fbbff78',
+									name: '1688542246151-209197963.png',
+									imageURL:
+										'https://cdn.discordapp.com/attachments/830416545594998844/1126074372831072266/yoga1_1.jpg',
+									_id: '64c1dae6d9724ff5f0bbdcaa',
+									createdAt: '2023-07-27T02:48:06.052Z',
+									updatedAt: '2023-07-27T02:48:06.052Z',
+								},
+								__v: 0,
+							},
+							{
+								_id: '649d3f7372e91c40d2e7e9dc',
+								createdAt: '2023-06-29T08:23:15.993Z',
+								updatedAt: '2023-06-29T08:23:15.993Z',
+								type: 'BOXING',
+								name: 'BOXING',
+								photo: {
+									ownerID: '64a51c26ecf458661fbbff78',
+									name: '1688542246151-209197963.png',
+									imageURL:
+										'https://cdn.discordapp.com/attachments/830416545594998844/1126074373636378734/boxing1_1.jpg',
+									_id: '64c1dae6d9724ff5f0bbdcb0',
+									createdAt: '2023-07-27T02:48:06.052Z',
+									updatedAt: '2023-07-27T02:48:06.052Z',
+								},
+								__v: 0,
+							},
+							{
+								_id: '649d3f7b72e91c40d2e7e9de',
+								createdAt: '2023-06-29T08:23:23.661Z',
+								updatedAt: '2023-06-29T08:23:23.661Z',
+								type: 'GYM',
+								name: 'GYM',
+								photo: {
+									ownerID: '64a51c26ecf458661fbbff78',
+									name: '1688542246151-209197963.png',
+									imageURL:
+										'https://cdn.discordapp.com/attachments/830416545594998844/1126074372461961227/gym1_1.jpg',
+									_id: '64c1dae6d9724ff5f0bbdcae',
+									createdAt: '2023-07-27T02:48:06.052Z',
+									updatedAt: '2023-07-27T02:48:06.052Z',
+								},
+								__v: 0,
+							},
+							{
+								_id: '649d3f8672e91c40d2e7e9e0',
+								createdAt: '2023-06-29T08:23:34.856Z',
+								updatedAt: '2023-06-29T08:23:34.856Z',
+								type: 'CYCLING',
+								name: 'CYCLING',
+								photo: {
+									ownerID: '64a51c26ecf458661fbbff78',
+									name: '1688542246151-209197963.png',
+									imageURL:
+										'https://cdn.discordapp.com/attachments/830416545594998844/1126074373095305296/cycling1_1.jpg',
+									_id: '64c1dae6d9724ff5f0bbdcac',
+									createdAt: '2023-07-27T02:48:06.052Z',
+									updatedAt: '2023-07-27T02:48:06.052Z',
+								},
+								__v: 0,
+							},
+						],
+						ownerID: '6497c6807a114f5b35a393fd',
+						name: 'Gym Thái Sơn',
 						address: {
-							street: '30/4',
-							commune: 'Phường Xuân Khánh',
-							communeCode: '011',
-							district: 'Quận Ninh Kiều',
-							districtCode: '056',
-							province: 'Thành phố Cần Thơ',
+							street: '54 Hùng Vương',
+							commune: 'An Hội',
+							communeCode: '066',
+							district: 'Ninh Kiều',
+							districtCode: '067',
+							province: 'Cần Thơ',
 							provinceCode: '065',
 						},
-						summary: 'Phòng gym thân thiện',
-						description: 'Nhiều dụng cụ tập luyện',
-						location: { coordinates: [10.031966330522316, 105.76892820319247] },
-						state: State.ACTIVE,
-						status: Status.APPROVED,
-						averageStar: null,
+						fullAddress: 'An Hội, Ninh Kiều, Cần Thơ',
+						summary: 'Chất lượng là danh dự',
+						description:
+							"Lorem Ipsum is simply dummy text of the printing and typesetting industry. Lorem Ipsum has been the industry's standard dummy text ever since the 1500s, when an unknown printer took a galley of type and scrambled it to make a type specimen book",
+						coordinates: [],
+						location: {
+							coordinates: [105.77827419395031, 10.044071865857335],
+							type: 'Point',
+						},
+						state: 'ACTIVE',
+						status: 'APPROVED',
+						phone: '84906943567',
 						photos: [
 							{
-								_id: '123456789',
-								ownerID: 'id-bucket',
-								name: 'name-image',
-								imageURL: 'http://localhost:8080/id-bucket/name-image',
-								createdAt: new Date(),
-								updatedAt: new Date(),
+								createdAt: '2023-06-29T07:36:22.758Z',
+								updatedAt: '2023-06-29T07:36:22.758Z',
+								ownerID: '649d344f72e91c40d2e7e895',
+								name: '1688024182737-366333986.jpeg',
+								imageURL:
+									'https://hdfitness.vn/wp-content/uploads/2022/02/tap-gym-la-gi-5-min-scaled.jpg',
+								_id: '649d347672e91c40d2e7e89c',
+								__v: 0,
+							},
+							{
+								createdAt: '2023-06-29T07:36:22.758Z',
+								updatedAt: '2023-06-29T07:36:22.758Z',
+								ownerID: '649d344f72e91c40d2e7e895',
+								name: '1688024182746-73042410.png',
+								imageURL:
+									'https://hdfitness.vn/wp-content/uploads/2022/02/Fitness-4-scaled-1536x1024.jpg',
+								_id: '649d347672e91c40d2e7e89d',
+								__v: 0,
+							},
+							{
+								createdAt: '2023-06-29T07:36:22.758Z',
+								updatedAt: '2023-06-29T07:36:22.758Z',
+								ownerID: '649d344f72e91c40d2e7e895',
+								name: '1688024182724-411896153.png',
+								imageURL:
+									'https://hdfitness.vn/wp-content/uploads/2022/03/cac-bai-tap-chan-cho-nam-1-min-1024x684.jpg',
+								_id: '649d347672e91c40d2e7e89b',
+								__v: 0,
+							},
+							{
+								createdAt: '2023-06-29T07:36:22.758Z',
+								updatedAt: '2023-06-29T07:36:22.758Z',
+								ownerID: '649d344f72e91c40d2e7e895',
+								name: '1688024182696-205093289.png',
+								imageURL:
+									'https://hdfitness.vn/wp-content/uploads/2022/03/thay-doi-nho-tap-gym-7-min-1024x683.jpg',
+								_id: '649d347672e91c40d2e7e899',
+								__v: 0,
+							},
+							{
+								createdAt: '2023-06-29T07:36:22.758Z',
+								updatedAt: '2023-06-29T07:36:22.758Z',
+								ownerID: '649d344f72e91c40d2e7e895',
+								name: '1688024182709-1336106.png',
+								imageURL:
+									'https://hdfitness.vn/wp-content/uploads/2022/03/thay-doi-nho-tap-gym-2-min-1024x683.jpg',
+								_id: '649d347672e91c40d2e7e89a',
+								__v: 0,
 							},
 						],
 						reviews: [
 							{
-								_id: '123456789',
-								accountID: {},
-								facilityID: {},
-								comment: 'Đáng để trải nghiệm',
+								accountID: '649a8f8ab185ffb672485391',
+								facilityID: '649d344f72e91c40d2e7e895',
+								rating: 2,
+								comment: 'ct7gxfhw8p8',
+								photos: [],
+								_id: '649d348d72e91c40d2e7e8b6',
+								__v: 0,
+							},
+							{
+								accountID: '649a8f8ab185ffb672485391',
+								facilityID: '649d344f72e91c40d2e7e895',
 								rating: 5,
-								photos: [
-									{
-										_id: '12345678dsgdgsdxdg4',
-										ownerID: 'bucket1',
-										name: 'image-name',
-										imageURL: 'http://localhost:8080/bucket1/image-name',
-										createdAt: new Date(),
-										updatedAt: new Date(),
-									},
-								] as Photo[],
-								createdAt: new Date(),
-								updatedAt: new Date(),
+								comment: '46bcpb2u40p',
+								photos: [],
+								_id: '649d348e72e91c40d2e7e8c2',
+								__v: 0,
+							},
+							{
+								accountID: '649a8f8ab185ffb672485391',
+								facilityID: '649d344f72e91c40d2e7e895',
+								rating: 1,
+								comment: '79ipdfwknm2',
+								photos: [],
+								_id: '649d348f72e91c40d2e7e8cf',
+								__v: 0,
+							},
+							{
+								accountID: '649a8f8ab185ffb672485391',
+								facilityID: '649d344f72e91c40d2e7e895',
+								rating: 2,
+								comment: 'zwk0nwwjr8',
+								photos: [],
+								_id: '649d349072e91c40d2e7e8dd',
+								__v: 0,
+							},
+							{
+								accountID: '649a8f8ab185ffb672485391',
+								facilityID: '649d344f72e91c40d2e7e895',
+								rating: 2,
+								comment: '5tb52o4jreg',
+								photos: [],
+								_id: '649d349172e91c40d2e7e8ec',
+								__v: 0,
 							},
 						],
-						schedule: '64b0cd9f9fe7ffe0a6c2038f',
-						createdAt: new Date(),
-						updatedAt: new Date(),
+						schedule: {
+							_id: '64b4aff0f4f2b881b96475ea',
+							createdAt: '2023-06-29T08:23:34.856Z',
+							updatedAt: '2023-06-29T08:23:34.856Z',
+							facilityID: '649d344f72e91c40d2e7e895',
+							type: 'DAILY',
+							openTime: [
+								{
+									shift: [
+										{
+											startTime: '06:00',
+											endTime: '12:00',
+										},
+										{
+											startTime: '13:00',
+											endTime: '19:00',
+										},
+									],
+								},
+							],
+							__v: 0,
+						},
+						__v: 0,
+						distance: 1898.977173018055,
+						package: [
+							{
+								_id: '649dd2e7e895344f72e91c46',
+								packageTypeID: '6476ef7d1f0419cd330fe682',
+								facilityID: '649d344f72e91c40d2e7e895',
+								type: '1',
+								price: 150000,
+								benefits: ['Use of bathroom'],
+								__v: 0,
+								createdAt: '2023-07-27T02:48:06.091Z',
+								updatedAt: '2023-07-27T02:48:06.091Z',
+							},
+						],
 					},
 				],
 				total: 1,
@@ -366,11 +556,13 @@ export class FacilityController {
 		name: 'longitude',
 		type: Number,
 		required: true,
+		example: '105.77291088739058',
 	})
 	@ApiQuery({
 		name: 'latitude',
 		type: Number,
 		required: true,
+		example: '10.027851057940572',
 	})
 	getFacilityByLocation(
 		@Query('longitude') longitude: number,
@@ -394,14 +586,86 @@ export class FacilityController {
 			example: {
 				data: {
 					_id: '649d344f72e91c40d2e7e895',
+					createdAt: '2023-06-29T07:35:43.345Z',
+					updatedAt: '2023-06-29T07:36:49.766Z',
 					brandID: {
 						_id: '64944c7c2d7cf0ec0dbb4051',
-						createdAt: '2023-07-17T08:02:38.272Z',
-						updatedAt: '2023-07-17T08:02:38.272Z',
+						createdAt: '2023-07-27T02:48:05.999Z',
+						updatedAt: '2023-07-27T02:48:05.999Z',
 						name: 'TheHinhOnline 1',
 						accountID: '649a9a4e631a79b49393bd7a',
 						__v: 0,
 					},
+					facilityCategoryID: [
+						{
+							_id: '649d3f6972e91c40d2e7e9da',
+							createdAt: '2023-06-29T08:23:05.455Z',
+							updatedAt: '2023-06-29T08:23:05.455Z',
+							type: 'YOGA',
+							name: 'YOGA',
+							photo: {
+								ownerID: '64a51c26ecf458661fbbff78',
+								name: '1688542246151-209197963.png',
+								imageURL:
+									'https://cdn.discordapp.com/attachments/830416545594998844/1126074372831072266/yoga1_1.jpg',
+								_id: '64c1dae6d9724ff5f0bbdcaa',
+								createdAt: '2023-07-27T02:48:06.052Z',
+								updatedAt: '2023-07-27T02:48:06.052Z',
+							},
+							__v: 0,
+						},
+						{
+							_id: '649d3f7372e91c40d2e7e9dc',
+							createdAt: '2023-06-29T08:23:15.993Z',
+							updatedAt: '2023-06-29T08:23:15.993Z',
+							type: 'BOXING',
+							name: 'BOXING',
+							photo: {
+								ownerID: '64a51c26ecf458661fbbff78',
+								name: '1688542246151-209197963.png',
+								imageURL:
+									'https://cdn.discordapp.com/attachments/830416545594998844/1126074373636378734/boxing1_1.jpg',
+								_id: '64c1dae6d9724ff5f0bbdcb0',
+								createdAt: '2023-07-27T02:48:06.052Z',
+								updatedAt: '2023-07-27T02:48:06.052Z',
+							},
+							__v: 0,
+						},
+						{
+							_id: '649d3f7b72e91c40d2e7e9de',
+							createdAt: '2023-06-29T08:23:23.661Z',
+							updatedAt: '2023-06-29T08:23:23.661Z',
+							type: 'GYM',
+							name: 'GYM',
+							photo: {
+								ownerID: '64a51c26ecf458661fbbff78',
+								name: '1688542246151-209197963.png',
+								imageURL:
+									'https://cdn.discordapp.com/attachments/830416545594998844/1126074372461961227/gym1_1.jpg',
+								_id: '64c1dae6d9724ff5f0bbdcae',
+								createdAt: '2023-07-27T02:48:06.052Z',
+								updatedAt: '2023-07-27T02:48:06.052Z',
+							},
+							__v: 0,
+						},
+						{
+							_id: '649d3f8672e91c40d2e7e9e0',
+							createdAt: '2023-06-29T08:23:34.856Z',
+							updatedAt: '2023-06-29T08:23:34.856Z',
+							type: 'CYCLING',
+							name: 'CYCLING',
+							photo: {
+								ownerID: '64a51c26ecf458661fbbff78',
+								name: '1688542246151-209197963.png',
+								imageURL:
+									'https://cdn.discordapp.com/attachments/830416545594998844/1126074373095305296/cycling1_1.jpg',
+								_id: '64c1dae6d9724ff5f0bbdcac',
+								createdAt: '2023-07-27T02:48:06.052Z',
+								updatedAt: '2023-07-27T02:48:06.052Z',
+							},
+							__v: 0,
+						},
+					],
 					ownerID: '6497c6807a114f5b35a393fd',
 					name: 'Gym Thái Sơn',
 					address: {
@@ -436,6 +700,46 @@ export class FacilityController {
 							_id: '649d347672e91c40d2e7e89c',
 							__v: 0,
 						},
+						{
+							createdAt: '2023-06-29T07:36:22.758Z',
+							updatedAt: '2023-06-29T07:36:22.758Z',
+							ownerID: '649d344f72e91c40d2e7e895',
+							name: '1688024182746-73042410.png',
+							imageURL:
+								'https://hdfitness.vn/wp-content/uploads/2022/02/Fitness-4-scaled-1536x1024.jpg',
+							_id: '649d347672e91c40d2e7e89d',
+							__v: 0,
+						},
+						{
+							createdAt: '2023-06-29T07:36:22.758Z',
+							updatedAt: '2023-06-29T07:36:22.758Z',
+							ownerID: '649d344f72e91c40d2e7e895',
+							name: '1688024182724-411896153.png',
+							imageURL:
+								'https://hdfitness.vn/wp-content/uploads/2022/03/cac-bai-tap-chan-cho-nam-1-min-1024x684.jpg',
+							_id: '649d347672e91c40d2e7e89b',
+							__v: 0,
+						},
+						{
+							createdAt: '2023-06-29T07:36:22.758Z',
+							updatedAt: '2023-06-29T07:36:22.758Z',
+							ownerID: '649d344f72e91c40d2e7e895',
+							name: '1688024182696-205093289.png',
+							imageURL:
+								'https://hdfitness.vn/wp-content/uploads/2022/03/thay-doi-nho-tap-gym-7-min-1024x683.jpg',
+							_id: '649d347672e91c40d2e7e899',
+							__v: 0,
+						},
+						{
+							createdAt: '2023-06-29T07:36:22.758Z',
+							updatedAt: '2023-06-29T07:36:22.758Z',
+							ownerID: '649d344f72e91c40d2e7e895',
+							name: '1688024182709-1336106.png',
+							imageURL:
+								'https://hdfitness.vn/wp-content/uploads/2022/03/thay-doi-nho-tap-gym-2-min-1024x683.jpg',
+							_id: '649d347672e91c40d2e7e89a',
+							__v: 0,
+						},
 					],
 					reviews: [
 						{
@@ -445,6 +749,42 @@ export class FacilityController {
 							comment: 'ct7gxfhw8p8',
 							photos: [],
 							_id: '649d348d72e91c40d2e7e8b6',
+							__v: 0,
+						},
+						{
+							accountID: '649a8f8ab185ffb672485391',
+							facilityID: '649d344f72e91c40d2e7e895',
+							rating: 5,
+							comment: '46bcpb2u40p',
+							photos: [],
+							_id: '649d348e72e91c40d2e7e8c2',
+							__v: 0,
+						},
+						{
+							accountID: '649a8f8ab185ffb672485391',
+							facilityID: '649d344f72e91c40d2e7e895',
+							rating: 1,
+							comment: '79ipdfwknm2',
+							photos: [],
+							_id: '649d348f72e91c40d2e7e8cf',
+							__v: 0,
+						},
+						{
+							accountID: '649a8f8ab185ffb672485391',
+							facilityID: '649d344f72e91c40d2e7e895',
+							rating: 2,
+							comment: 'zwk0nwwjr8',
+							photos: [],
+							_id: '649d349072e91c40d2e7e8dd',
+							__v: 0,
+						},
+						{
+							accountID: '649a8f8ab185ffb672485391',
+							facilityID: '649d344f72e91c40d2e7e895',
+							rating: 2,
+							comment: '5tb52o4jreg',
+							photos: [],
+							_id: '649d349172e91c40d2e7e8ec',
 							__v: 0,
 						},
 					],
@@ -471,70 +811,20 @@ export class FacilityController {
 						__v: 0,
 					},
 					__v: 0,
-					facilityCategoryID: [
+					distance: 1898.977173018055,
+					package: [
 						{
-							_id: '649d3f8672e91c40d2e7e9e0',
-							createdAt: '2023-06-29T08:23:34.856Z',
-							updatedAt: '2023-06-29T08:23:34.856Z',
-							type: 'CYCLING',
-							name: 'CYCLING',
-							photo: {
-								ownerID: '64a51c26ecf458661fbbff78',
-								name: '1688542246151-209197963.png',
-								imageURL:
-									'https://cdn.discordapp.com/attachments/830416545594998844/1126074373095305296/cycling1_1.jpg',
-								_id: '64b4f59e2ceb3395beee7e5b',
-								createdAt: '2023-07-17T08:02:38.324Z',
-								updatedAt: '2023-07-17T08:02:38.324Z',
-							},
-							__v: 0,
-						},
-						{
-							_id: '649d3f7b72e91c40d2e7e9de',
-							createdAt: '2023-06-29T08:23:23.661Z',
-							updatedAt: '2023-06-29T08:23:23.661Z',
-							type: 'GYM',
-							name: 'GYM',
-							photo: {
-								ownerID: '64a51c26ecf458661fbbff78',
-								name: '1688542246151-209197963.png',
-								imageURL:
-									'https://cdn.discordapp.com/attachments/830416545594998844/1126074372461961227/gym1_1.jpg',
-								_id: '64b4f59e2ceb3395beee7e5d',
-								createdAt: '2023-07-17T08:02:38.324Z',
-								updatedAt: '2023-07-17T08:02:38.324Z',
-							},
-							__v: 0,
-						},
-					],
-					packageTypes: [
-						{
-							_id: '6476ef7d1f0419cd330fe681',
+							_id: '649dd2e7e895344f72e91c46',
+							packageTypeID: '6476ef7d1f0419cd330fe682',
 							facilityID: '649d344f72e91c40d2e7e895',
-							name: 'GYM GYM',
-							description: 'Các bài tập Gym có PT',
-							price: 140000,
-							order: 2,
+							type: '1',
+							price: 150000,
+							benefits: ['Use of bathroom'],
 							__v: 0,
-							createdAt: '2023-07-17T08:02:38.379Z',
-							updatedAt: '2023-07-17T08:02:38.379Z',
-							packages: [
-								{
-									_id: '649dd2e7e895344f72e91c41',
-									packageTypeID: '6476ef7d1f0419cd330fe681',
-									facilityID: '649d344f72e91c40d2e7e895',
-									type: '1',
-									price: 140000,
-									benefits: ['Use of bathroom'],
-									__v: 0,
-									createdAt: '2023-07-17T08:02:38.369Z',
-									updatedAt: '2023-07-17T08:02:38.369Z',
-								},
-							],
+							createdAt: '2023-07-27T02:48:06.091Z',
+							updatedAt: '2023-07-27T02:48:06.091Z',
 						},
 					],
-					createdAt: new Date(),
-					updatedAt: new Date(),
 				},
 			},
 		} as unknown as Facility,
@@ -550,7 +840,6 @@ export class FacilityController {
 		description: '[Input] invalid',
 	})
 	async getFacilityById(@Param('facilityID') facilityID) {
-		console.log('da vo controller');
 		return await this.facilityService.getOneByID(facilityID);
 	}
 
@@ -1490,7 +1779,6 @@ export class FacilityController {
 			images?: Express.Multer.File[];
 		},
 	) {
-		console.log('vo day');
 		return this.facilityService.create(
 			createFacilityDto,
 			req,

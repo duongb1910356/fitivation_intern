@@ -1,10 +1,10 @@
 import { Facility, State, Status } from '../../schemas/facility.schema';
 
-export const ReviewStub = (): Facility => {
+export const FacilityStub = (): Facility => {
 	return {
 		_id: '649d344f72e91c40d2e7e895',
-		createdAt: new Date(),
-		updatedAt: new Date(),
+		createdAt: new Date('2023-07-19T08:18:04.988Z'),
+		updatedAt: new Date('2023-07-19T08:18:04.988Z'),
 		brandID: '64944c7c2d7cf0ec0dbb4051',
 		facilityCategoryID: [
 			'649d3f7372e91c40d2e7e9dc',
@@ -39,22 +39,13 @@ export const ReviewStub = (): Facility => {
 		averageStar: 4,
 		photos: [
 			{
-				createdAt: new Date(),
-				updatedAt: new Date(),
+				createdAt: new Date('2023-06-29T07:36:22.758Z'),
+				updatedAt: new Date('2023-06-29T07:36:22.758Z'),
 				ownerID: '649d344f72e91c40d2e7e895',
 				name: '1688024182737-366333986.jpeg',
 				imageURL:
 					'https://hdfitness.vn/wp-content/uploads/2022/02/tap-gym-la-gi-5-min-scaled.jpg',
 				_id: '649d347672e91c40d2e7e89c',
-			},
-			{
-				createdAt: new Date(),
-				updatedAt: new Date(),
-				ownerID: '649d344f72e91c40d2e7e895',
-				name: '1688024182746-73042410.png',
-				imageURL:
-					'https://hdfitness.vn/wp-content/uploads/2022/02/Fitness-4-scaled-1536x1024.jpg',
-				_id: '649d347672e91c40d2e7e89d',
 			},
 		],
 		reviews: [
@@ -65,8 +56,8 @@ export const ReviewStub = (): Facility => {
 				comment: 'ct7gxfhw8p8',
 				photos: [],
 				_id: '649d348d72e91c40d2e7e8b6',
-				createdAt: new Date(),
-				updatedAt: new Date(),
+				createdAt: new Date('2023-07-19T08:18:04.988Z'),
+				updatedAt: new Date('2023-07-19T08:18:04.988Z'),
 			},
 			{
 				accountID: '649a8f8ab185ffb672485391',
@@ -75,8 +66,8 @@ export const ReviewStub = (): Facility => {
 				comment: '46bcpb2u40p',
 				photos: [],
 				_id: '649d348e72e91c40d2e7e8c2',
-				createdAt: new Date(),
-				updatedAt: new Date(),
+				createdAt: new Date('2023-07-19T08:18:04.988Z'),
+				updatedAt: new Date('2023-07-19T08:18:04.988Z'),
 			},
 		],
 		schedule: '64b4aff0f4f2b881b96475ea',

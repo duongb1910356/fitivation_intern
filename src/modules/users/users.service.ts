@@ -66,7 +66,7 @@ export class UsersService {
 	): Promise<boolean> {
 		if (isValidObjectId(userID) && file) {
 			const user = await this.userModel.findById(userID);
-			await this.photoService.delete(user.avatar._id);
+			await this.photoService.delete(user.avatar?._id);
 			const avatar = await this.photoService.uploadOneFile(userID, file);
 			user.avatar = avatar;
 			if (!(await user.save())) {

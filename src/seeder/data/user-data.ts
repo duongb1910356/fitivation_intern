@@ -5,7 +5,7 @@ export const userData = [
 		username: 'owner1',
 		email: 'owner1@test.com',
 		password:
-			'00a4344cc5eb4f9af9ff5fde0c629348aae3ca49e7c8a490e9dcce516742acba1fda143476d90568ad3f31d0ec7bc572df2718fcf1233df153235c4ab5abe4c2.a8ba91b747c915d90946f3b9f9397446',
+			'cdeef6a358bb199479bb43de82fde1fc6c1588cf5efc2b6d45a438c40717b85f7afb2f59d137dafb9887221ec8b359f3d0643e20a23647db9fb7cfb4e5213e7e.52975bfe26f935963887714dc709df7e',
 		refreshToken: null,
 		displayName: 'Owner user',
 		firstName: 'string',
@@ -39,7 +39,7 @@ export const userData = [
 		username: 'admin',
 		email: 'admin@test.com',
 		password:
-			'3c6d2706c000a7627d0b264d81033b4dee58b2d8c2cc7883d5497a62958e72c40b98f8f398dee2bfce67fbaad958c668f41cd5db9de15a2f32b1af73441da31b.373ccceba770a009c21018b852572994',
+			'cdeef6a358bb199479bb43de82fde1fc6c1588cf5efc2b6d45a438c40717b85f7afb2f59d137dafb9887221ec8b359f3d0643e20a23647db9fb7cfb4e5213e7e.52975bfe26f935963887714dc709df7e',
 		refreshToken: null,
 		displayName: 'Admin user',
 		firstName: 'string',
@@ -73,7 +73,7 @@ export const userData = [
 		username: 'customer1',
 		email: 'customer1@test.com',
 		password:
-			'712cf3bceba7e501647e6d1d056658ecb4019d6bd39e3a183dd7df7bd38308f29afde375a51c5d095fc9fb716939bd09324e9c21650152dc67fc7ba55efa5e6b.a7b6621486f7bfb813750da75f150978',
+			'cdeef6a358bb199479bb43de82fde1fc6c1588cf5efc2b6d45a438c40717b85f7afb2f59d137dafb9887221ec8b359f3d0643e20a23647db9fb7cfb4e5213e7e.52975bfe26f935963887714dc709df7e',
 		refreshToken:
 			'd32ec3cea9686deed0200707b0c6390c2b50f0e5173681f26f105afdf04f1861f64533b8639cce4f850c5a548a826aec7fd73577c82404d020f6bfdc0c9a6267.c101eb08b3cce50cd2c253f56ea29bbd',
 		displayName: 'Member user',
@@ -101,5 +101,55 @@ export const userData = [
 				'https://genk.mediacdn.vn/139269124445442048/2022/6/5/v2-5a6e8ad7267ad465c5bb19a28e4decc2720w-1654418988025141565126.jpg',
 		},
 		__v: 0,
+	},
+	{
+		_id: '64bf407f727a2b58ec30b297',
+		role: 'MEMBER',
+		username: 'customer2',
+		email: 'customer2@test.com',
+		password:
+			'0cc035a08b130b8a5427dc70caa08cc7bab0771ea514baf5ece4814b8f745f8d432b246d9237327e72d64ff49ce2bceb005bc4df114b02ce1d232f7431abfee3.57c3d24af88149b37bd2617e1617f3e5',
+		refreshToken:
+			'957d844df999e49182cda66e4a9e8e33a05f4d48341016dff383b2cbe0292f49073cd2e8155b1f9c2dc6bb2b72d61d06c0477310e8d81de8e7cf284e908b7baf.db443d08d4fd1737c6307adb146a4159',
+		displayName: 'Customer User',
+		status: 'ACTIVE',
+		createdAt: '2023-07-25T03:24:48.006Z',
+		updatedAt: '2023-07-25T03:40:49.295Z',
+		__v: 0,
+		avatar: {
+			createdAt: '2023-07-25T03:40:49.286Z',
+			updatedAt: '2023-07-25T03:40:49.294Z',
+			ownerID: '64bf407f727a2b58ec30b297',
+			name: '1690256448909-298904171.png',
+			imageURL:
+				'https://www.cgv.vn/media/catalog/product/cache/1/image/1800x/71252117777b696995f01934522c402d/a/v/avatar-1615695904-2089-1615696022.jpg',
+			_id: '64bf444162fedba3c375a4cf',
+			__v: 0,
+		},
+	},
+	{
+		_id: '64bf4594f163da5e00c477fd',
+		role: 'MEMBER',
+		username: 'customer3',
+		email: 'customer3@test.com',
+		password:
+			'406898b3e4649543b1791f7d97055c5b03c8926a1493200a7547ece290764d11066d0026f8ac82ec522061341e846cb5e7e24079c6a42e3f2b8c10ec6b514c48.c18fea99de53d9c7834a36dfef41a43a',
+		refreshToken:
+			'b6dd4fabaca82d196a364afa92acbbf833a9d9d8efed870c3b55335408afe928bb3ad37203e9e85a8fb50d82042b4788166895caa22821e7bdcf6846755fa23b.92f005b150020e50ea745a0e671c2417',
+		displayName: 'Customer User',
+		status: 'ACTIVE',
+		createdAt: '2023-07-25T03:46:28.350Z',
+		updatedAt: '2023-07-25T03:46:57.640Z',
+		__v: 0,
+		avatar: {
+			createdAt: '2023-07-25T03:46:57.630Z',
+			updatedAt: '2023-07-25T03:46:57.640Z',
+			ownerID: '64bf4594f163da5e00c477fd',
+			name: '1690256817621-437525057.png',
+			imageURL:
+				'https://assets-prd.ignimgs.com/2022/11/22/avatar-blogroll2-1669090391194.jpg',
+			_id: '64bf45b1f163da5e00c4780a',
+			__v: 0,
+		},
 	},
 ];

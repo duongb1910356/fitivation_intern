@@ -370,7 +370,7 @@ export const packageData = [
 		packageTypeID: '6476ef7d1f0419cd330fe691',
 		facilityID: '649d3a0d72e91c40d2e7e946',
 		type: TimeType.ONE_MONTH,
-		price: 150000,
+		price: 170000,
 		benefits: ['Use of bathroom'],
 	},
 	{
