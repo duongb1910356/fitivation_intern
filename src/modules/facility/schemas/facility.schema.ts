@@ -7,6 +7,7 @@ import {
 } from 'src/modules/reviews/schemas/reviews.schema';
 import { Photo, PhotoSchema } from 'src/modules/photo/schemas/photo.schema';
 import { appConfig } from 'src/app.config';
+import { Brand } from 'src/modules/brand/schemas/brand.schema';
 
 export enum State {
 	ACTIVE = 'ACTIVE',
@@ -48,7 +49,6 @@ export class Facility extends BaseObject {
 		type: mongoose.Schema.Types.ObjectId,
 		ref: 'Brand',
 		required: false,
-		default: '',
 	})
 	brandID: string;
 
@@ -75,7 +75,7 @@ export class Facility extends BaseObject {
 		communeCode: string;
 	};
 
-	@Prop({ type: String, required: false, default: '' })
+	@Prop({ type: String, required: false })
 	fullAddress: string;
 
 	@Prop({ default: '' })
@@ -87,7 +87,6 @@ export class Facility extends BaseObject {
 	@Prop({
 		type: [Number],
 		required: false,
-		default: [],
 	})
 	coordinates: [number, number];
 

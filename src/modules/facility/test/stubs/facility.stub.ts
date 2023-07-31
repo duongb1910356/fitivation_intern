@@ -1,6 +1,6 @@
 import { Facility, State, Status } from '../../schemas/facility.schema';
 
-export const FacilityStub = (): Facility => {
+export const FacilityStub = (): any => {
 	return {
 		_id: '649d344f72e91c40d2e7e895',
 		createdAt: new Date('2023-07-19T08:18:04.988Z'),

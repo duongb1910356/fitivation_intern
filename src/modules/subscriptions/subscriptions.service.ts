@@ -24,6 +24,7 @@ export class SubscriptionsService {
 	constructor(
 		@InjectModel(Subscription.name)
 		private subscriptionsModel: Model<SubscriptionDocument>,
+
 		private packageService: PackageService,
 	) {}
 
