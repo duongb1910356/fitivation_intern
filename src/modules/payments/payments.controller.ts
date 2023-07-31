@@ -411,13 +411,11 @@ export class PaymentsController {
 		@Param('paymentIntentID') paymentIntentID: string,
 		@Body() paymentMethod: PaymentMethodDto,
 		@GetCurrentUser() userPayload: TokenPayload,
-		@Res() response: Response,
-	): Promise<void> {
+	): Promise<PaymentResponse> {
 		return await this.paymentService.confirmPayment(
 			paymentIntentID,
 			paymentMethod,
 			userPayload,
-			response,
 		);
 	}
 }
