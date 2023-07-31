@@ -113,7 +113,11 @@ describe('UsersService', () => {
 
 			const result = await usersService.findMany(query);
 
-			expect(result.items).toEqual([userStub()]);
+			expect(result).toEqual({
+				total: result.total,
+				queryOptions: result.queryOptions,
+				items: result.items,
+			});
 		});
 	});
 

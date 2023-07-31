@@ -8,10 +8,7 @@ import { CartItem, CartItemDocument } from './schemas/cart-item.schema';
 import { Model } from 'mongoose';
 import { PackageService } from '../package/package.service';
 import { PromotionsService } from '../promotions/promotions.service';
-import {
-	PromotionMethod,
-	PromotionType,
-} from '../promotions/schemas/promotion.schema';
+import { PromotionMethod } from '../promotions/schemas/promotion.schema';
 
 @Injectable()
 export class CartItemsService {
@@ -91,50 +88,50 @@ export class CartItemsService {
 		return true;
 	}
 
-	async addPackagePromotionToCartItem(
-		cartItemID: string,
-		promotionID: string,
-	): Promise<boolean> {
-		const promotion = await this.promotionService.findOneByID(promotionID);
+	// async addPackagePromotionToCartItem(
+	// 	cartItemID: string,
+	// 	promotionID: string,
+	// ): Promise<boolean> {
+	// 	const promotion = await this.promotionService.findOneByID(promotionID);
 
-		const cartItem: any = await this.cartItemModel
-			.findOne({ _id: cartItemID })
-			.populate('packageID');
+	// 	const cartItem: any = await this.cartItemModel
+	// 		.findOne({ _id: cartItemID })
+	// 		.populate('packageID');
 
-		if (!cartItem) throw new NotFoundException(`Not found cart-item`);
+	// 	if (!cartItem) throw new NotFoundException(`Not found cart-item`);
 
-		//check package promotion belong to that package
-		if (cartItem.packageID._id.toString() !== promotion.targetID.toString()) {
-			throw new BadRequestException(
-				'This promotion does not belong to this package',
-			);
-		}
+	// 	//check package promotion belong to that package
+	// 	if (cartItem.packageID._id.toString() !== promotion.targetID.toString()) {
+	// 		throw new BadRequestException(
+	// 			'This promotion does not belong to this package',
+	// 		);
+	// 	}
 
-		// check promotion type === PACKAGE
-		if (promotion.type !== PromotionType.PACKAGE) {
-			throw new BadRequestException(
-				'This promotion is not package promotion type',
-			);
-		}
+	// 	// check promotion type === PACKAGE
+	// 	if (promotion.type !== PromotionType.PACKAGE) {
+	// 		throw new BadRequestException(
+	// 			'This promotion is not package promotion type',
+	// 		);
+	// 	}
 
-		// check date
-		if (new Date(promotion.endDate) <= new Date(Date.now())) {
-			throw new BadRequestException('This promotion was expired');
-		}
+	// 	// check date
+	// 	if (new Date(promotion.endDate) <= new Date(Date.now())) {
+	// 		throw new BadRequestException('This promotion was expired');
+	// 	}
 
-		// check minPriceApply
-		if (promotion.method === PromotionMethod.NUMBER) {
-			if (cartItem.packageID.price < promotion.minPriceApply) {
-				throw new BadRequestException(
-					`Can't apply promotion price because package price is less than min price apply`,
-				);
-			}
-		}
+	// 	// check minPriceApply
+	// 	if (promotion.method === PromotionMethod.NUMBER) {
+	// 		if (cartItem.packageID.price < promotion.minPriceApply) {
+	// 			throw new BadRequestException(
+	// 				`Can't apply promotion price because package price is less than min price apply`,
+	// 			);
+	// 		}
+	// 	}
 
-		// update price
-		await this.updatePrice(cartItem, promotion._id.toString());
-		cartItem.promotionIDs.push(promotion._id);
-		await cartItem.save();
-		return true;
-	}
+	// 	// update price
+	// 	await this.updatePrice(cartItem, promotion._id.toString());
+	// 	cartItem.promotionIDs.push(promotion._id);
+	// 	await cartItem.save();
+	// 	return true;
+	// }
 }
