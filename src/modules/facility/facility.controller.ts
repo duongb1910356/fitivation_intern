@@ -502,49 +502,258 @@ export class FacilityController {
 		status: 200,
 		schema: {
 			example: {
-				code: 200,
-				message: 'Success',
-				data: {
-					total: 1,
-					items: [
-						{
-							_id: '1233456',
-							brandID: {},
-							facilityCategoryID: {},
-							ownerID: {},
-							name: 'City gym',
-							address: {
-								street: '30/4',
-								commune: 'Phường Xuân Khánh',
-								communeCode: '011',
-								district: 'Quận Ninh Kiều',
-								districtCode: '056',
-								province: 'Thành phố Cần Thơ',
-								provinceCode: '065',
-							},
-							summary: 'Phòng gym thân thiện',
-							description: 'Nhiều dụng cụ tập luyện',
-							location: {
-								coordinates: [10.031966330522316, 105.76892820319247],
-							},
-							state: State.ACTIVE,
-							status: Status.APPROVED,
-							averageStar: 5,
-							photos: [],
-							reviews: [],
-							createdAt: new Date(),
-							updatedAt: new Date(),
+				total: 1,
+				items: [
+					{
+						_id: '649d344f72e91c40d2e7e895',
+						createdAt: '2023-06-29T07:35:43.345Z',
+						updatedAt: '2023-06-29T07:36:49.766Z',
+						brandID: {
+							_id: '64944c7c2d7cf0ec0dbb4051',
+							createdAt: '2023-07-27T02:48:05.999Z',
+							updatedAt: '2023-07-27T02:48:05.999Z',
+							name: 'TheHinhOnline 1',
+							accountID: '649a9a4e631a79b49393bd7a',
+							__v: 0,
 						},
-					],
-					options: {
-						limit: 1,
-						offet: 1,
-						search: 'string',
-						sortBy: 'averageStar',
-						sortOrder: 'asc',
-					} as ListOptions<Facility>,
-				} as ListResponse<Facility>,
-			},
+						facilityCategoryID: [
+							{
+								_id: '649d3f6972e91c40d2e7e9da',
+								createdAt: '2023-06-29T08:23:05.455Z',
+								updatedAt: '2023-06-29T08:23:05.455Z',
+								type: 'YOGA',
+								name: 'YOGA',
+								photo: {
+									ownerID: '64a51c26ecf458661fbbff78',
+									name: '1688542246151-209197963.png',
+									imageURL:
+										'https://cdn.discordapp.com/attachments/830416545594998844/1126074372831072266/yoga1_1.jpg',
+									_id: '64c1dae6d9724ff5f0bbdcaa',
+									createdAt: '2023-07-27T02:48:06.052Z',
+									updatedAt: '2023-07-27T02:48:06.052Z',
+								},
+								__v: 0,
+							},
+							{
+								_id: '649d3f7372e91c40d2e7e9dc',
+								createdAt: '2023-06-29T08:23:15.993Z',
+								updatedAt: '2023-06-29T08:23:15.993Z',
+								type: 'BOXING',
+								name: 'BOXING',
+								photo: {
+									ownerID: '64a51c26ecf458661fbbff78',
+									name: '1688542246151-209197963.png',
+									imageURL:
+										'https://cdn.discordapp.com/attachments/830416545594998844/1126074373636378734/boxing1_1.jpg',
+									_id: '64c1dae6d9724ff5f0bbdcb0',
+									createdAt: '2023-07-27T02:48:06.052Z',
+									updatedAt: '2023-07-27T02:48:06.052Z',
+								},
+								__v: 0,
+							},
+							{
+								_id: '649d3f7b72e91c40d2e7e9de',
+								createdAt: '2023-06-29T08:23:23.661Z',
+								updatedAt: '2023-06-29T08:23:23.661Z',
+								type: 'GYM',
+								name: 'GYM',
+								photo: {
+									ownerID: '64a51c26ecf458661fbbff78',
+									name: '1688542246151-209197963.png',
+									imageURL:
+										'https://cdn.discordapp.com/attachments/830416545594998844/1126074372461961227/gym1_1.jpg',
+									_id: '64c1dae6d9724ff5f0bbdcae',
+									createdAt: '2023-07-27T02:48:06.052Z',
+									updatedAt: '2023-07-27T02:48:06.052Z',
+								},
+								__v: 0,
+							},
+							{
+								_id: '649d3f8672e91c40d2e7e9e0',
+								createdAt: '2023-06-29T08:23:34.856Z',
+								updatedAt: '2023-06-29T08:23:34.856Z',
+								type: 'CYCLING',
+								name: 'CYCLING',
+								photo: {
+									ownerID: '64a51c26ecf458661fbbff78',
+									name: '1688542246151-209197963.png',
+									imageURL:
+										'https://cdn.discordapp.com/attachments/830416545594998844/1126074373095305296/cycling1_1.jpg',
+									_id: '64c1dae6d9724ff5f0bbdcac',
+									createdAt: '2023-07-27T02:48:06.052Z',
+									updatedAt: '2023-07-27T02:48:06.052Z',
+								},
+								__v: 0,
+							},
+						],
+						ownerID: '6497c6807a114f5b35a393fd',
+						name: 'Gym Thái Sơn',
+						address: {
+							street: '54 Hùng Vương',
+							commune: 'An Hội',
+							communeCode: '066',
+							district: 'Ninh Kiều',
+							districtCode: '067',
+							province: 'Cần Thơ',
+							provinceCode: '065',
+						},
+						fullAddress: 'An Hội, Ninh Kiều, Cần Thơ',
+						summary: 'Chất lượng là danh dự',
+						description:
+							"Lorem Ipsum is simply dummy text of the printing and typesetting industry. Lorem Ipsum has been the industry's standard dummy text ever since the 1500s, when an unknown printer took a galley of type and scrambled it to make a type specimen book",
+						coordinates: [],
+						location: {
+							coordinates: [105.77827419395031, 10.044071865857335],
+							type: 'Point',
+						},
+						state: 'ACTIVE',
+						status: 'APPROVED',
+						phone: '84906943567',
+						photos: [
+							{
+								createdAt: '2023-06-29T07:36:22.758Z',
+								updatedAt: '2023-06-29T07:36:22.758Z',
+								ownerID: '649d344f72e91c40d2e7e895',
+								name: '1688024182737-366333986.jpeg',
+								imageURL:
+									'https://hdfitness.vn/wp-content/uploads/2022/02/tap-gym-la-gi-5-min-scaled.jpg',
+								_id: '649d347672e91c40d2e7e89c',
+								__v: 0,
+							},
+							{
+								createdAt: '2023-06-29T07:36:22.758Z',
+								updatedAt: '2023-06-29T07:36:22.758Z',
+								ownerID: '649d344f72e91c40d2e7e895',
+								name: '1688024182746-73042410.png',
+								imageURL:
+									'https://hdfitness.vn/wp-content/uploads/2022/02/Fitness-4-scaled-1536x1024.jpg',
+								_id: '649d347672e91c40d2e7e89d',
+								__v: 0,
+							},
+							{
+								createdAt: '2023-06-29T07:36:22.758Z',
+								updatedAt: '2023-06-29T07:36:22.758Z',
+								ownerID: '649d344f72e91c40d2e7e895',
+								name: '1688024182724-411896153.png',
+								imageURL:
+									'https://hdfitness.vn/wp-content/uploads/2022/03/cac-bai-tap-chan-cho-nam-1-min-1024x684.jpg',
+								_id: '649d347672e91c40d2e7e89b',
+								__v: 0,
+							},
+							{
+								createdAt: '2023-06-29T07:36:22.758Z',
+								updatedAt: '2023-06-29T07:36:22.758Z',
+								ownerID: '649d344f72e91c40d2e7e895',
+								name: '1688024182696-205093289.png',
+								imageURL:
+									'https://hdfitness.vn/wp-content/uploads/2022/03/thay-doi-nho-tap-gym-7-min-1024x683.jpg',
+								_id: '649d347672e91c40d2e7e899',
+								__v: 0,
+							},
+							{
+								createdAt: '2023-06-29T07:36:22.758Z',
+								updatedAt: '2023-06-29T07:36:22.758Z',
+								ownerID: '649d344f72e91c40d2e7e895',
+								name: '1688024182709-1336106.png',
+								imageURL:
+									'https://hdfitness.vn/wp-content/uploads/2022/03/thay-doi-nho-tap-gym-2-min-1024x683.jpg',
+								_id: '649d347672e91c40d2e7e89a',
+								__v: 0,
+							},
+						],
+						reviews: [
+							{
+								accountID: '649a8f8ab185ffb672485391',
+								facilityID: '649d344f72e91c40d2e7e895',
+								rating: 2,
+								comment: 'ct7gxfhw8p8',
+								photos: [],
+								_id: '649d348d72e91c40d2e7e8b6',
+								__v: 0,
+							},
+							{
+								accountID: '649a8f8ab185ffb672485391',
+								facilityID: '649d344f72e91c40d2e7e895',
+								rating: 5,
+								comment: '46bcpb2u40p',
+								photos: [],
+								_id: '649d348e72e91c40d2e7e8c2',
+								__v: 0,
+							},
+							{
+								accountID: '649a8f8ab185ffb672485391',
+								facilityID: '649d344f72e91c40d2e7e895',
+								rating: 1,
+								comment: '79ipdfwknm2',
+								photos: [],
+								_id: '649d348f72e91c40d2e7e8cf',
+								__v: 0,
+							},
+							{
+								accountID: '649a8f8ab185ffb672485391',
+								facilityID: '649d344f72e91c40d2e7e895',
+								rating: 2,
+								comment: 'zwk0nwwjr8',
+								photos: [],
+								_id: '649d349072e91c40d2e7e8dd',
+								__v: 0,
+							},
+							{
+								accountID: '649a8f8ab185ffb672485391',
+								facilityID: '649d344f72e91c40d2e7e895',
+								rating: 2,
+								comment: '5tb52o4jreg',
+								photos: [],
+								_id: '649d349172e91c40d2e7e8ec',
+								__v: 0,
+							},
+						],
+						schedule: {
+							_id: '64b4aff0f4f2b881b96475ea',
+							createdAt: '2023-06-29T08:23:34.856Z',
+							updatedAt: '2023-06-29T08:23:34.856Z',
+							facilityID: '649d344f72e91c40d2e7e895',
+							type: 'DAILY',
+							openTime: [
+								{
+									shift: [
+										{
+											startTime: '06:00',
+											endTime: '12:00',
+										},
+										{
+											startTime: '13:00',
+											endTime: '19:00',
+										},
+									],
+								},
+							],
+							__v: 0,
+						},
+						distance: 1898.977173018055,
+						package: [
+							{
+								_id: '649dd2e7e895344f72e91c46',
+								packageTypeID: '6476ef7d1f0419cd330fe682',
+								facilityID: '649d344f72e91c40d2e7e895',
+								type: '1',
+								price: 150000,
+								benefits: ['Use of bathroom'],
+								__v: 0,
+								createdAt: '2023-07-27T02:48:06.091Z',
+								updatedAt: '2023-07-27T02:48:06.091Z',
+							},
+						],
+					},
+				],
+				options: {
+					limit: 1,
+					offet: 1,
+					search: 'string',
+					sortBy: 'averageStar',
+					sortOrder: 'asc',
+				} as ListOptions<Facility>,
+			} as unknown as ListResponse<Facility>,
 		},
 	})
 	@ApiBadRequestResponse({
@@ -1947,6 +2156,82 @@ export class FacilityController {
 		return await this.facilityService.swapPackageTypeInList(facilityID, data);
 	}
 
+	// @UseGuards(OwnershipFacilityGuard)
+	@Patch(':facilityID/photos/add')
+	@ApiBearerAuth()
+	@ApiOperation({
+		summary: 'Add the photos to the facility, use for Owner Facility',
+	})
+	@ApiParam({ name: 'facilityID', type: String, description: 'Facility ID' })
+	@ApiConsumes('multipart/form-data')
+	@ApiBody({
+		schema: {
+			type: 'object',
+			properties: {
+				images: {
+					type: 'array',
+					items: {
+						type: 'string',
+						format: 'binary',
+						description: 'accept: jpeg|png',
+					},
+				},
+			},
+		},
+	})
+	@ApiOkResponse({
+		status: 200,
+		schema: {
+			example: {
+				code: 200,
+				message: 'Success',
+				data: {
+					_id: 'string',
+					brandID: {},
+					facilityCategoryID: {},
+					ownerID: {},
+					name: 'City Gym',
+					address: {
+						street: '30/4',
+						commune: 'Phường Xuân Khánh',
+						communeCode: '011',
+						district: 'Quận Ninh Kiều',
+						districtCode: '056',
+						province: 'Thành phố Cần Thơ',
+						provinceCode: '065',
+					},
+					averageStar: null,
+					summary: 'CHẤT LƯỢNG LÀ DANH DỰ',
+					description: 'ABC',
+					location: { coordinates: [10.031966330522316, 105.76892820319247] },
+					state: State.ACTIVE,
+					status: Status.APPROVED,
+					photos: [],
+					reviews: [],
+					schedule: {},
+					createdAt: new Date(),
+					updatedAt: new Date(),
+				} as Facility,
+			},
+		},
+	})
+	@ApiBadRequestResponse({
+		type: BadRequestException,
+		status: 400,
+		description: '[Input] invalid!',
+	})
+	@UseInterceptors(FileFieldsInterceptor([{ name: 'images', maxCount: 5 }]))
+	async addPhotoFacility(
+		@Param('facilityID') facilityID,
+		@Req() req: any,
+		@UploadedFiles()
+		files: {
+			images: Express.Multer.File[];
+		},
+	) {
+		return await this.facilityService.addPhoto(facilityID, req, files);
+	}
+
 	@Patch(':facilityID')
 	@ApiBearerAuth()
 	@ApiOperation({
@@ -2200,82 +2485,6 @@ export class FacilityController {
 			reviewDto,
 			files || null,
 		);
-	}
-
-	@Patch(':facilityID/photos/add')
-	@UseGuards(OwnershipFacilityGuard)
-	@ApiBearerAuth()
-	@ApiOperation({
-		summary: 'Add the photos to the facility, use for Owner Facility',
-	})
-	@ApiParam({ name: 'facilityID', type: String, description: 'Facility ID' })
-	@ApiConsumes('multipart/form-data')
-	@ApiBody({
-		schema: {
-			type: 'object',
-			properties: {
-				images: {
-					type: 'array',
-					items: {
-						type: 'string',
-						format: 'binary',
-						description: 'accept: jpeg|png',
-					},
-				},
-			},
-		},
-	})
-	@ApiOkResponse({
-		status: 200,
-		schema: {
-			example: {
-				code: 200,
-				message: 'Success',
-				data: {
-					_id: 'string',
-					brandID: {},
-					facilityCategoryID: {},
-					ownerID: {},
-					name: 'City Gym',
-					address: {
-						street: '30/4',
-						commune: 'Phường Xuân Khánh',
-						communeCode: '011',
-						district: 'Quận Ninh Kiều',
-						districtCode: '056',
-						province: 'Thành phố Cần Thơ',
-						provinceCode: '065',
-					},
-					averageStar: null,
-					summary: 'CHẤT LƯỢNG LÀ DANH DỰ',
-					description: 'ABC',
-					location: { coordinates: [10.031966330522316, 105.76892820319247] },
-					state: State.ACTIVE,
-					status: Status.APPROVED,
-					photos: [],
-					reviews: [],
-					schedule: {},
-					createdAt: new Date(),
-					updatedAt: new Date(),
-				} as Facility,
-			},
-		},
-	})
-	@ApiBadRequestResponse({
-		type: BadRequestException,
-		status: 400,
-		description: '[Input] invalid!',
-	})
-	@UseInterceptors(FileFieldsInterceptor([{ name: 'images', maxCount: 5 }]))
-	async addPhotoFacility(
-		@Param('facilityID') facilityID,
-		@Req() req: any,
-		@UploadedFiles()
-		files: {
-			images: Express.Multer.File[];
-		},
-	) {
-		return await this.facilityService.addPhoto(facilityID, req, files);
 	}
 
 	@Patch(':facilityID/photos/delete')
