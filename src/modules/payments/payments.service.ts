@@ -13,14 +13,14 @@ import { CartPaymentRequestDto } from './dto/cart-payment-request-dto';
 import { CartsService } from '../carts/carts.service';
 import { TokenPayload } from '../auth/types/token-payload.type';
 import { CartItemsService } from '../cart-items/cart-items.service';
-import Stripe from 'stripe';
-import { appConfig } from 'src/app.config';
 import { UsersService } from '../users/users.service';
 import { PaymentMethodDto } from './dto/payment-method-dto';
 import { Response } from 'express';
 import { SubscriptionPaymentRequestDto } from './dto/subscription-payment-request-dto';
 import { UserRole } from '../users/schemas/user.schema';
 import { PaymentResponse } from './types/payment-response.type';
+import Stripe from 'stripe';
+import { InjectStripe } from 'nestjs-stripe';
 
 export enum PaymentCurrency {
 	VND = 'vnd',
@@ -29,20 +29,15 @@ export enum PaymentCurrency {
 
 @Injectable()
 export class PaymentsService {
-	private stripe: any;
-
 	constructor(
+		@InjectStripe() private readonly stripe: Stripe,
 		private billItemService: BillItemsService,
 		private billService: BillsService,
 		private subscriptionService: SubscriptionsService,
 		private cartService: CartsService,
 		private cartItemService: CartItemsService,
 		private userService: UsersService,
-	) {
-		this.stripe = new Stripe(`${appConfig.stripeSecretKey}`, {
-			apiVersion: '2022-11-15',
-		});
-	}
+	) {}
 
 	async purchaseSomeInCart(
 		userID: string,
@@ -157,7 +152,7 @@ export class PaymentsService {
 
 		const paymentIntent = await this.stripe.paymentIntents.create({
 			amount,
-			currency: PaymentCurrency.VND,
+			currency: PaymentCurrency.USD,
 			customer: stripeCustomer.data[0].id,
 			metadata: {
 				subscriptionID: subscriptionPaymentRequestDto.subscriptionID,
@@ -233,8 +228,8 @@ export class PaymentsService {
 			paymentIntentID,
 		);
 
-		const customer = await this.stripe.customers.retrieve(
-			paymentIntent.customer,
+		const customer: any = await this.stripe.customers.retrieve(
+			paymentIntent.customer.toString(),
 		);
 
 		const user = await this.userService.findOneByID(userPayload.sub);

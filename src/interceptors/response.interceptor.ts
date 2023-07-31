@@ -12,9 +12,7 @@ export class ResponseInterceptor implements NestInterceptor {
 	intercept(context: ExecutionContext, next: CallHandler): Observable<any> {
 		return next.handle().pipe(
 			map((data) => {
-				return {
-					data,
-				};
+				return data;
 			}),
 		);
 	}

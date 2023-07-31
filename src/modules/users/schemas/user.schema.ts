@@ -52,8 +52,14 @@ export class User extends BaseObject {
 	@Prop({ default: null, type: String })
 	refreshToken: string;
 
-	@Prop({ required: true, type: String, minlength: 2, maxlength: 20 })
-	displayName: string;
+	@Prop({
+		required: false,
+		default: 'User',
+		type: String,
+		minlength: 2,
+		maxlength: 20,
+	})
+	displayName?: string;
 
 	@Prop({ type: String, minlength: 2, maxlength: 20 })
 	firstName?: string;
@@ -78,7 +84,7 @@ export class User extends BaseObject {
 	@Prop({ type: UserAddress })
 	address?: UserAddress;
 
-	@Prop({ type: PhotoSchema, required: true, default: {} })
+	@Prop({ type: PhotoSchema, required: false })
 	avatar?: Photo;
 
 	@Prop({ type: Boolean })

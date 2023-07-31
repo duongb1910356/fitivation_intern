@@ -13,12 +13,12 @@ export type Photo = {
 export type FacilityID = {
 	_id: string;
 	brandID: string;
-	facilityCategoryID: string;
+	facilityCategoryID: string[];
 	ownerID: string;
 	name: string;
 	location: {
 		coordinates: number[];
-		types: 'point';
+		type: 'Point';
 	};
 	address: {
 		street: string;
@@ -29,8 +29,10 @@ export type FacilityID = {
 		province: string;
 		provinceCode: string;
 	};
+	summary: string;
+	description: string;
 	fullAddress: string;
-	phone: 'string';
+	phone: string;
 	photos: Photo[];
 	scheduleType: ScheduleType;
 	state: State;

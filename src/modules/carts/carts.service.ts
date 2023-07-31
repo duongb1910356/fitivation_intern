@@ -140,28 +140,28 @@ export class CartsService {
 		return true;
 	}
 
-	async addPackagePromotionToCartItemInCurrentCart(
-		userID: string,
-		cartItemID: string,
-		promotionID: string,
-	): Promise<boolean> {
-		const cart = await this.cartModel.findOne({
-			accountID: userID,
-		});
+	// async addPackagePromotionToCartItemInCurrentCart(
+	// 	userID: string,
+	// 	cartItemID: string,
+	// 	promotionID: string,
+	// ): Promise<boolean> {
+	// 	const cart = await this.cartModel.findOne({
+	// 		accountID: userID,
+	// 	});
 
-		if (!cart) throw new NotFoundException(`Not found current user's cart`);
+	// 	if (!cart) throw new NotFoundException(`Not found current user's cart`);
 
-		const isValid = this.checkValidCartItemInCurrentCart(cart, cartItemID);
+	// 	const isValid = this.checkValidCartItemInCurrentCart(cart, cartItemID);
 
-		if (!isValid)
-			throw new BadRequestException(`Not found cart-item in user's cart`);
+	// 	if (!isValid)
+	// 		throw new BadRequestException(`Not found cart-item in user's cart`);
 
-		await this.cartItemService.addPackagePromotionToCartItem(
-			cartItemID,
-			promotionID,
-		);
-		return true;
-	}
+	// 	await this.cartItemService.addPackagePromotionToCartItem(
+	// 		cartItemID,
+	// 		promotionID,
+	// 	);
+	// 	return true;
+	// }
 
 	checkValidCartItemInCurrentCart(cart: Cart, cartItemID: string): boolean {
 		let valid = false;

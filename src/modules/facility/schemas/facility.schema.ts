@@ -5,13 +5,9 @@ import {
 	Review,
 	ReviewSchema,
 } from 'src/modules/reviews/schemas/reviews.schema';
-import { Brand } from '../../brand/schemas/brand.schema';
 import { Photo, PhotoSchema } from 'src/modules/photo/schemas/photo.schema';
 import { appConfig } from 'src/app.config';
-import {
-	FacilitySchedule,
-	FacilityScheduleSchema,
-} from 'src/modules/facility-schedule/entities/facility-schedule.entity';
+import { Brand } from 'src/modules/brand/schemas/brand.schema';
 
 export enum State {
 	ACTIVE = 'ACTIVE',
@@ -30,20 +26,20 @@ export enum ScheduleType {
 	MONTHLY = 'MONTHLY',
 }
 
-export interface Address {
-	province: {
-		name: string;
-		code: number;
-	};
-	district: {
-		name: string;
-		code: number;
-	};
-	commune: {
-		name: string;
-		code: number;
-	};
-}
+// export interface Address {
+// 	province: {
+// 		name: string;
+// 		code: number;
+// 	};
+// 	district: {
+// 		name: string;
+// 		code: number;
+// 	};
+// 	commune: {
+// 		name: string;
+// 		code: number;
+// 	};
+// }
 
 export type FacilityDocument = HydratedDocument<Facility>;
 
@@ -53,7 +49,6 @@ export class Facility extends BaseObject {
 		type: mongoose.Schema.Types.ObjectId,
 		ref: 'Brand',
 		required: false,
-		default: '',
 	})
 	brandID: string;
 
@@ -80,7 +75,7 @@ export class Facility extends BaseObject {
 		communeCode: string;
 	};
 
-	@Prop({ type: String, required: false, default: '' })
+	@Prop({ type: String, required: false })
 	fullAddress: string;
 
 	@Prop({ default: '' })
@@ -92,7 +87,6 @@ export class Facility extends BaseObject {
 	@Prop({
 		type: [Number],
 		required: false,
-		default: [],
 	})
 	coordinates: [number, number];
 

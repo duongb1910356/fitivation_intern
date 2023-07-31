@@ -17,14 +17,14 @@ export class BrandSeeder implements Seeder {
 			{
 				_id: '64944c7c2d7cf0ec0dbb4051',
 				name: 'TheHinhOnline 1',
-				accountID: '649a9a4e631a79b49393bd7a',
+				accountID: '6497c6807a114f5b35a393fd',
 				createdAt: new Date(),
 				updatedAt: new Date(),
 			},
 			{
 				_id: '64944c7c2d7cf0ec0dbb4052',
 				name: 'TheHinhOnline 2',
-				accountID: '649a9a4e631a79b49393bd7a',
+				accountID: '6497c6807a114f5b35a393fd',
 				createdAt: new Date(),
 				updatedAt: new Date(),
 			},

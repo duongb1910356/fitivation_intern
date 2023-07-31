@@ -79,12 +79,12 @@ export class CartsController {
 									facilityID: {
 										_id: 'string',
 										brandID: 'string',
-										facilityCategoryID: 'string',
+										facilityCategoryID: ['string'],
 										ownerID: 'string',
 										name: 'string',
 										location: {
 											coordinates: [1, 1],
-											types: 'point',
+											type: 'Point',
 										},
 										address: {
 											street: 'string',
@@ -95,6 +95,8 @@ export class CartsController {
 											province: 'string',
 											provinceCode: 'string',
 										},
+										summary: 'string',
+										description: 'string',
 										fullAddress: 'string',
 										phone: 'string',
 										photos: [
