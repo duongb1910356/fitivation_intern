@@ -20,6 +20,7 @@ import {
 } from '@nestjs/common';
 import { UserRole } from 'src/modules/users/schemas/user.schema';
 import { subscriptionStub } from 'src/modules/subscriptions/test/stubs/subscription.stub';
+import { SubscriptionStatus } from 'src/modules/subscriptions/schemas/subscription.schema';
 
 jest.mock('../../bills/bills.service');
 jest.mock('../../bill-items/bill-items.service');
@@ -36,7 +37,15 @@ describe('PaymentsService', () => {
 	let cartsService: CartsService;
 	let cartItemsService: CartItemsService;
 	let usersService: UsersService;
-	const stripeService = {
+
+	const userPayload = {
+		sub: '649a8f8ab185ffb672485391',
+		role: UserRole.MEMBER,
+	};
+	const paymentIntentID = 'paymentIntentID';
+	const clientSecretID = 'clientSecretID';
+
+	const stripeService: any = {
 		customers: {
 			search: () => {
 				return {
@@ -50,40 +59,30 @@ describe('PaymentsService', () => {
 			retrieve: () => {
 				return {
 					email: userStub().email,
+					customer: 'customerID',
 				};
 			},
 		},
 		paymentIntents: {
 			create: () => {
 				return {
-					id: 'id',
-					client_secret: 'client_secret',
+					id: paymentIntentID,
+					client_secret: clientSecretID,
 				};
 			},
 			retrieve: () => {
 				return {
+					id: paymentIntentID,
 					email: userStub().email,
 					customer: 'customerID',
-				};
-			},
-			confirm: () => {
-				return {
-					id: 'id',
-					metadata: {
-						cartItemIDs: undefined,
-						subscriptionID: undefined,
-					},
-					description: 'description',
-					then: () => {
-						return {
-							catch: () => {
-								return null;
-							},
-						};
-					},
+					cartItemIDs: undefined,
+					subscriptionID: undefined,
 				};
 			},
 			update: () => {
+				return {};
+			},
+			confirm: () => {
 				return {};
 			},
 		},
@@ -417,40 +416,182 @@ describe('PaymentsService', () => {
 		});
 	});
 
-	// describe('confirmPayment', () => {
-	// 	const mockJson = jest.fn().mockImplementation(() => null),
-	// 		mockStatus = jest.fn().mockImplementation(() => ({ json: mockJson })),
-	// 		mockResponse = {
-	// 			status: mockStatus,
-	// 		};
+	describe('confirmPayment', () => {
+		const paymentMethod = {
+			paymentMethod: 'cartID',
+		};
 
-	// 	const userPayload = {
-	// 		sub: '649a8f8ab185ffb672485391',
-	// 		role: UserRole.MEMBER,
-	// 	};
-	// 	const paymentMethod = {
-	// 		paymentMethod: 'cartID',
-	// 	};
-	// 	const responseObj: any = {
-	// 		status: () => {
-	// 			return {
-	// 				json: () => {
-	// 					return null;
-	// 				},
-	// 			};
-	// 		},
-	// 	};
-	// 	const paymentIntentID = 'paymentIntentID';
+		const cartItemIDs = 'cartItemID';
+		const subscriptionID = 'subscriptionID';
+		const subscriptionStub: any = {
+			_id: '64b5fb7409c136b1b2789db6',
+			accountID: '649a8f8ab185ffb672485391',
+			billItemID: '64b5fb7409c136b1b2789dc6',
+			packageID: {
+				_id: '649dd2e7e895344f72e91c42',
+			},
+			facilityID: '649d344f72e91c40d2e7e895',
+			expires: new Date('2023-08-18T08:50:57.500Z'),
+			status: SubscriptionStatus.ACTIVE,
+			renew: false,
+			createdAt: new Date('2023-07-18T02:39:48.020Z'),
+			updatedAt: new Date('2023-07-19T08:50:57.501Z'),
+		};
 
-	// 	it('should return payment response', async () => {
-	// 		jest.spyOn(usersService, 'findOneByID').mockResolvedValue(userStub());
+		it('should return payment response in cart payment', async () => {
+			jest.spyOn(usersService, 'findOneByID').mockResolvedValueOnce(userStub());
 
-	// 		const paymentIntent = await paymentsService.confirmPayment(
-	// 			paymentIntentID,
-	// 			paymentMethod,
-	// 			userPayload,
-	// 			responseObj,
-	// 		);
-	// 	});
-	// });
+			jest
+				.spyOn(stripeService.paymentIntents, 'retrieve')
+				.mockResolvedValueOnce({
+					id: paymentIntentID,
+					client_secret: clientSecretID,
+					email: userStub().email,
+					customer: userPayload.sub,
+					metadata: {
+						cartItemIDs: cartItemIDs,
+					},
+				});
+
+			jest
+				.spyOn(paymentsService, 'purchaseSomeInCart')
+				.mockResolvedValue(billStub());
+
+			jest.spyOn(billsService, 'findOneByID').mockResolvedValueOnce(billStub());
+
+			const paymentIntent: any = await paymentsService.confirmPayment(
+				paymentIntentID,
+				paymentMethod,
+				userPayload,
+			);
+
+			expect(stripeService.paymentIntents.retrieve).toHaveBeenCalledWith(
+				paymentIntentID,
+			);
+
+			expect(usersService.findOneByID).toHaveBeenCalledWith(userPayload.sub);
+
+			expect(paymentsService.purchaseSomeInCart).toHaveBeenCalledWith(
+				userPayload.sub,
+				{
+					cartItemIDs: [cartItemIDs],
+				},
+			);
+
+			expect(billsService.updatePaymentMethod).toHaveBeenCalledWith(
+				billStub()._id,
+				paymentMethod,
+			);
+
+			expect(cartsService.removeCartItemFromCurrentCart).toHaveBeenCalledWith(
+				userPayload.sub,
+				cartItemIDs,
+			);
+
+			expect(billsService.findOneByID).toHaveBeenCalledWith(
+				billStub()._id,
+				userPayload,
+			);
+
+			expect(paymentIntent).toEqual({
+				message: 'Payment successful',
+				clientSecret: clientSecretID,
+				paymentIntentID: paymentIntentID,
+				bill: billStub(),
+			});
+		});
+
+		it('should return payment response in subscription payment', async () => {
+			jest
+				.spyOn(stripeService.paymentIntents, 'retrieve')
+				.mockResolvedValueOnce({
+					id: paymentIntentID,
+					client_secret: clientSecretID,
+					email: userStub().email,
+					customer: userPayload.sub,
+					metadata: {
+						subscriptionID: subscriptionID,
+					},
+				});
+
+			jest
+				.spyOn(subscriptionsService, 'findOneByID')
+				.mockResolvedValueOnce(subscriptionStub);
+
+			jest
+				.spyOn(billItemsService, 'createOne')
+				.mockResolvedValueOnce(billItemStub());
+
+			jest.spyOn(billsService, 'createOne').mockResolvedValueOnce(billStub());
+
+			jest.spyOn(billsService, 'findOneByID').mockResolvedValueOnce(billStub());
+
+			const paymentIntent: any = await paymentsService.confirmPayment(
+				paymentIntentID,
+				paymentMethod,
+				userPayload,
+			);
+
+			expect(stripeService.paymentIntents.retrieve).toHaveBeenCalledWith(
+				paymentIntentID,
+			);
+
+			expect(usersService.findOneByID).toHaveBeenCalledWith(userPayload.sub);
+
+			expect(billItemsService.createOne).toHaveBeenCalledWith(
+				subscriptionStub.packageID._id,
+				userPayload.sub,
+			);
+
+			expect(billsService.updatePaymentMethod).toHaveBeenCalledWith(
+				billStub()._id,
+				paymentMethod,
+			);
+
+			expect(subscriptionsService.renew).toHaveBeenCalledWith(
+				subscriptionID,
+				billItemStub()._id,
+				userPayload,
+				{
+					path: 'packageID',
+					model: 'Package',
+					populate: {
+						path: 'packageTypeID',
+						model: 'PackageType',
+						populate: {
+							path: 'facilityID',
+							model: 'Facility',
+							select: '-reviews',
+						},
+					},
+				},
+			);
+
+			expect(paymentIntent).toEqual({
+				message: 'Payment successful',
+				clientSecret: clientSecretID,
+				paymentIntentID: paymentIntentID,
+				bill: billStub(),
+			});
+		});
+
+		it('should throw forbidden exception when user send payment not belong to', () => {
+			jest.spyOn(stripeService.customers, 'retrieve').mockResolvedValueOnce({
+				email: 'other email',
+				customer: 'other ID',
+			});
+
+			jest.spyOn(usersService, 'findOneByID').mockResolvedValueOnce(userStub());
+
+			expect(
+				paymentsService.confirmPayment(
+					paymentIntentID,
+					paymentMethod,
+					userPayload,
+				),
+			).rejects.toEqual(
+				new ForbiddenException('This payment does not belong to current user'),
+			);
+		});
+	});
 });
