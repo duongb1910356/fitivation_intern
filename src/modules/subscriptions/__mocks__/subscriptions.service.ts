@@ -6,4 +6,6 @@ export const SubscriptionsService = jest.fn().mockReturnValue({
 	checkDateAndUpdateDateIsExpired: jest.fn(),
 	renew: jest.fn(),
 	deleteOneByBillItemID: jest.fn(),
+	checkActive: jest.fn(),
+	createOne: jest.fn(),
 });

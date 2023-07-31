@@ -5,7 +5,7 @@ import { getModelToken } from '@nestjs/mongoose';
 import { CartItemsService } from 'src/modules/cart-items/cart-items.service';
 import { cartStub } from './stubs/cart.stub';
 import { BadRequestException, NotFoundException } from '@nestjs/common';
-import { cartItemStub } from './stubs/cart-item.stub';
+import { cartItemStub } from '../../cart-items/test/stubs/cart-item.stub';
 
 jest.mock('../../cart-items/cart-items.service');
 
