@@ -290,10 +290,15 @@ export class FacilityService {
 				{ $unwind: { path: '$brandID', preserveNullAndEmptyArrays: true } },
 				{
 					$lookup: {
-						from: 'packages',
+						from: 'packagetypes',
 						localField: '_id',
 						foreignField: 'facilityID',
-						as: 'packages',
+						as: 'packagetype',
+						pipeline: [
+							{
+								$sort: { order: 1 }, // Sắp xếp theo trường price
+							},
+						],
 					},
 				},
 				{
@@ -310,11 +315,11 @@ export class FacilityService {
 						photos: 1,
 						schedule: 1,
 						facilityCategoryID: 1,
-						packageTypes: 1,
 						updatedAt: 1,
 						createdAt: 1,
 						packages: 1,
 						averageStar: 1,
+						packagetype: 1,
 						reviews: {
 							$map: {
 								input: '$reviews',
