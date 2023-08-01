@@ -1,7 +1,6 @@
 import {
 	BadRequestException,
 	ForbiddenException,
-	HttpStatus,
 	Injectable,
 	NotFoundException,
 } from '@nestjs/common';
@@ -15,7 +14,6 @@ import { TokenPayload } from '../auth/types/token-payload.type';
 import { CartItemsService } from '../cart-items/cart-items.service';
 import { UsersService } from '../users/users.service';
 import { PaymentMethodDto } from './dto/payment-method-dto';
-import { Response } from 'express';
 import { SubscriptionPaymentRequestDto } from './dto/subscription-payment-request-dto';
 import { UserRole } from '../users/schemas/user.schema';
 import { PaymentResponse } from './types/payment-response.type';
@@ -222,8 +220,7 @@ export class PaymentsService {
 		paymentIntentID: string,
 		paymentMethod: PaymentMethodDto,
 		userPayload: TokenPayload,
-		response: Response,
-	): Promise<void> {
+	): Promise<PaymentResponse> {
 		const paymentIntent = await this.stripe.paymentIntents.retrieve(
 			paymentIntentID,
 		);
@@ -240,123 +237,125 @@ export class PaymentsService {
 			);
 		}
 
-		await this.stripe.paymentIntents
-			.confirm(paymentIntentID, {
+		await Promise.all([
+			this.stripe.paymentIntents.confirm(paymentIntentID, {
 				payment_method: paymentMethod.paymentMethod,
-			})
-			.then(async (paymentIntent: any) => {
-				if (paymentIntent.metadata.cartItemIDs !== undefined) {
-					const cartItemIDs = JSON.stringify(paymentIntent.metadata.cartItemIDs)
-						.replace(/"/g, '')
-						.split(', ');
-
-					const bill = await this.purchaseSomeInCart(userPayload.sub, {
-						cartItemIDs,
-						description: paymentIntent.description,
-					} as CartPaymentRequestDto);
-
-					await this.billService.updatePaymentMethod(
-						bill._id.toString(),
-						paymentMethod,
-					);
-
-					await this.stripe.paymentIntents.update(paymentIntent.id, {
-						metadata: { billID: bill._id.toString(), cartItemIDs: null },
-					});
-
-					for (let i = 0; i < cartItemIDs.length; i++) {
-						await this.cartService.removeCartItemFromCurrentCart(
-							userPayload.sub,
-							cartItemIDs[i],
-						);
-					}
-
-					response.status(HttpStatus.OK).json({
-						message: 'Payment successful',
-						clientSecret: paymentIntent.client_secret,
-						paymentIntentID: paymentIntent.id,
-						bill: await this.billService.findOneByID(
-							bill._id.toString(),
-							userPayload,
-						),
-					} as PaymentResponse);
-				} else if (paymentIntent.metadata.subscriptionID !== undefined) {
-					const subscription: any = await this.subscriptionService.findOneByID(
-						paymentIntent.metadata.subscriptionID,
-						userPayload,
-						{
-							path: 'packageID',
-							model: 'Package',
-							populate: {
-								path: 'packageTypeID',
-								model: 'PackageType',
-								populate: {
-									path: 'facilityID',
-									model: 'Facility',
-									select: '-reviews',
-								},
-							},
-						},
-					);
-
-					const billItem = await this.billItemService.createOne(
-						subscription.packageID._id.toString(),
-						userPayload.sub,
-					);
-
-					const billItems = [];
-
-					billItems.push(billItem);
-
-					const bill = await this.billService.createOne(
-						userPayload.sub,
-						billItems,
-						{ description: paymentIntent.description },
-					);
-
-					await this.billService.updatePaymentMethod(
-						bill._id.toString(),
-						paymentMethod,
-					);
-
-					await this.stripe.paymentIntents.update(paymentIntent.id, {
-						metadata: { billID: bill._id.toString() },
-					});
-
-					await this.subscriptionService.renew(
-						paymentIntent.metadata.subscriptionID,
-						bill.billItems[0]._id.toString(),
-						userPayload,
-						{
-							path: 'packageID',
-							model: 'Package',
-							populate: {
-								path: 'packageTypeID',
-								model: 'PackageType',
-								populate: {
-									path: 'facilityID',
-									model: 'Facility',
-									select: '-reviews',
-								},
-							},
-						},
-					);
-
-					response.status(HttpStatus.OK).json({
-						message: 'Payment successful',
-						clientSecret: paymentIntent.client_secret,
-						paymentIntentID: paymentIntent.id,
-						bill: await this.billService.findOneByID(
-							bill._id.toString(),
-							userPayload,
-						),
-					} as PaymentResponse);
-				}
-			})
-			.catch(async (err) => {
-				response
-					.status(HttpStatus.BAD_REQUEST)
-					.json({ statusCode: err.statusCode, message: err.message });
+			}),
+		]).catch((err) => {
+			throw new BadRequestException({
+				statusCode: err.statusCode,
+				message: err.message,
 			});
+		});
+
+		if (paymentIntent.metadata.cartItemIDs !== undefined) {
+			const cartItemIDs = JSON.stringify(paymentIntent.metadata.cartItemIDs)
+				.replace(/"/g, '')
+				.split(', ');
+
+			const bill = await this.purchaseSomeInCart(userPayload.sub, {
+				cartItemIDs,
+				description: paymentIntent.description,
+			} as CartPaymentRequestDto);
+
+			await this.billService.updatePaymentMethod(
+				bill._id.toString(),
+				paymentMethod,
+			);
+
+			await this.stripe.paymentIntents.update(paymentIntent.id, {
+				metadata: { billID: bill._id.toString(), cartItemIDs: null },
+			});
+
+			for (let i = 0; i < cartItemIDs.length; i++) {
+				await this.cartService.removeCartItemFromCurrentCart(
+					userPayload.sub,
+					cartItemIDs[i],
+				);
+			}
+
+			return {
+				message: 'Payment successful',
+				clientSecret: paymentIntent.client_secret,
+				paymentIntentID: paymentIntent.id,
+				bill: await this.billService.findOneByID(
+					bill._id.toString(),
+					userPayload,
+				),
+			} as PaymentResponse;
+		}
+
+		if (paymentIntent.metadata.subscriptionID !== undefined) {
+			const subscription: any = await this.subscriptionService.findOneByID(
+				paymentIntent.metadata.subscriptionID,
+				userPayload,
+				{
+					path: 'packageID',
+					model: 'Package',
+					populate: {
+						path: 'packageTypeID',
+						model: 'PackageType',
+						populate: {
+							path: 'facilityID',
+							model: 'Facility',
+							select: '-reviews',
+						},
+					},
+				},
+			);
+
+			const billItem = await this.billItemService.createOne(
+				subscription.packageID._id.toString(),
+				userPayload.sub,
+			);
+
+			const billItems = [];
+
+			billItems.push(billItem);
+
+			const bill = await this.billService.createOne(
+				userPayload.sub,
+				billItems,
+				{ description: paymentIntent.description },
+			);
+
+			await this.billService.updatePaymentMethod(
+				bill._id.toString(),
+				paymentMethod,
+			);
+
+			await this.stripe.paymentIntents.update(paymentIntent.id, {
+				metadata: { billID: bill._id.toString() },
+			});
+
+			await this.subscriptionService.renew(
+				paymentIntent.metadata.subscriptionID,
+				bill.billItems[0]._id.toString(),
+				userPayload,
+				{
+					path: 'packageID',
+					model: 'Package',
+					populate: {
+						path: 'packageTypeID',
+						model: 'PackageType',
+						populate: {
+							path: 'facilityID',
+							model: 'Facility',
+							select: '-reviews',
+						},
+					},
+				},
+			);
+
+			return {
+				message: 'Payment successful',
+				clientSecret: paymentIntent.client_secret,
+				paymentIntentID: paymentIntent.id,
+				bill: await this.billService.findOneByID(
+					bill._id.toString(),
+					userPayload,
+				),
+			} as PaymentResponse;
+		}
 	}
 }
