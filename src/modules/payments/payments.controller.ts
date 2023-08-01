@@ -5,7 +5,6 @@ import {
 	HttpStatus,
 	Param,
 	Post,
-	Res,
 	UseGuards,
 } from '@nestjs/common';
 import { Roles } from 'src/decorators/role.decorator';
