@@ -238,8 +238,15 @@ export class PaymentsService {
 			);
 		}
 
-		await this.stripe.paymentIntents.confirm(paymentIntentID, {
-			payment_method: paymentMethod.paymentMethod,
+		await Promise.all([
+			this.stripe.paymentIntents.confirm(paymentIntentID, {
+				payment_method: paymentMethod.paymentMethod,
+			}),
+		]).catch((err) => {
+			throw new BadRequestException({
+				statusCode: err.statusCode,
+				message: err.message,
+			});
 		});
 
 		if (paymentIntent.metadata.cartItemIDs !== undefined) {
