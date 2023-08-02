@@ -97,18 +97,33 @@ describe('BillsService', () => {
 		const query = {};
 		const userPayload = {
 			sub: '649a8f8ab185ffb672485391',
-			role: UserRole.ADMIN,
+			role: UserRole.MEMBER,
 		};
 
 		it('should return list bills', async () => {
-			const mockBillModel = {
-				sort: jest.fn().mockReturnThis(),
-				select: jest.fn().mockReturnThis(),
-				skip: jest.fn().mockReturnThis(),
-				limit: jest.fn().mockReturnValue([billStub()]),
-			};
-
-			jest.spyOn(billModel, 'find').mockImplementationOnce(() => mockBillModel);
+			jest.spyOn(billModel, 'find').mockImplementationOnce(() => {
+				return {
+					sort: () => {
+						return {
+							select: () => {
+								return {
+									skip: () => {
+										return {
+											limit: () => {
+												return {
+													find: () => {
+														return [billStub()];
+													},
+												};
+											},
+										};
+									},
+								};
+							},
+						};
+					},
+				};
+			});
 
 			const result = await billsService.findMany(query, userPayload);
 
