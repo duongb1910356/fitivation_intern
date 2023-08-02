@@ -268,6 +268,10 @@ describe('AuthService', () => {
 
 			const result = await authService.signupAsFacilityOwner(signupDto);
 
+			expect(userService.createOneAsFacilityOwner).toHaveBeenCalledWith(
+				signupDto,
+			);
+
 			expect(authService.signTokens).toHaveBeenCalledWith(
 				signupDto._id,
 				signupDto.role,
