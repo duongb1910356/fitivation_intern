@@ -31,6 +31,8 @@ import {
 import { TimeType } from '../package/entities/package.entity';
 import { ScheduleType } from '../facility-schedule/entities/facility-schedule.entity';
 import { State, Status } from '../facility/schemas/facility.schema';
+import { TokenPayload } from '../auth/types/token-payload.type';
+import { CartItem } from '../cart-items/schemas/cart-item.schema';
 
 @Controller('carts')
 @ApiTags('carts')
@@ -190,6 +192,140 @@ export class CartsController {
 		@GetCurrentUser('sub') userID: string,
 	): Promise<Cart> {
 		return await this.cartsService.getCurrent(userID, this.populateOpt);
+	}
+
+	@ApiOperation({
+		summary: 'Find One Cart Item By ID',
+		description: `Find one cart-item.\n\nRoles: ${UserRole.MEMBER}.`,
+	})
+	@ApiParam({ name: 'cartItemID', type: String, description: 'Cart-item ID' })
+	@ApiResponse({
+		status: 200,
+		schema: {
+			example: {
+				data: {
+					_id: 'string',
+					packageID: {
+						_id: 'string',
+						packageTypeID: {
+							_id: 'string',
+							facilityID: {
+								_id: 'string',
+								brandID: 'string',
+								facilityCategoryID: ['string'],
+								ownerID: 'string',
+								name: 'string',
+								location: {
+									coordinates: [1, 1],
+									type: 'Point',
+								},
+								address: {
+									street: 'string',
+									commune: 'string',
+									communeCode: 'string',
+									district: 'string',
+									districtCode: 'string',
+									province: 'string',
+									provinceCode: 'string',
+								},
+								summary: 'string',
+								description: 'string',
+								fullAddress: 'string',
+								phone: 'string',
+								photos: [
+									{
+										_id: 'string',
+										ownerID: 'string',
+										name: 'string',
+										createdAt: new Date(),
+										updatedAt: new Date(),
+									},
+								] as Photo[],
+								scheduleType: ScheduleType.DAILY,
+								state: State.ACTIVE,
+								status: Status.APPROVED,
+								createdAt: new Date(),
+								updatedAt: new Date(),
+							} as FacilityID,
+							name: 'string',
+							description: 'string',
+							price: 0,
+							order: 1,
+							createdAt: new Date(),
+							updatedAt: new Date(),
+						} as PackageTypeID,
+						type: TimeType.ONE_MONTH,
+						price: 0,
+						benefits: ['string', 'string'],
+						createdAt: new Date(),
+						updatedAt: new Date(),
+					} as PackageID,
+					promotionIDs: [],
+					promotionPrice: 0,
+					totalPrice: 0,
+					createdAt: new Date(),
+					updatedAt: new Date(),
+				},
+			},
+		},
+	})
+	@ApiResponse({
+		status: 401,
+		schema: {
+			example: {
+				code: '401',
+				message: 'Unauthorized',
+				details: null,
+			} as ErrorResponse<null>,
+		},
+	})
+	@ApiResponse({
+		status: 403,
+		schema: {
+			example: {
+				code: '403',
+				message: `Forbidden resource`,
+				details: null,
+			} as ErrorResponse<null>,
+		},
+	})
+	@ApiResponse({
+		status: 404,
+		schema: {
+			example: {
+				code: '404',
+				message: 'Bad request',
+				details: null,
+			} as ErrorResponse<null>,
+		},
+	})
+	@Get('/cart-items/:cartItemID')
+	@Roles(UserRole.MEMBER)
+	@UseGuards(RolesGuard)
+	async findOneCartItemByID(
+		@Param('cartItemID') cartItemID: string,
+		@GetCurrentUser() user: TokenPayload,
+	): Promise<CartItem> {
+		const populateOpt = {
+			path: 'packageID',
+			model: 'Package',
+			select: '-facilityID',
+			populate: {
+				path: 'packageTypeID',
+				model: 'PackageType',
+				populate: {
+					path: 'facilityID',
+					model: 'Facility',
+					select: '-reviews',
+				},
+			},
+		};
+
+		return await this.cartsService.findOneCartItemByID(
+			cartItemID,
+			user,
+			populateOpt,
+		);
 	}
 
 	@ApiOperation({

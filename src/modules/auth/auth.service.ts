@@ -63,6 +63,16 @@ export class AuthService {
 		return tokens;
 	}
 
+	async signupAsFacilityOwner(signupDto: SignupDto): Promise<TokenResponse> {
+		const newUser = await this.userService.createOneAsFacilityOwner(signupDto);
+
+		const tokens = await this.signTokens(newUser._id, newUser.role);
+
+		await this.updateRefreshTokenHashed(newUser._id, tokens.refreshToken);
+
+		return tokens;
+	}
+
 	async login(loginDto: LoginDto): Promise<TokenResponse> {
 		const user = await this.userService.findOneByEmail(loginDto.email);
 
