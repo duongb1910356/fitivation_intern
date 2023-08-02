@@ -6,6 +6,7 @@ import { CartItemsService } from 'src/modules/cart-items/cart-items.service';
 import { cartStub } from './stubs/cart.stub';
 import { BadRequestException, NotFoundException } from '@nestjs/common';
 import { cartItemStub } from '../../cart-items/test/stubs/cart-item.stub';
+import { UserRole } from 'src/modules/users/schemas/user.schema';
 
 jest.mock('../../cart-items/cart-items.service');
 
@@ -16,7 +17,7 @@ describe('CartsService', () => {
 		create: jest.fn(),
 		findOne: jest.fn(),
 		findOneAndUpdate: jest.fn(),
-		findById: jest.fn().mockReturnThis(),
+		findById: jest.fn(),
 		deleteOne: jest.fn(),
 	};
 
@@ -41,6 +42,47 @@ describe('CartsService', () => {
 	it(`should be defined it's service and dependencies`, () => {
 		expect(cartsService).toBeDefined();
 		expect(cartItemsService).toBeDefined();
+	});
+
+	describe('findOneCartItemByID', () => {
+		const cartItemID = cartItemStub()._id;
+		const user = {
+			sub: 'userID',
+			role: UserRole.MEMBER,
+		};
+
+		it('should return a cartItem', async () => {
+			jest.spyOn(cartModel, 'findOne').mockResolvedValue(cartStub());
+
+			jest
+				.spyOn(cartItemsService, 'findOneByID')
+				.mockResolvedValue(cartItemStub());
+
+			const result = await cartsService.findOneCartItemByID(
+				cartItemID,
+				user,
+				{},
+			);
+
+			expect(cartModel.findOne).toHaveBeenCalledWith({
+				accountID: user.sub,
+				cartItemIDs: cartItemID,
+			});
+
+			expect(cartItemsService.findOneByID).toHaveBeenCalledWith(cartItemID, {});
+
+			expect(result).toEqual(cartItemStub());
+		});
+
+		it(`should throw error if not found cart-item in current user's cart`, () => {
+			jest.spyOn(cartModel, 'findOne').mockResolvedValue(undefined);
+
+			expect(
+				cartsService.findOneCartItemByID(cartItemID, user, {}),
+			).rejects.toEqual(
+				new BadRequestException(`Not found cart-item in current user's cart`),
+			);
+		});
 	});
 
 	describe('createOne', () => {

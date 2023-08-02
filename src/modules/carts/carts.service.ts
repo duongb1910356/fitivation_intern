@@ -20,7 +20,7 @@ export class CartsService {
 	async findOneCartItemByID(
 		cartItemID: string,
 		user: TokenPayload,
-		populateOpt: any,
+		populateOpt?: any,
 	): Promise<CartItem> {
 		const cart = await this.cartModel.findOne({
 			accountID: user.sub,
