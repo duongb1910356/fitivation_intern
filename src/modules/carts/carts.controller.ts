@@ -383,7 +383,7 @@ export class CartsController {
 		summary: 'Remove Cart Item To Current Cart',
 		description: `Remove cart-item to current Cart`,
 	})
-	@ApiParam({ name: 'packageID', type: String, description: 'Package ID' })
+	@ApiParam({ name: 'cartItemID', type: String, description: 'Cart Item ID' })
 	@ApiResponse({
 		status: 200,
 		schema: {
@@ -420,12 +420,12 @@ export class CartsController {
 			} as ErrorResponse<null>,
 		},
 	})
-	@Delete('cart-items/:packageID')
+	@Delete('cart-items/:cartItemID')
 	@Roles(UserRole.MEMBER)
 	@UseGuards(RolesGuard)
 	async removeCartItemToCurrentCart(
 		@GetCurrentUser('sub') userID: string,
-		@Param('packageID') cartItemID: string,
+		@Param('cartItemID') cartItemID: string,
 	): Promise<boolean> {
 		return await this.cartsService.removeCartItemFromCurrentCart(
 			userID,

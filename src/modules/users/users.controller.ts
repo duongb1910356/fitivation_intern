@@ -5,6 +5,7 @@ import {
 	Get,
 	Param,
 	Patch,
+	Req,
 	UploadedFile,
 	UseGuards,
 	UseInterceptors,
@@ -170,8 +171,9 @@ export class UsersController {
 		@Param('userID') userID: string,
 		@UploadedFile()
 		file: Express.Multer.File,
+		@Req() req: any,
 	): Promise<boolean> {
-		return await this.userService.updateAvatar(userID, file);
+		return await this.userService.updateAvatar(userID, file, req);
 	}
 
 	@ApiOperation({

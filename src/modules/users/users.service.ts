@@ -1,5 +1,6 @@
 import {
 	BadRequestException,
+	ForbiddenException,
 	Injectable,
 	NotFoundException,
 } from '@nestjs/common';
@@ -64,7 +65,13 @@ export class UsersService {
 	async updateAvatar(
 		userID: string,
 		file: Express.Multer.File,
+		req: any,
 	): Promise<boolean> {
+		if (userID != req.user.sub) {
+			throw new ForbiddenException(
+				'You do not have permission to update avatar',
+			);
+		}
 		if (isValidObjectId(userID) && file) {
 			const user = await this.userModel.findById(userID);
 			await this.photoService.delete(user.avatar?._id);
