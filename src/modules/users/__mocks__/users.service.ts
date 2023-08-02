@@ -12,4 +12,5 @@ export const UsersService = jest.fn().mockReturnValue({
 	updateMyPassword: jest.fn().mockResolvedValue(true),
 	deleteMe: jest.fn().mockResolvedValue(true),
 	checkExist: jest.fn().mockResolvedValue({ value: false, message: null }),
+	createOneAsFacilityOwner: jest.fn(),
 });

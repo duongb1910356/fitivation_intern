@@ -26,6 +26,7 @@ import { CartsService } from '../carts/carts.service';
 import { PhotoService } from '../photo/photo.service';
 import Stripe from 'stripe';
 import { InjectStripe } from 'nestjs-stripe';
+import { SignupAsFacilityOwnerDto } from '../auth/dto/signupAsFacilityOwner-dto';
 
 @Injectable()
 export class UsersService {
@@ -193,6 +194,24 @@ export class UsersService {
 				},
 			});
 		}
+
+		return user;
+	}
+
+	async createOneAsFacilityOwner(dto: SignupAsFacilityOwnerDto): Promise<User> {
+		const isExist = await this.checkExist({
+			email: dto.email,
+			username: dto.username,
+		});
+
+		if (isExist.value) throw new BadRequestException(isExist.message);
+
+		dto.password = await Encrypt.hashData(dto.password);
+		dto.role = UserRole.FACILITY_OWNER;
+
+		const user = await this.userModel.create(dto);
+
+		user.refreshToken = undefined;
 
 		return user;
 	}
