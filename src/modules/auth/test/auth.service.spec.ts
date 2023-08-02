@@ -249,4 +249,36 @@ describe('AuthService', () => {
 			);
 		});
 	});
+
+	describe('signupAsFacilityOwner', () => {
+		const signupDto = userStub();
+
+		it('should return tokens', async () => {
+			signupDto.role = UserRole.FACILITY_OWNER;
+
+			jest
+				.spyOn(userService, 'createOneAsFacilityOwner')
+				.mockResolvedValue(signupDto);
+
+			jest.spyOn(authService, 'signTokens').mockResolvedValue(tokenResponse);
+
+			jest
+				.spyOn(authService, 'updateRefreshTokenHashed')
+				.mockResolvedValue(null);
+
+			const result = await authService.signupAsFacilityOwner(signupDto);
+
+			expect(authService.signTokens).toHaveBeenCalledWith(
+				signupDto._id,
+				signupDto.role,
+			);
+
+			expect(authService.updateRefreshTokenHashed).toHaveBeenCalledWith(
+				userStub()._id,
+				tokenResponse.refreshToken,
+			);
+
+			expect(result).toEqual(tokenResponse);
+		});
+	});
 });
