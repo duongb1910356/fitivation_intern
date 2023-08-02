@@ -1,4 +1,4 @@
-export const subscriptionStub = () => {
+export const subscriptionStub = (): any => {
 	return {
 		_id: '64b5fb7409c136b1b2789db6',
 		accountID: '649a8f8ab185ffb672485391',

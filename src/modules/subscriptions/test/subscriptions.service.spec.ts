@@ -11,10 +11,10 @@ import {
 	NotFoundException,
 } from '@nestjs/common';
 import { subscriptionStub } from './stubs/subscriptions.stub';
-import { QueryAPI, QueryObject } from 'src/shared/utils/query-api';
+import { PackageStub } from 'src/modules/package/test/stubs/package.stub';
 
 jest.mock('../../package/package.service');
-jest.mock('../../../shared/utils/query-api');
+
 describe('SubscriptionsService', function () {
 	let packageService: PackageService;
 	let subscriptionService: SubscriptionsService;
@@ -22,35 +22,28 @@ describe('SubscriptionsService', function () {
 
 	const mockModel: any = {
 		create: jest.fn(),
-		find: jest.fn(() => {
-			return {
-				sort: () => {
-					return {
-						select: () => {
-							return {
-								skip: () => {
-									return {
-										limit: () => {
-											return jest.fn();
-										},
-									};
-								},
-							};
-						},
-					};
-				},
-			};
-		}),
+		find: jest.fn().mockReturnThis(),
 		findById: jest.fn(),
 		findOneAndDelete: jest.fn(),
-		aggregate: jest.fn(),
 		findOne: jest.fn(),
-		filter: jest.fn(),
-		sort: jest.fn(),
-		limitfields: jest.fn(),
-		paginate: jest.fn(),
+		populate: jest.fn().mockResolvedValue([subscriptionStub()]),
+		findOneAndRemove: jest.fn(),
+		sort: jest.fn().mockReturnThis(),
+		select: jest.fn().mockReturnThis(),
+		skip: jest.fn().mockReturnThis(),
+		limit: jest.fn().mockReturnThis(),
 	};
-	const query: QueryObject = {};
+
+	jest.mock('src/shared/utils/query-api', () => ({
+		QueryAPI: jest.fn().mockImplementation(() => ({
+			filter: jest.fn().mockReturnThis(),
+			sort: jest.fn().mockReturnThis(),
+			limitfields: jest.fn().mockReturnThis(),
+			paginate: jest.fn().mockResolvedValue(subscriptionStub()),
+			queryModel: mockModel,
+			queryOptions: {},
+		})),
+	}));
 
 	const mockUser = {
 		sub: '649a8f8ab185ffb672485391',
@@ -58,6 +51,7 @@ describe('SubscriptionsService', function () {
 	};
 
 	beforeEach(async () => {
+		global.Date.now = jest.fn(() => new Date('2024-04-07T10:20:30Z').getTime());
 		const module: TestingModule = await Test.createTestingModule({
 			providers: [
 				SubscriptionsService,
@@ -75,11 +69,11 @@ describe('SubscriptionsService', function () {
 		subscriptionsModel = module.get<Model<Subscription>>(
 			getModelToken(Subscription.name),
 		);
-		jest.clearAllMocks();
 	});
 
-	// afterEach(() => {
-	// });
+	afterEach(() => {
+		jest.clearAllMocks();
+	});
 
 	it('should be defined', () => {
 		expect(subscriptionService).toBeDefined();
@@ -231,6 +225,7 @@ describe('SubscriptionsService', function () {
 				facilityID: 'your-facility-id',
 				expires: { $gt: mockDate },
 			});
+
 			expect(isActive).toBe(true);
 		});
 
@@ -267,21 +262,243 @@ describe('SubscriptionsService', function () {
 
 	describe('findMany', () => {
 		it('should return subscriptions based on the query and user.role is MEMBER', async () => {
-			const user = { role: UserRole.MEMBER, sub: 'your-account-id' };
-			const mockSubsciptionModel = {
-				sort: jest.fn().mockReturnThis(),
-				select: jest.fn().mockReturnThis(),
-				skip: jest.fn().mockReturnThis(),
-				limit: jest.fn().mockReturnValueOnce([subscriptionStub()]),
+			const query = {};
+			const userPayload = {
+				sub: '649a8f8ab185ffb672485391',
+				role: UserRole.MEMBER,
 			};
 
 			jest
-				.spyOn(mockModel, 'find')
-				.mockImplementationOnce(() => mockSubsciptionModel);
+				.spyOn(subscriptionService, 'checkDateAndUpdateDateIsExpired')
+				.mockReturnThis();
+			jest.spyOn(mockModel, 'find').mockReturnThis();
+			jest.spyOn(mockModel, 'populate').mockResolvedValue([subscriptionStub()]);
 
-			const result = await subscriptionService.findMany(query, user);
+			const result = await subscriptionService.findMany(query, userPayload);
 
+			expect(result.total).toEqual(1);
 			expect(result.items).toEqual([subscriptionStub()]);
+		});
+	});
+
+	describe('findOneByID', () => {
+		it('should return a subscription when valid subscriptionID and user', async () => {
+			const subscriptionID = 'valid_subscription_id';
+			const user = {
+				sub: '64b5fb7409c136b1b2789db6',
+				role: UserRole.ADMIN,
+			};
+			const populateOpt = {};
+
+			jest.spyOn(mockModel, 'findById').mockReturnThis();
+			jest.spyOn(mockModel, 'populate').mockResolvedValue(subscriptionStub());
+			jest
+				.spyOn(subscriptionService, 'checkDateAndUpdateDateIsExpired')
+				.mockReturnThis();
+
+			const result = await subscriptionService.findOneByID(
+				subscriptionID,
+				user,
+				populateOpt,
+			);
+
+			expect(result).toEqual(subscriptionStub());
+			expect(mockModel.findById).toHaveBeenCalledWith(subscriptionID);
+		});
+
+		it('should throw BadRequestException when subscription is not found', async () => {
+			const subscriptionID = 'valid_subscription_id';
+			const user = {
+				sub: '64b5fb7409c136b1b2789db6',
+				role: UserRole.MEMBER,
+			};
+			const populateOpt = {};
+
+			jest.spyOn(mockModel, 'findById').mockReturnThis();
+			jest
+				.spyOn(mockModel, 'populate')
+				.mockRejectedValueOnce(new Error('Bad Request'));
+
+			await expect(
+				subscriptionService.findOneByID(subscriptionID, user, populateOpt),
+			).rejects.toThrow(new BadRequestException());
+
+			expect(mockModel.findById).toHaveBeenCalledWith(subscriptionID);
+			expect(mockModel.populate).toHaveBeenCalledTimes(1);
+		});
+
+		it('should throw ForbiddenException when user is not authorized', async () => {
+			const subscriptionID = 'valid_subscription_id';
+			const user = {
+				sub: 'id',
+				role: UserRole.MEMBER,
+			};
+			const populateOpt = {};
+
+			jest.spyOn(mockModel, 'findById').mockReturnThis();
+			jest.spyOn(mockModel, 'populate').mockResolvedValue(subscriptionStub());
+
+			await expect(
+				subscriptionService.findOneByID(subscriptionID, user, populateOpt),
+			).rejects.toThrow(new ForbiddenException('Forbidden resource'));
+
+			expect(mockModel.findById).toHaveBeenCalledWith(subscriptionID);
+		});
+	});
+
+	describe('createOne', () => {
+		it('should create a subscription with valid inputs', async () => {
+			const userID = 'valid_user_id';
+			const billItemID = 'valid_bill_item_id';
+			const packageID = 'valid_package_id';
+			const facilityID = 'valid_facility_id';
+
+			jest
+				.spyOn(packageService, 'findOneByID')
+				.mockResolvedValue(PackageStub());
+			jest.spyOn(mockModel, 'create').mockResolvedValue(subscriptionStub());
+
+			const result = await subscriptionService.createOne(
+				userID,
+				billItemID,
+				packageID,
+				facilityID,
+			);
+
+			expect(result).toEqual(subscriptionStub());
+			expect(packageService.findOneByID).toHaveBeenCalledWith(packageID);
+			expect(mockModel.create).toHaveBeenCalledWith({
+				accountID: userID,
+				billItemID,
+				packageID,
+				facilityID,
+				expires: subscriptionStub().expires,
+			});
+		});
+	});
+
+	describe('renew', () => {
+		it('should renew a subscription with valid inputs', async () => {
+			const subscriptionID = 'valid_subscription_id';
+			const billItemID = 'valid_bill_item_id';
+			const user = {
+				sub: '649a8f8ab185ffb672485391',
+				role: UserRole.MEMBER,
+			};
+			const populateOpt = {};
+
+			jest.spyOn(mockModel, 'findById').mockResolvedValueOnce({
+				...subscriptionStub(),
+				save: jest.fn().mockResolvedValue(subscriptionStub()),
+			});
+			jest
+				.spyOn(subscriptionService, 'checkDateAndUpdateDateIsExpired')
+				.mockResolvedValue({
+					message: 'Subscription was expired',
+					subscription: subscriptionStub(),
+				});
+			jest
+				.spyOn(packageService, 'findOneByID')
+				.mockResolvedValue(PackageStub());
+			jest.spyOn(mockModel, 'findById').mockReturnThis();
+			jest.spyOn(mockModel, 'populate').mockResolvedValue(subscriptionStub());
+			const result = await subscriptionService.renew(
+				subscriptionID,
+				billItemID,
+				user,
+				populateOpt,
+			);
+
+			expect(result).toEqual(subscriptionStub());
+			expect(packageService.findOneByID).toHaveBeenCalledWith(
+				'649dd2e7e895344f72e91c42',
+			);
+		});
+
+		it('should throw a ForbiddenException when user is not authorized', async () => {
+			const subscriptionID = 'valid_subscription_id';
+			const billItemID = 'valid_bill_item_id';
+			const user = {
+				sub: 'invalid-id-user',
+				role: UserRole.MEMBER,
+			};
+			const populateOpt = {};
+
+			jest.spyOn(mockModel, 'findById').mockResolvedValueOnce({
+				...subscriptionStub(),
+				save: jest.fn().mockResolvedValue(subscriptionStub()),
+			});
+			jest
+				.spyOn(subscriptionService, 'checkDateAndUpdateDateIsExpired')
+				.mockResolvedValueOnce({
+					message: 'Subscription was expired',
+					subscription: subscriptionStub(),
+				});
+			await expect(
+				subscriptionService.renew(
+					subscriptionID,
+					billItemID,
+					user,
+					populateOpt,
+				),
+			).rejects.toThrow(new ForbiddenException('Forbidden resource'));
+		});
+
+		it('should throw a BadRequestException when subscription has not expired', async () => {
+			const subscriptionID = 'valid_subscription_id';
+			const billItemID = 'valid_bill_item_id';
+			const user = {
+				sub: '649a8f8ab185ffb672485391',
+				role: UserRole.MEMBER,
+			};
+			const populateOpt = {};
+
+			jest.spyOn(mockModel, 'findById').mockResolvedValue({
+				...subscriptionStub(),
+				save: jest.fn().mockResolvedValue(subscriptionStub()),
+			});
+			jest
+				.spyOn(subscriptionService, 'checkDateAndUpdateDateIsExpired')
+				.mockResolvedValue({
+					message: 'Subscription has not expired',
+					subscription: subscriptionStub(),
+				});
+
+			await expect(
+				subscriptionService.renew(subscriptionID, billItemID, user),
+			).rejects.toThrow(
+				new BadRequestException('Subscription has not expired'),
+			);
+		});
+	});
+
+	describe('deleteOneByBillItemID', () => {
+		it('should delete a subscription with valid billItemID', async () => {
+			const billItemID = 'valid_bill_item_id';
+
+			jest
+				.spyOn(mockModel, 'findOneAndRemove')
+				.mockResolvedValue(subscriptionStub());
+
+			const result = await subscriptionService.deleteOneByBillItemID(
+				billItemID,
+			);
+
+			expect(mockModel.findOneAndRemove).toHaveBeenCalledWith({ billItemID });
+			expect(result).toBe(true);
+		});
+
+		it('should return false when subscription is not found', async () => {
+			const billItemID = 'invalid_bill_item_id';
+
+			jest.spyOn(mockModel, 'findOneAndRemove').mockResolvedValue(null);
+
+			const result = await subscriptionService.deleteOneByBillItemID(
+				billItemID,
+			);
+
+			expect(mockModel.findOneAndRemove).toHaveBeenCalledWith({ billItemID });
+			expect(result).toBe(false);
 		});
 	});
 });
