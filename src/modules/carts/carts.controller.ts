@@ -198,7 +198,7 @@ export class CartsController {
 		summary: 'Find One Cart Item By ID',
 		description: `Find one cart-item.\n\nRoles: ${UserRole.MEMBER}.`,
 	})
-	@ApiParam({ name: 'id', type: String, description: 'Cart-item ID' })
+	@ApiParam({ name: 'cartItemID', type: String, description: 'Cart-item ID' })
 	@ApiResponse({
 		status: 200,
 		schema: {
@@ -299,11 +299,11 @@ export class CartsController {
 			} as ErrorResponse<null>,
 		},
 	})
-	@Get('/cart-items/:id')
+	@Get('/cart-items/:cartItemID')
 	@Roles(UserRole.MEMBER)
 	@UseGuards(RolesGuard)
 	async findOneCartItemByID(
-		@Param('id') cartItemID: string,
+		@Param('cartItemID') cartItemID: string,
 		@GetCurrentUser() user: TokenPayload,
 	): Promise<CartItem> {
 		const populateOpt = {
