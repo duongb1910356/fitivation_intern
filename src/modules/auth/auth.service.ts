@@ -12,7 +12,7 @@ import { JwtService } from '@nestjs/jwt';
 import { appConfig } from '../../app.config';
 import { Encrypt } from 'src/shared/utils/encrypt';
 import { LoginDto } from './dto/login-dto';
-import { UserStatus } from '../users/schemas/user.schema';
+import { UserRole, UserStatus } from '../users/schemas/user.schema';
 
 @Injectable()
 export class AuthService {
@@ -55,6 +55,16 @@ export class AuthService {
 
 	async signup(signupDto: SignupDto): Promise<TokenResponse> {
 		const newUser = await this.userService.createOne(signupDto);
+
+		const tokens = await this.signTokens(newUser._id, newUser.role);
+
+		await this.updateRefreshTokenHashed(newUser._id, tokens.refreshToken);
+
+		return tokens;
+	}
+
+	async signupAsFacilityOwner(signupDto: SignupDto): Promise<TokenResponse> {
+		const newUser = await this.userService.createOneAsFacilityOwner(signupDto);
 
 		const tokens = await this.signTokens(newUser._id, newUser.role);
 

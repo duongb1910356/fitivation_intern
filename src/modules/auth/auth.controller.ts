@@ -29,7 +29,7 @@ export class AuthController {
 	constructor(private readonly authService: AuthService) {}
 
 	@ApiOperation({
-		summary: 'signup',
+		summary: 'Signup',
 		description: 'Allow user sign up.\n\nRoles: none.',
 	})
 	@ApiBody({
@@ -40,7 +40,7 @@ export class AuthController {
 				value: {
 					username: 'customer1',
 					email: 'customer1@test.com',
-					password: '123123123',
+					password: '1@Aabcde',
 					displayName: 'Customer User',
 				} as SignupDto,
 			},
@@ -73,7 +73,53 @@ export class AuthController {
 	}
 
 	@ApiOperation({
-		summary: 'login',
+		summary: 'Signup As Facility Owner',
+		description: 'Allow user sign up as Facility Owner.\n\nRoles: none.',
+	})
+	@ApiBody({
+		type: SignupDto,
+		examples: {
+			'FACILITY OWNER': {
+				summary: 'Sign up Facility Owner account',
+				value: {
+					username: 'owner1',
+					email: 'owner1@test.com',
+					password: '1@Aabcde',
+					displayName: 'Owner User',
+				} as SignupDto,
+			},
+		},
+	})
+	@ApiResponse({
+		status: 201,
+		schema: {
+			example: {
+				accessToken: 'string',
+				refreshToken: 'string',
+			} as TokenResponse,
+		},
+	})
+	@ApiResponse({
+		status: 400,
+		schema: {
+			example: {
+				code: '400',
+				message: 'Input invalid',
+				details: null,
+			} as ErrorResponse<null>,
+		},
+	})
+	@Post('signup-owner')
+	@Public()
+	@HttpCode(HttpStatus.CREATED)
+	async signupAsFacilityOwner(
+		@Body() signupDto: SignupDto,
+	): Promise<TokenResponse> {
+		return this.authService.signupAsFacilityOwner(signupDto);
+	}
+
+	@ApiOperation({
+		summary: 'Login',
 		description: 'Allow user login.\n\nRoles: none.',
 	})
 	@ApiBody({
@@ -83,21 +129,21 @@ export class AuthController {
 				summary: 'Admin account',
 				value: {
 					email: 'admin@test.com',
-					password: '123123123',
+					password: '1@Aabcde',
 				} as LoginDto,
 			},
 			CUSTOMER: {
 				summary: 'Customer account',
 				value: {
 					email: 'customer1@test.com',
-					password: '123123123',
+					password: '1@Aabcde',
 				} as LoginDto,
 			},
 			FACILITY_OWNER: {
 				summary: 'Facility Owner account',
 				value: {
 					email: 'owner1@test.com',
-					password: '123123123',
+					password: '1@Aabcde',
 				} as LoginDto,
 			},
 		},
@@ -129,7 +175,7 @@ export class AuthController {
 	}
 
 	@ApiOperation({
-		summary: 'logout',
+		summary: 'Logout',
 		description: `Allow user log out.\n\nRoles: ${UserRole.ADMIN}, ${UserRole.FACILITY_OWNER}, ${UserRole.MEMBER}.`,
 	})
 	@ApiResponse({ status: 204 })
@@ -151,7 +197,7 @@ export class AuthController {
 	}
 
 	@ApiOperation({
-		summary: 'refreshToken',
+		summary: 'RefreshToken',
 		description: `Refresh new token.\n\nRoles: ${UserRole.ADMIN}, ${UserRole.FACILITY_OWNER}, ${UserRole.MEMBER}.`,
 	})
 	@ApiResponse({
