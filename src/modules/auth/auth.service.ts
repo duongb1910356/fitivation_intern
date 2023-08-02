@@ -12,6 +12,7 @@ import { JwtService } from '@nestjs/jwt';
 import { appConfig } from '../../app.config';
 import { Encrypt } from 'src/shared/utils/encrypt';
 import { LoginDto } from './dto/login-dto';
+import { UserStatus } from '../users/schemas/user.schema';
 
 @Injectable()
 export class AuthService {
