@@ -18,8 +18,10 @@ export class CartItemsService {
 		private promotionService: PromotionsService,
 	) {}
 
-	async findOneByID(cartItemID: string): Promise<CartItem> {
-		const cartItem = await this.cartItemModel.findOne({ _id: cartItemID });
+	async findOneByID(cartItemID: string, populateOpt?: any): Promise<CartItem> {
+		const cartItem = await this.cartItemModel
+			.findOne({ _id: cartItemID })
+			.populate(populateOpt);
 
 		if (!cartItem) throw new NotFoundException(`Not found cart-item`);
 

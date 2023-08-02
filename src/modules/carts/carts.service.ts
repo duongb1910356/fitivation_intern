@@ -7,6 +7,8 @@ import { Cart, CartDocument } from './schemas/cart.schema';
 import { Model } from 'mongoose';
 import { InjectModel } from '@nestjs/mongoose';
 import { CartItemsService } from '../cart-items/cart-items.service';
+import { CartItem } from '../cart-items/schemas/cart-item.schema';
+import { TokenPayload } from '../auth/types/token-payload.type';
 
 @Injectable()
 export class CartsService {
@@ -14,6 +16,30 @@ export class CartsService {
 		@InjectModel(Cart.name) private cartModel: Model<CartDocument>,
 		private cartItemService: CartItemsService,
 	) {}
+
+	async findOneCartItemByID(
+		cartItemID: string,
+		user: TokenPayload,
+		populateOpt: any,
+	): Promise<CartItem> {
+		const cart = await this.cartModel.findOne({
+			accountID: user.sub,
+			cartItemIDs: cartItemID,
+		});
+
+		if (!cart) {
+			throw new BadRequestException(
+				`Not found cart-item in current user's cart`,
+			);
+		}
+
+		const cartItem = await this.cartItemService.findOneByID(
+			cartItemID,
+			populateOpt,
+		);
+
+		return cartItem;
+	}
 
 	async createOne(userID: string): Promise<Cart> {
 		const cart = await this.cartModel.create({ accountID: userID });
