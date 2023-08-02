@@ -50,7 +50,9 @@ describe('CartItemsService', () => {
 		const cartItemID = '64bcef03dfcb51ae859b6d4e';
 
 		it('should return a cartItem', async () => {
-			jest.spyOn(cartItemModel, 'findOne').mockResolvedValue(cartItemStub());
+			jest.spyOn(cartItemModel, 'findOne').mockImplementation(() => ({
+				populate: jest.fn().mockResolvedValueOnce(cartItemStub()),
+			}));
 
 			const result = await cartItemsService.findOneByID(cartItemID);
 
@@ -60,7 +62,9 @@ describe('CartItemsService', () => {
 		});
 
 		it('should throw error if not found cart-item with that id', () => {
-			jest.spyOn(cartItemModel, 'findOne').mockResolvedValue(undefined);
+			jest.spyOn(cartItemModel, 'findOne').mockImplementation(() => ({
+				populate: jest.fn().mockResolvedValueOnce(undefined),
+			}));
 
 			expect(cartItemsService.findOneByID('other ID')).rejects.toEqual(
 				new NotFoundException('Not found cart-item'),
