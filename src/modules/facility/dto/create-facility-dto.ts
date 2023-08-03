@@ -41,7 +41,7 @@ export class LocationDTO {
 // }
 
 export class CreateFacilityDto {
-	@IsNotEmpty()
+	@IsOptional()
 	@IsString()
 	brandID: string;
 
