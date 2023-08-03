@@ -266,6 +266,42 @@ describe('UsersService', () => {
 		});
 	});
 
+	describe('createOneAsFacilityOwner', () => {
+		const signupAsFacilityOwnerDto = {
+			username: 'member',
+			email: 'member@test.com',
+			password: '123444321',
+			role: UserRole.MEMBER,
+		};
+		it('should return a user with role facility owner', async () => {
+			jest.spyOn(usersService, 'checkExist').mockResolvedValue({
+				value: false,
+				message: null,
+			});
+
+			jest.spyOn(userModel, 'create').mockResolvedValue(userStub());
+
+			const user: User = await usersService.createOneAsFacilityOwner(
+				signupAsFacilityOwnerDto,
+			);
+
+			expect(user).toBeDefined();
+
+			expect(user.password).not.toEqual(signupAsFacilityOwnerDto.password);
+		});
+
+		it('should throw error if email or username was exist', async () => {
+			jest.spyOn(usersService, 'checkExist').mockResolvedValue({
+				value: true,
+				message: 'Email already exists',
+			});
+
+			expect(
+				usersService.createOneAsFacilityOwner(signupAsFacilityOwnerDto),
+			).rejects.toEqual(new BadRequestException('Email already exists'));
+		});
+	});
+
 	describe('deleteOne', () => {
 		const userID = '649a8f8ab185ffb672485391';
 

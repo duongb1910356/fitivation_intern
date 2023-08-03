@@ -1,3 +1,4 @@
+import { cartItemStub } from 'src/modules/cart-items/test/stubs/cart-item.stub';
 import { cartStub } from '../test/stubs/cart.stub';
 
 export const CartsService = jest.fn().mockReturnValue({
@@ -10,4 +11,5 @@ export const CartsService = jest.fn().mockReturnValue({
 	updatePrice: jest.fn().mockResolvedValue(true),
 	addPackagePromotionToCartItemInCurrentCart: jest.fn().mockResolvedValue(true),
 	checkValidCartItemInCurrentCart: jest.fn().mockReturnValue(true),
+	findOneCartItemByID: jest.fn().mockResolvedValue(cartItemStub()),
 });

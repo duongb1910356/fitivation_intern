@@ -1,5 +1,6 @@
 import {
 	BadRequestException,
+	ForbiddenException,
 	Injectable,
 	NotFoundException,
 } from '@nestjs/common';
@@ -26,6 +27,7 @@ import { CartsService } from '../carts/carts.service';
 import { PhotoService } from '../photo/photo.service';
 import Stripe from 'stripe';
 import { InjectStripe } from 'nestjs-stripe';
+import { SignupAsFacilityOwnerDto } from '../auth/dto/signupAsFacilityOwner-dto';
 
 @Injectable()
 export class UsersService {
@@ -63,7 +65,13 @@ export class UsersService {
 	async updateAvatar(
 		userID: string,
 		file: Express.Multer.File,
+		req: any,
 	): Promise<boolean> {
+		if (userID != req.user.sub) {
+			throw new ForbiddenException(
+				'You do not have permission to update avatar',
+			);
+		}
 		if (isValidObjectId(userID) && file) {
 			const user = await this.userModel.findById(userID);
 			await this.photoService.delete(user.avatar?._id);
@@ -193,6 +201,24 @@ export class UsersService {
 				},
 			});
 		}
+
+		return user;
+	}
+
+	async createOneAsFacilityOwner(dto: SignupAsFacilityOwnerDto): Promise<User> {
+		const isExist = await this.checkExist({
+			email: dto.email,
+			username: dto.username,
+		});
+
+		if (isExist.value) throw new BadRequestException(isExist.message);
+
+		dto.password = await Encrypt.hashData(dto.password);
+		dto.role = UserRole.FACILITY_OWNER;
+
+		const user = await this.userModel.create(dto);
+
+		user.refreshToken = undefined;
 
 		return user;
 	}
