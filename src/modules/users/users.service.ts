@@ -235,22 +235,6 @@ export class UsersService {
 		return true;
 	}
 
-	// async updateAvatar(userId: string, filePath: string): Promise<User> {
-	// 	try {
-	// 		return await this.userModel.findByIdAndUpdate(
-	// 			userId,
-	// 			{
-	// 				avatar: filePath,
-	// 			},
-	// 			{
-	// 				new: true,
-	// 			},
-	// 		);
-	// 	} catch (err) {
-	// 		throw new InternalServerErrorException(err);
-	// 	}
-	// }
-
 	async getCurrentUser(userID: string): Promise<User> {
 		const user = await this.userModel.findById(userID);
 
