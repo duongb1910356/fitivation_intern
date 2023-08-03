@@ -54,11 +54,11 @@ export class UsersService {
 	}
 
 	async getQuantityFacilityOwnersStats(): Promise<object> {
-		const numFacilityOwners = await this.userModel
+		const numerFacilityOwners = await this.userModel
 			.find({ role: UserRole.FACILITY_OWNER })
 			.count();
 
-		return { numFacilityOwners };
+		return { numerFacilityOwners };
 	}
 
 	async updateAvatar(

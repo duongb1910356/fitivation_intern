@@ -141,8 +141,8 @@ export class BillsService {
 	}
 
 	async getQuantityBillsStats(): Promise<object> {
-		const numBills = await this.billModel.find().count();
-		return { numBills };
+		const numerBills = await this.billModel.find().count();
+		return { numerBills };
 	}
 
 	async getMonthlyBillStats(year: number): Promise<Array<object>> {
@@ -158,7 +158,7 @@ export class BillsService {
 			{
 				$group: {
 					_id: { $month: '$createdAt' },
-					numBills: { $sum: 1 },
+					numberBills: { $sum: 1 },
 					totalPrice: { $sum: '$totalPrice' },
 					avgTotalPrice: { $avg: '$totalPrice' },
 					minPrice: { $min: '$totalPrice' },
@@ -186,7 +186,7 @@ export class BillsService {
 			{
 				$group: {
 					_id: { $year: '$createdAt' },
-					numBills: { $sum: 1 },
+					numberBills: { $sum: 1 },
 					totalPrice: { $sum: '$totalPrice' },
 					avgTotalPrice: { $avg: '$totalPrice' },
 					minPrice: { $min: '$totalPrice' },
