@@ -14,6 +14,7 @@ describe('AuthService', () => {
 	const tokenResponse = {
 		accessToken: 'access_token',
 		refreshToken: 'refresh_token',
+		role: userStub().role,
 	};
 	const jwtService = {
 		signAsync: jest.fn().mockResolvedValue('token'),
