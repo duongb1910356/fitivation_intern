@@ -27,13 +27,14 @@ export const PhotoSchema = SchemaFactory.createForClass(Photo);
 
 export const PhotoSchemaFactory = () => {
 	const photoSchema = PhotoSchema;
-	const fileHost = appConfig.fileHost;
+	// const fileHost = appConfig.fileHost;
+	const fileHostServer = 'https://staging-file.fitivation.go.drimaesvn.com';
 
 	photoSchema.pre('save', async function (next) {
 		// eslint-disable-next-line @typescript-eslint/no-this-alias
 		const photo = this;
 		if (!photo.imageURL) {
-			photo.imageURL = `${fileHost}/${this.ownerID}/${this.name}`;
+			photo.imageURL = `${fileHostServer}/${this.ownerID}/${this.name}`;
 		}
 		return next();
 	});
