@@ -52,6 +52,7 @@ export class AuthController {
 			example: {
 				accessToken: 'string',
 				refreshToken: 'string',
+				role: 'string',
 			} as TokenResponse,
 		},
 	})
@@ -96,6 +97,7 @@ export class AuthController {
 			example: {
 				accessToken: 'string',
 				refreshToken: 'string',
+				role: 'string',
 			} as TokenResponse,
 		},
 	})
@@ -154,6 +156,7 @@ export class AuthController {
 			example: {
 				accessToken: 'string',
 				refreshToken: 'string',
+				role: 'string',
 			} as TokenResponse,
 		},
 	})
@@ -206,6 +209,7 @@ export class AuthController {
 			example: {
 				accessToken: 'string',
 				refreshToken: 'string',
+				role: 'string',
 			} as TokenResponse,
 		},
 	})

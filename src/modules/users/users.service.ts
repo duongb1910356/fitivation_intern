@@ -55,11 +55,11 @@ export class UsersService {
 	}
 
 	async getQuantityFacilityOwnersStats(): Promise<object> {
-		const numFacilityOwners = await this.userModel
+		const numerFacilityOwners = await this.userModel
 			.find({ role: UserRole.FACILITY_OWNER })
 			.count();
 
-		return { numFacilityOwners };
+		return { numerFacilityOwners };
 	}
 
 	async updateAvatar(
@@ -241,22 +241,6 @@ export class UsersService {
 
 		return true;
 	}
-
-	// async updateAvatar(userId: string, filePath: string): Promise<User> {
-	// 	try {
-	// 		return await this.userModel.findByIdAndUpdate(
-	// 			userId,
-	// 			{
-	// 				avatar: filePath,
-	// 			},
-	// 			{
-	// 				new: true,
-	// 			},
-	// 		);
-	// 	} catch (err) {
-	// 		throw new InternalServerErrorException(err);
-	// 	}
-	// }
 
 	async getCurrentUser(userID: string): Promise<User> {
 		const user = await this.userModel.findById(userID);

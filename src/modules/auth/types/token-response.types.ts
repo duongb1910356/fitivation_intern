@@ -8,4 +8,8 @@ export class TokenResponse {
 	@IsNotEmpty()
 	@IsString()
 	refreshToken: string;
+
+	@IsNotEmpty()
+	@IsString()
+	role: string;
 }
