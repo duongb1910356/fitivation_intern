@@ -22,6 +22,23 @@ export class BillItemsService {
 		private brandService: BrandService,
 	) {}
 
+	async getQuantityCustomerOfOwnFacilities(userID: string): Promise<object> {
+		const stats = await this.billItemsModel.aggregate([
+			{
+				$match: {
+					ownerFacilityID: new mongoose.Types.ObjectId(userID),
+				},
+			},
+			{
+				$group: {
+					_id: '$accountID',
+				},
+			},
+		]);
+
+		return { numberCustomers: stats.length };
+	}
+
 	async getQuantityBillItemOwnFacilitiesStats(userID: string): Promise<object> {
 		const numberbillItems = await this.billItemsModel
 			.find({

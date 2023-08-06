@@ -25,6 +25,51 @@ export class BillItemsController {
 	constructor(private readonly billItemsService: BillItemsService) {}
 
 	@ApiOperation({
+		summary: 'Get Quantity Customer Of Own Facilities',
+		description: `Get quantity customer of own facilities.\n\nRoles: ${UserRole.FACILITY_OWNER}.`,
+	})
+	@ApiResponse({
+		status: 200,
+		schema: {
+			example: {
+				data: {
+					numberCustomers: 1,
+				},
+			},
+		},
+	})
+	@ApiResponse({
+		status: 401,
+		schema: {
+			example: {
+				code: '401',
+				message: 'Unauthorized',
+				details: null,
+			} as ErrorResponse<null>,
+		},
+	})
+	@ApiResponse({
+		status: 403,
+		schema: {
+			example: {
+				code: '403',
+				message: `Forbidden resource`,
+				details: null,
+			} as ErrorResponse<null>,
+		},
+	})
+	@Get('statics/quantity-customers')
+	@Roles(UserRole.FACILITY_OWNER)
+	@UseGuards(RolesGuard)
+	async getQuantityCustomerOfOwnFacilities(
+		@GetCurrentUser('sub') userID: string,
+	): Promise<object> {
+		return await this.billItemsService.getQuantityCustomerOfOwnFacilities(
+			userID,
+		);
+	}
+
+	@ApiOperation({
 		summary: 'Get Quantity bill-item Of Own Facilities Statistic',
 		description: `Get quantity bill-item of own facilities.\n\nRoles: ${UserRole.FACILITY_OWNER}.`,
 	})
