@@ -908,6 +908,7 @@ export class AdminController {
 	}
 
 	//FACILITIES
+
 	@Patch('facilities/:facilityID/changeStatus')
 	@ApiBearerAuth()
 	@ApiOperation({
@@ -986,6 +987,12 @@ export class AdminController {
 	) {
 		console.log('data ', data);
 		return this.facilityService.updateStatus(facilityID, req, data.status);
+	}
+
+	@Get('facilities/statistics')
+	getFacilityStatistics(@Req() req: any) {
+		console.log('da gọi');
+		return this.facilityService.getFacilityStatistics(req);
 	}
 
 	// ATTENDANCES

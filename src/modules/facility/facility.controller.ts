@@ -1943,8 +1943,6 @@ export class FacilityController {
 		status: 200,
 		schema: {
 			example: {
-				code: 200,
-				message: 'Success',
 				data: {
 					_id: '1233456',
 					brandID: {},

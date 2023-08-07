@@ -152,7 +152,10 @@ export class FacilityService {
 			}
 		}
 
-		const facility = await this.facilityModel.create(createFacilityDto);
+		const facility = await this.facilityModel.create({
+			...createFacilityDto,
+			status: Status.PENDING,
+		});
 
 		if (createFacilityDto?.scheduleDto) {
 			const scheduleDto = await this.scheduleService.create(
@@ -683,10 +686,16 @@ export class FacilityService {
 			const regex = new RegExp(search.split(' ').join('.*'), 'i');
 			aggregatePipeline.push({
 				$match: {
-					$or: [
-						{ fullAddress: regex },
-						{ name: regex },
-						{ 'brandID.name': { $regex: regex } },
+					$and: [
+						{ status: Status.APPROVED },
+						{ state: State.ACTIVE },
+						{
+							$or: [
+								{ fullAddress: regex },
+								{ name: regex },
+								{ 'brandID.name': { $regex: regex } },
+							],
+						},
 					],
 				},
 			});
@@ -812,5 +821,41 @@ export class FacilityService {
 				latitude: latitude,
 			},
 		};
+	}
+
+	async getFacilityStatistics(req: any) {
+		if (req.user.role != 'ADMIN') {
+			throw new ForbiddenException('You must be admin to use this API');
+		}
+		console.log('truoc thong ke');
+		const facilities = await this.facilityModel.aggregate([
+			{
+				$group: {
+					_id: '$status', // Group theo trạng thái
+					count: { $sum: 1 }, // Đếm số lượng phòng tập trong mỗi nhóm
+				},
+			},
+		]);
+		console.log('sau thong ke');
+
+		const result = {
+			pendingFacility: 0,
+			rejectFacility: 0,
+			approveFacility: 0,
+		};
+
+		facilities.forEach((fa) => {
+			if (fa._id == 'PENDING') {
+				result.pendingFacility = fa.count;
+			} else if (fa._id == 'APPROVED') {
+				result.approveFacility = fa.count;
+			} else {
+				result.rejectFacility = fa.count;
+			}
+		});
+
+		console.log('result >> ', result);
+
+		return result;
 	}
 }
