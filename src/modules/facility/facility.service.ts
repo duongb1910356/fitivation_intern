@@ -827,7 +827,6 @@ export class FacilityService {
 		if (req.user.role != 'ADMIN') {
 			throw new ForbiddenException('You must be admin to use this API');
 		}
-		console.log('truoc thong ke');
 		const facilities = await this.facilityModel.aggregate([
 			{
 				$group: {
@@ -836,7 +835,6 @@ export class FacilityService {
 				},
 			},
 		]);
-		console.log('sau thong ke');
 
 		const result = {
 			pendingFacility: 0,
@@ -853,9 +851,6 @@ export class FacilityService {
 				result.rejectFacility = fa.count;
 			}
 		});
-
-		console.log('result >> ', result);
-
 		return result;
 	}
 }

@@ -989,9 +989,18 @@ export class AdminController {
 		return this.facilityService.updateStatus(facilityID, req, data.status);
 	}
 
+	@ApiBearerAuth()
 	@Get('facilities/statistics')
+	@ApiOkResponse({
+		schema: {
+			example: {
+				pendingFacility: 0,
+				rejectFacility: 0,
+				approveFacility: 0,
+			},
+		},
+	})
 	getFacilityStatistics(@Req() req: any) {
-		console.log('da gọi');
 		return this.facilityService.getFacilityStatistics(req);
 	}
 
