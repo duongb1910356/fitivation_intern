@@ -201,7 +201,7 @@ export class PaymentsService {
 
 		const paymentIntent = await this.stripe.paymentIntents.create({
 			amount,
-			currency: PaymentCurrency.VND,
+			currency: PaymentCurrency.USD,
 			customer: stripeCustomer.data[0].id,
 			metadata: {
 				cartItemIDs: paymentRequest.cartItemIDs.join(', '),

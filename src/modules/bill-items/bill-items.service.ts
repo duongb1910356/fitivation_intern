@@ -5,7 +5,7 @@ import {
 	NotFoundException,
 } from '@nestjs/common';
 import { InjectModel } from '@nestjs/mongoose';
-import { Model } from 'mongoose';
+import mongoose, { Model } from 'mongoose';
 import { BillItem, BillItemsDocument } from './schemas/bill-item.schema';
 import { PackageService } from '../package/package.service';
 import { BillItemFacility } from './schemas/bill-item-facility.schema';
@@ -21,6 +21,114 @@ export class BillItemsService {
 		private packageService: PackageService,
 		private brandService: BrandService,
 	) {}
+
+	async getQuantityCustomerOfOwnFacilities(userID: string): Promise<object> {
+		const stats = await this.billItemsModel.aggregate([
+			{
+				$match: {
+					ownerFacilityID: new mongoose.Types.ObjectId(userID),
+				},
+			},
+			{
+				$group: {
+					_id: '$accountID',
+				},
+			},
+		]);
+
+		return { numberCustomers: stats.length };
+	}
+
+	async getQuantityBillItemOwnFacilitiesStats(userID: string): Promise<object> {
+		const numberbillItems = await this.billItemsModel
+			.find({
+				ownerFacilityID: userID,
+			})
+			.count();
+
+		return { numberbillItems };
+	}
+
+	async getYearlyBillItemOwnFacilitiesStats(
+		userID: string,
+	): Promise<Array<object>> {
+		const stats = await this.billItemsModel.aggregate([
+			{
+				$match: {
+					ownerFacilityID: new mongoose.Types.ObjectId(userID),
+				},
+			},
+			{
+				$group: {
+					_id: { $year: '$createdAt' },
+					numberBillItems: { $sum: 1 },
+					totalPrice: { $sum: '$totalPrice' },
+					avgTotalPrice: { $avg: '$totalPrice' },
+					minPrice: { $min: '$totalPrice' },
+					maxPrice: { $max: '$totalPrice' },
+				},
+			},
+			{
+				$addFields: { year: '$_id' },
+			},
+			{
+				$project: {
+					_id: 0,
+				},
+			},
+			{
+				$sort: { year: -1 },
+			},
+		]);
+
+		return stats;
+	}
+
+	async getMonthlyBillItemOwnFacilitiesStats(
+		year: number,
+		userID: string,
+	): Promise<Array<object>> {
+		const stats = await this.billItemsModel.aggregate([
+			{
+				$match: {
+					$and: [
+						{
+							createdAt: {
+								$gte: new Date(`${year}-01-01T00:00:00.000Z`),
+								$lte: new Date(`${year}-12-31T00:00:00.000Z`),
+							},
+						},
+						{
+							ownerFacilityID: new mongoose.Types.ObjectId(userID),
+						},
+					],
+				},
+			},
+			{
+				$group: {
+					_id: { $month: '$createdAt' },
+					numberBillItems: { $sum: 1 },
+					totalPrice: { $sum: '$totalPrice' },
+					avgTotalPrice: { $avg: '$totalPrice' },
+					minPrice: { $min: '$totalPrice' },
+					maxPrice: { $max: '$totalPrice' },
+				},
+			},
+			{
+				$addFields: { month: '$_id' },
+			},
+			{
+				$project: {
+					_id: 0,
+				},
+			},
+			{
+				$sort: { month: -1 },
+			},
+		]);
+
+		return stats;
+	}
 
 	async findOneByCondition(condition: any): Promise<BillItem> {
 		const billItem = await this.billItemsModel.findOne(condition);

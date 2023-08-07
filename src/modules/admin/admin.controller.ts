@@ -108,7 +108,7 @@ export class AdminController {
 		schema: {
 			example: {
 				data: {
-					numUsers: 1,
+					numberUsers: 1,
 				},
 			},
 		},
@@ -190,7 +190,7 @@ export class AdminController {
 		schema: {
 			example: {
 				data: {
-					numFacilityOwners: 1,
+					numerFacilityOwners: 1,
 				},
 			},
 		},
@@ -697,7 +697,7 @@ export class AdminController {
 		schema: {
 			example: {
 				data: {
-					numBills: 1,
+					numerBills: 1,
 				},
 			},
 		},
@@ -739,7 +739,7 @@ export class AdminController {
 			example: {
 				data: [
 					{
-						numBills: 7,
+						numberBills: 7,
 						totalPrice: 3940000,
 						avgTotalPrice: 562857.1428571428,
 						minPrice: 140000,
@@ -747,7 +747,7 @@ export class AdminController {
 						year: 2023,
 					},
 					{
-						numBills: 1,
+						numberBills: 1,
 						totalPrice: 1680000,
 						avgTotalPrice: 1680000,
 						minPrice: 1680000,
@@ -755,7 +755,7 @@ export class AdminController {
 						year: 2022,
 					},
 					{
-						numBills: 1,
+						numberBills: 1,
 						totalPrice: 300000,
 						avgTotalPrice: 300000,
 						minPrice: 300000,
@@ -803,7 +803,7 @@ export class AdminController {
 			example: {
 				data: [
 					{
-						numBills: 3,
+						numberBills: 3,
 						totalPrice: 2820000,
 						avgTotalPrice: 940000,
 						minPrice: 150000,
@@ -811,7 +811,7 @@ export class AdminController {
 						month: 3,
 					},
 					{
-						numBills: 1,
+						numberBills: 1,
 						totalPrice: 420000,
 						avgTotalPrice: 420000,
 						minPrice: 420000,
@@ -819,7 +819,7 @@ export class AdminController {
 						month: 2,
 					},
 					{
-						numBills: 3,
+						numberBills: 3,
 						totalPrice: 700000,
 						avgTotalPrice: 233333.33333333334,
 						minPrice: 140000,
