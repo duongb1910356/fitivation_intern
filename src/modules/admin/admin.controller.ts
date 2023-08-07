@@ -985,24 +985,31 @@ export class AdminController {
 		@Body() data: UpdateStatusFacilityDto,
 		@Req() req: any,
 	) {
-		console.log('data ', data);
 		return this.facilityService.updateStatus(facilityID, req, data.status);
 	}
 
-	@ApiBearerAuth()
-	@Get('facilities/statistics')
-	@ApiOkResponse({
-		schema: {
-			example: {
-				pendingFacility: 0,
-				rejectFacility: 0,
-				approveFacility: 0,
-			},
-		},
-	})
-	getFacilityStatistics(@Req() req: any) {
-		return this.facilityService.getFacilityStatistics(req);
-	}
+	// @ApiBearerAuth()
+	// @Get('facilities/statistics')
+	// @ApiParam({
+	// 	name: 'facilityID',
+	// 	type: String,
+	// 	description: 'Facility ID',
+	// })
+	// @ApiOkResponse({
+	// 	schema: {
+	// 		example: {
+	// 			pendingFacility: 0,
+	// 			rejectFacility: 0,
+	// 			approveFacility: 0,
+	// 		},
+	// 	},
+	// })
+	// getFacilityStatistics(
+	// 	@Param('facilityID', MongoIdValidationPipe) facilityID: string,
+	// 	@Req() req: any,
+	// ) {
+	// 	return this.facilityService.getFacilityStatistics(facilityID, req);
+	// }
 
 	// ATTENDANCES
 	@Get('facillities/:facilityID/attendances')

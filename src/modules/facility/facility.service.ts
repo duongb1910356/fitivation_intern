@@ -823,34 +823,45 @@ export class FacilityService {
 		};
 	}
 
-	async getFacilityStatistics(req: any) {
-		if (req.user.role != 'ADMIN') {
-			throw new ForbiddenException('You must be admin to use this API');
+	async getNumberFacilityOfOwner(req: any) {
+		if (req.user.role == UserRole.FACILITY_OWNER) {
+			const count = await this.facilityModel.countDocuments({
+				ownerID: req.user.sub,
+			});
+
+			return { count: count };
 		}
-		const facilities = await this.facilityModel.aggregate([
-			{
-				$group: {
-					_id: '$status', // Group theo trạng thái
-					count: { $sum: 1 }, // Đếm số lượng phòng tập trong mỗi nhóm
-				},
-			},
-		]);
-
-		const result = {
-			pendingFacility: 0,
-			rejectFacility: 0,
-			approveFacility: 0,
-		};
-
-		facilities.forEach((fa) => {
-			if (fa._id == 'PENDING') {
-				result.pendingFacility = fa.count;
-			} else if (fa._id == 'APPROVED') {
-				result.approveFacility = fa.count;
-			} else {
-				result.rejectFacility = fa.count;
-			}
-		});
-		return result;
+		throw new ForbiddenException('You must be facility owner to use this API');
 	}
+
+	// async getFacilityStatistics(req: any) {
+	// 	if (req.user.role != 'ADMIN') {
+	// 		throw new ForbiddenException('You must be admin to use this API');
+	// 	}
+	// 	const facilities = await this.facilityModel.aggregate([
+	// 		{
+	// 			$group: {
+	// 				_id: '$status', // Group theo trạng thái
+	// 				count: { $sum: 1 }, // Đếm số lượng phòng tập trong mỗi nhóm
+	// 			},
+	// 		},
+	// 	]);
+
+	// 	const result = {
+	// 		pendingFacility: 0,
+	// 		rejectFacility: 0,
+	// 		approveFacility: 0,
+	// 	};
+
+	// 	facilities.forEach((fa) => {
+	// 		if (fa._id == 'PENDING') {
+	// 			result.pendingFacility = fa.count;
+	// 		} else if (fa._id == 'APPROVED') {
+	// 			result.approveFacility = fa.count;
+	// 		} else {
+	// 			result.rejectFacility = fa.count;
+	// 		}
+	// 	});
+	// 	return result;
+	// }
 }

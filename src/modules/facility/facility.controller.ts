@@ -783,6 +783,45 @@ export class FacilityController {
 		return this.facilityService.getNearestFacilities(longitude, latitude);
 	}
 
+	@Get('count')
+	@ApiBearerAuth()
+	@ApiOperation({
+		summary: 'Get number facility of owner',
+	})
+	@ApiOkResponse({
+		status: 200,
+		schema: {
+			example: {
+				code: 200,
+				message: 'Success',
+				data: {
+					total: 1,
+					items: [
+						{
+							_id: '123456789',
+							ownerID: 'id-bucket',
+							name: 'name-image',
+							imageURL: 'http://localhost:8080/id-bucket/name-image',
+							createdAt: new Date(),
+							updatedAt: new Date(),
+						},
+					],
+					options: {
+						limit: 1,
+						offset: 1,
+						searchField: 'ownerID',
+						searchValue: 'id-bucket',
+						sortField: 'createdAt',
+						sortOrder: 'asc',
+					} as ListOptions<Photo>,
+				} as ListResponse<Photo>,
+			},
+		},
+	})
+	getNumberFacilityOfOwner(@Req() req: any) {
+		return this.facilityService.getNumberFacilityOfOwner(req);
+	}
+
 	@Public()
 	@Get(':facilityID')
 	@ApiParam({ name: 'facilityID', type: String, description: 'Facility ID' })
