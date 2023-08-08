@@ -3,12 +3,14 @@ import {
 	Get,
 	Param,
 	ParseIntPipe,
+	Query,
 	UseGuards,
 } from '@nestjs/common';
 import { BillItemsService } from './bill-items.service';
 import {
 	ApiBearerAuth,
 	ApiOperation,
+	ApiParam,
 	ApiResponse,
 	ApiTags,
 } from '@nestjs/swagger';
@@ -17,6 +19,20 @@ import { Roles } from 'src/decorators/role.decorator';
 import { RolesGuard } from 'src/guards/role.guard';
 import { GetCurrentUser } from 'src/decorators/get-current-user.decorator';
 import { ErrorResponse } from 'src/shared/response/common-response';
+import { ListResponseV2, QueryObject } from 'src/shared/utils/query-api';
+import { BillItem, BillItemStatus } from './schemas/bill-item.schema';
+import { BillItemFacility } from './schemas/bill-item-facility.schema';
+import { BillItemPackageType } from './schemas/bill-item-package-type.schema';
+import { TimeType } from '../package/entities/package.entity';
+import { BillItemPackage } from './schemas/bill-item-package.schema';
+import {
+	CustomerType,
+	Promotion,
+	PromotionMethod,
+	PromotionStatus,
+	PromotionType,
+} from '../promotions/schemas/promotion.schema';
+import { ApiDocsPaginationVer2 } from 'src/decorators/swagger-form-data.decorator-v2';
 
 @Controller('bill-items')
 @ApiTags('bill-items')
@@ -249,6 +265,126 @@ export class BillItemsController {
 		return await this.billItemsService.getMonthlyBillItemOwnFacilitiesStats(
 			year,
 			userID,
+		);
+	}
+
+	@ApiOperation({
+		summary: 'Find Many Bill-items of Own Facility',
+		description: `Find many bill-items of own facility.\n\nRoles: ${UserRole.FACILITY_OWNER}}.`,
+	})
+	@ApiParam({ name: 'facilityID', type: String, description: 'Facility ID' })
+	@ApiDocsPaginationVer2('bill-item')
+	@ApiResponse({
+		status: 200,
+		schema: {
+			example: {
+				data: {
+					items: [
+						{
+							_id: '_id',
+							brandID: 'string',
+							facilityID: 'string',
+							packageTypeID: 'string',
+							packageID: 'string',
+							ownerFacilityID: 'string',
+							accountID: 'string',
+							facilityInfo: {
+								brandName: 'string',
+								facilityAddress: {},
+								facilityCoordinatesLocation: {
+									coordinates: [10.027851057940572, 105.77291088739058],
+								},
+								facilityPhotos: [],
+							} as BillItemFacility,
+							packageTypeInfo: {
+								name: 'string',
+								description: 'string',
+								price: 1,
+							} as BillItemPackageType,
+							packageInfo: {
+								type: TimeType.ONE_MONTH,
+								price: 1,
+							} as BillItemPackage,
+							promotions: [
+								{
+									targetID: 'string',
+									type: PromotionType.PACKAGE,
+									name: 'string',
+									description: 'string',
+									couponCode: 'string',
+									value: 1,
+									method: PromotionMethod.NUMBER,
+									minPriceApply: 1,
+									maxValue: 1,
+									maxQuantity: 1,
+									startDate: new Date(),
+									endDate: new Date(),
+									customerType: CustomerType.CUSTOMER,
+									status: PromotionStatus.ACTIVE,
+									createdAt: new Date(),
+									updatedAt: new Date(),
+								},
+							] as Promotion[],
+							promotionPrice: 1,
+							totalPrice: 1,
+							status: BillItemStatus.ACTIVE,
+							createdAt: new Date(),
+							updatedAt: new Date(),
+						},
+					] as BillItem[],
+					total: 1,
+					queryOptions: {
+						sort: 'string',
+						fields: 'string',
+						limit: 10,
+						page: 0,
+					} as QueryObject,
+				} as ListResponseV2<BillItem>,
+			},
+		},
+	})
+	@ApiResponse({
+		status: 400,
+		schema: {
+			example: {
+				code: '400',
+				message: 'Bad request',
+				details: null,
+			},
+		},
+	})
+	@ApiResponse({
+		status: 401,
+		schema: {
+			example: {
+				code: '401',
+				message: 'Unauthorized',
+				details: null,
+			},
+		},
+	})
+	@ApiResponse({
+		status: 403,
+		schema: {
+			example: {
+				code: '403',
+				message: `Forbidden resource`,
+				details: null,
+			},
+		},
+	})
+	@Get('/:facilityID')
+	@Roles(UserRole.FACILITY_OWNER)
+	@UseGuards(RolesGuard)
+	async findManyBillItemOfOwnFacility(
+		@GetCurrentUser('sub') userID: string,
+		@Query() query: QueryObject,
+		@Param('facilityID') facilityID: string,
+	): Promise<ListResponseV2<BillItem>> {
+		return await this.billItemsService.findManyBillItemOfOwnFacility(
+			query,
+			userID,
+			facilityID,
 		);
 	}
 }
