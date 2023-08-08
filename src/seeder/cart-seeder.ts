@@ -14,7 +14,7 @@ export class CartSeeder implements Seeder {
 	) {}
 
 	async seed(): Promise<any> {
-		this.cartModel.insertMany(cartData);
+		await this.cartModel.insertMany(cartData);
 	}
 
 	async drop(): Promise<any> {

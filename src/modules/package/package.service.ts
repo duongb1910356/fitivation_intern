@@ -171,7 +171,7 @@ export class PackageService {
 				},
 			},
 			{ $unwind: '$packageType' },
-			{ $match: { 'packageType.order': 1 } },
+			{ $sort: { 'packageType.order': 1 } },
 			{ $unset: 'packageType' },
 		]);
 

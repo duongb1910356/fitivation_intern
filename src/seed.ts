@@ -65,6 +65,8 @@ import {
 import { BillItemSeeder } from './seeder/billItems-seeder';
 import { BillSeeder } from './seeder/bill-seeder';
 import { SubscriptionSeeder } from './seeder/subscription-seeder';
+import { Cart, CartSchema } from './modules/carts/schemas/cart.schema';
+import { CartSeeder } from './seeder/cart-seeder';
 
 seeder({
 	imports: [
@@ -101,6 +103,7 @@ seeder({
 		MongooseModule.forFeature([
 			{ name: BillItem.name, schema: BillItemSchema },
 		]),
+		MongooseModule.forFeature([{ name: Cart.name, schema: CartSchema }]),
 	],
 }).run([
 	AdministrativeUnitSeeder,
@@ -117,4 +120,5 @@ seeder({
 	BillItemSeeder,
 	BillSeeder,
 	SubscriptionSeeder,
+	CartSeeder,
 ]);
