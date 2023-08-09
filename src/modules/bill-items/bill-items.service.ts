@@ -12,6 +12,11 @@ import { BillItemFacility } from './schemas/bill-item-facility.schema';
 import { TokenPayload } from '../auth/types/token-payload.type';
 import { UserRole } from '../users/schemas/user.schema';
 import { BrandService } from '../brand/brand.service';
+import {
+	ListResponseV2,
+	QueryAPI,
+	QueryObject,
+} from 'src/shared/utils/query-api';
 
 @Injectable()
 export class BillItemsService {
@@ -128,6 +133,31 @@ export class BillItemsService {
 		]);
 
 		return stats;
+	}
+
+	async findManyBillItemOfOwnFacility(
+		query: QueryObject,
+		userID: string,
+		facilityID: string,
+	): Promise<ListResponseV2<BillItem>> {
+		const queryFeatures = new QueryAPI(this.billItemsModel, query)
+			.filter()
+			.sort()
+			.limitfields()
+			.paginate();
+
+		queryFeatures.queryModel.find({
+			ownerFacilityID: userID,
+			facilityID,
+		});
+
+		const billItems = await queryFeatures.queryModel;
+
+		return {
+			total: billItems.length,
+			queryOptions: queryFeatures.queryOptions,
+			items: billItems,
+		};
 	}
 
 	async findOneByCondition(condition: any): Promise<BillItem> {
